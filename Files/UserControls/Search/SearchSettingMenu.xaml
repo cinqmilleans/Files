@@ -4,8 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Files.UserControls.Search"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:usercontrols="using:Files.UserControls"
     mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300">
-    <Grid>
-    </Grid>
+    <StackPanel Spacing="12">
+        <TextBlock
+            x:Uid="NavToolbarSearchWhenHeader"
+            FontWeight="Medium" Text="When" />
+        <StackPanel Spacing="4" Orientation="Horizontal">
+            <usercontrols:CalendarPicker
+                x:Name="SearchWhenFrom"
+                Width="140"
+                PlaceholderText="From"
+                Date="{x:Bind Option.Filters.CreationDate.MinDate, Mode=TwoWay}" />
+            <usercontrols:CalendarPicker
+                x:Name="SearchWhenTo"
+                Width="140"
+                PlaceholderText="To"
+                Date="{x:Bind Option.Filters.CreationDate.MaxDate, Mode=TwoWay}"
+            />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

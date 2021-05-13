@@ -10,7 +10,6 @@ namespace Files.UserControls.Search
         public SearchSettingMenu()
         {
             InitializeComponent();
-            DataContext = Option;
         }
     }
 }

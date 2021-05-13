@@ -1,31 +1,43 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Files.Filesystem.Search
 {
     public class FolderSearchOption
     {
-        public FolderSearchCriteriaDictionary Filters;
+        public FolderSearchCriteriaSet Filters = new FolderSearchCriteriaSet();
+    }
 
-        public FolderSearchOption()
-        {
-            var filters = CreateCriteria().ToDictionary(criteria => criteria.Code, criteria => criteria);
-            Filters = new FolderSearchCriteriaDictionary(filters);
-        }
+    public class FolderSearchCriteriaSet : IFolderSearchFilter
+    {
+        private readonly IFolderSearchCriteria[] filters;
 
-        private List<IFolderSearchCriteria> CreateCriteria()
+        public DateFolderSearchCriteria CreationDate { get; } =
+            new DateFolderSearchCriteria("creationDate", "Creation date");
+
+        public DateFolderSearchCriteria ModificationDate { get; } =
+            new DateFolderSearchCriteria("modificationDate", "modification Date");
+
+        public ComparableFolderSearchCriteria<int> Size { get; } =
+            new ComparableFolderSearchCriteria<int>("size", "Size");
+
+        public StringFolderSearchCriteria Artist { get; } =
+            new StringFolderSearchCriteria("size", "Size");
+
+        public FolderSearchCriteriaSet()
         {
-            return new List<IFolderSearchCriteria>
+            filters = new IFolderSearchCriteria[]
             {
-                new DateFolderSearchCriteria("creationDate", "Creation date"),
-                new DateFolderSearchCriteria("modificationDate", "modification Date"),
-                new ComparableFolderSearchCriteria<int>("size", "Size"),
-                new StringFolderSearchCriteria("artist", "Artist"),
+                CreationDate,
+                ModificationDate,
+                Size,
+                Artist,
             };
         }
+
+        public string ToAdvancedQuerySyntax() =>
+            string.Join(' ', filters.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
     public interface IFolderSearchFilter
@@ -37,15 +49,6 @@ namespace Files.Filesystem.Search
     {
         string Code { get; }
         string Label { get; }
-    }
-
-    public class FolderSearchCriteriaDictionary : ReadOnlyDictionary<string,IFolderSearchCriteria>, IFolderSearchFilter
-    {
-        public FolderSearchCriteriaDictionary(IDictionary<string, IFolderSearchCriteria> dictionary) : base(dictionary)
-        {
-        }
-
-        public string ToAdvancedQuerySyntax() => string.Join(' ', this.Values.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
     public abstract class FolderSearchCriteria : ObservableObject, IFolderSearchCriteria
@@ -161,38 +164,50 @@ namespace Files.Filesystem.Search
 
     public class DateFolderSearchCriteria : FolderSearchCriteria
     {
-        public enum Comparators : ushort
+        public enum Periods : ushort
         {
             None,
-            EqualTo,
-            Before,
-            After,
-            Between,
+            Custom,
             DayAgo,
             WeekAgo,
             MonthAgo,
             YearAgo,
         }
 
-        private Comparators comparator = Comparators.EqualTo;
+        public enum Comparators : ushort
+        {
+            None,
+            After,
+            Before,
+            Between,
+        }
+
+        private Periods period = Periods.None;
+        public Periods Period
+        {
+            get => period;
+            set => SetProperty(ref period, value);
+        }
+
+        private Comparators comparator = Comparators.None;
         public Comparators Comparator
         {
             get => comparator;
             set => SetProperty(ref comparator, value);
         }
 
-        private DateTime maxDate = DateTime.MaxValue;
-        public DateTime MinDate
+        private DateTimeOffset? minDate;
+        public DateTimeOffset? MinDate
         {
             get => minDate;
-            set => SetProperty(ref minDate, value);
+            set => SetProperty(ref minDate, value > MinDate ? value : null);
         }
 
-        private DateTime minDate = DateTime.MinValue;
-        public DateTime MaxDate
+        private DateTimeOffset? maxDate;
+        public DateTimeOffset? MaxDate
         {
             get => maxDate;
-            set => SetProperty(ref maxDate, value);
+            set => SetProperty(ref maxDate, value < MaxDate ? value : null);
         }
 
         public DateFolderSearchCriteria(string code, string label) : base(code, label)
@@ -201,20 +216,28 @@ namespace Files.Filesystem.Search
 
         public override string ToAdvancedQuerySyntax()
         {
+            return Period switch
+            {
+                Periods.Custom => ToAdvancedQuerySyntax_Custom(),
+                Periods.DayAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastDay",
+                Periods.WeekAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastWeek",
+                Periods.MonthAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastMonth",
+                Periods.YearAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastYear",
+                _ => string.Empty
+            };
+        }
+        private string ToAdvancedQuerySyntax_Custom()
+        {
             return Comparator switch
             {
-                Comparators.None => string.Empty,
-
-                Comparators.EqualTo => $"{Code}:={MinDate:yyyy/MM/dd}",
-                Comparators.Before => $"{Code}:<={MaxDate:yyyy/MM/dd}",
-                Comparators.After => $"{Code}:>={MinDate:yyyy/MM/dd}",
-                Comparators.Between => $"{Code}:>={MinDate:yyyy/MM/dd} {Code}:<={MaxDate:yyyy/MM/dd}",
-
-                Comparators.DayAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastDay",
-                Comparators.WeekAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastWeek",
-                Comparators.MonthAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastMonth",
-                Comparators.YearAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastYear",
-
+                Comparators.After =>
+                    MinDate.HasValue ? $"{Code}:>={MinDate:yyyy/MM/dd}" : string.Empty,
+                Comparators.Before =>
+                    MaxDate.HasValue ? $"{Code}:<={MaxDate:yyyy/MM/dd}" : string.Empty,
+                Comparators.Between =>
+                    (MinDate.HasValue ? $"{Code}:>={MinDate:yyyy/MM/dd}" : string.Empty)
+                    + (MinDate.HasValue && MaxDate.HasValue ? " " : string.Empty) +
+                    (MaxDate.HasValue ? $"{Code}:<={MaxDate:yyyy/MM/dd}" : string.Empty),
                 _ => string.Empty
             };
         }

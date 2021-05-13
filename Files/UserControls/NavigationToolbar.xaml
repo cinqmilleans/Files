@@ -15,6 +15,7 @@
     xmlns:local1="using:Files"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xh="using:Files.Helpers.XamlHelpers"
+    xmlns:search="using:Files.UserControls.Search"
     d:DesignHeight="72"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -920,6 +921,23 @@
             Spacing="4">
 
             <CommandBar VerticalAlignment="Center" Background="Transparent">
+                <AppBarButton
+                    x:Name="WidgetsManager2"
+                    x:Uid="NavToolbarWidgets2"
+                    Width="36"
+                    Height="32"
+                    x:Load="{x:Bind IsPageTypeNotHome, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                    AutomationProperties.Name="Manage widgets2"
+                    Background="Transparent"
+                    Style="{StaticResource ToolBarButtonStyle}"
+                    ToolTipService.ToolTip="Search Options">
+                    <FontIcon FontSize="14" Glyph="&#xE71C;" />
+                    <AppBarButton.Flyout>
+                        <Flyout Placement="Bottom">
+                            <search:SearchSettingMenu />
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
                 <AppBarButton
                     x:Name="WidgetsManager"
                     x:Uid="NavToolbarWidgets"
