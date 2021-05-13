@@ -2,26 +2,49 @@
     x:Class="Files.UserControls.Search.SearchSettingMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Files.UserControls.Search"
+    xmlns:search="using:Files.Filesystem.Search"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:usercontrols="using:Files.UserControls"
     mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300">
+    <!--UserControl.Resources>
+        <ControlTemplate x:Key="DateTemplate" TargetType="search:DateFolderSearchCriteria">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.ColumnSpan="2">
+                    <ComboBoxItem Content="" />
+                    <ComboBoxItem Content="A day ago" />
+                    <ComboBoxItem Content="A week ago" />
+                    <ComboBoxItem Content="A month ago" />
+                    <ComboBoxItem Content="A year ago" />
+                </ComboBox>
+                <usercontrols:CalendarPicker
+                    x:Name="SearchWhenFrom"
+                    Grid.Row="1" Grid.Column="0"
+                    Width="140" PlaceholderText="From"
+                    Date="{x:Bind MinDate, Mode=TwoWay}" />
+                <usercontrols:CalendarPicker
+                    x:Name="SearchWhenTo"
+                    Grid.Row="1" Grid.Column="1"
+                    Width="140" PlaceholderText="To"
+                    Date="{x:Bind MaxDate, Mode=TwoWay}" />
+            </Grid>
+        </>
+    </-->
     <StackPanel Spacing="12">
         <TextBlock
             x:Uid="NavToolbarSearchWhenHeader"
             FontWeight="Medium" Text="When" />
         <StackPanel Spacing="4" Orientation="Horizontal">
-            <usercontrols:CalendarPicker
-                x:Name="SearchWhenFrom"
-                Width="140"
-                PlaceholderText="From"
-                Date="{x:Bind Option.Filters.CreationDate.MinDate, Mode=TwoWay}" />
-            <usercontrols:CalendarPicker
-                x:Name="SearchWhenTo"
-                Width="140"
-                PlaceholderText="To"
-                Date="{x:Bind Option.Filters.CreationDate.MaxDate, Mode=TwoWay}"
-            />
+            <!--<ContentControl
+                DataContext="{x:Bind Option.Filters.CreationDate}"
+                ContentTemplate="{StaticResource DateTemplate}" />-->
         </StackPanel>
     </StackPanel>
 </UserControl>
