@@ -1,71 +1,67 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Files.Filesystem.Search
 {
     public class FolderSearchOption
     {
-        public FolderSearchCriteriaSet Filters = new FolderSearchCriteriaSet();
-    }
+        public FolderSearchFilterCollection Filters { get; }
 
-    public class FolderSearchCriteriaSet : IFolderSearchFilter
-    {
-        private readonly IFolderSearchCriteria[] filters;
+        public static FolderSearchOption Default { get; } =
+            new FolderSearchOption(
+                new DateFolderSearchFilter("creationDate", "Creation date"),
+                new DateFolderSearchFilter("modificationDate", "modification Date"),
+                new ComparableFolderSearchFilter<int>("size", "Size"),
+                new StringFolderSearchFilter("size", "Size")
+            );
 
-        public DateFolderSearchCriteria CreationDate { get; } =
-            new DateFolderSearchCriteria("creationDate", "Creation date");
-
-        public DateFolderSearchCriteria ModificationDate { get; } =
-            new DateFolderSearchCriteria("modificationDate", "modification Date");
-
-        public ComparableFolderSearchCriteria<int> Size { get; } =
-            new ComparableFolderSearchCriteria<int>("size", "Size");
-
-        public StringFolderSearchCriteria Artist { get; } =
-            new StringFolderSearchCriteria("size", "Size");
-
-        public FolderSearchCriteriaSet()
+        private FolderSearchOption (params IFolderSearchFilter[] filters)
         {
-            filters = new IFolderSearchCriteria[]
-            {
-                CreationDate,
-                ModificationDate,
-                Size,
-                Artist,
-            };
+            Filters = new FolderSearchFilterCollection(string.Empty, filters);
         }
-
-        public string ToAdvancedQuerySyntax() =>
-            string.Join(' ', filters.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
     public interface IFolderSearchFilter
     {
+        string Key { get; }
         string ToAdvancedQuerySyntax();
     }
 
-    public interface IFolderSearchCriteria : IFolderSearchFilter
+    public class FolderSearchFilterCollection : Collection<IFolderSearchFilter>, IFolderSearchFilter
     {
-        string Code { get; }
-        string Label { get; }
+        public string Key { get; }
+
+        public FolderSearchFilterCollection(string key) : base()
+        {
+            Key = key;
+        }
+        public FolderSearchFilterCollection(string key, IList<IFolderSearchFilter> filters) : base(filters)
+        {
+            Key = key;
+        }
+
+        public string ToAdvancedQuerySyntax() =>
+            string.Join(' ', Items.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
-    public abstract class FolderSearchCriteria : ObservableObject, IFolderSearchCriteria
+    public abstract class CriteriaFolderSearchFilter : ObservableObject, IFolderSearchFilter
     {
-        public string Code { get; }
+        public string Key { get; }
         public string Label { get; }
 
-        public FolderSearchCriteria(string code, string label)
+        public CriteriaFolderSearchFilter(string key, string label)
         {
-            Code = code;
+            Key = key;
             Label = label;
         }
 
         public abstract string ToAdvancedQuerySyntax();
     }
 
-    public class ComparableFolderSearchCriteria<T> : FolderSearchCriteria where T : IComparable<T>
+    public class ComparableFolderSearchFilter<T> : CriteriaFolderSearchFilter where T : IComparable<T>
     {
         public enum Comparators : ushort
         {
@@ -97,7 +93,7 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref maxValue, value);
         }
 
-        public ComparableFolderSearchCriteria(string code, string label) : base(code, label)
+        public ComparableFolderSearchFilter(string key, string label) : base(key, label)
         {
         }
 
@@ -107,17 +103,17 @@ namespace Files.Filesystem.Search
             {
                 Comparators.None => string.Empty,
 
-                Comparators.EqualTo => $"{Code}:={MinValue}",
-                Comparators.LessThan => $"{Code}:<={MaxValue}",
-                Comparators.GreaterThan => $"{Code}:>={MinValue}",
-                Comparators.Between => $"{Code}:>={MinValue} {Code}:<={MaxValue}",
+                Comparators.EqualTo => $"{Key}:={MinValue}",
+                Comparators.LessThan => $"{Key}:<={MaxValue}",
+                Comparators.GreaterThan => $"{Key}:>={MinValue}",
+                Comparators.Between => $"{Key}:>={MinValue} {Key}:<={MaxValue}",
 
                 _ => string.Empty
             };
         }
     }
 
-    public class StringFolderSearchCriteria : FolderSearchCriteria
+    public class StringFolderSearchFilter : CriteriaFolderSearchFilter
     {
         public enum Comparators : ushort
         {
@@ -142,7 +138,7 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref this.value, value);
         }
 
-        public StringFolderSearchCriteria(string code, string label) : base(code, label)
+        public StringFolderSearchFilter(string key, string label) : base(key, label)
         {
         }
 
@@ -152,17 +148,17 @@ namespace Files.Filesystem.Search
             {
                 Comparators.None => string.Empty,
 
-                Comparators.EqualTo => $"{Code}:={Value}",
-                Comparators.StartsWith => $"{Code}:={Value}",
-                Comparators.EndsWith => $"{Code}:={Value}",
-                Comparators.Contains => $"{Code}:={Value}",
+                Comparators.EqualTo => $"{Key}:={Value}",
+                Comparators.StartsWith => $"{Key}:={Value}",
+                Comparators.EndsWith => $"{Key}:={Value}",
+                Comparators.Contains => $"{Key}:={Value}",
 
                 _ => string.Empty
             };
         }
     }
 
-    public class DateFolderSearchCriteria : FolderSearchCriteria
+    public class DateFolderSearchFilter : CriteriaFolderSearchFilter
     {
         public enum Periods : ushort
         {
@@ -210,7 +206,7 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref maxDate, value < MaxDate ? value : null);
         }
 
-        public DateFolderSearchCriteria(string code, string label) : base(code, label)
+        public DateFolderSearchFilter(string key, string label) : base(key, label)
         {
         }
 
@@ -219,10 +215,10 @@ namespace Files.Filesystem.Search
             return Period switch
             {
                 Periods.Custom => ToAdvancedQuerySyntax_Custom(),
-                Periods.DayAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastDay",
-                Periods.WeekAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastWeek",
-                Periods.MonthAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastMonth",
-                Periods.YearAgo => $"{Code}:>System.StructuredQueryType.DateTime#LastYear",
+                Periods.DayAgo => $"{Key}:>System.StructuredQueryType.DateTime#LastDay",
+                Periods.WeekAgo => $"{Key}:>System.StructuredQueryType.DateTime#LastWeek",
+                Periods.MonthAgo => $"{Key}:>System.StructuredQueryType.DateTime#LastMonth",
+                Periods.YearAgo => $"{Key}:>System.StructuredQueryType.DateTime#LastYear",
                 _ => string.Empty
             };
         }
@@ -231,13 +227,13 @@ namespace Files.Filesystem.Search
             return Comparator switch
             {
                 Comparators.After =>
-                    MinDate.HasValue ? $"{Code}:>={MinDate:yyyy/MM/dd}" : string.Empty,
+                    MinDate.HasValue ? $"{Key}:>={MinDate:yyyy/MM/dd}" : string.Empty,
                 Comparators.Before =>
-                    MaxDate.HasValue ? $"{Code}:<={MaxDate:yyyy/MM/dd}" : string.Empty,
+                    MaxDate.HasValue ? $"{Key}:<={MaxDate:yyyy/MM/dd}" : string.Empty,
                 Comparators.Between =>
-                    (MinDate.HasValue ? $"{Code}:>={MinDate:yyyy/MM/dd}" : string.Empty)
+                    (MinDate.HasValue ? $"{Key}:>={MinDate:yyyy/MM/dd}" : string.Empty)
                     + (MinDate.HasValue && MaxDate.HasValue ? " " : string.Empty) +
-                    (MaxDate.HasValue ? $"{Code}:<={MaxDate:yyyy/MM/dd}" : string.Empty),
+                    (MaxDate.HasValue ? $"{Key}:<={MaxDate:yyyy/MM/dd}" : string.Empty),
                 _ => string.Empty
             };
         }

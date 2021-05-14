@@ -295,8 +295,8 @@
     <Compile Include="UserControls\MultitaskingControl\TabItem\TabItemControl.xaml.cs">
       <DependentUpon>TabItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Search\SearchSettingMenu.xaml.cs">
-      <DependentUpon>SearchSettingMenu.xaml</DependentUpon>
+    <Compile Include="UserControls\Search\FolderSearchOptionMenu.xaml.cs">
+      <DependentUpon>FolderSearchOptionMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Selection\ExtendPreviousItemSelectionStrategy.cs" />
     <Compile Include="Helpers\GenericItemsCollection.cs" />
@@ -914,7 +914,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Search\SearchSettingMenu.xaml">
+    <Page Include="UserControls\Search\FolderSearchOptionMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

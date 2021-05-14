@@ -934,7 +934,7 @@
                     <FontIcon FontSize="14" Glyph="&#xE71C;" />
                     <AppBarButton.Flyout>
                         <Flyout Placement="Bottom">
-                            <search:SearchSettingMenu />
+                            <search:FolderSearchOptionMenu />
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
