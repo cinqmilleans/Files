@@ -53,9 +53,10 @@ namespace Files.Filesystem.Search
         string ToAdvancedQuerySyntax();
     }
 
-    public interface ICriteriaFolderSearchFilter : IFolderSearchFilter
+    public interface IFolderSearchCriteria : IFolderSearchFilter
     {
         string Key { get; }
+        string Label { get; }
     }
 
     public class FolderSearchFilterCollection : Collection<IFolderSearchFilter>, IFolderSearchFilter
@@ -78,7 +79,7 @@ namespace Files.Filesystem.Search
         public string ToAdvancedQuerySyntax() => Query ?? string.Empty;
     }
 
-    public abstract class CriteriaFolderSearchFilter : ICriteriaFolderSearchFilter
+    public abstract class CriteriaFolderSearchFilter : IFolderSearchFilter, IFolderSearchCriteria
     {
         public string Key { get; }
         public string Label { get; }

@@ -11,29 +11,35 @@ namespace Files.UserControls.Search
 {
     public sealed partial class FolderSearchOptionMenu : UserControl
     {
-        private readonly FolderSearchOptionViewModelFactory ViewModeFactory = new FolderSearchOptionViewModelFactory();
-
-        public INotifyPropertyChanged[] BaseFilters { get; }
-        public ObservableCollection<INotifyPropertyChanged> UserFilters { get; }
+        public IFolderSearchCriteriaViewModel[] BaseFilters { get; }
+        public ObservableCollection<IFolderSearchCriteriaViewModel> UserFilters { get; }
+        public ObservableCollection<IFolderSearchCriteriaViewModel> FreeFilters { get; }
 
         public FolderSearchOptionMenu()
         {
             InitializeComponent();
 
-            var criteria = FolderSearchOption.Default.Filters
-                .Where(filter => filter is ICriteriaFolderSearchFilter)
-                .Cast<ICriteriaFolderSearchFilter>().ToList();
+            var ViewModeFactory = new FolderSearchCriteriaViewModelFactory();
 
-            BaseFilters = new INotifyPropertyChanged[]
+
+            var criteria = FolderSearchOption.Default.Filters
+                .Where(filter => filter is IFolderSearchCriteria)
+                .Cast<IFolderSearchCriteria>()
+                .Select(c => ViewModeFactory.ToViewModel(c))
+                .ToList();
+
+            BaseFilters = new IFolderSearchCriteriaViewModel[]
             {
-                ViewModeFactory.ToViewModel(criteria.First(f => f.Key == "creationDate"))
+                criteria.First(f => f.Key == "creationDate")
             };
+            UserFilters = new ObservableCollection<IFolderSearchCriteriaViewModel>();
+            FreeFilters = new ObservableCollection<IFolderSearchCriteriaViewModel>(criteria.Except(BaseFilters));
         }
     }
 
-    public class FolderSearchOptionViewModelFactory
+    public class FolderSearchCriteriaViewModelFactory
     {
-        public INotifyPropertyChanged ToViewModel(ICriteriaFolderSearchFilter filter)
+        public IFolderSearchCriteriaViewModel ToViewModel(IFolderSearchCriteria filter)
         {
             if (filter is DateFolderSearchFilter dateFolderSearchFilter)
             {
@@ -43,15 +49,23 @@ namespace Files.UserControls.Search
         }
     }
 
-    public class FolderSearchFilterViewModel<T> : ObservableObject where T : CriteriaFolderSearchFilter
+    public interface IFolderSearchCriteriaViewModel : INotifyPropertyChanged
     {
+        public string Key { get; }
+        public string Label { get; }
+    }
+
+    public class FolderSearchFilterViewModel<T> : ObservableObject, IFolderSearchCriteriaViewModel where T : IFolderSearchCriteria
+    {
+        public string Key => Filter.Key;
+        public string Label => Filter.Label;
+
         protected T Filter { get; }
 
         public FolderSearchFilterViewModel(T filter) : base()
         {
             Filter = filter;
         }
-        public string Label => Filter.Label;
     }
 
     public class DateFolderSearchFilterViewModel : FolderSearchFilterViewModel<DateFolderSearchFilter>
@@ -126,7 +140,7 @@ namespace Files.UserControls.Search
         }
     }
 
-    public class PeriodViewModel
+    public class PeriodViewModel : ObservableObject
     {
         public string Label { get; }
         public DateFolderSearchFilter.Periods Value { get; }
