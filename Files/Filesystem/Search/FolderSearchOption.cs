@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -47,7 +46,7 @@ namespace Files.Filesystem.Search
             string.Join(' ', Items.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
-    public abstract class CriteriaFolderSearchFilter : ObservableObject, IFolderSearchFilter
+    public abstract class CriteriaFolderSearchFilter : IFolderSearchFilter
     {
         public string Key { get; }
         public string Label { get; }
@@ -72,26 +71,10 @@ namespace Files.Filesystem.Search
             Between,
         }
 
-        private Comparators comparator = Comparators.EqualTo;
-        public Comparators Comparator
-        {
-            get => comparator;
-            set => SetProperty(ref comparator, value);
-        }
+        public Comparators Comparator = Comparators.EqualTo;
 
-        private T minValue;
-        public T MinValue
-        {
-            get => minValue;
-            set => SetProperty(ref minValue, value);
-        }
-
-        private T maxValue;
-        public T MaxValue
-        {
-            get => maxValue;
-            set => SetProperty(ref maxValue, value);
-        }
+        public T MinValue;
+        public T MaxValue;
 
         public ComparableFolderSearchFilter(string key, string label) : base(key, label)
         {
@@ -124,19 +107,9 @@ namespace Files.Filesystem.Search
             Contains,
         }
 
-        private Comparators comparator = Comparators.EqualTo;
-        public Comparators Comparator
-        {
-            get => comparator;
-            set => SetProperty(ref comparator, value);
-        }
+        public Comparators Comparator = Comparators.EqualTo;
 
-        private string value;
-        public string Value
-        {
-            get => value;
-            set => SetProperty(ref this.value, value);
-        }
+        public string Value;
 
         public StringFolderSearchFilter(string key, string label) : base(key, label)
         {
@@ -178,33 +151,11 @@ namespace Files.Filesystem.Search
             Between,
         }
 
-        private Periods period = Periods.MonthAgo;
-        public Periods Period
-        {
-            get => period;
-            set => SetProperty(ref period, value);
-        }
+        public Periods Period = Periods.MonthAgo;
+        public Comparators Comparator = Comparators.Between;
 
-        private Comparators comparator = Comparators.None;
-        public Comparators Comparator
-        {
-            get => comparator;
-            set => SetProperty(ref comparator, value);
-        }
-
-        private DateTimeOffset? minDate = DateTimeOffset.Now;
-        public DateTimeOffset? MinDate
-        {
-            get => minDate;
-            set => SetProperty(ref minDate, value > MinDate ? value : null);
-        }
-
-        private DateTimeOffset? maxDate;
-        public DateTimeOffset? MaxDate
-        {
-            get => maxDate;
-            set => SetProperty(ref maxDate, value < MaxDate ? value : null);
-        }
+        public DateTimeOffset? MinDate = DateTimeOffset.MinValue;
+        public DateTimeOffset? MaxDate = DateTimeOffset.MaxValue;
 
         public DateFolderSearchFilter(string key, string label) : base(key, label)
         {

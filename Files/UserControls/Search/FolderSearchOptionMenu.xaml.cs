@@ -1,5 +1,8 @@
 ﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,45 +11,103 @@ namespace Files.UserControls.Search
 {
     public sealed partial class FolderSearchOptionMenu : UserControl
     {
-        public ObservableCollection<IFolderSearchFilter> BaseFilters { get; }
-        public ObservableCollection<IFolderSearchFilter> UserFilters { get; }
+        private readonly FolderSearchOptionViewModelFactory ViewModeFactory = new FolderSearchOptionViewModelFactory();
 
-
+        public INotifyPropertyChanged[] BaseFilters { get; }
+        public ObservableCollection<INotifyPropertyChanged> UserFilters { get; }
 
         public FolderSearchOptionMenu()
         {
             InitializeComponent();
 
             var criteria = FolderSearchOption.Default.Filters;
-            BaseFilters = new ObservableCollection<IFolderSearchFilter>
+
+            BaseFilters = new INotifyPropertyChanged[]
             {
-                criteria.First(f => f.Key == "creationDate"),
+                ViewModeFactory.ToViewModel(criteria.First(f => f.Key == "creationDate"))
             };
-            UserFilters = new ObservableCollection<IFolderSearchFilter>();
         }
 
-        private void PeriodComboBox_Loaded(object sender, RoutedEventArgs e)
+        private class FolderSearchOptionViewModelFactory
         {
-            var control = sender as ComboBox;
-            var items = new ComboBoxItem[]
+            public INotifyPropertyChanged ToViewModel(IFolderSearchFilter filter)
             {
-                new ComboBoxItem{ Content = " ", Tag = DateFolderSearchFilter.Periods.None },
-                new ComboBoxItem{ Content = "A day ago", Tag = DateFolderSearchFilter.Periods.DayAgo },
-                new ComboBoxItem{ Content = "A week ago", Tag = DateFolderSearchFilter.Periods.WeekAgo },
-                new ComboBoxItem{ Content = "A month ago", Tag = DateFolderSearchFilter.Periods.MonthAgo },
-                new ComboBoxItem{ Content = "A year ago", Tag = DateFolderSearchFilter.Periods.YearAgo },
-                new ComboBoxItem{ Content = "Custom", Tag = DateFolderSearchFilter.Periods.Custom },
-            };
-            control.ItemsSource = items;
-            control.SelectedItem = items[0];
+                if (filter is DateFolderSearchFilter dateFolderSearchFilter)
+                {
+                    return new DateFolderSearchFilterViewModel(dateFolderSearchFilter);
+                };
+                return null;
+            }
+        }
+    }
+
+    public class FolderSearchFilterViewModel<T> : ObservableObject where T : CriteriaFolderSearchFilter
+    {
+        protected T Filter { get; }
+
+        public FolderSearchFilterViewModel(T filter) : base()
+        {
+            Filter = filter;
+        }
+        public string Label => Filter.Label;
+    }
+
+    public class DateFolderSearchFilterViewModel : FolderSearchFilterViewModel<DateFolderSearchFilter>
+    {
+        public PeriodViewModel[] Periods { get; } = new PeriodViewModel[]
+        {
+            new PeriodViewModel(" ", DateFolderSearchFilter.Periods.None),
+            new PeriodViewModel("A day ago", DateFolderSearchFilter.Periods.DayAgo),
+            new PeriodViewModel("A week ago", DateFolderSearchFilter.Periods.WeekAgo),
+            new PeriodViewModel("A month ago", DateFolderSearchFilter.Periods.MonthAgo),
+            new PeriodViewModel("A year ago", DateFolderSearchFilter.Periods.YearAgo),
+            new PeriodViewModel("Custom", DateFolderSearchFilter.Periods.Custom),
+        };
+
+        public DateFolderSearchFilterViewModel(DateFolderSearchFilter filter) : base(filter)
+        {
         }
 
-        private void PeriodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public PeriodViewModel Period
         {
-            var control = sender as Control;
-            var filter = control.DataContext as DateFolderSearchFilter;
-            var period = (DateFolderSearchFilter.Periods)control.Tag;
-            filter.Period = period;
+            get => Periods.First(period => period.Value == Filter.Period);
+            set
+            {
+                Filter.Period = value.Value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCustomPeriod));
+            }
+        }
+        public DateFolderSearchFilter.Comparators Comparator
+        {
+            get => Filter.Comparator;
+            set => SetProperty(ref Filter.Comparator, value);
+        }
+
+        public DateTimeOffset? MinDate
+        {
+            get => Filter.MinDate;
+            set => SetProperty(ref Filter.MinDate, value);
+        }
+        public DateTimeOffset? MaxDate
+        {
+            get => Filter.MaxDate;
+            set => SetProperty(ref Filter.MaxDate, value);
+        }
+
+        public bool IsCustomPeriod =>
+            Filter.Period == DateFolderSearchFilter.Periods.Custom;
+    }
+
+    public class PeriodViewModel
+    {
+        public string Label { get; }
+        public DateFolderSearchFilter.Periods Value { get; }
+
+        public PeriodViewModel(string label, DateFolderSearchFilter.Periods value)
+        {
+            Label = label;
+            Value = value;
         }
     }
 

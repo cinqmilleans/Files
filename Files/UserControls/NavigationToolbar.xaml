@@ -936,12 +936,6 @@
                     <AppBarButton.Flyout>
                         <Flyout Placement="Bottom">
                             <search:FolderSearchOptionMenu />
-                            <!--<ComboBox Width="200">
-                                <ComboBoxItem Content="A" />
-                                <ComboBoxItem Content="B" />
-                                <ComboBoxItem Content="C" />
-                            </ComboBox>-->
-
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
