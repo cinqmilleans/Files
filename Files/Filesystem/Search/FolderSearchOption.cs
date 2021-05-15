@@ -2,51 +2,83 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.Storage.Search;
 
 namespace Files.Filesystem.Search
 {
     public class FolderSearchOption
     {
-        public FolderSearchFilterCollection Filters { get; }
+        public static FolderSearchOption Default { get; } = new FolderSearchOption();
 
-        public static FolderSearchOption Default { get; } =
-            new FolderSearchOption(
+        public string Query { get; set; }
+
+        public FolderSearchFilterCollection Filters { get; } =
+            new FolderSearchFilterCollection
+            {
+                new QueryFolderSearchFilter(),
                 new DateFolderSearchFilter("creationDate", "Creation date"),
-                new DateFolderSearchFilter("modificationDate", "modification Date"),
-                new ComparableFolderSearchFilter<int>("size", "Size"),
-                new StringFolderSearchFilter("size", "Size")
+                new DateFolderSearchFilter("modificationDate", "modification Date")
+            };
+
+        private FolderSearchOption ()
+        {
+        }
+
+        public QueryOptions ToQueryOptions()
+        {
+            var options = new QueryOptions{ FolderDepth = FolderDepth.Deep };
+
+            options.IndexerOption = App.AppSettings.SearchUnindexedItems
+                ? IndexerOption.DoNotUseIndexer
+                : IndexerOption.OnlyUseIndexerAndOptimizeForIndexedProperties;
+
+            options.UserSearchFilter = string.Join(' ', Filters
+                .Select(filter => filter.ToAdvancedQuerySyntax())
+                .Where(aqs => !string.IsNullOrEmpty(aqs))
             );
 
-        private FolderSearchOption (params IFolderSearchFilter[] filters)
-        {
-            Filters = new FolderSearchFilterCollection(string.Empty, filters);
+            options.SortOrder.Clear();
+            options.SortOrder.Add(new SortEntry{ PropertyName = "System.Search.Rank", AscendingOrder = false });
+
+            options.SetPropertyPrefetch(Windows.Storage.FileProperties.PropertyPrefetchOptions.None, null);
+            options.SetThumbnailPrefetch(Windows.Storage.FileProperties.ThumbnailMode.ListView, 24,
+                Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
+
+            return options;
         }
     }
 
     public interface IFolderSearchFilter
     {
-        string Key { get; }
         string ToAdvancedQuerySyntax();
+    }
+
+    public interface ICriteriaFolderSearchFilter : IFolderSearchFilter
+    {
+        string Key { get; }
     }
 
     public class FolderSearchFilterCollection : Collection<IFolderSearchFilter>, IFolderSearchFilter
     {
-        public string Key { get; }
-
-        public FolderSearchFilterCollection(string key) : base()
+        public FolderSearchFilterCollection() : base()
         {
-            Key = key;
         }
-        public FolderSearchFilterCollection(string key, IList<IFolderSearchFilter> filters) : base(filters)
+        public FolderSearchFilterCollection(IList<IFolderSearchFilter> filters) : base(filters)
         {
-            Key = key;
         }
 
         public string ToAdvancedQuerySyntax() =>
             string.Join(' ', Items.Select(filter => filter.ToAdvancedQuerySyntax()));
     }
 
-    public abstract class CriteriaFolderSearchFilter : IFolderSearchFilter
+    public class QueryFolderSearchFilter : IFolderSearchFilter
+    {
+        public string Query { get; }
+
+        public string ToAdvancedQuerySyntax() => Query ?? string.Empty;
+    }
+
+    public abstract class CriteriaFolderSearchFilter : ICriteriaFolderSearchFilter
     {
         public string Key { get; }
         public string Label { get; }
@@ -58,77 +90,6 @@ namespace Files.Filesystem.Search
         }
 
         public abstract string ToAdvancedQuerySyntax();
-    }
-
-    public class ComparableFolderSearchFilter<T> : CriteriaFolderSearchFilter where T : IComparable<T>
-    {
-        public enum Comparators : ushort
-        {
-            None,
-            EqualTo,
-            LessThan,
-            GreaterThan,
-            Between,
-        }
-
-        public Comparators Comparator = Comparators.EqualTo;
-
-        public T MinValue;
-        public T MaxValue;
-
-        public ComparableFolderSearchFilter(string key, string label) : base(key, label)
-        {
-        }
-
-        public override string ToAdvancedQuerySyntax()
-        {
-            return Comparator switch
-            {
-                Comparators.None => string.Empty,
-
-                Comparators.EqualTo => $"{Key}:={MinValue}",
-                Comparators.LessThan => $"{Key}:<={MaxValue}",
-                Comparators.GreaterThan => $"{Key}:>={MinValue}",
-                Comparators.Between => $"{Key}:>={MinValue} {Key}:<={MaxValue}",
-
-                _ => string.Empty
-            };
-        }
-    }
-
-    public class StringFolderSearchFilter : CriteriaFolderSearchFilter
-    {
-        public enum Comparators : ushort
-        {
-            None,
-            EqualTo,
-            StartsWith,
-            EndsWith,
-            Contains,
-        }
-
-        public Comparators Comparator = Comparators.EqualTo;
-
-        public string Value;
-
-        public StringFolderSearchFilter(string key, string label) : base(key, label)
-        {
-        }
-
-        public override string ToAdvancedQuerySyntax()
-        {
-            return Comparator switch
-            {
-                Comparators.None => string.Empty,
-
-                Comparators.EqualTo => $"{Key}:={Value}",
-                Comparators.StartsWith => $"{Key}:={Value}",
-                Comparators.EndsWith => $"{Key}:={Value}",
-                Comparators.Contains => $"{Key}:={Value}",
-
-                _ => string.Empty
-            };
-        }
     }
 
     public class DateFolderSearchFilter : CriteriaFolderSearchFilter
@@ -151,7 +112,7 @@ namespace Files.Filesystem.Search
             Between,
         }
 
-        public Periods Period = Periods.MonthAgo;
+        public Periods Period = Periods.None;
         public Comparators Comparator = Comparators.Between;
 
         public DateTimeOffset? MinDate = DateTimeOffset.MinValue;

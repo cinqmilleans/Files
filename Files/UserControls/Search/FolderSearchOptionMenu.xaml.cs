@@ -20,24 +20,26 @@ namespace Files.UserControls.Search
         {
             InitializeComponent();
 
-            var criteria = FolderSearchOption.Default.Filters;
+            var criteria = FolderSearchOption.Default.Filters
+                .Where(filter => filter is ICriteriaFolderSearchFilter)
+                .Cast<ICriteriaFolderSearchFilter>().ToList();
 
             BaseFilters = new INotifyPropertyChanged[]
             {
                 ViewModeFactory.ToViewModel(criteria.First(f => f.Key == "creationDate"))
             };
         }
+    }
 
-        private class FolderSearchOptionViewModelFactory
+    public class FolderSearchOptionViewModelFactory
+    {
+        public INotifyPropertyChanged ToViewModel(ICriteriaFolderSearchFilter filter)
         {
-            public INotifyPropertyChanged ToViewModel(IFolderSearchFilter filter)
+            if (filter is DateFolderSearchFilter dateFolderSearchFilter)
             {
-                if (filter is DateFolderSearchFilter dateFolderSearchFilter)
-                {
-                    return new DateFolderSearchFilterViewModel(dateFolderSearchFilter);
-                };
-                return null;
-            }
+                return new DateFolderSearchFilterViewModel(dateFolderSearchFilter);
+            };
+            return null;
         }
     }
 
@@ -76,27 +78,52 @@ namespace Files.UserControls.Search
                 Filter.Period = value.Value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsCustomPeriod));
+                Filter.Comparator = GetComparator();
             }
-        }
-        public DateFolderSearchFilter.Comparators Comparator
-        {
-            get => Filter.Comparator;
-            set => SetProperty(ref Filter.Comparator, value);
         }
 
         public DateTimeOffset? MinDate
         {
             get => Filter.MinDate;
-            set => SetProperty(ref Filter.MinDate, value);
+            set
+            {
+                SetProperty(ref Filter.MinDate, value);
+                Filter.Comparator = GetComparator();
+            }
         }
         public DateTimeOffset? MaxDate
         {
             get => Filter.MaxDate;
-            set => SetProperty(ref Filter.MaxDate, value);
+            set
+            {
+                SetProperty(ref Filter.MaxDate, value);
+                Filter.Comparator = GetComparator();
+            }
         }
 
         public bool IsCustomPeriod =>
             Filter.Period == DateFolderSearchFilter.Periods.Custom;
+
+        private DateFolderSearchFilter.Comparators GetComparator()
+        {
+            if (Filter.Period != DateFolderSearchFilter.Periods.Custom)
+            {
+                return DateFolderSearchFilter.Comparators.None;
+            }
+            if (Filter.MinDate.HasValue && Filter.MaxDate.HasValue)
+            {
+                return DateFolderSearchFilter.Comparators.Between;
+            }
+            if (Filter.MinDate.HasValue)
+            {
+                return DateFolderSearchFilter.Comparators.After;
+            }
+            if (Filter.MaxDate.HasValue)
+            {
+                return DateFolderSearchFilter.Comparators.Before;
+            }
+            return DateFolderSearchFilter.Comparators.None;
+        }
     }
 
     public class PeriodViewModel
@@ -114,19 +141,14 @@ namespace Files.UserControls.Search
     public class FolderSearchFilterTemplateSelector : DataTemplateSelector
     {
         public DataTemplate DateTemplate { get; set; }
-        public DataTemplate WhereTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            if (item is DateFolderSearchFilter)
+            if (item is DateFolderSearchFilterViewModel)
             {
                 return DateTemplate;
             }
-            if (item is StringFolderSearchFilter)
-            {
-                return WhereTemplate;
-            }
-            return DateTemplate;
+            return null;
         }
     }
 }

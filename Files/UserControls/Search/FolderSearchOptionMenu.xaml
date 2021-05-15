@@ -9,8 +9,7 @@
 
         <local:FolderSearchFilterTemplateSelector
             x:Key="FilterTemplateSelector"
-            DateTemplate="{StaticResource DateFilterTemplate}"
-            WhereTemplate="{StaticResource DateFilterTemplate}" />
+            DateTemplate="{StaticResource DateFilterTemplate}" />
 
         <DataTemplate x:Key="DateFilterTemplate" x:DataType="local:DateFolderSearchFilterViewModel">
             <Grid RowSpacing="4" ColumnSpacing="4">
@@ -63,7 +62,7 @@
             FontWeight="Medium" Text="When" />
         <StackPanel Spacing="4" Orientation="Vertical">
             <ListView
-                ItemsSource="{x:Bind BaseFilters}"
+                ItemsSource="{x:Bind BaseFilters, Mode=OneWay}"
                 ItemTemplateSelector="{StaticResource FilterTemplateSelector}" />
         </StackPanel>
     </StackPanel>
