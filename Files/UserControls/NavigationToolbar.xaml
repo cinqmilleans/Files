@@ -926,6 +926,7 @@
                     x:Uid="NavToolbarWidgets2"
                     Width="36"
                     Height="32"
+                    Loaded="WidgetsManager2_Loaded"
                     x:Load="{x:Bind IsPageTypeNotHome, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     AutomationProperties.Name="Manage widgets2"
                     Background="Transparent"
@@ -935,6 +936,12 @@
                     <AppBarButton.Flyout>
                         <Flyout Placement="Bottom">
                             <search:FolderSearchOptionMenu />
+                            <!--<ComboBox Width="200">
+                                <ComboBoxItem Content="A" />
+                                <ComboBoxItem Content="B" />
+                                <ComboBoxItem Content="C" />
+                            </ComboBox>-->
+
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>

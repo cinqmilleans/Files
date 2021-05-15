@@ -18,18 +18,19 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ComboBox Grid.ColumnSpan="2">
-                    <ComboBoxItem Content="" />
-                    <ComboBoxItem Content="A day ago" />
-                    <ComboBoxItem Content="A week ago" />
-                    <ComboBoxItem Content="A month ago" />
-                    <ComboBoxItem Content="A year ago" />
-                </ComboBox>
+                <ComboBox
+                    x:Name="PeriodComboBox"
+                    Width="200" Grid.ColumnSpan="2"
+                    Header="{x:Bind Label}"
+                    Loaded="PeriodComboBox_Loaded"
+                    SelectionChanged="PeriodComboBox_SelectionChanged"
+                    />
                 <usercontrols:CalendarPicker
                     x:Name="SearchWhenFrom"
                     Grid.Row="1" Grid.Column="0"
@@ -40,6 +41,7 @@
                     Grid.Row="1" Grid.Column="1"
                     Width="140" PlaceholderText="To"
                     Date="{x:Bind MaxDate, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Period}" />
             </Grid>
         </DataTemplate>
 

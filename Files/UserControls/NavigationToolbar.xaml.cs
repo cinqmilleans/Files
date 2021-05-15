@@ -1346,5 +1346,21 @@ namespace Files.UserControls
         {
             PreviewPaneEnabled = !PreviewPaneEnabled;
         }
+
+        private void WidgetsManager2_Loaded(object sender, RoutedEventArgs e)
+        {
+            var allowFocusOnInteractionAvailable =
+        Windows.Foundation.Metadata.ApiInformation.IsPropertyPresent(
+            "Windows.UI.Xaml.FrameworkElement",
+            "AllowFocusOnInteraction");
+
+            if (allowFocusOnInteractionAvailable)
+            {
+                if (sender is FrameworkElement s)
+                {
+                    s.AllowFocusOnInteraction = true;
+                }
+            }
+        }
     }
 }

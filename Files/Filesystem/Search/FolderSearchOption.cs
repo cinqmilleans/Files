@@ -178,7 +178,7 @@ namespace Files.Filesystem.Search
             Between,
         }
 
-        private Periods period = Periods.None;
+        private Periods period = Periods.MonthAgo;
         public Periods Period
         {
             get => period;
@@ -192,7 +192,7 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref comparator, value);
         }
 
-        private DateTimeOffset? minDate;
+        private DateTimeOffset? minDate = DateTimeOffset.Now;
         public DateTimeOffset? MinDate
         {
             get => minDate;
