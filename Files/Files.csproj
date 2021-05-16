@@ -201,6 +201,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ImageSourceExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="Filesystem\Search\FolderSearchOption.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupedCollection.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupingHelper.cs" />
     <Compile Include="Helpers\SaveImageToFile.cs" />
@@ -302,6 +303,9 @@
     </Compile>
     <Compile Include="UserControls\MultitaskingControl\TabItem\TabItemControl.xaml.cs">
       <DependentUpon>TabItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Selection\ExtendPreviousItemSelectionStrategy.cs" />
     <Compile Include="Helpers\GenericItemsCollection.cs" />
@@ -920,6 +924,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\FilePreviews\ImagePreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SearchControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

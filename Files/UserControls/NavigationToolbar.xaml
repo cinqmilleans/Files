@@ -14,8 +14,8 @@
     xmlns:local="using:Files.UserControls.MultitaskingControl"
     xmlns:local1="using:Files"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:xh="using:Files.Helpers.XamlHelpers"
+    xmlns:search="using:Files.UserControls.Search"
     d:DesignHeight="72"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -835,6 +835,14 @@
                 </ListView>
             </Grid>
 
+                <search:TextBoxEx
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Canvas.ZIndex="100"
+                CornerRadius="{StaticResource ControlCornerRadius}"
+                Visibility="{x:Bind IsSearchRegionVisible, Mode=OneWay}" />
+
             <AutoSuggestBox
                 x:Name="SearchRegion"
                 x:Uid="NavigationToolbarSearchReigon"
@@ -850,7 +858,7 @@
                 TextBoxStyle="{StaticResource AutoSuggestBoxTextBoxStyleFixed}"
                 TextChanged="SearchRegion_TextChanged"
                 UpdateTextOnSelect="False"
-                Visibility="{x:Bind IsSearchRegionVisible, Mode=OneWay}">
+                Visibility="Collapsed">
                 <AutoSuggestBox.QueryIcon>
                     <FontIcon FontSize="14" Glyph="&#xE094;" />
                 </AutoSuggestBox.QueryIcon>
