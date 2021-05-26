@@ -23,7 +23,7 @@ namespace Files.UserControls
             set => SetValue(QueryProperty, value ?? string.Empty);
         }
 
-        public SearchBox()
+        public SearchBox() : base()
         {
             InitializeComponent();
         }

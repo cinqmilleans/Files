@@ -201,9 +201,9 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ImageSourceExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
-    <Compile Include="Filesystem\Search\Enum.cs" />
     <Compile Include="Filesystem\Search\FolderSearchOption.cs" />
-    <Compile Include="Filesystem\Search\_FolderSearchOption.cs" />
+    <Compile Include="Filesystem\Search\Moment.cs" />
+    <Compile Include="Filesystem\Search\FolderSearchOptionProvider.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupedCollection.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupingHelper.cs" />
     <Compile Include="Helpers\SaveImageToFile.cs" />

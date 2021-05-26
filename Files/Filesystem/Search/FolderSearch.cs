@@ -56,6 +56,8 @@ namespace Files.Filesystem.Search
             query.SetPropertyPrefetch(PropertyPrefetchOptions.None, null);
             query.SetThumbnailPrefetch(ThumbnailMode.ListView, 24, ThumbnailOptions.UseCurrentScale);
 
+            Options.ApplyOption(query);
+
             return query;
         }
 

@@ -4,7 +4,9 @@ namespace Files.Filesystem.Search
 {
     internal enum Moment
     {
-        Custom,
+        Before,
+        After,
+        Between,
         DayAgo,
         WeekAgo,
         MonthAgo,
@@ -13,7 +15,7 @@ namespace Files.Filesystem.Search
 
     internal static class MomentExtension
     {
-        public static string ToAvancedQuerySearch(this Moment moment)
+        public static string ToAdvancedSearchQueryFilter (this Moment moment)
         {
             return moment switch
             {

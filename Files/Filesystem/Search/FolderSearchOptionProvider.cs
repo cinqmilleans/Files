@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System;
 
 namespace Files.Filesystem.Search
 {
-   /*internal interface IFolderSearchParameter
+    internal interface IFolderSearchOptionProvider
     {
         string Key { get; }
         string Description { get; }
 
         bool CanProvideOption(object query);
-        IFolderSearchParameter ProvideOption(object query);
+        IFolderSearchOption ProvideOption(object query);
 
         object[] ProvideSamples();
     }
 
-    internal abstract class _FolderSearchFilter : ObservableObject, IFolderSearchFilter
+    internal abstract class FolderSearchOptionProvider : ObservableObject, IFolderSearchOptionProvider
     {
         public string Key { get; protected set; }
         public string Description { get; protected set; }
@@ -28,9 +25,9 @@ namespace Files.Filesystem.Search
         public virtual object[] ProvideSamples() => new object[0];
     }
 
-    internal class BeforeFolderSearchFilter : _FolderSearchFilter
+    internal class BeforeSearchOptionProvider : FolderSearchOptionProvider
     {
-        public BeforeFolderSearchFilter() : base()
+        public BeforeSearchOptionProvider() : base()
         {
             Key = "before";
             Description = "Only before the date";
@@ -53,11 +50,11 @@ namespace Files.Filesystem.Search
         {
             if (query is Moment moment)
             {
-                return new BeforeFolderSearchOption(moment);
+                return new BeforeMomentFolderSearchOption(moment);
             }
             if (query is DateTime dateTime)
             {
-                return new BeforeFolderSearchOption(dateTime);
+                return new BeforeDateFolderSearchOption(dateTime);
             }
             if (query is DateTimeOffset dateTimeOffset)
             {
@@ -78,14 +75,14 @@ namespace Files.Filesystem.Search
                 Moment.WeekAgo,
                 Moment.MonthAgo,
                 Moment.YearAgo,
-                Moment.Custom,
+                Moment.Before,
             };
         }
     }
 
-    internal class AfterFolderSearchFilter : _FolderSearchFilter
+    internal class AfterSearchOptionProvider : FolderSearchOptionProvider
     {
-        public AfterFolderSearchFilter() : base()
+        public AfterSearchOptionProvider() : base()
         {
             Key = "after";
             Description = "Only after the date";
@@ -108,11 +105,11 @@ namespace Files.Filesystem.Search
         {
             if (query is Moment moment)
             {
-                return new AfterFolderSearchOption(moment);
+                return new AfterMomentFolderSearchOption(moment);
             }
             if (query is DateTime dateTime)
             {
-                return new AfterFolderSearchOption(dateTime);
+                return new AfterDateFolderSearchOption(dateTime);
             }
             if (query is DateTimeOffset dateTimeOffset)
             {
@@ -133,12 +130,12 @@ namespace Files.Filesystem.Search
                 Moment.WeekAgo,
                 Moment.MonthAgo,
                 Moment.YearAgo,
-                Moment.Custom,
+                Moment.After,
             };
         }
     }
 
-    internal class AudioFolderSearchFilter : _FolderSearchFilter
+    internal class AudioFolderSearchFilter : FolderSearchOptionProvider
     {
         public AudioFolderSearchFilter() : base()
         {
@@ -147,5 +144,5 @@ namespace Files.Filesystem.Search
         }
 
         public override IFolderSearchOption ProvideOption(object query) => new AudioFolderSearchOption();
-    }*/
+    }
 }
