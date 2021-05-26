@@ -7,29 +7,29 @@ using Windows.Storage.Search;
 
 namespace Files.Filesystem.Search
 {
-    internal interface IFolderSearchOption
+   /* internal interface IFolderSearchOption
     {
-        void ApplyOption(QueryOptions query);
+        void ApplyParameter(QueryOptions query);
     }
-    internal interface INamedFolderSearchOption : IFolderSearchOption
+    internal interface INamedFolderSearchParameter : IFolderSearchParameter
     {
         string Label { get; }
         string Description { get; }
     }
 
-    internal class FolderSearchOptionCollection : ObservableCollection<IFolderSearchOption>, IFolderSearchOption
+    internal class FolderSearchParameterCollection : ObservableCollection<IFolderSearchParameter>, IFolderSearchParameter
     {
-        public FolderSearchOptionCollection() : base()
+        public FolderSearchParameterCollection() : base()
         {
         }
-        public FolderSearchOptionCollection(IList<IFolderSearchOption> options) : base(options)
+        public FolderSearchParameterCollection(IList<IFolderSearchParameter> Parameters) : base(Parameters)
         {
         }
 
-        public void ApplyOption(QueryOptions query) => Items.ForEach(item => item.ApplyOption(query));
+        public void ApplyParameter(QueryOptions query) => Items.ForEach(item => item.ApplyParameter(query));
     }
 
-    internal abstract class FilterFolderSearchOption : ObservableObject, INamedFolderSearchOption
+    internal abstract class FilterFolderSearchParameter : ObservableObject, INamedFolderSearchParameter
     {
         private string label;
         public string Label
@@ -47,54 +47,54 @@ namespace Files.Filesystem.Search
 
         protected string Filter { get; set; }
 
-        public void ApplyOption(QueryOptions query) => query.UserSearchFilter += $" {Filter}";
+        public void ApplyParameter(QueryOptions query) => query.UserSearchFilter += $" {Filter}";
     }
 
-    internal class BeforeMomentFolderSearchOption : FilterFolderSearchOption
+    internal class BeforeMomentFolderSearchParameter : FilterFolderSearchParameter
     {
-        public BeforeMomentFolderSearchOption(Moment moment) : base()
+        public BeforeMomentFolderSearchParameter(Moment moment) : base()
         {
-            Label = "FolderSearcheOption.BeforeMoment.Label";//.GetLocalized();
-            Description = "FolderSearcheOption.BeforeMoment.Description";//.GetLocalized();
+            Label = "FolderSearcheParameter.BeforeMoment.Label";//.GetLocalized();
+            Description = "FolderSearcheParameter.BeforeMoment.Description";//.GetLocalized();
             Filter = $"date:<={moment.ToAvancedQuerySearch()}";
         }
     }
-    internal class BeforeDateFolderSearchOption : FilterFolderSearchOption
+    internal class BeforeDateFolderSearchParameter : FilterFolderSearchParameter
     {
-        public BeforeDateFolderSearchOption(DateTime dateTime) : base()
+        public BeforeDateFolderSearchParameter(DateTime dateTime) : base()
         {
-            Label = "FolderSearcheOption.BeforeDate.Label";//.GetLocalized();
-            Description = "FolderSearcheOption.BeforeDate.Description";//.GetLocalized();
+            Label = "FolderSearcheParameter.BeforeDate.Label";//.GetLocalized();
+            Description = "FolderSearcheParameter.BeforeDate.Description";//.GetLocalized();
             Filter = $"date:<={dateTime}";
         }
     }
 
-    internal class AfterMomentFolderSearchOption : FilterFolderSearchOption
+    internal class AfterMomentFolderSearchParameter : FilterFolderSearchParameter
     {
-        public AfterMomentFolderSearchOption(Moment moment) : base()
+        public AfterMomentFolderSearchParameter(Moment moment) : base()
         {
-            Label = "FolderSearcheOption.AfterMoment.Label";//.GetLocalized();
-            Description = "FolderSearcheOption.AfterMoment.Description";//.GetLocalized();
+            Label = "FolderSearcheParameter.AfterMoment.Label";//.GetLocalized();
+            Description = "FolderSearcheParameter.AfterMoment.Description";//.GetLocalized();
             Filter = $"date:>={moment.ToAvancedQuerySearch()}";
         }
     }
-    internal class AfterDateFolderSearchOption : FilterFolderSearchOption
+    internal class AfterDateFolderSearchParameter : FilterFolderSearchParameter
     {
-        public AfterDateFolderSearchOption(DateTime dateTime) : base()
+        public AfterDateFolderSearchParameter(DateTime dateTime) : base()
         {
-            Label = "FolderSearcheOption.AfterDate.Label";//.GetLocalized();
-            Description = "FolderSearcheOption.AfterDate.Description";//.GetLocalized();
+            Label = "FolderSearcheParameter.AfterDate.Label";//.GetLocalized();
+            Description = "FolderSearcheParameter.AfterDate.Description";//.GetLocalized();
             Filter = $"date:>={dateTime}";
         }
     }
 
-    internal class AudioFolderSearchOption : FilterFolderSearchOption
+    internal class AudioFolderSearchParameter : FilterFolderSearchParameter
     {
-        public AudioFolderSearchOption()
+        public AudioFolderSearchParameter()
         {
-            Label = "FolderSearcheOption.Audio.Label";//.GetLocalized();
-            Description = "FolderSearcheOption.Audio.Description";//.GetLocalized();
+            Label = "FolderSearcheParameter.Audio.Label";//.GetLocalized();
+            Description = "FolderSearcheParameter.Audio.Description";//.GetLocalized();
             Filter = "audio:";
         }
-    }
+    }*/
 }
