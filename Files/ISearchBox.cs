@@ -44,9 +44,14 @@ namespace Files
     }
     public class SearchBoxQuerySubmittedEventArgs
     {
+        public string QueryText { get; }
         public ListedItem ChosenSuggestion { get; }
 
-        public SearchBoxQuerySubmittedEventArgs(ListedItem chosenSuggestion) => ChosenSuggestion = chosenSuggestion;
+        public SearchBoxQuerySubmittedEventArgs(string queryText, ListedItem chosenSuggestion)
+        {
+            QueryText = queryText;
+            ChosenSuggestion = chosenSuggestion;
+        }
     }
 
     public enum SearchBoxTextChangeReason : ushort

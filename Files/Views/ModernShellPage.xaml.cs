@@ -316,9 +316,9 @@ namespace Files.Views
 
         private void ModernShellPage_QuerySubmitted(ISearchBox sender, SearchBoxQuerySubmittedEventArgs e)
         {
-            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(sender.Query))
+            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(e.QueryText))
             {
-                SubmitSearch(sender.Query, AppSettings.SearchUnindexedItems);
+                SubmitSearch(e.QueryText, AppSettings.SearchUnindexedItems);
             }
         }
 

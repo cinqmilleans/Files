@@ -1280,8 +1280,8 @@ namespace Files.UserControls
 
         private void CloseSearchBox()
         {
-            SearchRegion.Query = string.Empty;
-            IsSearchBoxVisible = false;
+            //SearchRegion.Query = string.Empty;
+            //IsSearchBoxVisible = false;
         }
 
         private void NavMoreButtonFlyout_Opening(object sender, object e)

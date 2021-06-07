@@ -325,9 +325,9 @@ namespace Files.Views
 
         private void ColumnShellPage_QuerySubmitted(ISearchBox sender, SearchBoxQuerySubmittedEventArgs e)
         {
-            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(sender.Query))
+            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(e.QueryText))
             {
-                SubmitSearch(sender.Query, App.AppSettings.SearchUnindexedItems);
+                SubmitSearch(e.QueryText, App.AppSettings.SearchUnindexedItems);
             }
         }
 
