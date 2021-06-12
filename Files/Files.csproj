@@ -206,6 +206,9 @@
     <Compile Include="Filesystem\Permissions\FileSystemAccessRule.cs" />
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
+    <Compile Include="Filesystem\Search\SearchOption.cs" />
+    <Compile Include="Filesystem\Search\SearchOptionWhat.cs" />
+    <Compile Include="Filesystem\Search\SearchOptionWhen.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupedCollection.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupingHelper.cs" />
     <Compile Include="Helpers\MathHelpers.cs" />
@@ -334,6 +337,7 @@
     </Compile>
     <Compile Include="ViewModels\Previews\CodePreviewViewModel.cs" />
     <Compile Include="ViewModels\Properties\FileSystemProperties.cs" />
+    <Compile Include="ViewModels\Search\SearchSuggestion.cs" />
     <Compile Include="ViewModels\SettingsViewModels\SidebarViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="ViewModels\BaseJsonSettingsViewModel.cs" />

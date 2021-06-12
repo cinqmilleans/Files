@@ -792,6 +792,10 @@ namespace Files.UserControls
                     isSearchBoxVisible = value;
                     NotifyPropertyChanged(nameof(IsSearchBoxVisible));
                     SearchButtonGlyph = value ? "\uE711" : "\uE721";
+                    if (!value)
+                    {
+                        SearchRegion.ClearOptions();
+                    }
                 }
             }
         }
@@ -1275,12 +1279,11 @@ namespace Files.UserControls
                 return;
             }
 
-            CloseSearchBox();
+            //CloseSearchBox();
         }
 
         private void CloseSearchBox()
         {
-            SearchRegion.Query = string.Empty;
             IsSearchBoxVisible = false;
         }
 

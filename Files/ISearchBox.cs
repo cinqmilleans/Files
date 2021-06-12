@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
 
 namespace Files
 {
@@ -13,7 +12,9 @@ namespace Files
         event TypedEventHandler<ISearchBox, SearchBoxQuerySubmittedEventArgs> QuerySubmitted;
         event EventHandler<ISearchBox> Escaped;
 
-        string Query { get; set; }
+        public string Query { get; set; }
+
+        void ClearOptions();
 
         void ClearSuggestions();
         void SetSuggestions(IEnumerable<ListedItem> suggestions);
@@ -21,19 +22,9 @@ namespace Files
 
     public class SearchBoxTextChangedEventArgs
     {
-        public SearchBoxTextChangeReason Reason { get; }
+        public string QueryText { get; }
 
-        public SearchBoxTextChangedEventArgs(SearchBoxTextChangeReason reason) => Reason = reason;
-
-        public SearchBoxTextChangedEventArgs(AutoSuggestionBoxTextChangeReason reason)
-        {
-            Reason = reason switch
-            {
-                AutoSuggestionBoxTextChangeReason.UserInput => SearchBoxTextChangeReason.UserInput,
-                AutoSuggestionBoxTextChangeReason.SuggestionChosen => SearchBoxTextChangeReason.SuggestionChosen,
-                _ => SearchBoxTextChangeReason.ProgrammaticChange
-            };
-        }
+        public SearchBoxTextChangedEventArgs(string queryText) => QueryText = queryText;
     }
 
     public class SearchBoxSuggestionChosenEventArgs
@@ -44,15 +35,13 @@ namespace Files
     }
     public class SearchBoxQuerySubmittedEventArgs
     {
+        public string QueryText { get; }
         public ListedItem ChosenSuggestion { get; }
 
-        public SearchBoxQuerySubmittedEventArgs(ListedItem chosenSuggestion) => ChosenSuggestion = chosenSuggestion;
-    }
-
-    public enum SearchBoxTextChangeReason : ushort
-    {
-        UserInput,
-        ProgrammaticChange,
-        SuggestionChosen,
+        public SearchBoxQuerySubmittedEventArgs(string queryText, ListedItem chosenSuggestion)
+        {
+            QueryText = queryText;
+            ChosenSuggestion = chosenSuggestion;
+        }
     }
 }

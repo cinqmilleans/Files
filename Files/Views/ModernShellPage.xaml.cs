@@ -277,23 +277,20 @@ namespace Files.Views
 
         private async void ModernShellPage_TextChanged(ISearchBox sender, SearchBoxTextChangedEventArgs e)
         {
-            if (e.Reason == SearchBoxTextChangeReason.UserInput)
+            if (!string.IsNullOrWhiteSpace(e.QueryText))
             {
-                if (!string.IsNullOrWhiteSpace(sender.Query))
+                var search = new FolderSearch
                 {
-                    var search = new FolderSearch
-                    {
-                        Query = sender.Query,
-                        Folder = FilesystemViewModel.WorkingDirectory,
-                        MaxItemCount = 10,
-                        SearchUnindexedItems = App.AppSettings.SearchUnindexedItems
-                    };
-                    sender.SetSuggestions(await search.SearchAsync());
-                }
-                else
-                {
-                    sender.ClearSuggestions();
-                }
+                    Query = e.QueryText,
+                    Folder = FilesystemViewModel.WorkingDirectory,
+                    MaxItemCount = 10,
+                    SearchUnindexedItems = App.AppSettings.SearchUnindexedItems
+                };
+                sender.SetSuggestions(await search.SearchAsync());
+            }
+            else
+            {
+                sender.ClearSuggestions();
             }
         }
 
@@ -316,9 +313,9 @@ namespace Files.Views
 
         private void ModernShellPage_QuerySubmitted(ISearchBox sender, SearchBoxQuerySubmittedEventArgs e)
         {
-            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(sender.Query))
+            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(e.QueryText))
             {
-                SubmitSearch(sender.Query, AppSettings.SearchUnindexedItems);
+                SubmitSearch(e.QueryText, AppSettings.SearchUnindexedItems);
             }
         }
 
