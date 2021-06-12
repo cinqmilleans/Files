@@ -10,16 +10,11 @@ namespace Files.Filesystem.Search
 
         public ISearchOptionFormat Format { get; } = new PeriodSearchOptionFormat();
 
-        public string[] SuggestionValues { get; }
-
-        public DateSearchOptionKey()
+        public string[] SuggestionValues { get; } = new string[]
         {
-            SuggestionValues = new string[]
-            {
-                "today", "thisweek", "thismonth", "thisyear",
-                "<=2019", "02/03/2017..05/03/2017", "2018", "24/03/2019"
-            };
-        }
+            "today", "yesterday", "thisweek", "thismonth", "thisyear",
+            "<=2019", "02/03/2017..05/03/2017", "2018", "04/05/2019"
+        };
 
         public string ProvideFilter(ISearchOptionValue value)
         {
@@ -30,7 +25,7 @@ namespace Files.Filesystem.Search
             throw new ArgumentException();
         }
         public virtual string ProvideFilter(PeriodSearchOptionValue period)
-            => $"System.ItemDate:>={period.ToAdvancedQuerySyntax()}";
+            => $"System.ItemDate:{period.ToAdvancedQuerySyntax()}";
     }
     public class ModificationDateSearchOptionKey : DateSearchOptionKey
     {
@@ -38,13 +33,13 @@ namespace Files.Filesystem.Search
         public override string Label { get; } = "Date of last modification";
 
         public override string ProvideFilter(PeriodSearchOptionValue period)
-            => $"System.DateModified:>={period.ToAdvancedQuerySyntax()}";
+            => $"System.DateModified:{period.ToAdvancedQuerySyntax()}";
     }
 
     public interface IPeriodSearchOptionValue : ISearchOptionValue
     {
-        DateTime ToMinDate();
-        DateTime ToMaxDate();
+        DateTime MinDate { get; }
+        DateTime MaxDate { get; }
     }
 
     public class PeriodSearchOptionFormat : ISearchOptionFormat
@@ -122,51 +117,54 @@ namespace Files.Filesystem.Search
 
         public ValueRelation Relation { get; }
 
-        public IPeriodSearchOptionValue MinValue { get; }
-        public IPeriodSearchOptionValue MaxValue { get; }
+        public DateTime MinDate { get; }
+        public DateTime MaxDate { get; }
 
         public PeriodSearchOptionValue(ValueRelation relation, IPeriodSearchOptionValue minValue, IPeriodSearchOptionValue maxValue)
         {
             Relation = relation;
-            MinValue = minValue;
-            MaxValue = maxValue;
+
+            if (!(minValue is null))
+            {
+                MinDate = minValue.MinDate;
+            }
+            if (!(maxValue is null))
+            {
+                MaxDate = maxValue.MaxDate;
+            }
 
             Text = relation switch
             {
-                ValueRelation.Equal => MinValue.Text,
-                ValueRelation.Less => $"<{MaxValue.Text}",
-                ValueRelation.Greater => $">{MinValue.Text}",
-                ValueRelation.LessOrEqual => $"<={MaxValue.Text}",
-                ValueRelation.GreaterOrEqual => $">={MinValue.Text}",
-                ValueRelation.Between => $"{MinValue.Text}..{MaxValue.Text}",
+                ValueRelation.Equal => minValue.Text,
+                ValueRelation.Less => $"<{maxValue.Text}",
+                ValueRelation.Greater => $">{minValue.Text}",
+                ValueRelation.LessOrEqual => $"<={maxValue.Text}",
+                ValueRelation.GreaterOrEqual => $">={minValue.Text}",
+                ValueRelation.Between => $"{minValue.Text}..{maxValue.Text}",
                 _ => throw new ArgumentException()
             };
             Label = relation switch
             {
-                ValueRelation.Equal => MinValue.Label,
-                ValueRelation.Less => $"< {MaxValue.Label}",
-                ValueRelation.Greater => $"> {MinValue.Label}",
-                ValueRelation.LessOrEqual => $"<= {MaxValue.Label}",
-                ValueRelation.GreaterOrEqual => $">= {MinValue.Label}",
-                ValueRelation.Between => $"{MinValue.Label} -> {MaxValue.Label}",
+                ValueRelation.Equal => minValue.Label,
+                ValueRelation.Less => $"< {maxValue.Label}",
+                ValueRelation.Greater => $"> {minValue.Label}",
+                ValueRelation.LessOrEqual => $"<= {maxValue.Label}",
+                ValueRelation.GreaterOrEqual => $">= {minValue.Label}",
+                ValueRelation.Between => $"{minValue.Label} -> {maxValue.Label}",
                 _ => throw new ArgumentException()
             };
         }
 
-        public DateTime ToMinDate() => MinValue.ToMinDate();
-        public DateTime ToMaxDate() => MaxValue.ToMaxDate();
-
         public string ToAdvancedQuerySyntax() => Relation switch
         {
-            ValueRelation.Equal => $"{ToMinDate():d}",
-            ValueRelation.Less => $"<{ToMaxDate():d}",
-            ValueRelation.Greater => $">{ToMinDate():d}",
-            ValueRelation.LessOrEqual => $"<={ToMaxDate():d}",
-            ValueRelation.GreaterOrEqual => $">={ToMinDate():d}",
-            ValueRelation.Between => $"{ToMinDate():d}..{ToMaxDate():d}",
+            ValueRelation.Equal => $"{MinDate:yyyy-MM-dd}..{MaxDate:yyyy-MM-dd}",
+            ValueRelation.Less => $"<{MaxDate:yyyy-MM-dd}",
+            ValueRelation.Greater => $">{MinDate:yyyy-MM-dd}",
+            ValueRelation.LessOrEqual => $"<={MaxDate:yyyy-MM-dd}",
+            ValueRelation.GreaterOrEqual => $">={MinDate:yyyy-MM-dd}",
+            ValueRelation.Between => $"{MinDate:yyyy-MM-dd}..{MaxDate:yyyy-MM-dd}",
             _ => throw new Exception()
         };
-
     }
 
     public class DateSearchOptionFormat : ISearchOptionFormat
@@ -182,17 +180,18 @@ namespace Files.Filesystem.Search
     {
         public string Text { get; }
         public string Label { get; }
+
         public DateTime Date { get; }
+
+        public DateTime MinDate => Date;
+        public DateTime MaxDate => Date;
 
         public DateSearchOptionValue(DateTime date)
         {
             Text = $"{date.Date:d}";
-            Label = date.Date.ToLongDateString();
+            Label = $"{date.Date:D}";
             Date = date.Date;
         }
-
-        public DateTime ToMinDate() => Date;
-        public DateTime ToMaxDate() => Date;
     }
 
     public class YearSearchOptionFormat : ISearchOptionFormat
@@ -211,20 +210,20 @@ namespace Files.Filesystem.Search
 
         public ushort Year { get; }
 
+        public DateTime MinDate => new DateTime(Year, 1, 1);
+        public DateTime MaxDate => new DateTime(Year, 12, 31);
+
         public YearSearchOptionValue(ushort year)
         {
             Text = $"{year}";
             Label = $"Year {year}";
             Year = year;
         }
-
-        public DateTime ToMinDate() => new DateTime(Year, 1, 1);
-        public DateTime ToMaxDate() => new DateTime(Year, 12, 31);
     }
 
     public class MomentSearchOptionFormat : ISearchOptionFormat
     {
-        private readonly string[] moments = new string[] { "today", "thisweek", "thismonth", "thisyear" };
+        private readonly string[] moments = new string[] { "today", "yesterday", "thisweek", "thismonth", "thisyear" };
 
         public bool CanParseValue(string moment) => moments.Contains(moment.ToLower());
 
@@ -235,14 +234,18 @@ namespace Files.Filesystem.Search
         public string Text { get; }
         public string Label { get; }
 
-        public string Moment { get; }
+        public DateTime MinDate { get; }
+        public DateTime MaxDate { get; }
 
         public MomentSearchOptionValue(string moment)
         {
             moment = moment.ToLower();
+            var today = DateTime.Now.Date;
+
             Text = moment switch
             {
                 "today" => "today",
+                "yesterday" => "yesterday",
                 "thisweek" => "thisWeek",
                 "thismonth" => "thisMonth",
                 "thisyear" => "thisYear",
@@ -251,26 +254,22 @@ namespace Files.Filesystem.Search
             Label = moment switch
             {
                 "today" => "Today",
+                "yesterday" => "Yesterday",
                 "thisweek" => "This week",
                 "thismonth" => "This month",
                 "thisyear" => "This year",
                 _ => throw new ArgumentException()
             };
-            Moment = moment.ToLower();
-        }
-
-        public DateTime ToMinDate()
-        {
-            var today = DateTime.Now.Date;
-            return Moment switch
+            MinDate = moment switch
             {
                 "today" => today,
+                "yesterday" => today.AddDays(-1),
                 "thisweek" => today.AddDays(-7),
                 "thismonth" => today.AddMonths(-1),
                 "thisyear" => today.AddYears(-1),
                 _ => throw new ArgumentException()
             };
+            MaxDate = today;
         }
-        public DateTime ToMaxDate() => DateTime.Now.Date;
     }
 }

@@ -43,11 +43,11 @@ namespace Files.Filesystem.Search
     public enum ValueRelation
     {
         Equal
-    , Less
-    , LessOrEqual
-    , Greater
-    , GreaterOrEqual
-    , Between
+    ,   Less
+    ,   LessOrEqual
+    ,   Greater
+    ,   GreaterOrEqual
+    ,   Between
     }
 
     public class SearchOption : ObservableObject, ISearchOption
