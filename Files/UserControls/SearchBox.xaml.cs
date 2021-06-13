@@ -27,7 +27,10 @@ namespace Files.UserControls
 
         public void Clear()
         {
-            queryTextBox.Text = string.Empty;
+            if (!(queryTextBox is null))
+            {
+                queryTextBox.Text = string.Empty;
+            }
             optionViewModel.Visibles.Clear();
             optionViewModel.Hiddens.Clear();
             optionViewModel.HasHiddenVisibility = Visibility.Collapsed;
@@ -143,9 +146,9 @@ namespace Files.UserControls
                 ClearField();
                 SearchRegion.Focus(FocusState.Programmatic);
             }
-            else if (e.ChosenSuggestion is ListedItem item)
+            else if (e.ChosenSuggestion is ItemSearchSuggestion item)
             {
-                SuggestionChosen?.Invoke(this, new SearchBoxSuggestionChosenEventArgs(item));
+                SuggestionChosen?.Invoke(this, new SearchBoxSuggestionChosenEventArgs(item.Data));
             }
             else
             {
