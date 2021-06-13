@@ -25,6 +25,15 @@ namespace Files.UserControls
             InitializeComponent();
         }
 
+        public void Clear()
+        {
+            queryTextBox.Text = string.Empty;
+            optionViewModel.Visibles.Clear();
+            optionViewModel.Hiddens.Clear();
+            optionViewModel.HasHiddenVisibility = Visibility.Collapsed;
+            optionSizes.Clear();
+        }
+
         #region event
         public event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;
         public event TypedEventHandler<ISearchBox, SearchBoxSuggestionChosenEventArgs> SuggestionChosen;
@@ -108,14 +117,14 @@ namespace Files.UserControls
                     UpdateSuggestions();
                     SearchRegion.Focus(FocusState.Programmatic);
                 }
-                if (suggestion.Data is ISearchOption option)
+                else if (suggestion.Data is ISearchOption option)
                 {
                     ClearField();
                     AddOption(option);
                     ReplaceField($"{option.Key.Text}:{option.Value.Text}");
                     SearchRegion.Focus(FocusState.Programmatic);
                 }
-                if (suggestion.Data is ListedItem item)
+                else if (suggestion.Data is ListedItem item)
                 {
                     SuggestionChosen?.Invoke(this, new SearchBoxSuggestionChosenEventArgs(item));
                 }
@@ -134,11 +143,14 @@ namespace Files.UserControls
                 ClearField();
                 SearchRegion.Focus(FocusState.Programmatic);
             }
+            else if (e.ChosenSuggestion is ListedItem item)
+            {
+                SuggestionChosen?.Invoke(this, new SearchBoxSuggestionChosenEventArgs(item));
+            }
             else
             {
-                var item = e.ChosenSuggestion is ItemSearchSuggestion suggestion ? suggestion.Data : null;
                 string query = (queryTextBox.Text + " " + ProvideFilter()).Trim();
-                QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(query, item));
+                QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(query));
             }
         }
 
@@ -193,18 +205,6 @@ namespace Files.UserControls
         #endregion
 
         #region field
-        public string Query
-        {
-            get => queryTextBox?.Text ?? string.Empty;
-            set
-            {
-                if (!(queryTextBox is null))
-                {
-                    queryTextBox.Text = value;
-                }
-            }
-        }
-
         private TextBox queryTextBox;
 
         private readonly Regex fieldRegex = new Regex(@"[^\s]+");
@@ -246,14 +246,6 @@ namespace Files.UserControls
         private readonly SearchOptionComparer optionComparer = new SearchOptionComparer();
 
         private readonly IDictionary<ISearchOption, double> optionSizes = new Dictionary<ISearchOption, double>();
-
-        public void ClearOptions()
-        {
-            optionViewModel.Visibles.Clear();
-            optionViewModel.Hiddens.Clear();
-            optionViewModel.HasHiddenVisibility = Visibility.Collapsed;
-            optionSizes.Clear();
-        }
 
         public string ProvideFilter() =>
             string.Join(' ', optionViewModel.Visibles.Concat(optionViewModel.Hiddens).Select(option => option.Key.ProvideFilter(option.Value)));

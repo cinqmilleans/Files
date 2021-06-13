@@ -794,7 +794,7 @@ namespace Files.UserControls
                     SearchButtonGlyph = value ? "\uE711" : "\uE721";
                     if (!value)
                     {
-                        SearchRegion.ClearOptions();
+                        SearchRegion.Clear();
                     }
                 }
             }
@@ -1254,7 +1254,7 @@ namespace Files.UserControls
         {
             if (IsSearchBoxVisible)
             {
-                SearchRegion.Query = string.Empty;
+                SearchRegion.Clear();
                 IsSearchBoxVisible = false;
             }
             else

@@ -313,7 +313,7 @@ namespace Files.Views
 
         private void ModernShellPage_QuerySubmitted(ISearchBox sender, SearchBoxQuerySubmittedEventArgs e)
         {
-            if (e.ChosenSuggestion == null && !string.IsNullOrWhiteSpace(e.QueryText))
+            if (!string.IsNullOrWhiteSpace(e.QueryText))
             {
                 SubmitSearch(e.QueryText, AppSettings.SearchUnindexedItems);
             }
@@ -910,7 +910,7 @@ namespace Files.Views
         private async void ItemDisplayFrame_Navigated(object sender, NavigationEventArgs e)
         {
             ContentPage = await GetContentOrNullAsync();
-            NavigationToolbar.SearchBox.Query = string.Empty;
+            NavigationToolbar.SearchBox.Clear();
             NavigationToolbar.IsSearchBoxVisible = false;
             if (ItemDisplayFrame.CurrentSourcePageType == (typeof(DetailsLayoutBrowser))
                 || ItemDisplayFrame.CurrentSourcePageType == typeof(GridViewBrowser))

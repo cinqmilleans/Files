@@ -12,9 +12,7 @@ namespace Files
         event TypedEventHandler<ISearchBox, SearchBoxQuerySubmittedEventArgs> QuerySubmitted;
         event EventHandler<ISearchBox> Escaped;
 
-        public string Query { get; set; }
-
-        void ClearOptions();
+        void Clear();
 
         void ClearSuggestions();
         void SetSuggestions(IEnumerable<ListedItem> suggestions);
@@ -38,10 +36,9 @@ namespace Files
         public string QueryText { get; }
         public ListedItem ChosenSuggestion { get; }
 
-        public SearchBoxQuerySubmittedEventArgs(string queryText, ListedItem chosenSuggestion)
+        public SearchBoxQuerySubmittedEventArgs(string queryText)
         {
             QueryText = queryText;
-            ChosenSuggestion = chosenSuggestion;
         }
     }
 }
