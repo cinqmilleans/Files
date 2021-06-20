@@ -7,6 +7,7 @@ using System.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using static Files.ViewModels.SearchBoxViewModel;
 
@@ -36,5 +37,10 @@ namespace Files.UserControls
         private void SearchRegion_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs e) => SearchBoxViewModel.SearchRegion_SuggestionChosen(sender, e);
 
         private void SearchRegion_Escaped(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e) => SearchBoxViewModel.SearchRegion_Escaped(sender, e);
+
+        private void SuggestionsPopup_Opened(object sender, object e)
+        {
+            var a = (sender as Popup).VerticalOffset;
+        }
     }
 }
