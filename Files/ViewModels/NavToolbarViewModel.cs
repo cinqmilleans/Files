@@ -479,7 +479,7 @@ namespace Files.ViewModels
                 return;
             }
 
-            CloseSearchBox();
+            //CloseSearchBox();
         }
 
         private void SearchRegion_SuggestionChosen(ISearchBox sender, SearchBoxSuggestionChosenEventArgs args) => IsSearchBoxVisible = false;

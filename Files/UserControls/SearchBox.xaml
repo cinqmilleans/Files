@@ -5,12 +5,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fs="using:Files.Filesystem"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:Files.UserControls"
+    xmlns:search="using:Files.Filesystem.Search"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
     <UserControl.Resources>
 
+        <uc:SearchOptionConverter x:Key="SearchOptionConverter" />
+
         <ControlTemplate x:Key="AutoSuggestBoxTemplate" TargetType="AutoSuggestBox">
-            <Grid x:Name="LayoutRoot">
+            <StackPanel x:Name="LayoutRoot" DataContext="{TemplateBinding Tag}" SizeChanged="Popup_SizeChanged">
 
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="Orientation">
@@ -19,17 +23,18 @@
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
 
-                <Grid.ColumnDefinitions>
+                <!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                </Grid.RowDefinitions>-->
+
+                <StackPanel>
 
                 <TextBox x:Name="TextBox"
                     Header="{TemplateBinding Header}"
-                    Width="{TemplateBinding Width}"
                     Margin="0" Canvas.ZIndex="0"
                     Style="{TemplateBinding TextBoxStyle}"
                     PlaceholderText="{TemplateBinding PlaceholderText}"
@@ -38,47 +43,36 @@
                     DesiredCandidateWindowAlignment="BottomEdge"
                     UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" />
 
-                <!--<Popup x:Name="SuggestionsPopup" Visibility="Collapsed">
-                    <Border x:Name="SuggestionsContainer">
-                        <ListView x:Name="SuggestionsList" />
-                    </Border>
-                </Popup>-->
-
-                <Popup x:Name="SuggestionsPopup" Opened="SuggestionsPopup_Opened">
-                    <Border x:Name="SuggestionsContainer">
-                        <ListView x:Name="SuggestionsList"
-                                    Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
-                                    BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                                    BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
-                                    DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
-                                    IsItemClickEnabled="True"
-                                    ItemTemplate="{TemplateBinding ItemTemplate}"
-                                    ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                    ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
-                                    MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
-                                    Margin="{ThemeResource AutoSuggestListMargin}"
-                                    Padding="{ThemeResource AutoSuggestListPadding}" />
+                <Popup x:Name="Popup" IsOpen="True" Canvas.ZIndex="0">
+                    <Border>
+                        <ListView
+                            Margin="{ThemeResource AutoSuggestListMargin}"
+                            Padding="{ThemeResource AutoSuggestListPadding}"
+                            Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
+                            BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                            BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
+                            ItemsSource="{Binding Test, Mode=OneWay}" />
                     </Border>
                 </Popup>
-
-
-                <!--Popup x:Name="Popup" IsOpen="True">
-                    <StackPanel>
-                        <ListView
+                </StackPanel>
+                <Popup x:Name="SuggestionsPopup" VerticalOffset="100">
+                    <Border x:Name="SuggestionsContainer">
+                        <ListView x:Name="SuggestionsList"
                             MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
                             Margin="{ThemeResource AutoSuggestListMargin}"
                             Padding="{ThemeResource AutoSuggestListPadding}"
                             Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
                             BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
                             BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                            ItemsSource="{TemplateBinding ItemsSource}"
+                            IsItemClickEnabled="False"
+                            DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
                             ItemTemplate="{TemplateBinding ItemTemplate}"
                             ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                             ItemContainerStyle="{TemplateBinding ItemContainerStyle}" />
-                    </StackPanel>
-                </-->
+                    </Border>
+                </Popup>
 
-            </Grid>
+            </StackPanel>
         </ControlTemplate>
 
         <ControlTemplate x:Name="TextBoxTemplate" TargetType="TextBox">
@@ -165,6 +159,9 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
@@ -174,7 +171,7 @@
                 </Grid.RowDefinitions>
 
                 <Border x:Name="BorderElement"
-                    Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="3"
+                    Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="6"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
@@ -182,7 +179,7 @@
 
                 <ContentPresenter x:Name="HeaderContentPresenter"
                     x:DeferLoadStrategy="Lazy"
-                    Grid.Row="0" Grid.ColumnSpan="3"
+                    Grid.Row="0" Grid.ColumnSpan="6"
                     Visibility="Collapsed"
                     Margin="{ThemeResource AutoSuggestBoxTopHeaderMargin}"
                     Foreground="{ThemeResource TextControlHeaderForeground}"
@@ -203,7 +200,7 @@
                     ZoomMode="Disabled" AutomationProperties.AccessibilityView="Raw" />
 
                 <ContentControl x:Name="PlaceholderTextContentPresenter"
-                    Grid.Row="1" Grid.ColumnSpan="3" IsTabStop="False" IsHitTestVisible="False"
+                    Grid.Row="1" Grid.ColumnSpan="6" IsTabStop="False" IsHitTestVisible="False"
                     Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                     Content="{TemplateBinding PlaceholderText}" />
@@ -214,11 +211,42 @@
                     VerticalAlignment="Stretch"
                     FontSize="{TemplateBinding FontSize}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    Template="{StaticResource DeleteButtonTemplate}"
+                    Template="{StaticResource ButtonTemplate}"
                     AutomationProperties.AccessibilityView="Raw" />
 
+                <AppBarButton x:Name="OptionKeyButton"
+                    Grid.Row="1" Grid.Column="4"
+                    VerticalAlignment="Stretch"
+                    MinWidth="34" IsTabStop="False"
+                    Width="{TemplateBinding Height}"
+                    FontSize="{TemplateBinding FontSize}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+	                Template="{StaticResource ButtonTemplate}"
+                    Content="&#xE71C;"
+                    AutomationProperties.AccessibilityView="Raw">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <StackPanel Orientation="Vertical" Spacing="12">
+                                <TextBlock FontWeight="Medium" Text="Options" />
+                                <ListView
+                                    HorizontalAlignment="Left"
+                                    IsItemClickEnabled="True"
+                                    SelectionChanged="ListView_SelectionChanged"
+                                    ItemsSource="{Binding OptionKeys}"
+                                    ItemTemplate="{StaticResource OptionKeyTemplate}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ListView>
+                            </StackPanel>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+
                 <Button x:Name="QueryButton"
-                    Grid.Row="1" Grid.Column="2" IsTabStop="False"
+                    Grid.Row="1" Grid.Column="5" IsTabStop="False"
                     VerticalAlignment="Stretch"
                     MinWidth="34" Width="{TemplateBinding Height}"
                     FontSize="{TemplateBinding FontSize}"
@@ -227,7 +255,7 @@
                     AutomationProperties.AccessibilityView="Raw" />
 
                 <ContentPresenter x:Name="DescriptionPresenter"
-                    Grid.Row="2" Grid.ColumnSpan="3"
+                    Grid.Row="2" Grid.ColumnSpan="6"
                     x:Load="False" Content="{TemplateBinding Description}"
                     Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"
                     AutomationProperties.AccessibilityView="Raw" />
@@ -256,7 +284,7 @@
             <Setter Property="Template" Value="{StaticResource TextBoxTemplate}" />
         </Style>
 
-        <ControlTemplate x:Key="DeleteButtonTemplate" TargetType="Button">
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
             <Grid x:Name="ButtonLayoutGrid"
                 BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -367,6 +395,42 @@
             </ContentPresenter>
         </ControlTemplate>
 
+        <DataTemplate x:Key="OptionKeyTemplate" x:DataType="search:ISearchOption">
+            <TextBlock ToolTipService.Placement="Bottom">
+                <Run FontSize="14" FontWeight="Bold" Text="{Binding Converter={StaticResource SearchOptionConverter}}" />
+                <Run Text="{x:Bind Label}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="{x:Bind Label}" />
+                </ToolTipService.ToolTip>
+            </TextBlock>
+        </DataTemplate>
+
+        <uc:SuggestionTemplateSelector
+            x:Key="SuggestionTemplateSelector"
+            OptionKeyTemplate="{StaticResource OptionKeySuggestionTemplate}"
+            OptionTemplate="{StaticResource OptionSuggestionTemplate}"
+            ItemTemplate="{StaticResource ItemSuggestionTemplate}" />
+
+        <DataTemplate x:Key="OptionKeySuggestionTemplate" x:DataType="search:ISearchOptionKey">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <FontIcon Glyph="&#xE71C;" />
+                <TextBlock
+                    VerticalAlignment="Center" FontWeight="Bold"
+                    Text="{Binding Converter={StaticResource SearchOptionConverter}}" />
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind Label}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="OptionSuggestionTemplate" x:DataType="search:ISearchOption">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <FontIcon Glyph="&#xE721;" />
+                <TextBlock
+                    VerticalAlignment="Center" FontWeight="Bold"
+                    Text="{Binding Converter={StaticResource SearchOptionConverter}}" />
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind Label}" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="ItemSuggestionTemplate" x:DataType="fs:ListedItem">
             <Grid Tag="{x:Bind ItemPath}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -399,14 +463,15 @@
         x:Uid="NavigationToolbarSearchReigon"
         PlaceholderText="Search"
         UpdateTextOnSelect="False"
+        Tag="{x:Bind SearchBoxViewModel, Mode=OneWay}"
         Text="{x:Bind SearchBoxViewModel.Query, Mode=TwoWay}"
         TextChanged="SearchRegion_TextChanged"
         SuggestionChosen="SearchRegion_SuggestionChosen"
         QuerySubmitted="SearchRegion_QuerySubmitted"
         TextBoxStyle="{StaticResource TextBoxStyle}"
         Template="{StaticResource AutoSuggestBoxTemplate}"
-        ItemTemplate="{StaticResource ItemSuggestionTemplate}"
-        ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}">
+        ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}"
+        ItemTemplateSelector="{StaticResource SuggestionTemplateSelector}">
         <AutoSuggestBox.QueryIcon>
             <FontIcon FontSize="14" Glyph="&#xE094;" />
         </AutoSuggestBox.QueryIcon>

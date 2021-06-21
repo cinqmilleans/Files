@@ -1,11 +1,11 @@
-﻿using Files.Filesystem;
+﻿using Files.Extensions;
+using Files.Filesystem;
+using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -14,13 +14,51 @@ namespace Files.ViewModels
 {
     public class SearchBoxViewModel : ObservableObject, ISearchBox
     {
+        private readonly ISearchOptionFactory optionFactory = SearchOptionFactory.Default;
+
+        public ISearchOptionKey[] OptionKeys { get; } = SearchOptionFactory.Default.AllKeys.Values.ToArray();
+
+        private bool IsPopupOpen => Suggestions.Any();
 
         private string query;
         public string Query
         {
             get => query;
-            set => SetProperty(ref query, value);
+            set
+            {
+                SetProperty(ref query, value);
+                UpdateSelectedOption();
+            }
         }
+
+        private void UpdateSelectedOption()
+        {
+            int space = query.LastIndexOf(' ');
+            string item = space < 0 ? query : query.Substring(space + 1);
+
+            var suggestions = optionFactory.GetSuggestions(item);
+            UpdateSuggestions(suggestions.Where(suggestion => suggestion is ISearchOptionKey).Cast<ISearchOptionKey>());
+            UpdateSuggestions(suggestions.Where(suggestion => suggestion is ISearchOption).Cast<ISearchOption>());
+        }
+
+        public SearchBoxViewModel() : base()
+        {
+            Suggestions.CollectionChanged += Suggestions_CollectionChanged;
+        }
+
+        private void Suggestions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(IsPopupOpen));
+        }
+
+        public void OptionSelected(ISearchOption option)
+        {
+            string query = Query.Trim();
+            string space = query.Length > 0 ? " " : string.Empty;
+            Query = $"{query}{space}{option.Key}:";
+        }
+
+        public string[] Test { get; } = new string[] { "Coucou", "Salut" };
 
         public event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;
         public event TypedEventHandler<ISearchBox, SearchBoxSuggestionChosenEventArgs> SuggestionChosen;
@@ -29,35 +67,37 @@ namespace Files.ViewModels
 
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
-        public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
+        public ObservableCollection<object> Suggestions { get; } = new ObservableCollection<object>();
 
+        public void ClearSuggestions() => ClearSuggestions<ListedItem>();
+        public void SetSuggestions(IEnumerable<ListedItem> suggestions) => UpdateSuggestions(suggestions);
 
-        public void ClearSuggestions()
+        private void ClearSuggestions<T>()
         {
-            Suggestions.Clear();
+            Suggestions
+                .Where(suggestion => suggestion is T)
+                .ToList()
+                .ForEach(suggestion => Suggestions.Remove(suggestion));
         }
-        public void SetSuggestions(IEnumerable<ListedItem> suggestions)
+        private void UpdateSuggestions<T>(IEnumerable<T> suggestions)
         {
-            var items = suggestions.OrderBy(suggestion => suggestion, suggestionComparer).ToList();
+            var oldItems = Suggestions.Where(suggestion => suggestion is T).ToList();
+            var newItems = suggestions.OrderBy(suggestion => suggestion, suggestionComparer).Cast<object>().ToList();
 
-            var oldSuggestions = Suggestions.Except(items, suggestionComparer).ToList();
-            foreach (var oldSuggestion in oldSuggestions)
-            {
-                Suggestions.Remove(oldSuggestion);
-            }
+            oldItems.Except(newItems, suggestionComparer).ForEach(suggestion => Suggestions.Remove(suggestion));
+            newItems.Except(oldItems, suggestionComparer).ForEach(suggestion => Insert(suggestion));
 
-            var newSuggestions = items.Except(Suggestions, suggestionComparer).ToList();
-            foreach (var newSuggestion in newSuggestions)
+            void Insert(object suggestion)
             {
-                var indexSuggestion = Suggestions.FirstOrDefault(suggestion => suggestionComparer.Compare(suggestion, newSuggestion) < 1);
+                var indexSuggestion = Suggestions.FirstOrDefault(oldSuggestion => suggestionComparer.Compare(oldSuggestion, suggestion) < 1);
                 if (!(indexSuggestion is null))
                 {
                     int index = Suggestions.IndexOf(indexSuggestion);
-                    Suggestions.Insert(index, newSuggestion);
+                    Suggestions.Insert(index, suggestion);
                 }
                 else
                 {
-                    Suggestions.Add(newSuggestion);
+                    Suggestions.Add(suggestion);
                 }
             }
         }
@@ -85,11 +125,28 @@ namespace Files.ViewModels
             Escaped?.Invoke(this, this);
         }
 
-        public class SuggestionComparer : IEqualityComparer<ListedItem>, IComparer<ListedItem>
+        public class SuggestionComparer : IEqualityComparer<object>, IComparer<object>
         {
-            public int Compare(ListedItem x, ListedItem y) => y.ItemPath.CompareTo(x.ItemPath);
-            public bool Equals(ListedItem x, ListedItem y) => y.ItemPath.Equals(x.ItemPath);
-            public int GetHashCode(ListedItem o) => o.ItemPath.GetHashCode();
+            public int Compare(object x, object y) => ToValue(y).CompareTo(ToValue(x));
+            public new bool Equals(object x, object y) => ToValue(y).Equals(ToValue(x));
+            public int GetHashCode(object o) => ToValue(o).GetHashCode();
+
+            private static (ushort, string) ToValue (object o)
+            {
+                if (o is ISearchOptionKey optionKey)
+                {
+                    return (1, $"{optionKey.Text}");
+                }
+                if (o is ISearchOption option)
+                {
+                    return (2, $"{option.Key.Text}:{option.Text}");
+                }
+                if (o is ListedItem item)
+                {
+                    return (3, item.ItemPath);
+                }
+                throw new ArgumentException();
+            }
         }
     }
 }
