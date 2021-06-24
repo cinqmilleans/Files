@@ -18,7 +18,16 @@ namespace Files.ViewModels
 
         public ISearchOptionKey[] OptionKeys { get; } = SearchOptionFactory.Default.AllKeys.Values.ToArray();
 
-        private bool IsPopupOpen => Suggestions.Any();
+        private ISearchOption currentOption;
+        public ISearchOption CurrentOption
+        {
+            get => currentOption;
+            set
+            {
+                SetProperty(ref currentOption, value);
+                OnPropertyChanged(nameof(Suggestions));
+            }
+        }
 
         private string query;
         public string Query
@@ -36,29 +45,16 @@ namespace Files.ViewModels
             int space = query.LastIndexOf(' ');
             string item = space < 0 ? query : query.Substring(space + 1);
 
-            var suggestions = optionFactory.GetSuggestions(item);
-            UpdateSuggestions(suggestions.Where(suggestion => suggestion is ISearchOptionKey).Cast<ISearchOptionKey>());
-            UpdateSuggestions(suggestions.Where(suggestion => suggestion is ISearchOption).Cast<ISearchOption>());
+            UpdateSuggestions(optionFactory.GetOptionKeySuggestions(item));
+            UpdateSuggestions(optionFactory.GetOptionSuggestions(item));
         }
 
-        public SearchBoxViewModel() : base()
-        {
-            Suggestions.CollectionChanged += Suggestions_CollectionChanged;
-        }
-
-        private void Suggestions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(IsPopupOpen));
-        }
-
-        public void OptionSelected(ISearchOption option)
+        public void OptionSelected(ISearchOptionKey optionKey)
         {
             string query = Query.Trim();
             string space = query.Length > 0 ? " " : string.Empty;
-            Query = $"{query}{space}{option.Key}:";
+            Query = $"{query}{space}{optionKey.Text}:";
         }
-
-        public string[] Test { get; } = new string[] { "Coucou", "Salut" };
 
         public event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;
         public event TypedEventHandler<ISearchBox, SearchBoxSuggestionChosenEventArgs> SuggestionChosen;
@@ -67,44 +63,55 @@ namespace Files.ViewModels
 
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
-        public ObservableCollection<object> Suggestions { get; } = new ObservableCollection<object>();
+        private readonly ObservableCollection<object> emptyCollection = new ObservableCollection<object>();
+        private readonly ObservableCollection<object> suggestions = new ObservableCollection<object>();
+        public ObservableCollection<object> Suggestions => currentOption is null ? suggestions : emptyCollection;
 
         public void ClearSuggestions() => ClearSuggestions<ListedItem>();
         public void SetSuggestions(IEnumerable<ListedItem> suggestions) => UpdateSuggestions(suggestions);
 
         private void ClearSuggestions<T>()
         {
-            Suggestions
+            this.suggestions
                 .Where(suggestion => suggestion is T)
                 .ToList()
                 .ForEach(suggestion => Suggestions.Remove(suggestion));
         }
         private void UpdateSuggestions<T>(IEnumerable<T> suggestions)
         {
-            var oldItems = Suggestions.Where(suggestion => suggestion is T).ToList();
+            var oldItems = this.suggestions.Where(suggestion => suggestion is T).ToList();
             var newItems = suggestions.OrderBy(suggestion => suggestion, suggestionComparer).Cast<object>().ToList();
 
-            oldItems.Except(newItems, suggestionComparer).ForEach(suggestion => Suggestions.Remove(suggestion));
+            oldItems.Except(newItems, suggestionComparer).ForEach(suggestion => this.suggestions.Remove(suggestion));
             newItems.Except(oldItems, suggestionComparer).ForEach(suggestion => Insert(suggestion));
 
             void Insert(object suggestion)
             {
-                var indexSuggestion = Suggestions.FirstOrDefault(oldSuggestion => suggestionComparer.Compare(oldSuggestion, suggestion) < 1);
+                var indexSuggestion = this.suggestions.FirstOrDefault(oldSuggestion => suggestionComparer.Compare(oldSuggestion, suggestion) < 1);
                 if (!(indexSuggestion is null))
                 {
-                    int index = Suggestions.IndexOf(indexSuggestion);
-                    Suggestions.Insert(index, suggestion);
+                    int index = this.suggestions.IndexOf(indexSuggestion);
+                    this.suggestions.Insert(index, suggestion);
                 }
                 else
                 {
-                    Suggestions.Add(suggestion);
+                    this.suggestions.Add(suggestion);
                 }
             }
         }
 
         public void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
         {
-            TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+            int space = query.LastIndexOf(' ');
+            string item = space < 0 ? query : query.Substring(space + 1);
+            if (item.Contains(':') && optionFactory.CanProvide(item))
+            {
+                CurrentOption = optionFactory.Provide(item);
+            }
+            else
+            {
+                TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+            }
         }
 
         public void SearchRegion_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs e)

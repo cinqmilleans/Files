@@ -1,30 +1,19 @@
 ﻿namespace Files.Filesystem.Search
 {
-    public interface ISearchOptionKey
-    {
-        string Text { get; }
-        string Label { get; }
-
-        IFactory<ISearchOptionValue> ValueFactory { get; }
-
-        string[] Suggestions { get; }
-        string GetAdvancedQuerySyntax(ISearchOptionValue value);
-    }
-
     public class DateSearchOptionKey : ISearchOptionKey
     {
         public virtual string Text => "date";
         public virtual string Label => "Date of creation";
 
-        public IFactory<ISearchOptionValue> ValueFactory { get; } = IntervalPeriodSearchOptionValueFactory.Default;
+        public IFactory<ISearchOptionValue> Format { get; } = PeriodSearchOptionValueFactory.Default;
 
-        public string[] Suggestions { get; } = new string[] { "modified:", "date:2019" };
+        public string[] Suggestions { get; } = new string[] { "date:2019" };
 
         public string GetAdvancedQuerySyntax(ISearchOptionValue value)
         {
-            if (value is IAdvancedQuerySyntaxValue aqsValue)
+            if (value is IPeriod period)
             {
-                return $"System.ItemDate:{aqsValue.AdvancedQuerySyntax}";
+                return $"System.ItemDate:>={period.AdvancedQuerySyntax}";
             }
             return string.Empty;
         }
@@ -35,15 +24,15 @@
         public virtual string Text => "modified";
         public virtual string Label => "Date of last modification";
 
-        public IFactory<ISearchOptionValue> ValueFactory { get; } = IntervalPeriodSearchOptionValueFactory.Default;
+        public IFactory<ISearchOptionValue> Format { get; } = PeriodSearchOptionValueFactory.Default;
 
         public string[] Suggestions { get; } = new string[0];
 
         public string GetAdvancedQuerySyntax(ISearchOptionValue value)
         {
-            if (value is IAdvancedQuerySyntaxValue aqsValue)
+            if (value is IPeriod period)
             {
-                return $"System.DateModified:{aqsValue.AdvancedQuerySyntax}";
+                return $"System.DateModified:{period.AdvancedQuerySyntax}";
             }
             return string.Empty;
         }
