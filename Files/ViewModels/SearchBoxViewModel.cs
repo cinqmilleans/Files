@@ -106,7 +106,15 @@ namespace Files.ViewModels
             string item = space < 0 ? query : query.Substring(space + 1);
             if (item.Contains(':') && optionFactory.CanProvide(item))
             {
-                CurrentOption = optionFactory.Provide(item);
+                var option = optionFactory.Provide(item);
+                if (currentOption is null || currentOption.Key.Text != option.Key.Text)
+                {
+                    CurrentOption = option;
+                }
+                else
+                {
+                    CurrentOption.Text = option.Text;
+                }
             }
             else
             {

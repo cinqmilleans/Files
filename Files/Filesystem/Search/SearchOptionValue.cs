@@ -163,7 +163,16 @@ namespace Files.Filesystem.Search
             {
                 return $">={maxReader.ToText(period.MaxDate.Value)}";
             }
-            return $"{minReader.ToText(period.MinDate.Value)}..{maxReader.ToText(period.MaxDate.Value)}";
+
+            string minText = minReader.ToText(period.MinDate.Value);
+            string maxText = maxReader.ToText(period.MaxDate.Value);
+
+            if (minText == maxText)
+            {
+                return minText;
+            }
+
+            return $"{minText}..{maxText}";
         }
         public string ToLabel(IPeriod period)
         {
@@ -175,7 +184,16 @@ namespace Files.Filesystem.Search
             {
                 return $">= {maxReader.ToLabel(period.MaxDate.Value)}";
             }
-            return $"{minReader.ToLabel(period.MinDate.Value)} -> {maxReader.ToLabel(period.MaxDate.Value)}";
+
+            string minLabel = minReader.ToLabel(period.MinDate.Value);
+            string maxLabel = maxReader.ToLabel(period.MaxDate.Value);
+
+            if (minLabel == maxLabel)
+            {
+                return minLabel;
+            }
+
+            return $"{minLabel} -> {maxLabel}";
         }
     }
 
@@ -252,10 +270,10 @@ namespace Files.Filesystem.Search
 
         public DateTime Provide(string text) => new DateTime(ushort.Parse(text), 1, 1);
 
-        public bool CanRead(DateTime date) => date.Month == 12 && date.Day == 31;
+        public bool CanRead(DateTime date) => date.Month == 1 && date.Day == 1;
 
-        public string ToText(DateTime date) => $"{date:YYYY}";
-        public string ToLabel(DateTime date) => $"Year {date:YYYY}";
+        public string ToText(DateTime date) => $"{date:yyyy}";
+        public string ToLabel(DateTime date) => $"Year {date:yyyy}";
     }
     public class MaxYearConverter : IFactory<DateTime>, IReader<DateTime>
     {
@@ -280,8 +298,8 @@ namespace Files.Filesystem.Search
 
         public bool CanRead(DateTime date) => date.Month == 12 && date.Day == 31;
 
-        public string ToText(DateTime date) => $"{date:YYYY}";
-        public string ToLabel(DateTime date) => $"Year {date:YYYY}";
+        public string ToText(DateTime date) => $"{date:yyyy}";
+        public string ToLabel(DateTime date) => $"Year {date:yyyy}";
     }
 
     public class DateConverter : IFactory<DateTime>, IReader<DateTime>
