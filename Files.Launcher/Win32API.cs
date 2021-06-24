@@ -111,26 +111,29 @@ namespace FilesFullTrust
             }
         }
 
-        public static (string icon, string overlay, bool isCustom) GetFileIconAndOverlay(string path, int thumbnailSize, bool getOverlay = true)
+        public static (string icon, string overlay) GetFileIconAndOverlay(string path, int thumbnailSize, bool getOverlay = true, bool onlyGetOverlay = false)
         {
             string iconStr = null, overlayStr = null;
 
-            using var shellItem = new Vanara.Windows.Shell.ShellItem(path);
-            if (shellItem.IShellItem is Shell32.IShellItemImageFactory fctry)
+            if (!onlyGetOverlay)
             {
-                var flags = Shell32.SIIGBF.SIIGBF_BIGGERSIZEOK;
-                if (thumbnailSize < 80) flags |= Shell32.SIIGBF.SIIGBF_ICONONLY;
-                var hres = fctry.GetImage(new SIZE(thumbnailSize, thumbnailSize), flags, out var hbitmap);
-                if (hres == HRESULT.S_OK)
+                using var shellItem = new Vanara.Windows.Shell.ShellItem(path);
+                if (shellItem.IShellItem is Shell32.IShellItemImageFactory fctry)
                 {
-                    using var image = GetBitmapFromHBitmap(hbitmap);
-                    if (image != null)
+                    var flags = Shell32.SIIGBF.SIIGBF_BIGGERSIZEOK;
+                    if (thumbnailSize < 80) flags |= Shell32.SIIGBF.SIIGBF_ICONONLY;
+                    var hres = fctry.GetImage(new SIZE(thumbnailSize, thumbnailSize), flags, out var hbitmap);
+                    if (hres == HRESULT.S_OK)
                     {
-                        byte[] bitmapData = (byte[])new ImageConverter().ConvertTo(image, typeof(byte[]));
-                        iconStr = Convert.ToBase64String(bitmapData, 0, bitmapData.Length);
+                        using var image = GetBitmapFromHBitmap(hbitmap);
+                        if (image != null)
+                        {
+                            byte[] bitmapData = (byte[])new ImageConverter().ConvertTo(image, typeof(byte[]));
+                            iconStr = Convert.ToBase64String(bitmapData, 0, bitmapData.Length);
+                        }
                     }
+                    //Marshal.ReleaseComObject(fctry);
                 }
-                //Marshal.ReleaseComObject(fctry);
             }
 
             if (getOverlay)
@@ -144,16 +147,15 @@ namespace FilesFullTrust
                     Shell32.SHGFI.SHGFI_OVERLAYINDEX | Shell32.SHGFI.SHGFI_ICON | Shell32.SHGFI.SHGFI_SYSICONINDEX | Shell32.SHGFI.SHGFI_ICONLOCATION);
                 if (ret == IntPtr.Zero)
                 {
-                    return (iconStr, null, false);
+                    return (iconStr, null);
                 }
 
-                bool isCustom = true;
                 User32.DestroyIcon(shfi.hIcon);
                 Shell32.SHGetImageList(Shell32.SHIL.SHIL_LARGE, typeof(ComCtl32.IImageList).GUID, out var tmp);
                 using var imageList = ComCtl32.SafeHIMAGELIST.FromIImageList(tmp);
                 if (imageList.IsNull || imageList.IsInvalid)
                 {
-                    return (iconStr, null, isCustom);
+                    return (iconStr, null);
                 }
 
                 var overlayIdx = shfi.iIcon >> 24;
@@ -169,13 +171,12 @@ namespace FilesFullTrust
                     }
                 }
 
-                return (iconStr, overlayStr, isCustom);
+                return (iconStr, overlayStr);
             }
             else
             {
-                return (iconStr, null, false);
+                return (iconStr, null);
             }
-
         }
 
         public static bool RunPowershellCommand(string command, bool runAsAdmin)
@@ -260,10 +261,18 @@ namespace FilesFullTrust
                 {
                     return bmp;
                 }
-                if (IsAlphaBitmap(bmp, out var bmpData))
+                
+                Rectangle bmBounds = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                var bmpData = bmp.LockBits(bmBounds, ImageLockMode.ReadOnly, bmp.PixelFormat);
+                if (IsAlphaBitmap(bmpData))
                 {
-                    return GetAlphaBitmapFromBitmapData(bmpData);
+                    var alpha = GetAlphaBitmapFromBitmapData(bmpData);
+                    bmp.UnlockBits(bmpData);
+                    bmp.Dispose();
+                    return alpha;
                 }
+
+                bmp.UnlockBits(bmpData);
                 return bmp;
             }
             catch
@@ -274,39 +283,29 @@ namespace FilesFullTrust
 
         private static Bitmap GetAlphaBitmapFromBitmapData(BitmapData bmpData)
         {
-            return new Bitmap(
-                    bmpData.Width,
-                    bmpData.Height,
-                    bmpData.Stride,
-                    PixelFormat.Format32bppArgb,
-                    bmpData.Scan0);
+            using var tmp = new Bitmap(bmpData.Width, bmpData.Height, bmpData.Stride, PixelFormat.Format32bppArgb, bmpData.Scan0);
+            Bitmap clone = new Bitmap(tmp.Width, tmp.Height, tmp.PixelFormat);
+            using (Graphics gr = Graphics.FromImage(clone))
+            {
+                gr.DrawImage(tmp, new Rectangle(0, 0, clone.Width, clone.Height));
+            }
+            return clone;
         }
 
-        private static bool IsAlphaBitmap(Bitmap bmp, out BitmapData bmpData)
+        private static bool IsAlphaBitmap(BitmapData bmpData)
         {
-            Rectangle bmBounds = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
-            bmpData = bmp.LockBits(bmBounds, ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-            try
+            for (int y = 0; y <= bmpData.Height - 1; y++)
             {
-                for (int y = 0; y <= bmpData.Height - 1; y++)
+                for (int x = 0; x <= bmpData.Width - 1; x++)
                 {
-                    for (int x = 0; x <= bmpData.Width - 1; x++)
-                    {
-                        Color pixelColor = Color.FromArgb(
-                            Marshal.ReadInt32(bmpData.Scan0, (bmpData.Stride * y) + (4 * x)));
+                    Color pixelColor = Color.FromArgb(
+                        Marshal.ReadInt32(bmpData.Scan0, (bmpData.Stride * y) + (4 * x)));
 
-                        if (pixelColor.A > 0 & pixelColor.A < 255)
-                        {
-                            return true;
-                        }
+                    if (pixelColor.A > 0 & pixelColor.A < 255)
+                    {
+                        return true;
                     }
                 }
-            }
-            finally
-            {
-                bmp.UnlockBits(bmpData);
             }
 
             return false;
@@ -378,6 +377,7 @@ namespace FilesFullTrust
         public class Win32Window : IWin32Window
         {
             public IntPtr Handle { get; set; }
+
             public static Win32Window FromLong(long hwnd)
             {
                 return new Win32Window() { Handle = new IntPtr(hwnd) };

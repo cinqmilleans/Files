@@ -393,12 +393,12 @@ namespace FilesFullTrust
                 case "GetIconOverlay":
                     var fileIconPath = (string)message["filePath"];
                     var thumbnailSize = (int)(long)message["thumbnailSize"];
-                    var iconOverlay = Win32API.StartSTATask(() => Win32API.GetFileIconAndOverlay(fileIconPath, thumbnailSize)).Result;
+                    var isOverlayOnly = (bool)message["isOverlayOnly"];
+                    var iconOverlay = Win32API.StartSTATask(() => Win32API.GetFileIconAndOverlay(fileIconPath, thumbnailSize, true, isOverlayOnly)).Result;
                     await Win32API.SendMessageAsync(connection, new ValueSet()
                     {
                         { "Icon", iconOverlay.icon },
-                        { "Overlay", iconOverlay.overlay },
-                        { "HasCustomIcon", iconOverlay.isCustom }
+                        { "Overlay", iconOverlay.overlay }
                     }, message.Get("RequestID", (string)null));
                     break;
 
@@ -821,7 +821,7 @@ namespace FilesFullTrust
                 "runas", "runasuser", "pintohome", "PinToStartScreen",
                 "cut", "copy", "paste", "delete", "properties", "link",
                 "Windows.ModernShare", "Windows.Share", "setdesktopwallpaper",
-                "eject", "rename", "explore", "openinfiles",
+                "eject", "rename", "explore", "openinfiles", "extract",
                 Win32API.ExtractStringFromDLL("shell32.dll", 30312), // SendTo menu
                 Win32API.ExtractStringFromDLL("shell32.dll", 34593), // Add to collection
             };

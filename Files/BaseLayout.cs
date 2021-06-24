@@ -9,18 +9,14 @@ using Files.ViewModels;
 using Files.Views;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.DragDrop;
 using Windows.Storage;
@@ -62,9 +58,12 @@ namespace Files
 
         public IShellPage ParentShellPageInstance { get; private set; } = null;
 
+        public PreviewPaneViewModel PreviewPaneViewModel { get; } = new PreviewPaneViewModel();
+
         public bool IsRenamingItem { get; set; } = false;
 
         private bool isMiddleClickToScrollEnabled = true;
+
         public bool IsMiddleClickToScrollEnabled
         {
             get => isMiddleClickToScrollEnabled;
@@ -223,6 +222,18 @@ namespace Files
                             }
                         }
                     }
+
+                    if (value?.Count == 1)
+                    {
+                        PreviewPaneViewModel.IsItemSelected = true;
+                        PreviewPaneViewModel.SelectedItem = SelectedItems.First();
+                    }
+                    else
+                    {
+                        PreviewPaneViewModel.IsItemSelected = value?.Count > 0;
+                        PreviewPaneViewModel.SelectedItem = null;
+                    }
+
                     NotifyPropertyChanged(nameof(SelectedItems));
                     ItemManipulationModel.SetDragModeForItems();
                 }
@@ -388,7 +399,7 @@ namespace Files
                 ParentShellPageInstance.NavToolbarViewModel.PathControlDisplayText = navigationArguments.NavPathParam;
                 if (!navigationArguments.IsLayoutSwitch)
                 {
-                    ParentShellPageInstance.FilesystemViewModel.RefreshItems(previousDir);
+                    ParentShellPageInstance.FilesystemViewModel.RefreshItems(previousDir, SetSelectedItemsOnNavigation);
                 }
                 else
                 {
@@ -413,16 +424,23 @@ namespace Files
             }
 
             ParentShellPageInstance.InstanceViewModel.IsPageTypeNotHome = true; // show controls that were hidden on the home page
-            ParentShellPageInstance.LoadPreviewPaneChanged();
             ParentShellPageInstance.FilesystemViewModel.UpdateGroupOptions();
             UpdateCollectionViewSource();
             FolderSettings.IsLayoutModeChanging = false;
 
             ItemManipulationModel.FocusFileList(); // Set focus on layout specific file list control
 
+            SetSelectedItemsOnNavigation();
+
+            ItemContextMenuFlyout.Opening += ItemContextFlyout_Opening;
+            BaseContextMenuFlyout.Opening += BaseContextFlyout_Opening;
+        }
+
+        public void SetSelectedItemsOnNavigation()
+        {
             try
             {
-                if (navigationArguments.SelectItems != null && navigationArguments.SelectItems.Count() > 0)
+                if (navigationArguments != null && navigationArguments.SelectItems != null && navigationArguments.SelectItems.Any())
                 {
                     List<ListedItem> liItemsToSelect = new List<ListedItem>();
                     foreach (string item in navigationArguments.SelectItems)
@@ -431,17 +449,16 @@ namespace Files
                     }
 
                     ItemManipulationModel.SetSelectedItems(liItemsToSelect);
+                    ItemManipulationModel.FocusSelectedItems();
                 }
             }
             catch (Exception)
             {
             }
-
-            ItemContextMenuFlyout.Opening += ItemContextFlyout_Opening;
-            BaseContextMenuFlyout.Opening += BaseContextFlyout_Opening;
         }
 
         private CancellationTokenSource groupingCancellationToken;
+
         private async void FolderSettings_GroupOptionPreferenceUpdated(object sender, EventArgs e)
         {
             // Two or more of these running at the same time will cause a crash, so cancel the previous one before beginning
@@ -732,7 +749,7 @@ namespace Files
         {
             if (ParentShellPageInstance.FilesystemViewModel.FilesAndFolders.IsGrouped)
             {
-                CollectionViewSource = new Windows.UI.Xaml.Data.CollectionViewSource()
+                CollectionViewSource = new CollectionViewSource()
                 {
                     IsSourceGrouped = true,
                     Source = ParentShellPageInstance.FilesystemViewModel.FilesAndFolders.GroupedCollection
@@ -740,7 +757,7 @@ namespace Files
             }
             else
             {
-                CollectionViewSource = new Windows.UI.Xaml.Data.CollectionViewSource()
+                CollectionViewSource = new CollectionViewSource()
                 {
                     IsSourceGrouped = false,
                     Source = ParentShellPageInstance.FilesystemViewModel.FilesAndFolders
