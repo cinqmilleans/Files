@@ -1,207 +1,213 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Files.Filesystem.Search
 {
-    public interface ISearchOptionValue
+    public interface IPeriodSearchOptionValue : ISearchOptionValue
     {
-        string Text { get; }
-        string Label { get; }
+        IPeriod Period { get; }
     }
 
-    public interface IAdvancedQuerySyntaxValue : ISearchOptionValue
+    public interface IPeriod
     {
-        string AdvancedQuerySyntax { get; }
+        DateTime? MinDate { get; }
+        DateTime? MaxDate { get; }
+
+        public string AdvancedQuerySyntax { get; }
     }
-
-    public interface IPeriodSearchOptionValue : IAdvancedQuerySyntaxValue
+    public class Period : IPeriod
     {
-        IPeriodSearchOptionValue MinPeriod { get; }
-        IPeriodSearchOptionValue MaxPeriod { get; }
-    }
+        public DateTime? MinDate { get; }
+        public DateTime? MaxDate { get; }
 
-    public abstract class PeriodSearchOptionValue : IPeriodSearchOptionValue
-    {
-        private readonly Lazy<string> text;
-        public string Text => text.Value;
-        protected abstract string GetText();
-
-        private readonly Lazy<string> label;
-        public string Label => label.Value;
-        protected virtual string GetLabel() => GetText();
-
-        private readonly Lazy<IPeriodSearchOptionValue> minPeriod;
-        public IPeriodSearchOptionValue MinPeriod => minPeriod.Value;
-        protected virtual IPeriodSearchOptionValue GetMinPeriod() => this;
-
-        private readonly Lazy<IPeriodSearchOptionValue> maxPeriod;
-        public IPeriodSearchOptionValue MaxPeriod => maxPeriod.Value;
-        protected virtual IPeriodSearchOptionValue GetMaxPeriod() => this;
-
-        private readonly Lazy<string> advancedQuerySyntax;
+        private Lazy<string> advancedQuerySyntax;
         public string AdvancedQuerySyntax => advancedQuerySyntax.Value;
-        protected virtual string GetAdvancedQuerySyntax() => GetText();
 
-        public PeriodSearchOptionValue()
+        public Period(DateTime? mindate, DateTime? maxDate)
         {
-            text = new Lazy<string>(GetText);
-            label = new Lazy<string>(GetLabel);
-            minPeriod = new Lazy<IPeriodSearchOptionValue>(GetMinPeriod);
-            maxPeriod = new Lazy<IPeriodSearchOptionValue>(GetMaxPeriod);
-            advancedQuerySyntax = new Lazy<string>(GetAdvancedQuerySyntax);
+            MinDate = mindate;
+            MaxDate = maxDate;
+
+            advancedQuerySyntax = new Lazy<string>(ToAdvancedQuerySyntax);
+        }
+
+        private string ToAdvancedQuerySyntax()
+        {
+            if (!MinDate.HasValue && !MaxDate.HasValue)
+            {
+                return string.Empty;
+            }
+            if (!MaxDate.HasValue)
+            {
+                return $"System.ItemDate:>={MinDate.Value:yyyy-MM-dd}";
+            }
+            if (!MinDate.HasValue)
+            {
+                return $"System.ItemDate:<={MaxDate.Value:yyyy-MM-dd}";
+            }
+            return $"System.ItemDate:{MinDate.Value:yyyy-MM-dd}..{MaxDate.Value:yyyy-MM-dd}";
         }
     }
 
-    public class IntervalPeriodSearchOptionValueFactory : IFactory<IntervalPeriodSearchOptionValue>
+    public class PeriodSearchOptionValueFactory : IFactory<IPeriodSearchOptionValue>
     {
-        public static IntervalPeriodSearchOptionValueFactory Default { get; } = new IntervalPeriodSearchOptionValueFactory();
+        private readonly IFactory<IPeriod> factory = PeriodConverter.Default;
 
-        private readonly IFactory<IPeriodSearchOptionValue> factory = new FactoryCollection<IPeriodSearchOptionValue>
-        {
-            MomentPeriodSearchOptionValueFactory.Default,
-            YearPeriodSearchOptionValueFactory.Default,
-            DatePeriodSearchOptionValueFactory.Default,
-        };
+        public static PeriodSearchOptionValueFactory Default { get; } = new PeriodSearchOptionValueFactory();
 
-        public bool CanProvide(string item)
-        {
-            if (item.StartsWith(">=") || item.StartsWith("<=") || item.StartsWith(".."))
-            {
-                return factory.CanProvide(item.Substring(2));
-            }
-            if (item.StartsWith(">") || item.StartsWith("<"))
-            {
-                return factory.CanProvide(item.Substring(2));
-            }
-            if (item.EndsWith(".."))
-            {
-                return factory.CanProvide(item.Substring(0, item.Length - 2));
-            }
-            if (item.Contains(".."))
-            {
-                var parts = item.Split("..", 2);
-                return factory.CanProvide(parts[0]) && factory.CanProvide(parts[1]);
-            }
-            return factory.CanProvide(item);
-        }
-
-        public IntervalPeriodSearchOptionValue Provide(string item)
-        {
-            if (item.StartsWith(">="))
-            {
-                return new IntervalPeriodSearchOptionValue(factory.Provide(item.Substring(2)), null);
-            }
-            if (item.StartsWith(">="))
-            {
-                return new IntervalPeriodSearchOptionValue(null, factory.Provide(item.Substring(2)));
-            }
-            if (item.StartsWith(">"))
-            {
-                return new IntervalPeriodSearchOptionValue(factory.Provide(item.Substring(1)), null);
-            }
-            if (item.StartsWith(">"))
-            {
-                return new IntervalPeriodSearchOptionValue(null, factory.Provide(item.Substring(1)));
-            }
-            if (item.StartsWith(".."))
-            {
-                return new IntervalPeriodSearchOptionValue(null, factory.Provide(item.Substring(2)));
-            }
-            if (item.EndsWith(".."))
-            {
-                return new IntervalPeriodSearchOptionValue(factory.Provide(item.Substring(0, item.Length - 2)), null);
-            }
-            if (item.Contains(".."))
-            {
-                var parts = item.Split("..", 2);
-                return new IntervalPeriodSearchOptionValue(factory.Provide(parts[0]), factory.Provide(parts[1]));
-            }
-            return new IntervalPeriodSearchOptionValue(factory.Provide(item));
-        }
+        public bool CanProvide(string text) => factory.CanProvide(text);
+        public IPeriodSearchOptionValue Provide(string text) => new PeriodSearchOptionValue(factory.Provide(text));
     }
-    public class IntervalPeriodSearchOptionValue : IPeriodSearchOptionValue
+
+    public class PeriodSearchOptionValue : IPeriodSearchOptionValue
     {
-        public enum Directions { None, Before, After, Interval }
-        public Directions Direction { get; }
+        public string Text { get; } = string.Empty;
+        public string Label { get; } = string.Empty;
 
-        public string Text => Direction switch
-        {
-            Directions.Before => $"<={MaxPeriod.Text}",
-            Directions.After => $"<={MinPeriod.Text}",
-            Directions.Interval => $"{MinPeriod.Text}..{MaxPeriod.Text}",
-            _ => string.Empty
-        };
-        public string Label => Direction switch
-        {
-            Directions.Before => $"<= {MaxPeriod.Label}",
-            Directions.After => $"<= {MinPeriod.Label}",
-            Directions.Interval => $"{MinPeriod.Label} -> {MaxPeriod.Label}",
-            _ => string.Empty
-        };
-        public string AdvancedQuerySyntax => Direction switch
-        {
-            Directions.Before => $"<={MaxPeriod.AdvancedQuerySyntax}",
-            Directions.After => $"<={MinPeriod.AdvancedQuerySyntax}",
-            Directions.Interval => $"{MinPeriod.AdvancedQuerySyntax}..{MaxPeriod.AdvancedQuerySyntax}",
-            _ => string.Empty
-        };
+        public IPeriod Period { get; set; }
 
-        public IPeriodSearchOptionValue MinPeriod { get; }
-        public IPeriodSearchOptionValue MaxPeriod { get; }
-
-        public bool HasMinPeriod => !(MinPeriod is null);
-        public bool HasMaxPeriod => !(MaxPeriod is null);
-
-        public IntervalPeriodSearchOptionValue(IPeriodSearchOptionValue period) : this(period, period)
+        public PeriodSearchOptionValue(IPeriod period)
         {
-        }
-        public IntervalPeriodSearchOptionValue(IPeriodSearchOptionValue minPeriod, IPeriodSearchOptionValue maxPeriod)
-        {
-            MinPeriod = minPeriod;
-            MaxPeriod = maxPeriod;
-            Direction = GetDirection();
-        }
+            Period = period;
 
-        private Directions GetDirection()
-        {
-            if (HasMinPeriod && HasMaxPeriod)
+            IReader<IPeriod> reader = PeriodConverter.Default;
+            if (reader.CanRead(period))
             {
-                return Directions.Interval;
+                Text = reader.ToText(period);
+                Label = reader.ToLabel(period);
             }
-            if (HasMaxPeriod)
-            {
-                return Directions.Before;
-            }
-            if (HasMinPeriod)
-            {
-                return Directions.After;
-            }
-            return Directions.None;
         }
     }
 
-    public class MomentPeriodSearchOptionValueFactory : IFactory<MomentPeriodSearchOptionValue>
+    public class PeriodConverter : IFactory<IPeriod>, IReader<IPeriod>
     {
-        public static MomentPeriodSearchOptionValueFactory Default { get; } = new MomentPeriodSearchOptionValueFactory();
+        private readonly IFactory<DateTime> minFactory = new FactoryCollection<DateTime> { MomentConverter.Default, MinYearConverter.Default, DateConverter.Default };
+        private readonly IFactory<DateTime> maxFactory = new FactoryCollection<DateTime> { MomentConverter.Default, MaxYearConverter.Default, DateConverter.Default };
 
-        public bool CanProvide(string item)
-            => Enum
-                .GetNames(typeof(MomentPeriodSearchOptionValue.Moments))
-                .Select(moment => moment.ToLower())
-                .Contains(item.ToLower());
+        private readonly IReader<DateTime> minReader = new ReaderCollection<DateTime> { MomentConverter.Default, MinYearConverter.Default, DateConverter.Default };
+        private readonly IReader<DateTime> maxReader = new ReaderCollection<DateTime> { MomentConverter.Default, MaxYearConverter.Default, DateConverter.Default };
 
-        public MomentPeriodSearchOptionValue Provide(string item)
-            => new MomentPeriodSearchOptionValue(Enum.Parse<MomentPeriodSearchOptionValue.Moments>(item, true));
+        public static PeriodConverter Default { get; } = new PeriodConverter();
+
+        public bool CanProvide(string text)
+        {
+            if (text.StartsWith(">="))
+            {
+                return minFactory.CanProvide(text.Substring(2));
+            }
+            if (text.StartsWith("<=") || text.StartsWith(".."))
+            {
+                return maxFactory.CanProvide(text.Substring(2));
+            }
+            if (text.StartsWith(">"))
+            {
+                return minFactory.CanProvide(text.Substring(1));
+            }
+            if (text.StartsWith("<"))
+            {
+                return maxFactory.CanProvide(text.Substring(1));
+            }
+            if (text.EndsWith(".."))
+            {
+                return minFactory.CanProvide(text.Substring(0, text.Length - 2));
+            }
+            if (text.Contains(".."))
+            {
+                var parts = text.Split("..", 2);
+                return minFactory.CanProvide(parts[0]) && maxFactory.CanProvide(parts[1]);
+            }
+            return minFactory.CanProvide(text) && maxFactory.CanProvide(text);
+        }
+        public IPeriod Provide(string text)
+        {
+            if (text.StartsWith(">="))
+            {
+                return new Period(minFactory.Provide(text.Substring(2)), null);
+            }
+            if (text.StartsWith("<=") || text.StartsWith(".."))
+            {
+                return new Period(null, maxFactory.Provide(text.Substring(2)));
+            }
+            if (text.StartsWith(">"))
+            {
+                return new Period(minFactory.Provide(text.Substring(1)), null);
+            }
+            if (text.StartsWith("<"))
+            {
+                return new Period(null, maxFactory.Provide(text.Substring(1)));
+            }
+            if (text.EndsWith(".."))
+            {
+                return new Period(minFactory.Provide(text.Substring(0, text.Length - 2)), null);
+            }
+            if (text.Contains(".."))
+            {
+                var parts = text.Split("..", 2);
+                return new Period(minFactory.Provide(parts[0]), maxFactory.Provide(parts[1]));
+            }
+            return new Period(minFactory.Provide(text), maxFactory.Provide(text));
+        }
+
+        public bool CanRead(IPeriod period) =>
+            (period.MinDate.HasValue && minReader.CanRead(period.MinDate.Value))
+        || (period.MaxDate.HasValue && maxReader.CanRead(period.MaxDate.Value));
+
+        public string ToText(IPeriod period)
+        {
+            if (!period.MaxDate.HasValue)
+            {
+                return $"<={minReader.ToText(period.MinDate.Value)}";
+            }
+            if (!period.MinDate.HasValue)
+            {
+                return $">={maxReader.ToText(period.MaxDate.Value)}";
+            }
+            return $"{minReader.ToText(period.MinDate.Value)}..{maxReader.ToText(period.MaxDate.Value)}";
+        }
+        public string ToLabel(IPeriod period)
+        {
+            if (!period.MaxDate.HasValue)
+            {
+                return $"<= {minReader.ToLabel(period.MinDate.Value)}";
+            }
+            if (!period.MinDate.HasValue)
+            {
+                return $">= {maxReader.ToLabel(period.MaxDate.Value)}";
+            }
+            return $"{minReader.ToLabel(period.MinDate.Value)} -> {maxReader.ToLabel(period.MaxDate.Value)}";
+        }
     }
-    public class MomentPeriodSearchOptionValue : PeriodSearchOptionValue
+
+    public class MomentConverter : IFactory<DateTime>, IReader<DateTime>
     {
-        public enum Moments { Today, Yesterday, WeekAgo, MonthAgo, YearAgo }
+        private enum Moments { Today, Yesterday, WeekAgo, MonthAgo, YearAgo }
 
-        public Moments Moment { get; }
+        private readonly IReadOnlyDictionary<Moments, DateTime> MomentDates;
 
-        public MomentPeriodSearchOptionValue(Moments moment) => Moment = moment;
+        public static MomentConverter Default = new MomentConverter();
 
-        protected override string GetText() => Moment switch
+        public MomentConverter()
+        {
+            var today = DateTime.Today;
+            MomentDates = new Dictionary<Moments, DateTime>
+            {
+                [Moments.Today] = today,
+                [Moments.Yesterday] = today.AddDays(-1),
+                [Moments.WeekAgo] = today.AddDays(-7),
+                [Moments.MonthAgo] = today.AddMonths(-1),
+                [Moments.YearAgo] = today.AddYears(-1),
+            };
+        }
+
+        public bool CanProvide(string text)
+                => Enum.GetNames(typeof(Moments)).Any(moment => moment.ToLower().Equals(text.ToLower()));
+
+        public DateTime Provide(string text) => MomentDates[ToMoment(text)];
+
+        public bool CanRead(DateTime date) => MomentDates.Values.Contains(date);
+
+        public string ToText(DateTime date) => ToMoment(date) switch
         {
             Moments.Today => "today",
             Moments.Yesterday => "yesterday",
@@ -210,82 +216,84 @@ namespace Files.Filesystem.Search
             Moments.YearAgo => "yearAgo",
             _ => throw new ArgumentException()
         };
-        protected override string GetLabel() => Moment switch
+
+        public string ToLabel(DateTime date) => ToMoment(date) switch
         {
             Moments.Today => "Today",
             Moments.Yesterday => "Yesterday",
-            Moments.WeekAgo => "A week ago",
-            Moments.MonthAgo => "A month ago",
-            Moments.YearAgo => "A year ago",
+            Moments.WeekAgo => "One week ago",
+            Moments.MonthAgo => "One month ago",
+            Moments.YearAgo => "One year ago",
             _ => throw new ArgumentException()
         };
 
-        protected override IPeriodSearchOptionValue GetMinPeriod() => new DatePeriodSearchOptionValue(GetDate());
-        protected override IPeriodSearchOptionValue GetMaxPeriod() => new DatePeriodSearchOptionValue(DateTime.Today);
-
-        private DateTime GetDate() => Moment switch
-        {
-            Moments.Today => DateTime.Today,
-            Moments.Yesterday => DateTime.Today.AddDays(-1),
-            Moments.WeekAgo => DateTime.Today.AddDays(-7),
-            Moments.MonthAgo => DateTime.Today.AddMonths(-1),
-            Moments.YearAgo => DateTime.Today.AddYears(-1),
-            _ => throw new ArgumentException()
-        };
+        private Moments ToMoment(string text) => Enum.Parse<Moments>(text);
+        private Moments ToMoment(DateTime date) => MomentDates.First(i => i.Value == date).Key;
     }
 
-    public class YearPeriodSearchOptionValueFactory : IFactory<YearPeriodSearchOptionValue>
+    public class MinYearConverter : IFactory<DateTime>, IReader<DateTime>
     {
-        public static YearPeriodSearchOptionValueFactory Default { get; } = new YearPeriodSearchOptionValueFactory();
-
         public ushort MinYear { get; } = 1900;
         public ushort MaxYear { get; } = 9999;
 
-        public YearPeriodSearchOptionValueFactory()
+        public static MinYearConverter Default { get; } = new MinYearConverter();
+
+        public MinYearConverter()
         {
         }
-        public YearPeriodSearchOptionValueFactory(ushort minYear, ushort maxYear)
+        public MinYearConverter(ushort minYear, ushort maxYear)
         {
             MinYear = minYear;
             MaxYear = maxYear;
         }
 
-        public bool CanProvide(string item)
-            => ushort.TryParse(item, out ushort year) && year >= MinYear && year <= MaxYear;
+        public bool CanProvide(string text)
+            => ushort.TryParse(text, out ushort year) && year >= MinYear && year <= MaxYear;
 
-        public YearPeriodSearchOptionValue Provide(string item)
-            => new YearPeriodSearchOptionValue(ushort.Parse(item));
+        public DateTime Provide(string text) => new DateTime(ushort.Parse(text), 1, 1);
+
+        public bool CanRead(DateTime date) => date.Month == 12 && date.Day == 31;
+
+        public string ToText(DateTime date) => $"{date:YYYY}";
+        public string ToLabel(DateTime date) => $"Year {date:YYYY}";
     }
-    public class YearPeriodSearchOptionValue : PeriodSearchOptionValue
+    public class MaxYearConverter : IFactory<DateTime>, IReader<DateTime>
     {
-        public ushort Year { get; }
+        public ushort MinYear { get; } = 1900;
+        public ushort MaxYear { get; } = 9999;
 
-        public YearPeriodSearchOptionValue(ushort year) => Year = year;
+        public static MaxYearConverter Default { get; } = new MaxYearConverter();
 
-        protected override string GetText() => $"{Year}";
-        protected override string GetLabel() => $"Year {Year}";
+        public MaxYearConverter()
+        {
+        }
+        public MaxYearConverter(ushort minYear, ushort maxYear)
+        {
+            MinYear = minYear;
+            MaxYear = maxYear;
+        }
 
-        protected override IPeriodSearchOptionValue GetMinPeriod() => new DatePeriodSearchOptionValue(new DateTime(Year, 1, 1));
-        protected override IPeriodSearchOptionValue GetMaxPeriod() => new DatePeriodSearchOptionValue(new DateTime(Year, 12, 31));
+        public bool CanProvide(string text)
+            => ushort.TryParse(text, out ushort year) && year >= MinYear && year <= MaxYear;
+
+        public DateTime Provide(string text) => new DateTime(ushort.Parse(text), 12, 31);
+
+        public bool CanRead(DateTime date) => date.Month == 12 && date.Day == 31;
+
+        public string ToText(DateTime date) => $"{date:YYYY}";
+        public string ToLabel(DateTime date) => $"Year {date:YYYY}";
     }
 
-    public class DatePeriodSearchOptionValueFactory : IFactory<DatePeriodSearchOptionValue>
+    public class DateConverter : IFactory<DateTime>, IReader<DateTime>
     {
-        public static DatePeriodSearchOptionValueFactory Default { get; } = new DatePeriodSearchOptionValueFactory();
+        public static DateConverter Default = new DateConverter();
 
-        public bool CanProvide(string item) => DateTime.TryParse(item, out DateTime _);
+        public bool CanProvide(string text) => DateTime.TryParse(text, out DateTime _);
+        public DateTime Provide(string text) => DateTime.Parse(text).Date;
 
-        public DatePeriodSearchOptionValue Provide(string item) => new DatePeriodSearchOptionValue(DateTime.Parse(item));
-    }
-    public class DatePeriodSearchOptionValue : PeriodSearchOptionValue
-    {
-        public DateTime Date { get; }
+        public bool CanRead(DateTime date) => true;
 
-        public DatePeriodSearchOptionValue(DateTime date) => Date = date.Date;
-
-        protected override string GetText() => $"{Date:d}";
-        protected override string GetLabel() => $"{Date:D}";
-
-        protected override string GetAdvancedQuerySyntax() => $"{Date:yyyy-MM-dd}";
+        public string ToText(DateTime date) => date.ToString("d");
+        public string ToLabel(DateTime date) => date.ToString("D");
     }
 }
