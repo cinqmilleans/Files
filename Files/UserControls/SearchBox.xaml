@@ -420,6 +420,10 @@
                     <HyperlinkButton Content="Since one month" />
                     <HyperlinkButton Content="Since one year" />
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CalendarDatePicker Header="To" Margin="8" />
+                    <CalendarDatePicker Header="From" Margin="8" />
+                </StackPanel>
                 <TextBlock Text="{Binding IsValid}" FontWeight="Bold" FontSize="14" />
                 <TextBlock Text="Data format" FontWeight="Bold" FontSize="14" />
                 <TextBlock FontWeight="Bold" Text="Date: 2/3/21 ()" />

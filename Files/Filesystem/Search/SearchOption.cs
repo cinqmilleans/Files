@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Files.Filesystem.Search
 {
-    public interface ISearchOption
+    public interface ISearchOption : INotifyPropertyChanged
     {
         ISearchOptionKey Key { get; }
         ISearchOptionValue Value { get; }
