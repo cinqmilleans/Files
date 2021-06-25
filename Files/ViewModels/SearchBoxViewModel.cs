@@ -118,6 +118,7 @@ namespace Files.ViewModels
             }
             else
             {
+                CurrentOption = null;
                 TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
             }
         }

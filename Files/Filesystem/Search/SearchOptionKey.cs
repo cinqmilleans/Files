@@ -7,7 +7,7 @@
 
         public IFactory<ISearchOptionValue> Format { get; } = PeriodSearchOptionValueFactory.Default;
 
-        public string[] Suggestions { get; } = new string[] { "date:2019" };
+        public string[] Suggestions { get; } = new string[] { "date:today", "date:yesterday", "date:weekago", "date:monthago", "date:yearago" };
 
         public string GetAdvancedQuerySyntax(ISearchOptionValue value)
         {
