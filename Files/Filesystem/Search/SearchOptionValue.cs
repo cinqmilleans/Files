@@ -26,8 +26,11 @@ namespace Files.Filesystem.Search
 
         public Period(DateTime? mindate, DateTime? maxDate)
         {
-            MinDate = mindate;
-            MaxDate = maxDate;
+            if (!mindate.HasValue || !maxDate.HasValue || mindate.Value <= maxDate.Value)
+            {
+                MinDate = mindate;
+                MaxDate = maxDate;
+            }
 
             advancedQuerySyntax = new Lazy<string>(ToAdvancedQuerySyntax);
         }
@@ -199,7 +202,7 @@ namespace Files.Filesystem.Search
 
     public class MomentConverter : IFactory<DateTime>, IReader<DateTime>
     {
-        private enum Moments { Today, Yesterday, WeekAgo, MonthAgo, YearAgo }
+        private enum Moments { today, yesterday, weekago, monthago, yearago }
 
         private readonly IReadOnlyDictionary<Moments, DateTime> MomentDates;
 
@@ -210,16 +213,19 @@ namespace Files.Filesystem.Search
             var today = DateTime.Today;
             MomentDates = new Dictionary<Moments, DateTime>
             {
-                [Moments.Today] = today,
-                [Moments.Yesterday] = today.AddDays(-1),
-                [Moments.WeekAgo] = today.AddDays(-7),
-                [Moments.MonthAgo] = today.AddMonths(-1),
-                [Moments.YearAgo] = today.AddYears(-1),
+                [Moments.today] = today,
+                [Moments.yesterday] = today.AddDays(-1),
+                [Moments.weekago] = today.AddDays(-7),
+                [Moments.monthago] = today.AddMonths(-1),
+                [Moments.yearago] = today.AddYears(-1),
             };
         }
 
         public bool CanProvide(string text)
-                => Enum.GetNames(typeof(Moments)).Any(moment => moment.ToLower().Equals(text.ToLower()));
+        {
+            string value = text.ToLower();
+            return Enum.GetNames(typeof(Moments)).Any(moment => Equals(text.ToLower()));
+        }
 
         public DateTime Provide(string text) => MomentDates[ToMoment(text)];
 
@@ -227,25 +233,25 @@ namespace Files.Filesystem.Search
 
         public string ToText(DateTime date) => ToMoment(date) switch
         {
-            Moments.Today => "today",
-            Moments.Yesterday => "yesterday",
-            Moments.WeekAgo => "weekAgo",
-            Moments.MonthAgo => "monthAgo",
-            Moments.YearAgo => "yearAgo",
+            Moments.today => "today",
+            Moments.yesterday => "yesterday",
+            Moments.weekago => "weekAgo",
+            Moments.monthago => "monthAgo",
+            Moments.yearago => "yearAgo",
             _ => throw new ArgumentException()
         };
 
         public string ToLabel(DateTime date) => ToMoment(date) switch
         {
-            Moments.Today => "Today",
-            Moments.Yesterday => "Yesterday",
-            Moments.WeekAgo => "One week ago",
-            Moments.MonthAgo => "One month ago",
-            Moments.YearAgo => "One year ago",
+            Moments.today => "Today",
+            Moments.yesterday => "Yesterday",
+            Moments.weekago => "One week ago",
+            Moments.monthago => "One month ago",
+            Moments.yearago => "One year ago",
             _ => throw new ArgumentException()
         };
 
-        private Moments ToMoment(string text) => Enum.Parse<Moments>(text);
+        private Moments ToMoment(string text) => Enum.Parse<Moments>(text.ToLower());
         private Moments ToMoment(DateTime date) => MomentDates.First(i => i.Value == date).Key;
     }
 

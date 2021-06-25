@@ -35,27 +35,21 @@
                     UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" />
 
                 <Popup x:Name="CurrentOptionPopup" Canvas.ZIndex="0"
-                       IsOpen="{Binding CurrentOption, Converter={StaticResource CurrentOptionConverter}}">
-                    <Border Width="{Binding Width, ElementName=CurrentOptionPopup, Mode=OneWay}">
-                        <ListView
-                            Margin="{ThemeResource AutoSuggestListMargin}"
-                            Padding="{ThemeResource AutoSuggestListPadding}"
+                       IsOpen="{Binding CurrentOption, Mode=OneWay, Converter={StaticResource CurrentOptionConverter}}">
+                    <Border Width="{Binding Width, ElementName=CurrentOptionPopup, Mode=OneWay}"
                             Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
                             BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
-                            BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                            ItemsSource="{Binding CurrentOption, Converter={StaticResource CurrentOptionConverter}}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="search:ISearchOption">
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock ToolTipService.Placement="Bottom">
-                                            <Run FontSize="14" FontWeight="Bold" Text="{Binding Mode=OneWay, Converter={StaticResource SearchOptionConverter}}" />
-                                            <Run Text="{x:Bind Label, Mode=OneWay}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                        </TextBlock>
-                                        <ContentControl Content="{Binding Key.Format}" ContentTemplateSelector="{StaticResource CurrentOptionTemplateSelector}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                            BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}">
+                        <StackPanel Orientation="Vertical" DataContext="{Binding CurrentOption, Mode=OneWay}">
+                            <StackPanel Margin="16,8,0,16" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center"
+                                                FontSize="18" FontWeight="Bold" Text="{Binding Key, Mode=OneWay, Converter={StaticResource SearchOptionConverter}}" />
+                                <TextBlock VerticalAlignment="Center" Margin="8,0,0,0"
+                                                Text="{Binding Label, Mode=OneWay}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <FontIcon Glyph="&#xE73E;" FontSize="18" VerticalAlignment="Center" Margin="8,0,0,0" Visibility="{Binding IsValid, Mode=OneWay}" />
+                            </StackPanel>
+                            <ContentControl Content="{Binding Key.Format, Mode=OneWay}" ContentTemplateSelector="{StaticResource CurrentOptionTemplateSelector}" />
+                        </StackPanel>
                     </Border>
                 </Popup>
 
@@ -413,21 +407,49 @@
             PeriodTemplate="{StaticResource PeriodTemplate}" />
 
         <DataTemplate x:Key="PeriodTemplate" x:DataType="search:IPeriodSearchOptionValue">
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Margin="16,0,0,0">
                 <StackPanel Orientation="Horizontal" Padding="4">
-                    <HyperlinkButton Content="Since one day" />
-                    <HyperlinkButton Content="Since one week" />
-                    <HyperlinkButton Content="Since one month" />
-                    <HyperlinkButton Content="Since one year" />
+                    <HyperlinkButton Content="Today" />
+                    <HyperlinkButton Content="Yesterday" />
+                    <HyperlinkButton Content="This week" />
+                    <HyperlinkButton Content="This month" />
+                    <HyperlinkButton Content="This year" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <CalendarDatePicker Header="To" Margin="8" />
-                    <CalendarDatePicker Header="From" Margin="8" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                    <CalendarDatePicker Header="To" Margin="16" Width="150" />
+                    <CalendarDatePicker Header="From" Margin="16" Width="150" />
                 </StackPanel>
-                <TextBlock Text="{Binding IsValid}" FontWeight="Bold" FontSize="14" />
-                <TextBlock Text="Data format" FontWeight="Bold" FontSize="14" />
-                <TextBlock FontWeight="Bold" Text="Date: 2/3/21 ()" />
-                <TextBlock FontWeight="Bold" Text="Year: 2019, " />
+                <TextBlock Text="Syntax" FontWeight="Bold" FontSize="18" Margin="0,16,0,16" />
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Moment:" FontWeight="Bold" />
+                    <Run Text="today, yesterday, weekago, monthago, yearago" />
+                </TextBlock>
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Year:" FontWeight="Bold" />
+                    <Run Text="2019, 2020, 2021" />
+                </TextBlock>
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Month:" FontWeight="Bold" />
+                    <Run Text="april, may, june" />
+                </TextBlock>
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Date:" FontWeight="Bold" />
+                    <Run Text="10/3/2021, 2/1/2020, " />
+                </TextBlock>
+                <TextBlock Text=" " />
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Before:" FontWeight="Bold" />
+                    <Run Text="&lt;10/3/2021, &lt;2020, &lt;yesterday" />
+                </TextBlock>
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="After:" FontWeight="Bold" />
+                    <Run Text="&gt;=10/3/2021, &gt;2018, &gt;weekago" />
+                </TextBlock>
+                <TextBlock Margin="16,0,0,0">
+                    <Run Text="Between:" FontWeight="Bold" />
+                    <Run Text="april..may, 2/3/2020..may" />
+                </TextBlock>
+                <TextBlock Text=" " />
             </StackPanel>
         </DataTemplate>
 
