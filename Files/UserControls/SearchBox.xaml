@@ -13,6 +13,7 @@
 
         <uc:SearchOptionConverter x:Key="SearchOptionConverter" />
         <uc:CurrentOptionConverter x:Key="CurrentOptionConverter" />
+        <uc:DateValueConverter x:Key="DateValueConverter" />
 
         <ControlTemplate x:Key="AutoSuggestBoxTemplate" TargetType="AutoSuggestBox">
             <Grid x:Name="LayoutRoot">
@@ -48,7 +49,7 @@
                                                 Text="{Binding Label, Mode=OneWay}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                                 <FontIcon Glyph="&#xE73E;" FontSize="18" VerticalAlignment="Center" Margin="8,0,0,0" Visibility="{Binding IsValid, Mode=OneWay}" />
                             </StackPanel>
-                            <ContentControl Content="{Binding Key.Format, Mode=OneWay}" ContentTemplateSelector="{StaticResource CurrentOptionTemplateSelector}" />
+                            <ContentControl Content="{Binding Value, Mode=OneWay}" ContentTemplateSelector="{StaticResource CurrentOptionTemplateSelector}" />
                         </StackPanel>
                     </Border>
                 </Popup>
@@ -210,6 +211,18 @@
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Template="{StaticResource ButtonTemplate}"
                     AutomationProperties.AccessibilityView="Raw" />
+
+                <ItemsControl
+                    x:Name="FilterControl"
+                    Grid.Row="1" Grid.Column="3"
+                    ItemsSource="{Binding VisibleOptions, Mode=OneWay}"
+                    ItemTemplate="{StaticResource OptionButtonTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
 
                 <AppBarButton x:Name="OptionKeyButton"
                     Grid.Row="1" Grid.Column="4"
@@ -409,15 +422,18 @@
         <DataTemplate x:Key="PeriodTemplate" x:DataType="search:IPeriodSearchOptionValue">
             <StackPanel Orientation="Vertical" Margin="16,0,0,0">
                 <StackPanel Orientation="Horizontal" Padding="4">
-                    <HyperlinkButton Content="Today" />
-                    <HyperlinkButton Content="Yesterday" />
-                    <HyperlinkButton Content="This week" />
-                    <HyperlinkButton Content="This month" />
-                    <HyperlinkButton Content="This year" />
+                    <HyperlinkButton Content="Today" CommandParameter="date:today" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="Yesterday" CommandParameter="date:yesterday" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="This week" CommandParameter="date:thisweek" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="Last week" CommandParameter="date:lastweek" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="This month" CommandParameter="date:thismonth" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="Last month" CommandParameter="date:lastmonth" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="This year" CommandParameter="date:thisyear" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
+                    <HyperlinkButton Content="Last year" CommandParameter="date:lastyear" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
-                    <CalendarDatePicker Header="To" Margin="16" Width="150" />
-                    <CalendarDatePicker Header="From" Margin="16" Width="150" />
+                <StackPanel Orientation="Horizontal">
+                    <CalendarDatePicker Header="To" Margin="16" Width="150" Date="{x:Bind MinDate, Mode=TwoWay, Converter={StaticResource DateValueConverter}}" />
+                    <CalendarDatePicker Header="From" Margin="16" Width="150" Date="{x:Bind MaxDate, Mode=TwoWay, Converter={StaticResource DateValueConverter}}" />
                 </StackPanel>
                 <TextBlock Text="Syntax" FontWeight="Bold" FontSize="18" Margin="0,16,0,16" />
                 <TextBlock Margin="16,0,0,0">
@@ -504,6 +520,36 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="OptionButtonTemplate" x:DataType="search:ISearchOption">
+            <Border Padding="0"
+                CornerRadius="4" Height="24" VerticalAlignment="Center" Margin="2,0,2,0"
+                Background="{ThemeResource SystemControlForegroundBaseHighBrush}">
+                <Grid ToolTipService.Placement="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Padding="8,0,0,0"
+                        Foreground="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Inlines>
+                            <Run FontWeight="Bold" Text="{x:Bind Key, Converter={StaticResource SearchOptionConverter}}" />
+                            <Run Text="{x:Bind Value.Text}" />
+                        </TextBlock.Inlines>
+                    </TextBlock>
+                    <Button x:Name="CloseButton" CommandParameter="" Command="{Binding DataContext.OpenOptionCommand, ElementName=SearchRegion, Mode=OneWay}"
+                        Grid.Column="1" Background="Transparent"
+                        Foreground="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <FontIcon FontSize="14" Glyph="&#xE711;" />
+                    </Button>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{x:Bind Value.Label}" />
+                    </ToolTipService.ToolTip>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <AutoSuggestBox x:Name="SearchRegion"
@@ -512,6 +558,7 @@
         PlaceholderText="Search"
         UpdateTextOnSelect="False"
         Text="{Binding Query, Mode=TwoWay}"
+        PreviewKeyDown="SearchRegion_PreviewKeyDown"
         TextChanged="SearchRegion_TextChanged"
         SuggestionChosen="SearchRegion_SuggestionChosen"
         QuerySubmitted="SearchRegion_QuerySubmitted"

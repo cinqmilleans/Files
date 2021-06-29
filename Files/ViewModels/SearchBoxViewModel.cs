@@ -2,11 +2,15 @@
 using Files.Filesystem;
 using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -17,6 +21,28 @@ namespace Files.ViewModels
         private readonly ISearchOptionFactory optionFactory = SearchOptionFactory.Default;
 
         public ISearchOptionKey[] OptionKeys { get; } = SearchOptionFactory.Default.AllKeys.Values.ToArray();
+
+        public ObservableCollection<ISearchOption> VisibleOptions { get; } = new ObservableCollection<ISearchOption>();
+
+        public ICommand OpenOptionCommand { get; }
+
+        public SearchBoxViewModel() : base()
+        {
+            OpenOptionCommand = new RelayCommand<string>(OpenOption);
+        }
+
+        public void OpenOption(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                VisibleOptions.Clear();
+            }
+            if (optionFactory.CanProvide(text))
+            {
+                CurrentOption = optionFactory.Provide(text);
+                OptionSelected(text);
+            }
+        }
 
         private ISearchOption currentOption;
         public ISearchOption CurrentOption
@@ -36,6 +62,11 @@ namespace Files.ViewModels
             set
             {
                 SetProperty(ref query, value);
+                if (query.Length > 1 && query.Last() == ' ' && !(CurrentOption is null) && CurrentOption.IsValid)
+                {
+
+                }
+
                 UpdateSelectedOption();
             }
         }
@@ -49,11 +80,26 @@ namespace Files.ViewModels
             UpdateSuggestions(optionFactory.GetOptionSuggestions(item));
         }
 
-        public void OptionSelected(ISearchOptionKey optionKey)
+        public void OptionSelected(string field)
         {
-            string query = Query.Trim();
-            string space = query.Length > 0 ? " " : string.Empty;
-            Query = $"{query}{space}{optionKey.Text}:";
+            var prefix = Query;
+            if (!(CurrentOption is null))
+            {
+                var spaceIndex = prefix.LastIndexOf(' ');
+                prefix = spaceIndex >= 0 ? prefix.Substring(0, spaceIndex + 1) : string.Empty;
+            }
+            prefix = prefix.Trim();
+            if (prefix.Length > 0 && !string.IsNullOrEmpty(field))
+            {
+                prefix += ' ';
+            }
+            Query = $"{prefix}{field}";
+        }
+        public void OptionSelected(ISearchOptionKey optionKey) => OptionSelected($"{optionKey.Text}:");
+        public void OptionSelected(ISearchOption option)
+        {
+            CurrentOption = option;
+            OptionSelected($"{option.Key.Text}:{option.Value.Text}");
         }
 
         public event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;
@@ -100,6 +146,23 @@ namespace Files.ViewModels
             }
         }
 
+        public void SearchRegion_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Space)
+            {
+                if (!(CurrentOption is null))
+                {
+                    if (CurrentOption.IsValid)
+                    {
+                        VisibleOptions.Insert(0, CurrentOption);
+                        OptionSelected(string.Empty);
+                        CurrentOption = null;
+                    }
+                    e.Handled = true;
+                }
+            }
+        }
+
         public void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
         {
             int space = query.LastIndexOf(' ');
@@ -110,16 +173,29 @@ namespace Files.ViewModels
                 if (currentOption is null || currentOption.Key.Text != option.Key.Text)
                 {
                     CurrentOption = option;
+                    CurrentOption.PropertyChanged += CurrentOption_PropertyChanged;
                 }
                 else
                 {
                     CurrentOption.Text = option.Text;
                 }
             }
-            else
+            else if (e.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
+                if (!(CurrentOption is null))
+                {
+                    CurrentOption.PropertyChanged -= CurrentOption_PropertyChanged;
+                }
                 CurrentOption = null;
                 TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+            }
+        }
+
+        private void CurrentOption_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Text")
+            {
+                OptionSelected(CurrentOption);
             }
         }
 

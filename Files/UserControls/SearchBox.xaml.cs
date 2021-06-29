@@ -3,6 +3,7 @@ using Files.Filesystem.Search;
 using Files.ViewModels;
 using Microsoft.Toolkit.Uwp.UI;
 using System;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -69,6 +70,13 @@ namespace Files.UserControls
             //SearchBoxViewModel.Query = $"{query}{space}{SearchBoxViewModel.CurrentOption.Text}:{sender.Date:d}";
         }
 
+        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SearchRegion_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+            => SearchBoxViewModel.SearchRegion_PreviewKeyDown(sender, e);
     }
 
     public class SuggestionTemplateSelector : DataTemplateSelector
@@ -103,7 +111,7 @@ namespace Files.UserControls
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            if (item is IFactory<IPeriodSearchOptionValue>)
+            if (item is IPeriodSearchOptionValue)
             {
                 return PeriodTemplate;
             }
@@ -142,16 +150,33 @@ namespace Files.UserControls
             {
                 return !(value is null);
             }
-            if (targetType == typeof(object))
-            {
-                return value is null ? null : new object[] { value };
-            }
             throw new ArgumentException();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class DateValueConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is DateTime dateTime)
+            {
+                return new DateTimeOffset(dateTime);
+            }
+            return new DateTimeOffset?();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value is DateTimeOffset offset)
+            {
+                return offset.DateTime;
+            }
+            return null;
         }
     }
 

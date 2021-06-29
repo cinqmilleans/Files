@@ -24,17 +24,18 @@ namespace Files.Filesystem.Search
         string Text { get; }
         string Label { get; }
 
-        IFactory<ISearchOptionValue> Format { get; }
-
         string[] Suggestions { get; }
+
+        ISearchOptionValue GetEmptyValue();
 
         string GetAdvancedQuerySyntax(ISearchOptionValue value);
     }
 
     public interface ISearchOptionValue
     {
-        string Text { get; }
+        string Text { get; set; }
         string Label { get; }
+        bool IsValid { get; }
     }
 
     public interface IFactory<out T>
@@ -42,14 +43,7 @@ namespace Files.Filesystem.Search
         bool CanProvide(string item);
         T Provide(string item);
     }
-
-    public interface IReader<in T>
-    {
-        bool CanRead(T value);
-        string ToText(T value);
-        string ToLabel(T value);
-    }
-
+ 
     public interface ISearchOptionFactory : IFactory<ISearchOption>
     {
         IReadOnlyDictionary<string, ISearchOptionKey> AllKeys { get; }
@@ -70,73 +64,26 @@ namespace Files.Filesystem.Search
         public T Provide(string item) => this.First(provider => provider.CanProvide(item)).Provide(item);
     }
 
-    public class ReaderCollection<T> : Collection<IReader<T>>, IReader<T>
-    {
-        public ReaderCollection() : base()
-        {
-        }
-        public ReaderCollection(IList<IReader<T>> readers) : base(readers)
-        {
-        }
-
-        public bool CanRead(T value) => this.Any(reader => reader.CanRead(value));
-        public string ToText(T value) => this.First(reader => reader.CanRead(value)).ToText(value);
-        public string ToLabel(T value) => this.First(reader => reader.CanRead(value)).ToLabel(value);
-    }
-
-    public abstract class SearchOptionValue : ISearchOptionValue
-    {
-        private readonly Lazy<string> text;
-        public string Text => text.Value;
-
-        private readonly Lazy<string> label;
-        public string Label => label.Value;
-
-        protected SearchOptionValue()
-        {
-            text = new Lazy<string>(ToText);
-            label = new Lazy<string>(ToLabel);
-        }
-
-        protected abstract string ToText();
-        protected abstract string ToLabel();
-    }
-
     public class SearchOption : ObservableObject, ISearchOption
     {
         public ISearchOptionKey Key { get; }
+        public ISearchOptionValue Value { get; }
 
-        private ISearchOptionValue value;
-        public ISearchOptionValue Value
-        {
-            get => value;
-            set => Text = Value?.Text ?? string.Empty;
-        }
-
-        private string text = string.Empty;
         public string Text
         {
-            get => text;
+            get => (Value.IsValid ? Value.Text : Key.Text) ?? string.Empty;
             set
             {
-                if (!text.Equals(value ?? string.Empty))
+                if (!Text.Equals(value ?? string.Empty))
                 {
-                    text = value ?? string.Empty;
-                    isValid = Key.Format.CanProvide(value);
-                    this.value = isValid ? Key.Format.Provide(value) : null;
-
-                    OnPropertyChanged(nameof(Text));
-                    OnPropertyChanged(nameof(Value));
-                    OnPropertyChanged(nameof(Label));
-                    OnPropertyChanged(nameof(IsValid));
+                    Value.Text = value ?? string.Empty;
                 }
             }
         }
 
         public string Label => IsValid ? Value.Label : Key.Label;
 
-        private bool isValid = false;
-        public bool IsValid => isValid;
+        public bool IsValid => Value.IsValid;
 
         public string AdvancedQuerySyntax => Key.GetAdvancedQuerySyntax(Value);
 
@@ -146,7 +93,21 @@ namespace Files.Filesystem.Search
         public SearchOption(ISearchOptionKey key, string text) : base()
         {
             Key = key;
+            Value = key.GetEmptyValue();
             Text = text ?? string.Empty;
+
+            if (Value is INotifyPropertyChanged notifyPropertyChanged)
+            {
+                notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            }
+        }
+
+        private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(Text));
+            OnPropertyChanged(nameof(Value));
+            OnPropertyChanged(nameof(Label));
+            OnPropertyChanged(nameof(IsValid));
         }
     }
 
