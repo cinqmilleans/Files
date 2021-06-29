@@ -210,7 +210,7 @@
     <Compile Include="Filesystem\Permissions\FileSystemAccessRuleForUI.cs" />
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
-    <Compile Include="Filesystem\Search\SearchOptionValue.cs" />
+    <Compile Include="Filesystem\Search\Period.cs" />
     <Compile Include="Filesystem\Search\SearchOption.cs" />
     <Compile Include="Filesystem\Search\SearchOptionKey.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupedCollection.cs" />
