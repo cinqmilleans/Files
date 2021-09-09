@@ -6,6 +6,43 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
+    public struct Date : IEquatable<Date>, IComparable<Date>, IFormattable
+    {
+        private readonly DateTime date;
+
+        public static Date Today => new(DateTime.Today);
+
+        public static Date MinValue { get; } = new Date(1600, 1, 1);
+        public static Date MaxValue { get; } = new Date(9999, 12, 31);
+
+        public ushort Year => (ushort)date.Year;
+        public ushort Month => (ushort)date.Month;
+        public ushort Day => (ushort)date.Day;
+
+        public Date(ushort year, ushort month, ushort day) : this(new DateTime(year, month, day)) { }
+        public Date(DateTime date) => this.date = date.Date;
+
+        public static bool operator ==(Date d1, Date d2) => d1.date == d2.date;
+        public static bool operator !=(Date d1, Date d2) => d1.date != d2.date;
+        public static bool operator <(Date d1, Date d2) => d1.date < d2.date;
+        public static bool operator >(Date d1, Date d2) => d1.date > d2.date;
+        public static bool operator <=(Date d1, Date d2) => d1.date <= d2.date;
+        public static bool operator >=(Date d1, Date d2) => d1.date >= d2.date;
+
+        public override int GetHashCode() => date.GetHashCode();
+        public override bool Equals(object other) => other is Date date && Equals(date);
+        public bool Equals(Date other) => other.date.Equals(date);
+        public int CompareTo(Date other) => other.date.CompareTo(date);
+
+        public override string ToString() => date.ToString("D");
+        public string ToString(string format) => date.ToString(format, CultureInfo.CurrentCulture);
+        public string ToString(string format, IFormatProvider formatProvider) => date.ToString(format, formatProvider);
+
+        public Date AddDays(int days) => new(date.AddDays(days));
+        public Date AddMonths(int months) => new(date.AddMonths(months));
+        public Date AddYears(int years) => new(date.AddYears(years));
+    }
+
     public class DateRange : IEquatable<DateRange>, IFormattable
     {
         private readonly Range range;
@@ -186,42 +223,5 @@ namespace Files.Filesystem.Search
             public override string FullFormat => "Between {0} and {1}";
             public BetweenRange(Date minDate, Date maxDate) => (MinDate, MaxDate) = (minDate, maxDate);
         }
-    }
-
-    public struct Date : IEquatable<Date>, IComparable<Date>, IFormattable
-    {
-        private readonly DateTime date;
-
-        public static Date Today => new(DateTime.Today);
-
-        public static Date MinValue { get; } = new Date(1600, 1, 1);
-        public static Date MaxValue { get; } = new Date(9999, 12, 31);
-
-        public ushort Year => (ushort)date.Year;
-        public ushort Month => (ushort)date.Month;
-        public ushort Day => (ushort)date.Day;
-
-        public Date(ushort year, ushort month, ushort day) : this(new DateTime(year, month, day)) {}
-        public Date(DateTime date) => this.date = date.Date;
-
-        public static bool operator ==(Date d1, Date d2) => d1.date == d2.date;
-        public static bool operator !=(Date d1, Date d2) => d1.date != d2.date;
-        public static bool operator <(Date d1, Date d2) => d1.date < d2.date;
-        public static bool operator >(Date d1, Date d2) => d1.date > d2.date;
-        public static bool operator <=(Date d1, Date d2) => d1.date <= d2.date;
-        public static bool operator >=(Date d1, Date d2) => d1.date >= d2.date;
-
-        public override int GetHashCode() => date.GetHashCode();
-        public override bool Equals(object other) => other is Date date && Equals(date);
-        public bool Equals(Date other) => other.date.Equals(date);
-        public int CompareTo(Date other) => other.date.CompareTo(date);
-
-        public override string ToString() => date.ToString("D");
-        public string ToString(string format) => date.ToString(format, CultureInfo.CurrentCulture);
-        public string ToString(string format, IFormatProvider formatProvider) => date.ToString(format, formatProvider);
-
-        public Date AddDays(int days) => new(date.AddDays(days));
-        public Date AddMonths(int months) => new(date.AddMonths(months));
-        public Date AddYears(int years) => new(date.AddYears(years));
     }
 }

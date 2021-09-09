@@ -12,27 +12,27 @@ namespace Files.Filesystem.Search
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
-        public static SearchSettings Default { get; } = new SearchSettings();
+        public static SearchSettings Default { get; } = new();
 
-        private DateRange created = new DateRange();
+        private DateRange created = new();
         public DateRange Created
         {
             get => created;
-            set => SetProperty(ref created, value ?? new DateRange());
+            set => SetProperty(ref created, value ?? new());
         }
 
-        private DateRange modified = new DateRange();
+        private DateRange modified = new();
         public DateRange Modified
         {
             get => modified;
-            set => SetProperty(ref modified, value ?? new DateRange());
+            set => SetProperty(ref modified, value ?? new());
         }
 
-        private SizeRange fileSize = new SizeRange();
+        private SizeRange fileSize = new();
         public SizeRange FileSize
         {
             get => fileSize;
-            set => SetProperty(ref fileSize, value ?? new SizeRange());
+            set => SetProperty(ref fileSize, value ?? new());
         }
     }
 }

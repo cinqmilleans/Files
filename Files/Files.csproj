@@ -137,6 +137,7 @@
     <Compile Include="Converters\MultiBooleanConverter.cs" />
     <Compile Include="Converters\StorageDeleteOptionToBooleanConverter.cs" />
     <Compile Include="Converters\StringArrayToString.cs" />
+    <Compile Include="Converters\ToStringConverter.cs" />
     <Compile Include="Converters\WidthToRightMargin.cs" />
     <Compile Include="Converters\UInt32ToString.cs" />
     <Compile Include="Converters\VisiblityInvertConverter.cs" />
@@ -179,8 +180,8 @@
     <Compile Include="Filesystem\Permissions\FileSystemAccessRuleForUI.cs" />
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
-    <Compile Include="Filesystem\Search\SizeRange.cs" />
-    <Compile Include="Filesystem\Search\DateRange.cs" />
+    <Compile Include="Filesystem\Search\Size.cs" />
+    <Compile Include="Filesystem\Search\Date.cs" />
     <Compile Include="Filesystem\Search\SearchSettings.cs" />
     <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
     <Compile Include="Filesystem\StorageItems\BaseStorageItem.cs" />
@@ -314,6 +315,16 @@
     <Compile Include="UserControls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\SearchNavigator.cs" />
+    <Compile Include="UserControls\Search\RootSearchPage.xaml.cs">
+      <DependentUpon>RootSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\SettingSearchPage.xaml.cs">
+      <DependentUpon>SettingSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
+      <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Selection\ExtendPreviousItemSelectionStrategy.cs" />
     <Compile Include="Helpers\GenericItemsCollection.cs" />
     <Compile Include="UserControls\Selection\IgnorePreviousItemSelectionStrategy.cs" />
@@ -342,6 +353,10 @@
     <Compile Include="ViewModels\Previews\ArchivePreviewViewModel.cs" />
     <Compile Include="ViewModels\Previews\CodePreviewViewModel.cs" />
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
+    <Compile Include="ViewModels\Search\RootSearchPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchNavigatorViewModel.cs" />
+    <Compile Include="ViewModels\Search\SettingSearchPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\SizeRangePageViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModels\SidebarViewModel.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
@@ -1233,6 +1248,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\SearchBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\RootSearchPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\SettingSearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SizeRangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

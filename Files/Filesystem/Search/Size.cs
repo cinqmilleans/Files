@@ -8,6 +8,45 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
+    public struct Size : IEquatable<Size>, IComparable<Size>
+    {
+        public enum Units { Byte, Kibi, Mebi, Gibi, Tebi, Pebi }
+
+        private readonly ByteSize size;
+
+        public static Size MinValue { get; } = new Size(0);
+        public static Size MaxValue { get; } = new Size(ByteSize.MaxValue);
+
+        public Size(long bytes) => size = ByteSize.FromBytes(bytes);
+        public Size(double value, Units unit) => size = unit switch
+        {
+            Units.Byte => ByteSize.FromBytes(value),
+            Units.Kibi => ByteSize.FromKibiBytes(value),
+            Units.Mebi => ByteSize.FromMebiBytes(value),
+            Units.Gibi => ByteSize.FromGibiBytes(value),
+            Units.Tebi => ByteSize.FromTebiBytes(value),
+            Units.Pebi => ByteSize.FromPebiBytes(value),
+            _ => throw new ArgumentException(),
+        };
+        private Size(ByteSize size) => this.size = size;
+
+        public static Size operator +(Size s1, Size s2) => new Size(s1.size + s2.size);
+        public static Size operator -(Size s1, Size s2) => new Size(s1.size - s2.size);
+        public static bool operator ==(Size s1, Size s2) => s1.size == s2.size;
+        public static bool operator !=(Size s1, Size s2) => s1.size != s2.size;
+        public static bool operator <(Size s1, Size s2) => s1.size < s2.size;
+        public static bool operator >(Size s1, Size s2) => s1.size > s2.size;
+        public static bool operator <=(Size s1, Size s2) => s1.size <= s2.size;
+        public static bool operator >=(Size s1, Size s2) => s1.size >= s2.size;
+
+        public override int GetHashCode() => size.GetHashCode();
+        public override bool Equals(object other) => other is Size size && Equals(size);
+        public bool Equals(Size other) => other.size.Equals(size);
+        public int CompareTo(Size other) => other.size.CompareTo(size);
+
+        public override string ToString() => size.ToBinaryString().ConvertSizeAbbreviation();
+    }
+
     public class SizeRange : IEquatable<SizeRange>, IFormattable
     {
         private static readonly Lazy<SizeRange> all = new Lazy<SizeRange>(() => new SizeRange(new AllRange()));
@@ -194,44 +233,5 @@ namespace Files.Filesystem.Search
             public override string FullFormat => "Between {0} and {1}";
             public BetweenRange(Size minSize, Size maxSize) => (MinSize, MaxSize) = (minSize, maxSize);
         }
-    }
-
-    public struct Size : IEquatable<Size>, IComparable<Size>
-    {
-        public enum Units { Byte, Kibi, Mebi, Gibi, Tebi, Pebi }
-
-        private readonly ByteSize size;
-
-        public static Size MinValue { get; } = new Size(0);
-        public static Size MaxValue { get; } = new Size(ByteSize.MaxValue);
-
-        public Size(long bytes) => size = ByteSize.FromBytes(bytes);
-        public Size(double value, Units unit) => size = unit switch
-        {
-            Units.Byte => ByteSize.FromBytes(value),
-            Units.Kibi => ByteSize.FromKibiBytes(value),
-            Units.Mebi => ByteSize.FromMebiBytes(value),
-            Units.Gibi => ByteSize.FromGibiBytes(value),
-            Units.Tebi => ByteSize.FromTebiBytes(value),
-            Units.Pebi => ByteSize.FromPebiBytes(value),
-            _ => throw new ArgumentException(),
-        };
-        private Size(ByteSize size) => this.size = size;
-
-        public static Size operator +(Size s1, Size s2) => new Size(s1.size + s2.size);
-        public static Size operator -(Size s1, Size s2) => new Size(s1.size - s2.size);
-        public static bool operator ==(Size s1, Size s2) => s1.size == s2.size;
-        public static bool operator !=(Size s1, Size s2) => s1.size != s2.size;
-        public static bool operator <(Size s1, Size s2) => s1.size < s2.size;
-        public static bool operator >(Size s1, Size s2) => s1.size > s2.size;
-        public static bool operator <=(Size s1, Size s2) => s1.size <= s2.size;
-        public static bool operator >=(Size s1, Size s2) => s1.size >= s2.size;
-
-        public override int GetHashCode() => size.GetHashCode();
-        public override bool Equals(object other) => other is Size size && Equals(size);
-        public bool Equals(Size other) => other.size.Equals(size);
-        public int CompareTo(Size other) => other.size.CompareTo(size);
-
-        public override string ToString() => size.ToBinaryString().ConvertSizeAbbreviation();
     }
 }
