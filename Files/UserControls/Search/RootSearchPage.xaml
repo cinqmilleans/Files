@@ -5,13 +5,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Files.ViewModels.Search"
+    xmlns:local="using:Files.UserControls.Search"
     xmlns:converters="using:Files.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>
 
         <converters:ToStringConverter x:Key="ToStringConverter" />
-        <converters:VisiblityInvertConverter x:Key="VisiblityInvertConverter" />
+
+        <local:SettingButtonTemplateSelector x:Key="SettingButtonTemplateSelector"
+            DateRangeTemplate="{StaticResource DateRangeTemplate}"
+            SizeRangeTemplate="{StaticResource SizeRangeTemplate}" />
 
         <DataTemplate x:Key="RootTemplate" x:DataType="vm:IRootSearchPageViewModel">
             <StackPanel Orientation="Vertical">
@@ -32,22 +36,23 @@
                     </Button>
                     <FontIcon Grid.Column="1" FontSize="14" Glyph="&#xE76C;" />
                 </Grid>
-                <Grid Margin="0,8,0,0" Visibility="{Binding SizePageViewModel.IsAll, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="32" />
-                    </Grid.ColumnDefinitions>
-                    <Button CornerRadius="8" Command="{x:Bind SizePageViewModel.SelectCommand}">
-                        <Button.Content>
-                            <StackPanel>
-                                <TextBlock  FontSize="14" FontWeight="SemiBold"
-                                    Text="{Binding SizePageViewModel.Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:n}'}" />
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
-                    <FontIcon Grid.Column="1" FontSize="14" Glyph="&#xE76C;" />
-                </Grid>
-
+                <ItemsControl ItemsSource="{x:Bind SettingPageViewModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ISettingSearchPageViewModel">
+                            <Grid Margin="0,8,0,0" Visibility="{Binding HasValue, Mode=OneWay}" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="32" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Grid.Column="0" FontSize="14" Glyph="{x:Bind Glyph}" />
+                                <Button Grid.Column="1" CornerRadius="8" Command="{x:Bind SelectCommand}"
+                                    Content="{Binding}" ContentTemplateSelector="{StaticResource SettingButtonTemplateSelector}" />
+                                <FontIcon Grid.Column="2" FontSize="14" Glyph="&#xE76C;" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 <StackPanel Orientation="Vertical" Spacing="4" Margin="0,16,0,0">
                     <TextBlock FontSize="14" FontWeight="SemiBold" Text="Search in" />
                     <CheckBox Content="Subfolders" IsChecked="True" />
@@ -65,17 +70,28 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
                                 <MenuFlyoutItem Text="Kind" />
-                                <MenuFlyoutItem Text="Date" />
-                                <MenuFlyoutItem Text="Size" Command="{x:Bind SizePageViewModel.SelectCommand}">
+                                <MenuFlyoutItem Text="{x:Bind CreatedPageViewModel.Title}" Command="{x:Bind CreatedPageViewModel.SelectCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xF0E2;" FontSize="14" />
+                                        <FontIcon Glyph="{x:Bind CreatedPageViewModel.Glyph}" FontSize="14" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Text="{x:Bind SizePageViewModel.Title}" Command="{x:Bind SizePageViewModel.SelectCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{x:Bind SizePageViewModel.Glyph}" FontSize="14" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutSubItem Text="File">
-                                    <MenuFlyoutItem Text="Creation Date" />
-                                    <MenuFlyoutItem Text="Last Modification Date" />
-                                    <MenuFlyoutItem Text="Last Read Date" />
+                                    <MenuFlyoutItem Text="{x:Bind CreatedPageViewModel.Title}" Command="{x:Bind CreatedPageViewModel.SelectCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="{x:Bind CreatedPageViewModel.Glyph}" FontSize="14" />
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Text="{x:Bind ModifiedPageViewModel.Title}" Command="{x:Bind ModifiedPageViewModel.SelectCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="{x:Bind ModifiedPageViewModel.Glyph}" FontSize="14" />
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
                                 </MenuFlyoutSubItem>
                                 <MenuFlyoutSubItem Text="Image">
                                     <MenuFlyoutItem Text="Aspect Ratio" />
@@ -91,6 +107,20 @@
                         </Button.Flyout>
                     </Button>
                 </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DateRangeTemplate" x:DataType="vm:IDateRangePageViewModel">
+            <StackPanel>
+                <TextBlock FontSize="14" FontWeight="SemiBold"
+                    Text="{Binding Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:n}'}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SizeRangeTemplate" x:DataType="vm:ISizeRangePageViewModel">
+            <StackPanel>
+                <TextBlock FontSize="14" FontWeight="SemiBold"
+                    Text="{Binding Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:n}'}" />
             </StackPanel>
         </DataTemplate>
 

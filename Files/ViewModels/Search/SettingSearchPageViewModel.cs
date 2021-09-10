@@ -10,6 +10,8 @@ namespace Files.ViewModels.Search
         string Glyph { get; }
         string Title { get; }
 
+        bool HasValue { get; }
+
         ICommand BackCommand { get; }
         ICommand SelectCommand { get; }
     }
@@ -19,6 +21,8 @@ namespace Files.ViewModels.Search
         public abstract string Glyph { get; }
         public abstract string Title { get; }
 
+        public abstract bool HasValue { get; }
+
         public ICommand BackCommand => Navigator.BackCommand;
         public ICommand SelectCommand { get; }
 
@@ -27,7 +31,10 @@ namespace Files.ViewModels.Search
         public SettingSearchPageViewModel(ISearchNavigatorViewModel navigator)
         {
             Navigator = navigator;
-            SelectCommand = new RelayCommand(() => Navigator.OpenPage(this));
+            SelectCommand = new RelayCommand(()
+                =>
+            Navigator.OpenPage(this)
+            );
         }
     }
 }

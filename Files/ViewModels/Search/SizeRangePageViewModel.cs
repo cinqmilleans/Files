@@ -1,25 +1,25 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.Input;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface ISizeRangePageViewModel : ISettingSearchPageViewModel
     {
-        bool IsAll { get; }
         SizeRange Range { get; set; }
 
-        ISizeRangePageLink AllLink { get; }
-        ISizeRangePageLink EmptyLink { get; }
-        ISizeRangePageLink TinyLink { get; }
-        ISizeRangePageLink SmallLink { get; }
-        ISizeRangePageLink MediumLink { get; }
-        ISizeRangePageLink LargeLink { get; }
-        ISizeRangePageLink VeryLargeLink { get; }
-        ISizeRangePageLink HugeLink { get; }
+        ISizeRangeLink AllLink { get; }
+        ISizeRangeLink EmptyLink { get; }
+        ISizeRangeLink TinyLink { get; }
+        ISizeRangeLink SmallLink { get; }
+        ISizeRangeLink MediumLink { get; }
+        ISizeRangeLink LargeLink { get; }
+        ISizeRangeLink VeryLargeLink { get; }
+        ISizeRangeLink HugeLink { get; }
     }
 
-    public interface ISizeRangePageLink
+    public interface ISizeRangeLink
     {
         SizeRange Range { get; }
         ICommand SelectCommand { get; }
@@ -30,61 +30,53 @@ namespace Files.ViewModels.Search
         public override string Glyph { get; } = "\xF0E2";
         public override string Title { get; } = "Size";
 
-        public bool IsAll => Navigator.Settings.FileSize.Equals(SizeRange.All);
+        public override bool HasValue => !AllLink.Range.Equals(Range);
 
         public SizeRange Range
         {
             get => Navigator.Settings.FileSize;
-            set
-            {
-                value ??= new();
-                if (!Navigator.Settings.FileSize.Equals(value))
-                {
-                    Navigator.Settings.FileSize = value;
-                }
-            }
+            set => Navigator.Settings.FileSize = value ?? new();
         }
 
-        public ISizeRangePageLink AllLink { get; }
-        public ISizeRangePageLink EmptyLink { get; }
-        public ISizeRangePageLink TinyLink { get; }
-        public ISizeRangePageLink SmallLink { get; }
-        public ISizeRangePageLink MediumLink { get; }
-        public ISizeRangePageLink LargeLink { get; }
-        public ISizeRangePageLink VeryLargeLink { get; }
-        public ISizeRangePageLink HugeLink { get; }
+        public ISizeRangeLink AllLink { get; }
+        public ISizeRangeLink EmptyLink { get; }
+        public ISizeRangeLink TinyLink { get; }
+        public ISizeRangeLink SmallLink { get; }
+        public ISizeRangeLink MediumLink { get; }
+        public ISizeRangeLink LargeLink { get; }
+        public ISizeRangeLink VeryLargeLink { get; }
+        public ISizeRangeLink HugeLink { get; }
 
         public SizeRangePageViewModel(ISearchNavigatorViewModel navigator) : base(navigator)
         {
-            AllLink = GetLink(SizeRange.All);
-            EmptyLink = GetLink(SizeRange.Empty);
-            TinyLink = GetLink(SizeRange.Tiny);
-            SmallLink = GetLink(SizeRange.Small);
-            MediumLink = GetLink(SizeRange.Medium);
-            LargeLink = GetLink(SizeRange.Large);
-            VeryLargeLink = GetLink(SizeRange.VeryLarge);
-            HugeLink = GetLink(SizeRange.Huge);
+            AllLink = GetLink(NamedSizeRange.Names.All);
+            EmptyLink = GetLink(NamedSizeRange.Names.Empty);
+            TinyLink = GetLink(NamedSizeRange.Names.Tiny);
+            SmallLink = GetLink(NamedSizeRange.Names.Small);
+            MediumLink = GetLink(NamedSizeRange.Names.Medium);
+            LargeLink = GetLink(NamedSizeRange.Names.Large);
+            VeryLargeLink = GetLink(NamedSizeRange.Names.VeryLarge);
+            HugeLink = GetLink(NamedSizeRange.Names.Huge);
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
 
-            ISizeRangePageLink GetLink(SizeRange range) => new SizeRangePageLink
+            ISizeRangeLink GetLink(NamedSizeRange.Names name) => new SizeRangeLink
             {
-                Range = range,
-                SelectCommand = new RelayCommand(() => Range = range),
+                Range = new NamedSizeRange(name),
+                SelectCommand = new RelayCommand(() => Range = new NamedSizeRange(name)),
             };
         }
 
-        private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "FileSize")
             {
-                Range = Navigator.Settings.FileSize;
                 OnPropertyChanged(nameof(Range));
-                OnPropertyChanged(nameof(IsAll));
+                OnPropertyChanged(nameof(HasValue));
             }
         }
 
-        private class SizeRangePageLink : ISizeRangePageLink
+        private class SizeRangeLink : ISizeRangeLink
         {
             public SizeRange Range { get; set; }
             public ICommand SelectCommand { get; set; }

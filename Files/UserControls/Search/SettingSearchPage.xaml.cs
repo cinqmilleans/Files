@@ -8,11 +8,11 @@ namespace Files.UserControls.Search
     public sealed partial class SettingSearchPage : Page
     {
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(ISizeRangePageViewModel), typeof(SettingSearchPage), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(ISettingSearchPageViewModel), typeof(SettingSearchPage), new PropertyMetadata(null));
 
-        public ISizeRangePageViewModel ViewModel
+        public ISettingSearchPageViewModel ViewModel
         {
-            get => (ISizeRangePageViewModel)GetValue(ViewModelProperty);
+            get => (ISettingSearchPageViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
@@ -21,16 +21,18 @@ namespace Files.UserControls.Search
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ViewModel = e.Parameter as ISizeRangePageViewModel;
+            ViewModel = e.Parameter as ISettingSearchPageViewModel;
         }
     }
 
     public class SettingSearchPageTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate DateRangeTemplate { get; set; }
         public DataTemplate SizeRangeTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
+            IDateRangePageViewModel _ => DateRangeTemplate,
             ISizeRangePageViewModel _ => SizeRangeTemplate,
             _ => null,
         };

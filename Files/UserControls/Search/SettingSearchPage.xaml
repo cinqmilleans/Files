@@ -15,21 +15,26 @@
         <converters:VisiblityInvertConverter x:Key="VisiblityInvertConverter" />
 
         <local:SettingSearchPageTemplateSelector x:Key="SettingTemplateSelector"
+            DateRangeTemplate="{StaticResource DateRangeTemplate}"
             SizeRangeTemplate="{StaticResource SizeRangeTemplate}" />
+
+        <DataTemplate x:Key="DateRangeTemplate" x:DataType="vm:IDateRangePageViewModel">
+            <StackPanel Orientation="Vertical" Width="200">
+                <Button Content="{Binding Mode=OneWay}" Command="{x:Bind BackCommand}" Style="{StaticResource SettingTitleButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
 
         <DataTemplate x:Key="SizeRangeTemplate" x:DataType="vm:ISizeRangePageViewModel">
             <StackPanel Orientation="Vertical" Width="200">
                 <Button Content="{Binding Mode=OneWay}" Command="{x:Bind BackCommand}" Style="{StaticResource SettingTitleButtonStyle}" />
-                <Rectangle Height="1" Margin="0,0,0,8" HorizontalAlignment="Stretch" Fill="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
                 <StackPanel MinHeight="64">
-                    <StackPanel Orientation="Vertical" Margin="8,0,8,16"
-                    Visibility="{x:Bind IsAll, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
+                    <StackPanel Orientation="Vertical" Margin="8,0,8,16" Visibility="{x:Bind HasValue, Mode=OneWay}">
                         <TextBlock Margin="8,8,0,0"  TextWrapping="Wrap" Text="Only files whose size is" />
                         <TextBlock
                         Margin="8,0,0,0" FontSize="13" TextWrapping="Wrap" FontWeight="Bold"
                         Text="{x:Bind Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:N}'}" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="8,0,8,16" Visibility="{x:Bind IsAll, Mode=OneWay}">
+                    <StackPanel Orientation="Vertical" Margin="8,0,8,16" Visibility="{x:Bind HasValue, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
                         <TextBlock Margin="8,8,0,0" TextWrapping="Wrap" Text="No file size range selected" />
                     </StackPanel>
                 </StackPanel>
@@ -82,22 +87,25 @@
             <Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate x:DataType="vm:ISettingSearchPageViewModel">
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="32" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="32" />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon FontSize="18" HorizontalAlignment="Left" Glyph="{x:Bind Glyph}" />
-                            <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Title}" />
-                            <FontIcon Grid.Column="2" FontSize="18" HorizontalAlignment="Right" Glyph="&#xE973;" />
-                        </Grid>
+                        <StackPanel Orientation="Vertical">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="32" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon FontSize="18" HorizontalAlignment="Left" Glyph="{x:Bind Glyph}" />
+                                <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Title}" />
+                                <FontIcon Grid.Column="2" FontSize="18" HorizontalAlignment="Right" Glyph="&#xE973;" />
+                            </Grid>
+                            <Rectangle Height="1" Margin="0,0,0,8" HorizontalAlignment="Stretch" Fill="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="SizeRangeLinkTemplate" x:DataType="vm:ISizeRangePageLink">
+        <DataTemplate x:Key="SizeRangeLinkTemplate" x:DataType="vm:ISizeRangeLink">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
                 <TextBlock
                     FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"

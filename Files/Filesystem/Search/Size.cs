@@ -2,7 +2,6 @@
 using Files.Extensions;
 using Microsoft.Toolkit.Uwp;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -49,189 +48,121 @@ namespace Files.Filesystem.Search
 
     public class SizeRange : IEquatable<SizeRange>, IFormattable
     {
-        private static readonly Lazy<SizeRange> all = new Lazy<SizeRange>(() => new SizeRange(new AllRange()));
-        private static readonly Lazy<SizeRange> empty = new Lazy<SizeRange>(() => new SizeRange(new EmptyRange()));
-        private static readonly Lazy<SizeRange> tiny = new Lazy<SizeRange>(() => new SizeRange(new TinyRange()));
-        private static readonly Lazy<SizeRange> small = new Lazy<SizeRange>(() => new SizeRange(new SmallRange()));
-        private static readonly Lazy<SizeRange> medium = new Lazy<SizeRange>(() => new SizeRange(new MediumRange()));
-        private static readonly Lazy<SizeRange> large = new Lazy<SizeRange>(() => new SizeRange(new LargeRange()));
-        private static readonly Lazy<SizeRange> veryLarge = new Lazy<SizeRange>(() => new SizeRange(new VeryLargeRange()));
-        private static readonly Lazy<SizeRange> huge = new Lazy<SizeRange>(() => new SizeRange(new HugeRange()));
+        public Size MinSize { get; }
+        public Size MaxSize { get; }
 
-        private readonly Range range;
+        public SizeRange() : this(Size.MinValue, Size.MaxValue) {}
+        public SizeRange(Size minSize, Size maxSize) => (MinSize, MaxSize) = minSize <= maxSize ? (minSize, maxSize) : (maxSize, minSize);
+        protected SizeRange((Size minSize, Size maxSize) range) : this(range.minSize, range.maxSize) {}
 
-        public static SizeRange All => all.Value;
-        public static SizeRange Empty => empty.Value;
-        public static SizeRange Tiny => tiny.Value;
-        public static SizeRange Small => small.Value;
-        public static SizeRange Medium => medium.Value;
-        public static SizeRange Large => large.Value;
-        public static SizeRange VeryLarge => veryLarge.Value;
-        public static SizeRange Huge => huge.Value;
+        public void Deconstruct(out Size minSize, out Size maxSize) => (minSize, maxSize) = (MinSize, MaxSize);
 
-        public static IEnumerable<SizeRange> NamedRanges
+        public override int GetHashCode() => (MinSize, MaxSize).GetHashCode();
+        public override bool Equals(object other) => other is SizeRange range && Equals(range);
+        public virtual bool Equals(SizeRange other) => (other.MinSize, other.MaxSize).Equals((MinSize, MaxSize));
+
+        public override string ToString() => ToString("G");
+        public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
+        public virtual string ToString(string format, IFormatProvider formatProvider)
         {
-            get
+            bool hasMinSize = MinSize != Size.MinValue && MaxSize != Size.MaxValue;
+            bool hasMaxSize = MaxSize != Size.MaxValue && MaxSize != Size.MaxValue;
+
+            return format switch
             {
-                yield return All;
-                yield return Empty;
-                yield return Tiny;
-                yield return Small;
-                yield return Medium;
-                yield return Large;
-                yield return VeryLarge;
-                yield return Huge;
-            }
-        }
-
-        public Size MinSize => range.MinSize;
-        public Size MaxSize => range.MaxSize;
-
-        public SizeRange() : this(new AllRange()) { }
-        public SizeRange(Size minSize, Size maxSize) => range = GetRange(minSize, maxSize);
-        private SizeRange(Range range) => this.range = range;
-
-        public void Deconstruct(out Size minSize, out Size maxSize) => (minSize, maxSize) = range;
-
-        public override int GetHashCode() => range.GetHashCode();
-        public override bool Equals(object other) => range.Equals(other);
-        public virtual bool Equals(SizeRange other) => range.Equals(other.range);
-
-        public override string ToString() => range.ToString();
-        public string ToString(string format) => range.ToString(format);
-        public virtual string ToString(string format, IFormatProvider formatProvider) => range.ToString(format, formatProvider);
-
-        private static Range GetRange(Size minSize, Size maxSize)
-        {
-            if (minSize > maxSize)
-            {
-                (minSize, maxSize) = (maxSize, minSize);
-            }
-
-            var named = NamedRanges.FirstOrDefault(range => (range.MinSize, range.MaxSize).Equals((minSize, maxSize)));
-            if (named is not null)
-            {
-                return named.range;
-            }
-
-            if (minSize.Equals(Size.MaxValue))
-            {
-                return new MaxRange();
-            }
-            if (minSize.Equals(maxSize))
-            {
-                return new EqualRange(minSize);
-            }
-            if (minSize.Equals(Size.MinValue))
-            {
-                return new LessRange(maxSize);
-            }
-            if (maxSize.Equals(Size.MaxValue))
-            {
-                return new GreaterRange(minSize);
-            }
-            return new BetweenRange(minSize, maxSize);
-        }
-
-        private abstract class Range : IEquatable<Range>, IFormattable
-        {
-            public virtual Size MinSize { get; } = Size.MinValue;
-            public virtual Size MaxSize { get; } = Size.MaxValue;
-
-            public virtual string Name => null;
-            public virtual string ShortFormat => string.Empty;
-            public virtual string FullFormat => ShortFormat;
-
-            public void Deconstruct(out Size minSize, out Size maxSize)
-                => (minSize, maxSize) = (MinSize, MaxSize);
-
-            public override int GetHashCode() => (MinSize, MaxSize).GetHashCode();
-            public override bool Equals(object other) => other is Range range && Equals(range);
-            public bool Equals(Range other) => (other.MinSize, other.MaxSize).Equals((MinSize, MaxSize));
-
-            public override string ToString() => ToString("G");
-            public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
-            public string ToString(string format, IFormatProvider formatProvider) => format switch
-            {
-                "G" => ToString("N", formatProvider),
-                "n" => Name ?? ToString("r", formatProvider),
-                "N" => Name ?? ToString("R", formatProvider),
-                "r" => string.Format(ShortFormat, MinSize, MaxSize),
-                "R" => string.Format(FullFormat, MinSize, MaxSize),
+                "r" => string.Format(GetShortFormat(), MinSize, MaxSize),
+                "R" => string.Format(GetFullFormat(), MinSize, MaxSize),
                 _ => string.Empty,
             };
+
+            string GetShortFormat() => (hasMinSize, hasMaxSize) switch
+            {
+                (false, false) => string.Empty,
+                (true, false) => "< {1}",
+                (false, true) => "> {1}",
+                _ when MinSize == MaxSize => "{1}",
+                _ => "{0} - {1}",
+            };
+            string GetFullFormat() => (hasMinSize, hasMaxSize) switch
+            {
+                (false, false) => string.Empty,
+                (true, false) => "Less than {1}",
+                (false, true) => "Greater than {1}",
+                _ when MinSize == MaxSize => "{1}",
+                _ => "Between {0} and {1}",
+            };
         }
-        private class AllRange : Range
+    }
+
+    public class NamedSizeRange : SizeRange, IEquatable<NamedSizeRange>
+    {
+        public enum Names { Unnamed, All, Empty, Tiny, Small, Medium, Large, VeryLarge, Huge }
+
+        public Names Name { get; }
+
+        public NamedSizeRange() : this(Names.All) { }
+        public NamedSizeRange(Names name) : base(GetRange(name)) => Name = name;
+        public NamedSizeRange(Size minSize, Size maxSize) : base(minSize, maxSize) => Name = GetName(minSize, maxSize);
+
+        public void Deconstruct(out Names name, out Size minSize, out Size maxSize) => (name, minSize, maxSize) = (Name, MinSize, MaxSize);
+
+        public override int GetHashCode() => (Name, MinSize, MaxSize).GetHashCode();
+        public override bool Equals(object other) => other switch
         {
-            public override string Name => string.Empty;
-        }
-        private class EmptyRange : EqualRange
+            NamedSizeRange range => Equals(range),
+            SizeRange range => Equals(range),
+            _ => false,
+        };
+        public virtual bool Equals(NamedSizeRange other) => (other.Name, other.MinSize, other.MaxSize).Equals((Name, MinSize, MaxSize));
+
+        public override string ToString(string format, IFormatProvider formatProvider)
         {
-            public override string Name => "Empty";
-            public EmptyRange() : base(new Size(0)) {}
+            return format switch
+            {
+                "n" => GetLabel(Name) ?? base.ToString("r", formatProvider),
+                "N" => GetLabel(Name) ?? base.ToString("R", formatProvider),
+                _ => base.ToString(format, formatProvider),
+            };
+
+            static string GetLabel(Names name) => name switch
+            {
+                Names.All => string.Empty,
+                Names.Empty => "Empty",
+                Names.Tiny => "ItemSizeText_Tiny".GetLocalized(),
+                Names.Small => "ItemSizeText_Small".GetLocalized(),
+                Names.Medium => "ItemSizeText_Medium".GetLocalized(),
+                Names.Large => "ItemSizeText_Large".GetLocalized(),
+                Names.VeryLarge => "ItemSizeText_VeryLarge".GetLocalized(),
+                Names.Huge => "ItemSizeText_Huge".GetLocalized(),
+                _ => null,
+            };
         }
-        private class TinyRange : LessRange
+
+        private static Names GetName(Size minSize, Size maxSize)
         {
-            public override string Name => "ItemSizeText_Tiny".GetLocalized();
-            public TinyRange() : base(new Size(16, Size.Units.Kibi)) {}
+            var names = Enum.GetValues(typeof(Names)).Cast<Names>();
+            foreach (var name in names)
+            {
+                var range = new NamedSizeRange(name);
+                if ((range.MinSize, range.MaxSize).Equals((minSize, maxSize)))
+                {
+                    return name;
+                }
+            }
+            return Names.Unnamed;
         }
-        private class SmallRange : BetweenRange
+
+        private static (Size, Size) GetRange(Names name) => name switch
         {
-            public override string Name => "ItemSizeText_Small".GetLocalized();
-            public SmallRange() : base(new Size(16, Size.Units.Kibi), new Size(1, Size.Units.Mebi)) {}
-        }
-        private class MediumRange : BetweenRange
-        {
-            public override string Name => "ItemSizeText_Medium".GetLocalized();
-            public MediumRange() : base(new Size(1, Size.Units.Mebi), new Size(128, Size.Units.Mebi)) {}
-        }
-        private class LargeRange : BetweenRange
-        {
-            public override string Name => "ItemSizeText_Large".GetLocalized();
-            public LargeRange() : base(new Size(128, Size.Units.Mebi), new Size(1, Size.Units.Gibi)) {}
-        }
-        private class VeryLargeRange : BetweenRange
-        {
-            public override string Name => "ItemSizeText_VeryLarge".GetLocalized();
-            public VeryLargeRange() : base(new Size(1, Size.Units.Gibi), new Size(5, Size.Units.Gibi)) {}
-        }
-        private class HugeRange : GreaterRange
-        {
-            public override string Name => "ItemSizeText_Huge".GetLocalized();
-            public HugeRange() : base(new Size(5, Size.Units.Gibi)) {}
-        }
-        private class MaxRange : Range
-        {
-            public override Size MinSize { get; } = Size.MaxValue;
-        }
-        private class EqualRange : Range
-        {
-            public override Size MinSize { get; }
-            public override Size MaxSize => MinSize;
-            public override string ShortFormat => "{1}";
-            public EqualRange(Size size) => MinSize = size;
-        }
-        private class LessRange : Range
-        {
-            public override Size MaxSize { get; }
-            public override string ShortFormat => "< {1}";
-            public override string FullFormat => "Less than {1}";
-            public LessRange(Size maxSize) => MaxSize = maxSize;
-        }
-        private class GreaterRange : Range
-        {
-            public override Size MinSize { get; }
-            public override string ShortFormat => "> {0}";
-            public override string FullFormat => "Greater than {0}";
-            public GreaterRange(Size minSize) => MinSize = minSize;
-        }
-        private class BetweenRange : Range
-        {
-            public override Size MinSize { get; }
-            public override Size MaxSize { get; }
-            public override string ShortFormat => "{0} - {1}";
-            public override string FullFormat => "Between {0} and {1}";
-            public BetweenRange(Size minSize, Size maxSize) => (MinSize, MaxSize) = (minSize, maxSize);
-        }
+            Names.All => (Size.MinValue, Size.MaxValue),
+            Names.Empty => (new Size(0), new Size(0)),
+            Names.Tiny => (new Size(0), new Size(16, Size.Units.Kibi)),
+            Names.Small => (new Size(16, Size.Units.Kibi), new Size(1, Size.Units.Mebi)),
+            Names.Medium => (new Size(1, Size.Units.Mebi), new Size(128, Size.Units.Mebi)),
+            Names.Large => (new Size(128, Size.Units.Mebi), new Size(1, Size.Units.Gibi)),
+            Names.VeryLarge => (new Size(1, Size.Units.Gibi), new Size(5, Size.Units.Gibi)),
+            Names.Huge => (new Size(5, Size.Units.Gibi), Size.MaxValue),
+            _ => throw new ArgumentException(),
+        };
     }
 }

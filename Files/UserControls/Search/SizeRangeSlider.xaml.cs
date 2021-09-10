@@ -53,7 +53,7 @@ namespace Files.UserControls.Search
                     return;
                 }
 
-                value ??= SizeRange.All;
+                value ??= new NamedSizeRange(NamedSizeRange.Names.All);
                 SetValue(RangeProperty, value);
 
                 var (minSize, maxSize) = value;

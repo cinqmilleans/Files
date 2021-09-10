@@ -24,4 +24,21 @@ namespace Files.UserControls.Search
             ViewModel = e.Parameter as IRootSearchPageViewModel;
         }
     }
+
+    public class SettingButtonTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DateRangeTemplate { get; set; }
+        public DataTemplate SizeRangeTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            IDateRangePageViewModel _ => DateRangeTemplate,
+            ISizeRangePageViewModel _ => SizeRangeTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
+    }
+
 }
