@@ -65,8 +65,8 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public virtual string ToString(string format, IFormatProvider formatProvider)
         {
-            bool hasMinSize = MinSize != Size.MinValue && MaxSize != Size.MaxValue;
-            bool hasMaxSize = MaxSize != Size.MaxValue && MaxSize != Size.MaxValue;
+            bool hasMinSize = MinSize != Size.MinValue && MinSize != Size.MaxValue;
+            bool hasMaxSize = MaxSize != Size.MinValue && MaxSize != Size.MaxValue;
 
             return format switch
             {
@@ -86,8 +86,8 @@ namespace Files.Filesystem.Search
             string GetFullFormat() => (hasMinSize, hasMaxSize) switch
             {
                 (false, false) => string.Empty,
-                (true, false) => "Less than {1}",
-                (false, true) => "Greater than {1}",
+                (false, true) => "Less than {1}",
+                (true, false) => "Greater than {0}",
                 _ when MinSize == MaxSize => "{1}",
                 _ => "Between {0} and {1}",
             };
@@ -140,7 +140,7 @@ namespace Files.Filesystem.Search
 
         private static Names GetName(Size minSize, Size maxSize)
         {
-            var names = Enum.GetValues(typeof(Names)).Cast<Names>();
+            var names = Enum.GetValues(typeof(Names)).Cast<Names>().Where(name => name != Names.Unnamed);
             foreach (var name in names)
             {
                 var range = new NamedSizeRange(name);
