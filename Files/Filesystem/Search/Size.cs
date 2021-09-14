@@ -145,6 +145,15 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
+            if (format == "n")
+            {
+                return ToString("r", formatProvider);
+            }
+            if (format == "N")
+            {
+                return ToString("R", formatProvider);
+            }
+
             if (MinSize == MaxSize)
             {
                 return $"{MinSize}";
@@ -210,22 +219,24 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            if (MinName == MaxName)
+            if (format == "r" || format == "R")
             {
-                return GetLabel(MinName);
+                return new SizeRange(MinSize, MaxSize).ToString(format, formatProvider);
             }
 
             bool hasMin = MinName != Names.Empty && MinName != Names.Huge;
             bool hasMax = MaxName != Names.Empty && MaxName != Names.Huge;
 
-            return format switch
+            if (format == "n" || format == "N")
             {
-                "n" => string.Format(GetFormat(), GetLabel(MinName), GetLabel(MaxName)),
-                "N" => string.Format(GetFormat(), GetLabel(MinName), GetLabel(MaxName)),
-                "r" => new SizeRange(MinSize, MaxSize).ToString("r", formatProvider),
-                "R" => new SizeRange(MinSize, MaxSize).ToString("R", formatProvider),
-                _ => null,
-            };
+                if (MinName == MaxName)
+                {
+                    return GetLabel(MinName);
+                }
+                return string.Format(GetFormat(), GetLabel(MinName), GetLabel(MaxName));
+            }
+
+            return string.Empty;
 
             string GetLabel(Names name) => name switch
             {
@@ -241,12 +252,12 @@ namespace Files.Filesystem.Search
             string GetFormat() => (format, hasMin, hasMax) switch
             {
                 (_, false, false) => string.Empty,
-                ("r", false, true) => "< {1}",
-                ("r", true, false) => "> {0}",
-                ("r", true, true) _ => "{0} - {1}",
-                ("R", false, true) => "Less than {1}",
-                ("R", true, false) => "Greater than {0}",
-                ("R", true, true) => "Between {0} and {1}",
+                ("n", false, true) => "< {1}",
+                ("n", true, false) => "> {0}",
+                ("n", true, true) _ => "{0} - {1}",
+                ("N", false, true) => "Less than {1}",
+                ("N", true, false) => "Greater than {0}",
+                ("N", true, true) => "Between {0} and {1}",
                 _ => string.Empty,
             };
         }

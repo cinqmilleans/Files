@@ -10,6 +10,8 @@ namespace Files.UserControls.Search
 {
     public sealed partial class SizeRangeSlider : UserControl
     {
+        private readonly ISizeRangeFactory factory = new SizeRangeFactory();
+
         private TextBlock ToolTipBlock;
 
         private bool isInUpdateRange = false;
@@ -97,7 +99,7 @@ namespace Files.UserControls.Search
         public SizeRangeSlider()
         {
             InitializeComponent();
-            SetValue(RangeProperty, new SizeRange());
+            SetValue(RangeProperty, NameSizeRange.All);
 
             Selector.Minimum = 0;
             Selector.Maximum = 3 * (Steps.Count - 1);
@@ -115,8 +117,8 @@ namespace Files.UserControls.Search
             {
                 Range = e.ChangedRangeProperty switch
                 {
-                    RangeSelectorProperty.MinimumValue => new SizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
-                    RangeSelectorProperty.MaximumValue => new SizeRange(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
+                    RangeSelectorProperty.MinimumValue => factory.Build(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
+                    RangeSelectorProperty.MaximumValue => factory.Build(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
                     _ => throw new ArgumentException(),
                 };
             }

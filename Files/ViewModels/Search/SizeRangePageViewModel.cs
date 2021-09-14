@@ -28,7 +28,7 @@ namespace Files.ViewModels.Search
         public override string Glyph { get; } = "\xF0E2";
         public override string Title { get; } = "Size";
 
-        public override bool HasValue => Range.MinSize == Size.MinValue && Range.MaxSize == Size.MaxValue;
+        public override bool HasValue => Range.MinSize != Size.MinValue || Range.MaxSize != Size.MaxValue;
 
         public ISizeRange Range
         {
@@ -83,11 +83,15 @@ namespace Files.ViewModels.Search
             }
 
             private bool GetIsSelected()
-                => viewModel.Range is NameSizeRange range && range.MinName <= Range.MinName && range.MaxName >= Range.MaxName;
+                => viewModel.Range is NameSizeRange range && viewModel.HasValue && range.MinName <= Range.MinName && range.MaxName >= Range.MaxName;
 
             private void Toggle()
             {
-                if (IsSelected)
+                if (!viewModel.HasValue)
+                {
+                    viewModel.Range = Range;
+                }
+                else if (IsSelected)
                 {
                     Deselect();
                 }
@@ -100,11 +104,11 @@ namespace Files.ViewModels.Search
             {
                 if (viewModel.Range is NameSizeRange range)
                 {
-                    if (range.MinName < Range.MinName)
+                    if (Range.MinName < range.MinName)
                     {
                         viewModel.Range = new NameSizeRange(Range.MinName, range.MaxName);
                     }
-                    if (range.MaxName > Range.MaxName)
+                    else if (Range.MaxName > range.MaxName)
                     {
                         viewModel.Range = new NameSizeRange(range.MinName, Range.MaxName);
                     }
@@ -116,20 +120,21 @@ namespace Files.ViewModels.Search
             }
             private void Deselect()
             {
-                /*if (viewModel.Range is NameSizeRange range)
+                if (viewModel.Range is NameSizeRange range)
                 {
-                    if (range.MinName == Range.MinName)
+                    if (range.MinName == Range.MinName && range.MinName < NameSizeRange.Names.Huge)
                     {
-                        viewModel.Range = new NameSizeRange(Range.MinName, range.MaxName);
+                        viewModel.Range = new NameSizeRange(range.MinName + 1, range.MaxName);
                     }
-                    else if (range.MaxName == Range.MaxName)
+                    else if (range.MaxName == Range.MaxName && range.MaxName > NameSizeRange.Names.Empty)
                     {
-                        viewModel.Range = new NameSizeRange(range.MinName, Range.MaxName);
+                        viewModel.Range = new NameSizeRange(range.MinName, range.MaxName - 1);
                     }
                     else
                     {
+                        viewModel.Range = NameSizeRange.All;
                     }
-                }*/
+                }
             }
 
             private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
