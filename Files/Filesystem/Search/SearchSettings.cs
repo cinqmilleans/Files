@@ -7,7 +7,7 @@ namespace Files.Filesystem.Search
     {
         DateRange Created { get; set; }
         DateRange Modified { get; set; }
-        SizeRange FileSize { get; set; }
+        ISizeRange FileSize { get; set; }
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
@@ -28,11 +28,11 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref modified, value ?? new());
         }
 
-        private SizeRange fileSize = new();
-        public SizeRange FileSize
+        private ISizeRange fileSize = NameSizeRange.All;
+        public ISizeRange FileSize
         {
             get => fileSize;
-            set => SetProperty(ref fileSize, value ?? new());
+            set => SetProperty(ref fileSize, value ?? NameSizeRange.All);
         }
     }
 }

@@ -322,6 +322,9 @@
     <Compile Include="UserControls\Search\SettingSearchPage.xaml.cs">
       <DependentUpon>SettingSearchPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\SizeRangePicker.xaml.cs">
+      <DependentUpon>SizeRangePicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
       <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
     </Compile>
@@ -1259,6 +1262,10 @@
     <Page Include="UserControls\Search\SettingSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SizeRangePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\Search\SizeRangeSlider.xaml">
       <SubType>Designer</SubType>

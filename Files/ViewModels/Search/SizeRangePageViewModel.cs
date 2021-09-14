@@ -1,28 +1,26 @@
 ﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface ISizeRangePageViewModel : ISettingSearchPageViewModel
     {
-        SizeRange Range { get; set; }
-
-        ISizeRangeLink AllLink { get; }
-        ISizeRangeLink EmptyLink { get; }
-        ISizeRangeLink TinyLink { get; }
-        ISizeRangeLink SmallLink { get; }
-        ISizeRangeLink MediumLink { get; }
-        ISizeRangeLink LargeLink { get; }
-        ISizeRangeLink VeryLargeLink { get; }
-        ISizeRangeLink HugeLink { get; }
+        ISizeRange Range { get; set; }
+        ICommand ClearCommand { get; }
+        IEnumerable<ISizeRangeLink> Links { get; }
     }
 
-    public interface ISizeRangeLink
+    public interface ISizeRangeLink : INotifyPropertyChanged
     {
-        SizeRange Range { get; }
-        ICommand SelectCommand { get; }
+        bool IsSelected { get; }
+        NameSizeRange Range { get; }
+        ICommand ToggleCommand { get; }
     }
 
     public class SizeRangePageViewModel : SettingSearchPageViewModel, ISizeRangePageViewModel
@@ -30,56 +28,118 @@ namespace Files.ViewModels.Search
         public override string Glyph { get; } = "\xF0E2";
         public override string Title { get; } = "Size";
 
-        public override bool HasValue => !AllLink.Range.Equals(Range);
+        public override bool HasValue => Range.MinSize == Size.MinValue && Range.MaxSize == Size.MaxValue;
 
-        public SizeRange Range
+        public ISizeRange Range
         {
             get => Navigator.Settings.FileSize;
-            set => Navigator.Settings.FileSize = value ?? new();
+            set => Navigator.Settings.FileSize = value;
         }
 
-        public ISizeRangeLink AllLink { get; }
-        public ISizeRangeLink EmptyLink { get; }
-        public ISizeRangeLink TinyLink { get; }
-        public ISizeRangeLink SmallLink { get; }
-        public ISizeRangeLink MediumLink { get; }
-        public ISizeRangeLink LargeLink { get; }
-        public ISizeRangeLink VeryLargeLink { get; }
-        public ISizeRangeLink HugeLink { get; }
+        public ICommand ClearCommand { get; }
+        public IEnumerable<ISizeRangeLink> Links { get; }
 
         public SizeRangePageViewModel(ISearchNavigatorViewModel navigator) : base(navigator)
         {
-            AllLink = GetLink(NamedSizeRange.Names.All);
-            EmptyLink = GetLink(NamedSizeRange.Names.Empty);
-            TinyLink = GetLink(NamedSizeRange.Names.Tiny);
-            SmallLink = GetLink(NamedSizeRange.Names.Small);
-            MediumLink = GetLink(NamedSizeRange.Names.Medium);
-            LargeLink = GetLink(NamedSizeRange.Names.Large);
-            VeryLargeLink = GetLink(NamedSizeRange.Names.VeryLarge);
-            HugeLink = GetLink(NamedSizeRange.Names.Huge);
+            ClearCommand = new RelayCommand(() => Range = NameSizeRange.All);
+            Links = Enum.GetValues(typeof(NameSizeRange.Names)).Cast<NameSizeRange.Names>().Select(name => new SizeRangeLink(this, name));
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
-
-            ISizeRangeLink GetLink(NamedSizeRange.Names name) => new SizeRangeLink
-            {
-                Range = new NamedSizeRange(name),
-                SelectCommand = new RelayCommand(() => Range = new NamedSizeRange(name)),
-            };
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "FileSize")
+            if (e.PropertyName == nameof(ISearchSettings.FileSize))
             {
                 OnPropertyChanged(nameof(Range));
                 OnPropertyChanged(nameof(HasValue));
             }
         }
 
-        private class SizeRangeLink : ISizeRangeLink
+        private class SizeRangeLink : ObservableObject, ISizeRangeLink
         {
-            public SizeRange Range { get; set; }
-            public ICommand SelectCommand { get; set; }
+            private readonly SizeRangePageViewModel viewModel;
+
+            public NameSizeRange Range { get; set; }
+
+            private bool isSelected = false;
+            public bool IsSelected
+            {
+                get => isSelected;
+                set => SetProperty(ref isSelected, value);
+            }
+
+            public ICommand ToggleCommand { get; set; }
+
+            public SizeRangeLink(SizeRangePageViewModel viewModel, NameSizeRange.Names name)
+            {
+                this.viewModel = viewModel;
+
+                IsSelected = GetIsSelected();
+                Range = new NameSizeRange(name);
+                ToggleCommand = new RelayCommand(Toggle);
+
+                viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            }
+
+            private bool GetIsSelected()
+                => viewModel.Range is NameSizeRange range && range.MinName <= Range.MinName && range.MaxName >= Range.MaxName;
+
+            private void Toggle()
+            {
+                if (IsSelected)
+                {
+                    Deselect();
+                }
+                else
+                {
+                    Select();
+                }
+            }
+            private void Select()
+            {
+                if (viewModel.Range is NameSizeRange range)
+                {
+                    if (range.MinName < Range.MinName)
+                    {
+                        viewModel.Range = new NameSizeRange(Range.MinName, range.MaxName);
+                    }
+                    if (range.MaxName > Range.MaxName)
+                    {
+                        viewModel.Range = new NameSizeRange(range.MinName, Range.MaxName);
+                    }
+                }
+                else
+                {
+                    viewModel.Range = Range;
+                }
+            }
+            private void Deselect()
+            {
+                /*if (viewModel.Range is NameSizeRange range)
+                {
+                    if (range.MinName == Range.MinName)
+                    {
+                        viewModel.Range = new NameSizeRange(Range.MinName, range.MaxName);
+                    }
+                    else if (range.MaxName == Range.MaxName)
+                    {
+                        viewModel.Range = new NameSizeRange(range.MinName, Range.MaxName);
+                    }
+                    else
+                    {
+                    }
+                }*/
+            }
+
+            private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == nameof(ISizeRangePageViewModel.Range))
+                {
+                    IsSelected = GetIsSelected();
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+            }
         }
     }
 }

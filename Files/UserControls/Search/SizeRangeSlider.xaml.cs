@@ -42,10 +42,9 @@ namespace Files.UserControls.Search
         private static readonly DependencyProperty ToolTipProperty =
             DependencyProperty.Register(nameof(ToolTip), typeof(string), typeof(SizeRangeSlider), new PropertyMetadata(null));
 
-
-        public SizeRange Range
+        public ISizeRange Range
         {
-            get => (SizeRange)GetValue(RangeProperty);
+            get => (ISizeRange)GetValue(RangeProperty);
             set
             {
                 if (Range.Equals(value))
@@ -53,10 +52,9 @@ namespace Files.UserControls.Search
                     return;
                 }
 
-                value ??= new NamedSizeRange(NamedSizeRange.Names.All);
                 SetValue(RangeProperty, value);
 
-                var (minSize, maxSize) = value;
+                var (minSize, maxSize) = (value.MinSize, value.MaxSize);
 
                 int minStep = Steps.Contains(minSize) ? 3 * Steps.IndexOf(minSize) : 3 * Steps.IndexOf(Steps.Last(step => step <= minSize)) + 1;
                 int maxStep = Steps.Contains(maxSize) ? 3 * Steps.IndexOf(maxSize) : 3 * Steps.IndexOf(Steps.Last(step => step <= maxSize)) + 2;
@@ -85,20 +83,13 @@ namespace Files.UserControls.Search
                 if (ToolTipBlock is not null)
                 {
                     int index = int.Parse(value);
-                    if (index == Selector.Maximum)
+                    var size = (index % 3) switch
                     {
-                        ToolTipBlock.Text = "No limit";
-                    }
-                    else
-                    {
-                        var size = (index % 3) switch
-                        {
-                            1 => Range.MinSize,
-                            2 => Range.MaxSize,
-                            _ => Steps[index / 3],
-                        };
-                        ToolTipBlock.Text = size.ToString();
-                    }
+                        1 => Range.MinSize,
+                        2 => Range.MaxSize,
+                        _ => Steps[index / 3],
+                    };
+                    ToolTipBlock.Text = size.ToString("N");
                 }
             }
         }
@@ -106,7 +97,7 @@ namespace Files.UserControls.Search
         public SizeRangeSlider()
         {
             InitializeComponent();
-            SetValue(RangeProperty, new NamedSizeRange());
+            SetValue(RangeProperty, new SizeRange());
 
             Selector.Minimum = 0;
             Selector.Maximum = 3 * (Steps.Count - 1);
@@ -124,8 +115,8 @@ namespace Files.UserControls.Search
             {
                 Range = e.ChangedRangeProperty switch
                 {
-                    RangeSelectorProperty.MinimumValue => new NamedSizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
-                    RangeSelectorProperty.MaximumValue => new NamedSizeRange(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
+                    RangeSelectorProperty.MinimumValue => new SizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
+                    RangeSelectorProperty.MaximumValue => new SizeRange(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
                     _ => throw new ArgumentException(),
                 };
             }
