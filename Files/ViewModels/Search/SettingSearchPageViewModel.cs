@@ -31,10 +31,7 @@ namespace Files.ViewModels.Search
         public SettingSearchPageViewModel(ISearchNavigatorViewModel navigator)
         {
             Navigator = navigator;
-            SelectCommand = new RelayCommand(()
-                =>
-            Navigator.OpenPage(this)
-            );
+            SelectCommand = new RelayCommand(() => Navigator.OpenPage(this));
         }
     }
 }

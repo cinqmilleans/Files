@@ -20,22 +20,6 @@
         <DataTemplate x:Key="RootTemplate" x:DataType="vm:IRootSearchPageViewModel">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Search Options" FontSize="18" FontWeight="SemiBold" />
-
-                <Grid Margin="0,16,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="32" />
-                    </Grid.ColumnDefinitions>
-                    <Button CornerRadius="8">
-                        <Button.Content>
-                            <StackPanel>
-                                <TextBlock Text="Date" FontSize="12" />
-                                <TextBlock Text="November 8, 2020" FontSize="14" FontWeight="SemiBold" />
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
-                    <FontIcon Grid.Column="1" FontSize="14" Glyph="&#xE76C;" />
-                </Grid>
                 <ItemsControl ItemsSource="{x:Bind SettingPageViewModels}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:ISettingSearchPageViewModel">
@@ -69,7 +53,11 @@
                     <Button Grid.Column="1" Content="Filters" HorizontalAlignment="Stretch">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                <MenuFlyoutItem Text="Kind" />
+                                <MenuFlyoutItem Text="{x:Bind KindPageViewModel.Title}" Command="{x:Bind KindPageViewModel.SelectCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="{x:Bind KindPageViewModel.Glyph}" FontSize="14" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                                 <MenuFlyoutItem Text="{x:Bind CreatedPageViewModel.Title}" Command="{x:Bind CreatedPageViewModel.SelectCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="{x:Bind CreatedPageViewModel.Glyph}" FontSize="14" />

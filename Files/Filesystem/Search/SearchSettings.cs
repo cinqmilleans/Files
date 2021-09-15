@@ -5,8 +5,8 @@ namespace Files.Filesystem.Search
 {
     public interface ISearchSettings : INotifyPropertyChanged
     {
-        DateRange Created { get; set; }
-        DateRange Modified { get; set; }
+        IDateRange Created { get; set; }
+        IDateRange Modified { get; set; }
         ISizeRange FileSize { get; set; }
     }
 
@@ -14,18 +14,18 @@ namespace Files.Filesystem.Search
     {
         public static SearchSettings Default { get; } = new();
 
-        private DateRange created = new();
-        public DateRange Created
+        private IDateRange created = NameDateRange.All;
+        public IDateRange Created
         {
             get => created;
-            set => SetProperty(ref created, value ?? new());
+            set => SetProperty(ref created, value ?? NameDateRange.All);
         }
 
-        private DateRange modified = new();
-        public DateRange Modified
+        private IDateRange modified = NameDateRange.All;
+        public IDateRange Modified
         {
             get => modified;
-            set => SetProperty(ref modified, value ?? new());
+            set => SetProperty(ref modified, value ?? NameDateRange.All);
         }
 
         private ISizeRange fileSize = NameSizeRange.All;

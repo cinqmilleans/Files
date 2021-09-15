@@ -92,10 +92,6 @@ namespace Files.Filesystem.Search
         public ISizeRange Build(Size size) => Build(size);
         public ISizeRange Build(Size minSize, Size maxSize)
         {
-
-            if (minSize.Equals(new Size(1)))
-            {
-            }
             if (minSize > maxSize)
             {
                 (minSize, maxSize) = (maxSize, minSize);

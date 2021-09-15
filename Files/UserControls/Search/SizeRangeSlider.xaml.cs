@@ -39,7 +39,7 @@ namespace Files.UserControls.Search
         };
 
         public static readonly DependencyProperty RangeProperty =
-            DependencyProperty.Register(nameof(Range), typeof(SizeRange), typeof(SizeRangeSlider), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Range), typeof(ISizeRange), typeof(SizeRangeSlider), new PropertyMetadata(null));
 
         private static readonly DependencyProperty ToolTipProperty =
             DependencyProperty.Register(nameof(ToolTip), typeof(string), typeof(SizeRangeSlider), new PropertyMetadata(null));

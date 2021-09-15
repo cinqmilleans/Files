@@ -27,11 +27,13 @@ namespace Files.UserControls.Search
 
     public class SettingSearchPageTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate KindTemplate { get; set; }
         public DataTemplate DateRangeTemplate { get; set; }
         public DataTemplate SizeRangeTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
+            IKindPageViewModel _ => KindTemplate,
             IDateRangePageViewModel _ => DateRangeTemplate,
             ISizeRangePageViewModel _ => SizeRangeTemplate,
             _ => null,

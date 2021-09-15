@@ -1,116 +1,227 @@
 ﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface IDateRangePageViewModel : ISettingSearchPageViewModel
     {
-        DateRange Range { get; set; }
+        string LongTitle { get; }
 
-        IDateRangeLink AlwaysLink { get; }
-        IDateRangeLink TodayLink { get; }
-        IDateRangeLink YesterdayLink { get; }
-        IDateRangeLink ThisWeekLink { get; }
-        IDateRangeLink LastWeekLink { get; }
-        IDateRangeLink ThisMonthLink { get; }
-        IDateRangeLink LastMonthLink { get; }
-        IDateRangeLink ThisYearLink { get; }
-        IDateRangeLink LastYearLink { get; }
+        DateTimeOffset? MinDateTime { get; set; }
+        DateTimeOffset? MaxDateTime { get; set; }
+
+        IDateRange Range { get; set; }
+        ICommand ClearCommand { get; }
+        IEnumerable<IDateRangeLink> Links { get; }
     }
 
-    public interface IDateRangeLink
+    public interface IDateRangeLink : INotifyPropertyChanged
     {
-        DateRange Range { get; }
-        ICommand SelectCommand { get; }
+        bool IsSelected { get; }
+        NameDateRange Range { get; }
+        ICommand ToggleCommand { get; }
     }
 
     public abstract class DateRangePageViewModel : SettingSearchPageViewModel, IDateRangePageViewModel
     {
-        private readonly string propertyName;
+        private readonly Date today;
+        private readonly IDateRangeFactory factory;
+
+        private readonly string settingName;
 
         public override string Glyph { get; } = "\xE163";
-        public override string Title { get; } = "Creation Date";
+        public override string Title { get; } = "Date";
+        public abstract string LongTitle { get; }
 
-        public override bool HasValue => !AlwaysLink.Range.Equals(Range);
+        public override bool HasValue => Range.MinDate > Date.MinValue || Range.MaxDate < Date.Today;
 
-        public abstract DateRange Range { get; set; }
+        public abstract IDateRange Range { get; set; }
 
-        public IDateRangeLink AlwaysLink { get; }
-        public IDateRangeLink TodayLink { get; }
-        public IDateRangeLink YesterdayLink { get; }
-        public IDateRangeLink ThisWeekLink { get; }
-        public IDateRangeLink LastWeekLink { get; }
-        public IDateRangeLink ThisMonthLink { get; }
-        public IDateRangeLink LastMonthLink { get; }
-        public IDateRangeLink ThisYearLink { get; }
-        public IDateRangeLink LastYearLink { get; }
-
-        public DateRangePageViewModel(string propertyName, ISearchNavigatorViewModel navigator) : base(navigator)
+        public DateTimeOffset? MinDateTime
         {
-            this.propertyName = propertyName;
+            get
+            {
+                var minDate = Range.MinDate;
+                return minDate != Date.MinValue ? minDate.offset : null;
+            }
+            set
+            {
+                var minDate = value.HasValue ? new Date(value.Value.DateTime) : Date.MinValue;
+                Range = factory.Build(minDate, Range.MaxDate);
+            }
+        }
+        public DateTimeOffset? MaxDateTime
+        {
+            get
+            {
+                var maxDate = Range.MaxDate;
+                return maxDate != Date.MaxValue ? maxDate.offset : null;
+            }
+            set
+            {
+                var maxDate = value.HasValue ? new Date(value.Value.DateTime) : today;
+                Range = factory.Build(Range.MinDate, maxDate);
+            }
+        }
 
-            var today = Date.Today;
+        public ICommand ClearCommand { get; }
+        public IEnumerable<IDateRangeLink> Links { get; }
 
-            AlwaysLink = GetLink(NamedDateRange.Names.Always);
-            TodayLink = GetLink(NamedDateRange.Names.Today);
-            YesterdayLink = GetLink(NamedDateRange.Names.Yesterday);
-            ThisWeekLink = GetLink(NamedDateRange.Names.ThisWeek);
-            LastWeekLink = GetLink(NamedDateRange.Names.LastWeek);
-            ThisMonthLink = GetLink(NamedDateRange.Names.ThisMonth);
-            LastMonthLink = GetLink(NamedDateRange.Names.LastMonth);
-            ThisYearLink = GetLink(NamedDateRange.Names.ThisYear);
-            LastYearLink = GetLink(NamedDateRange.Names.LastYear);
+        public DateRangePageViewModel(string settingName, ISearchNavigatorViewModel navigator) : base(navigator)
+        {
+            today = Date.Today;
+            factory = new DateRangeFactory(today);
+
+            this.settingName = settingName;
+            ClearCommand = new RelayCommand(() => Range = NameDateRange.All);
+            Links = Enum.GetValues(typeof(NameDateRange.Names)).Cast<NameDateRange.Names>().Reverse().Select(name => new DateRangeLink(this, name));
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
-
-            IDateRangeLink GetLink(NamedDateRange.Names name) => new DateRangeLink
-            {
-                Range = new NamedDateRange(name, today),
-                SelectCommand = new RelayCommand(() => Range = new NamedDateRange(name)),
-            };
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == propertyName)
+            if (e.PropertyName == settingName)
             {
                 OnPropertyChanged(nameof(Range));
+                OnPropertyChanged(nameof(MinDateTime));
+                OnPropertyChanged(nameof(MaxDateTime));
                 OnPropertyChanged(nameof(HasValue));
             }
         }
 
-        private class DateRangeLink : IDateRangeLink
+        private class DateRangeLink : ObservableObject, IDateRangeLink
         {
-            public DateRange Range { get; set; }
-            public ICommand SelectCommand { get; set; }
+            private readonly DateRangePageViewModel viewModel;
+
+            public NameDateRange Range { get; set; }
+
+            private bool isSelected = false;
+            public bool IsSelected
+            {
+                get => isSelected;
+                set => SetProperty(ref isSelected, value);
+            }
+
+            public ICommand ToggleCommand { get; set; }
+
+            public DateRangeLink(DateRangePageViewModel viewModel, NameDateRange.Names name)
+            {
+                this.viewModel = viewModel;
+
+                IsSelected = GetIsSelected();
+                Range = new NameDateRange(name);
+                ToggleCommand = new RelayCommand(Toggle);
+
+                viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            }
+
+            private bool GetIsSelected()
+                => viewModel.Range is NameDateRange range && viewModel.HasValue && range.MinName <= Range.MinName && range.MaxName >= Range.MaxName;
+
+            private void Toggle()
+            {
+                if (Range.MinName == NameDateRange.Names.Today)
+                {
+                }
+                if (Range.MaxName == NameDateRange.Names.Older)
+                {
+                }
+
+                if (!viewModel.HasValue)
+                {
+                    viewModel.Range = Range;
+                }
+                else if (IsSelected)
+                {
+                    Deselect();
+                }
+                else
+                {
+                    Select();
+                }
+            }
+            private void Select()
+            {
+                if (viewModel.Range is NameDateRange range)
+                {
+                    if (Range.MinName < range.MinName)
+                    {
+                        var a = new NameDateRange(Range.MinName, range.MaxName);
+                        viewModel.Range = a; // new NameDateRange(Range.MinName, range.MaxName);
+                    }
+                    else if (Range.MaxName > range.MaxName)
+                    {
+                        var b = new NameDateRange(range.MinName, Range.MaxName);
+                        viewModel.Range = b; // new NameDateRange(range.MinName, Range.MaxName);
+                    }
+                }
+                else
+                {
+                    viewModel.Range = Range;
+                }
+            }
+            private void Deselect()
+            {
+                if (viewModel.Range is NameDateRange range)
+                {
+                    if (range.MinName == Range.MinName && range.MinName < NameDateRange.Names.Today)
+                    {
+                        viewModel.Range = new NameDateRange(range.MinName + 1, range.MaxName);
+                    }
+                    else if (range.MaxName == Range.MaxName && range.MaxName > NameDateRange.Names.Older)
+                    {
+                        viewModel.Range = new NameDateRange(range.MinName, range.MaxName - 1);
+                    }
+                    else
+                    {
+                        viewModel.Range = NameDateRange.All;
+                    }
+                }
+            }
+
+            private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == nameof(IDateRangePageViewModel.Range))
+                {
+                    IsSelected = GetIsSelected();
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+            }
         }
     }
 
     public class CreatedPageViewModel : DateRangePageViewModel
     {
-        public override string Title { get; } = "Creation Date";
+        public override string Title { get; } = "Created";
+        public override string LongTitle { get; } = "Creation date";
 
-        public override DateRange Range
+        public override IDateRange Range
         {
             get => Navigator.Settings.Created;
-            set => Navigator.Settings.Created = value ?? new();
+            set => Navigator.Settings.Created = value ?? NameDateRange.All;
         }
 
-        public CreatedPageViewModel(ISearchNavigatorViewModel navigator) : base("Created", navigator) {}
+        public CreatedPageViewModel(ISearchNavigatorViewModel navigator) : base(nameof(ISearchSettings.Created), navigator) {}
     }
 
     public class ModifiedPageViewModel : DateRangePageViewModel
     {
-        public override string Title { get; } = "Last Modification Date";
+        public override string Title { get; } = "Modified";
+        public override string LongTitle { get; } = "Last modification date";
 
-        public override DateRange Range
+        public override IDateRange Range
         {
-            get => Navigator.Settings.Created;
-            set => Navigator.Settings.Created = value ?? new();
+            get => Navigator.Settings.Modified;
+            set => Navigator.Settings.Modified = value ?? NameDateRange.All;
         }
 
-        public ModifiedPageViewModel(ISearchNavigatorViewModel navigator) : base("Modified", navigator) { }
+        public ModifiedPageViewModel(ISearchNavigatorViewModel navigator) : base(nameof(ISearchSettings.Modified), navigator) {}
     }
 }
