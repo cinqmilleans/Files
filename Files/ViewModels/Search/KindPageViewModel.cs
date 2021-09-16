@@ -6,7 +6,7 @@
 
     public class KindPageViewModel : SettingSearchPageViewModel, IKindPageViewModel
     {
-        public override string Glyph => "\xF0E2";
+        public override string Glyph => "\xE97C";
         public override string Title => "Kind";
 
         public override bool HasValue => false;

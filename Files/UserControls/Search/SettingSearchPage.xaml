@@ -21,23 +21,68 @@
             SizeRangeTemplate="{StaticResource SizeRangeTemplate}" />
 
         <DataTemplate x:Key="KindTemplate" x:DataType="vm:IKindPageViewModel">
-            <Grid Width="200" RowSpacing="4" ColumnSpacing="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ToggleButton Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Content="Folder" />
-                <ToggleButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Content="Document" />
-                <ToggleButton Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Content="Video" />
-                <ToggleButton Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Content="Music" />
-                <ToggleButton Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" Content="Program" />
-                <ToggleButton Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Content="Other" />
-            </Grid>
+            <StackPanel Orientation="Vertical" Width="200">
+                <Button Content="{Binding Mode=OneWay}" Command="{x:Bind BackCommand}" Style="{StaticResource SettingTitleButtonStyle}" />
+                <Grid Width="200" RowSpacing="4" ColumnSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ToggleButton Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xED25;" />
+                                <TextBlock Text="Folder" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <ToggleButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE8A5;" />
+                                <TextBlock Text="Document" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <ToggleButton Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE714;" />
+                                <TextBlock Text="Video" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <ToggleButton Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xEC4F;" />
+                                <TextBlock Text="Music" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <ToggleButton Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE8A5;" />
+                                <TextBlock Text="Program" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <ToggleButton Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch">
+                        <ToggleButton.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE8A5;" />
+                                <TextBlock Text="Other" FontSize="10" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                </Grid>
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="DateRangeTemplate" x:DataType="vm:IDateRangePageViewModel">

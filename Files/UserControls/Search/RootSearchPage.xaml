@@ -27,12 +27,12 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="32" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="32" />
+                                    <!--<ColumnDefinition Width="32" />-->
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" FontSize="14" Glyph="{x:Bind Glyph}" />
                                 <Button Grid.Column="1" CornerRadius="8" Command="{x:Bind SelectCommand}"
                                     Content="{Binding}" ContentTemplateSelector="{StaticResource SettingButtonTemplateSelector}" />
-                                <FontIcon Grid.Column="2" FontSize="14" Glyph="&#xE76C;" />
+                                <!--<FontIcon Grid.Column="2" FontSize="14" Glyph="&#xE76C;" />-->
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -100,14 +100,14 @@
 
         <DataTemplate x:Key="DateRangeTemplate" x:DataType="vm:IDateRangePageViewModel">
             <StackPanel>
-                <TextBlock FontSize="14" FontWeight="SemiBold"
+                <TextBlock FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap"
                     Text="{Binding Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:n}'}" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangeTemplate" x:DataType="vm:ISizeRangePageViewModel">
             <StackPanel>
-                <TextBlock FontSize="14" FontWeight="SemiBold"
+                <TextBlock FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap"
                     Text="{Binding Range, Mode=OneWay, Converter={StaticResource ToStringConverter}, ConverterParameter='\{0:n}'}" />
             </StackPanel>
         </DataTemplate>
