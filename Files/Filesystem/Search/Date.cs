@@ -11,8 +11,8 @@ namespace Files.Filesystem.Search
 
         public static Date Today => new(DateTime.Today);
 
-        public static Date MinValue { get; } = new Date(1600, 1, 1);
-        public static Date MaxValue { get; } = new Date(9999, 12, 31);
+        public static readonly Date MinValue = new Date(1600, 1, 1);
+        public static readonly Date MaxValue = new Date(9999, 12, 31);
 
         public ushort Year => (ushort)date.Year;
         public ushort Month => (ushort)date.Month;

@@ -358,6 +358,7 @@
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\Search\DateRangePageViewModel.cs" />
     <Compile Include="ViewModels\Search\KindPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\LocationViewModel.cs" />
     <Compile Include="ViewModels\Search\RootSearchPageViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchNavigatorViewModel.cs" />
     <Compile Include="ViewModels\Search\SettingSearchPageViewModel.cs" />

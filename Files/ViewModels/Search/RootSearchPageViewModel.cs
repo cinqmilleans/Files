@@ -5,6 +5,8 @@ namespace Files.ViewModels.Search
 {
     public interface IRootSearchPageViewModel
     {
+        ILocationViewModel LocationViewModel { get; }
+
         IEnumerable<ISettingSearchPageViewModel> SettingPageViewModels { get; }
 
         ISettingSearchPageViewModel KindPageViewModel { get; }
@@ -15,6 +17,8 @@ namespace Files.ViewModels.Search
 
     public class RootSearchPageViewModel : ObservableObject, IRootSearchPageViewModel
     {
+        public ILocationViewModel LocationViewModel { get; }
+
         public IEnumerable<ISettingSearchPageViewModel> SettingPageViewModels { get; }
 
         public ISettingSearchPageViewModel KindPageViewModel { get; }
@@ -24,6 +28,8 @@ namespace Files.ViewModels.Search
 
         public RootSearchPageViewModel(ISearchNavigatorViewModel navigator)
         {
+            LocationViewModel = new LocationViewModel(navigator.Settings);
+
             KindPageViewModel = new KindPageViewModel(navigator);
             CreatedPageViewModel = new CreatedPageViewModel(navigator);
             ModifiedPageViewModel = new ModifiedPageViewModel(navigator);

@@ -27,21 +27,19 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="32" />
                                     <ColumnDefinition Width="*" />
-                                    <!--<ColumnDefinition Width="32" />-->
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" FontSize="14" Glyph="{x:Bind Glyph}" />
                                 <Button Grid.Column="1" CornerRadius="8" Command="{x:Bind SelectCommand}"
                                     Content="{Binding}" ContentTemplateSelector="{StaticResource SettingButtonTemplateSelector}" />
-                                <!--<FontIcon Grid.Column="2" FontSize="14" Glyph="&#xE76C;" />-->
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <StackPanel Orientation="Vertical" Spacing="4" Margin="0,16,0,0">
                     <TextBlock FontSize="14" FontWeight="SemiBold" Text="Search in" />
-                    <CheckBox Content="Subfolders" IsChecked="True" />
-                    <CheckBox Content="System files" />
-                    <CheckBox Content="Compressed files" />
+                    <CheckBox Content="Subfolders" IsChecked="{x:Bind LocationViewModel.UseSubFolders, Mode=TwoWay}" />
+                    <CheckBox Content="System files" IsChecked="{x:Bind LocationViewModel.UseSystemFiles, Mode=TwoWay}" />
+                    <CheckBox Content="Compressed files" IsChecked="{x:Bind LocationViewModel.UseCompressedFiles, Mode=TwoWay}" />
                 </StackPanel>
                 <HyperlinkButton Content="Search &amp; indexing options…" />
                 <Grid Width="200" ColumnSpacing="8" Margin="0,16,0,0">

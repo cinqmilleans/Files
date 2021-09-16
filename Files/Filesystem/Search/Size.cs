@@ -13,8 +13,10 @@ namespace Files.Filesystem.Search
 
         private readonly ByteSize size;
 
-        public static Size MinValue { get; } = new Size(0);
-        public static Size MaxValue { get; } = new Size(ByteSize.MaxValue);
+        public static readonly Size MinValue = new(0);
+        public static readonly Size MaxValue = new(ByteSize.MaxValue);
+
+        public long Bytes => size.Bits * ByteSize.BitsInByte;
 
         public double Value => size.LargestWholeNumberBinaryValue;
         public Units Unit => size.LargestWholeNumberBinarySymbol switch
