@@ -1,7 +1,6 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Files.ViewModels.Search
 {
     public interface ISizeRangePageViewModel : ISettingSearchPageViewModel
     {
-        ISizeRange Range { get; set; }
+        SizeRange Range { get; set; }
         ICommand ClearCommand { get; }
         IEnumerable<ISizeRangeLink> Links { get; }
     }
@@ -19,7 +18,7 @@ namespace Files.ViewModels.Search
     public interface ISizeRangeLink : INotifyPropertyChanged
     {
         bool IsSelected { get; }
-        NameSizeRange Range { get; }
+        SizeRange Range { get; }
         ICommand ToggleCommand { get; }
     }
 
@@ -28,9 +27,9 @@ namespace Files.ViewModels.Search
         public override string Glyph { get; } = "\xF0E2";
         public override string Title { get; } = "Size";
 
-        public override bool HasValue => Range.MinSize != Size.MinValue || Range.MaxSize != Size.MaxValue;
+        public override bool HasValue => !Range.Equals(SizeRange.All) && !Range.Equals(SizeRange.None);
 
-        public ISizeRange Range
+        public SizeRange Range
         {
             get => Navigator.Settings.FileSize;
             set => Navigator.Settings.FileSize = value;
@@ -41,8 +40,17 @@ namespace Files.ViewModels.Search
 
         public SizeRangePageViewModel(ISearchNavigatorViewModel navigator) : base(navigator)
         {
-            ClearCommand = new RelayCommand(() => Range = NameSizeRange.All);
-            Links = Enum.GetValues(typeof(NameSizeRange.Names)).Cast<NameSizeRange.Names>().Select(name => new SizeRangeLink(this, name));
+            ClearCommand = new RelayCommand(() => Range = SizeRange.All);
+            Links = new List<SizeRange>
+            {
+                SizeRange.Empty,
+                SizeRange.Tiny,
+                SizeRange.Small,
+                SizeRange.Medium,
+                SizeRange.Large,
+                SizeRange.VeryLarge,
+                SizeRange.Huge
+            }.Select(range => new SizeRangeLink(this, range));
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
         }
@@ -51,8 +59,15 @@ namespace Files.ViewModels.Search
         {
             if (e.PropertyName == nameof(ISearchSettings.FileSize))
             {
-                OnPropertyChanged(nameof(Range));
-                OnPropertyChanged(nameof(HasValue));
+                if (Range.Equals(SizeRange.None))
+                {
+                    Range = SizeRange.All;
+                }
+                else
+                {
+                    OnPropertyChanged(nameof(Range));
+                    OnPropertyChanged(nameof(HasValue));
+                }
             }
         }
 
@@ -60,7 +75,7 @@ namespace Files.ViewModels.Search
         {
             private readonly SizeRangePageViewModel viewModel;
 
-            public NameSizeRange Range { get; set; }
+            public SizeRange Range { get; set; }
 
             private bool isSelected = false;
             public bool IsSelected
@@ -71,19 +86,19 @@ namespace Files.ViewModels.Search
 
             public ICommand ToggleCommand { get; set; }
 
-            public SizeRangeLink(SizeRangePageViewModel viewModel, NameSizeRange.Names name)
+            public SizeRangeLink(SizeRangePageViewModel viewModel, SizeRange range)
             {
                 this.viewModel = viewModel;
 
                 IsSelected = GetIsSelected();
-                Range = new NameSizeRange(name);
+                Range = range;
                 ToggleCommand = new RelayCommand(Toggle);
 
                 viewModel.PropertyChanged += ViewModel_PropertyChanged;
             }
 
             private bool GetIsSelected()
-                => viewModel.Range is NameSizeRange range && viewModel.HasValue && range.MinName <= Range.MinName && range.MaxName >= Range.MaxName;
+                => viewModel.Range.IsNamed && viewModel.HasValue && viewModel.Range.Contains(Range);
 
             private void Toggle()
             {
@@ -93,47 +108,15 @@ namespace Files.ViewModels.Search
                 }
                 else if (IsSelected)
                 {
-                    Deselect();
+                    viewModel.Range -= Range;
                 }
-                else
+                else if (viewModel.Range.IsNamed)
                 {
-                    Select();
-                }
-            }
-            private void Select()
-            {
-                if (viewModel.Range is NameSizeRange range)
-                {
-                    if (Range.MinName < range.MinName)
-                    {
-                        viewModel.Range = new NameSizeRange(Range.MinName, range.MaxName);
-                    }
-                    else if (Range.MaxName > range.MaxName)
-                    {
-                        viewModel.Range = new NameSizeRange(range.MinName, Range.MaxName);
-                    }
+                    viewModel.Range += Range;
                 }
                 else
                 {
                     viewModel.Range = Range;
-                }
-            }
-            private void Deselect()
-            {
-                if (viewModel.Range is NameSizeRange range)
-                {
-                    if (range.MinName == Range.MinName && range.MinName < NameSizeRange.Names.Huge)
-                    {
-                        viewModel.Range = new NameSizeRange(range.MinName + 1, range.MaxName);
-                    }
-                    else if (range.MaxName == Range.MaxName && range.MaxName > NameSizeRange.Names.Empty)
-                    {
-                        viewModel.Range = new NameSizeRange(range.MinName, range.MaxName - 1);
-                    }
-                    else
-                    {
-                        viewModel.Range = NameSizeRange.All;
-                    }
                 }
             }
 

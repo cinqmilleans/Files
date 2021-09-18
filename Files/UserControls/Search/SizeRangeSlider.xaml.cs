@@ -10,8 +10,6 @@ namespace Files.UserControls.Search
 {
     public sealed partial class SizeRangeSlider : UserControl
     {
-        private readonly ISizeRangeFactory factory = new SizeRangeFactory();
-
         private TextBlock ToolTipBlock;
 
         private bool isInUpdateRange = false;
@@ -39,14 +37,14 @@ namespace Files.UserControls.Search
         };
 
         public static readonly DependencyProperty RangeProperty =
-            DependencyProperty.Register(nameof(Range), typeof(ISizeRange), typeof(SizeRangeSlider), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Range), typeof(SizeRange), typeof(SizeRangeSlider), new PropertyMetadata(null));
 
         private static readonly DependencyProperty ToolTipProperty =
             DependencyProperty.Register(nameof(ToolTip), typeof(string), typeof(SizeRangeSlider), new PropertyMetadata(null));
 
-        public ISizeRange Range
+        public SizeRange Range
         {
-            get => (ISizeRange)GetValue(RangeProperty);
+            get => (SizeRange)GetValue(RangeProperty);
             set
             {
                 if (Range.Equals(value))
@@ -99,7 +97,7 @@ namespace Files.UserControls.Search
         public SizeRangeSlider()
         {
             InitializeComponent();
-            SetValue(RangeProperty, NameSizeRange.All);
+            SetValue(RangeProperty, SizeRange.All);
 
             Selector.Minimum = 0;
             Selector.Maximum = 3 * (Steps.Count - 1);
@@ -117,8 +115,8 @@ namespace Files.UserControls.Search
             {
                 Range = e.ChangedRangeProperty switch
                 {
-                    RangeSelectorProperty.MinimumValue => factory.Build(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
-                    RangeSelectorProperty.MaximumValue => factory.Build(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
+                    RangeSelectorProperty.MinimumValue => new SizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
+                    RangeSelectorProperty.MaximumValue => new SizeRange(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
                     _ => throw new ArgumentException(),
                 };
             }

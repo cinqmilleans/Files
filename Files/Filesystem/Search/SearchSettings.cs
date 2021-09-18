@@ -20,7 +20,7 @@ namespace Files.Filesystem.Search
 
         IDateRange Created { get; set; }
         IDateRange Modified { get; set; }
-        ISizeRange FileSize { get; set; }
+        SizeRange FileSize { get; set; }
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
@@ -48,37 +48,22 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref modified, value ?? NameDateRange.All);
         }
 
-        private ISizeRange fileSize = NameSizeRange.All;
-        public ISizeRange FileSize
+        private SizeRange fileSize = SizeRange.All;
+        public SizeRange FileSize
         {
             get => fileSize;
-            set => SetProperty(ref fileSize, value ?? NameSizeRange.All);
+            set => SetProperty(ref fileSize, value);
         }
 
         public string ToAdvancedQuerySyntax()
         {
             var query = new StringBuilder();
 
-            //query.Append(" " + ToDateRangeQuery("System.ItemDate", Created)).;
-            //query.Append(" " + ToDateRangeQuery("System.DateModified", Modified));
-            //query.Append(" " + ToSizeRangeQuery("System.ItemSize", FileSize));
+            string fileSizeQuery = fileSize.ToString("q");
+            if (!string.IsNullOrEmpty(fileSizeQuery))
+                query.Append(" System.ItemSize:" + fileSizeQuery);
 
             return query.ToString().Trim();
-
-            //static string ToDateRangeQuery(string option, IDateRange range) => (range.MinDate, range.MaxDate) switch
-            //{
-            //    (Date.MinValue, Date.MaxValue) => string.Empty,
-            //    (Date.MinValue, _) => $"{option}:>{range.MinDate:yyyyMMdd}",
-            //    (_, Date.MaxValue) => $"{option}:<{range.MaxDate:yyyyMMdd}",
-            //    _ => $"{option}:{range.MinDate:yyyyMMdd}..{range.MaxDate:yyyyMMdd}",
-            //};
-            //static string ToSizeRangeQuery(string option, ISizeRange range) => (range.MinSize, range.MaxSize) switch
-            //{
-            //    (Size.MinValue, Size.MaxValue) => string.Empty,
-            //    (Size.MinValue, _) => $"{option}:>{range.MinSize.Bytes}",
-            //    (_, Size.MaxValue) => $"{option}:<{range.MaxSize.Bytes}",
-            //    _ => $"{option}:{range.MinSize.Bytes}..{range.MaxSize.Bytes}",
-            //};
         }
     }
 }
