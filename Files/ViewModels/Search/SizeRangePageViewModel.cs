@@ -108,7 +108,14 @@ namespace Files.ViewModels.Search
                 }
                 else if (IsSelected)
                 {
-                    viewModel.Range -= Range;
+                    if (Range.Equals(SizeRange.Empty))
+                    {
+                        viewModel.Range -= new SizeRange(Size.MinValue, new Size(1));
+                    }
+                    else
+                    {
+                        viewModel.Range -= Range;
+                    }
                 }
                 else if (viewModel.Range.IsNamed)
                 {

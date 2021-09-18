@@ -244,11 +244,6 @@ namespace Files.Filesystem.Search
 
         private static SizeRange Substract(SizeRange a, SizeRange b)
         {
-            if (b.MaxSize == Size.MinValue)
-            {
-                b = new(Size.MinValue, new Size(1));
-            }
-
             if (b.MinSize == a.MinSize && b.MaxSize < a.MaxSize)
             {
                 return new(b.MaxSize, a.MaxSize);
