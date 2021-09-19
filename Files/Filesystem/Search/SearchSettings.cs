@@ -1,6 +1,8 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Files.Filesystem.Search
@@ -18,8 +20,8 @@ namespace Files.Filesystem.Search
     {
         SearchSettingLocation Location { get; set; }
 
-        IDateRange Created { get; set; }
-        IDateRange Modified { get; set; }
+        DateRange Created { get; set; }
+        DateRange Modified { get; set; }
         SizeRange FileSize { get; set; }
     }
 
@@ -34,18 +36,18 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref location, value);
         }
 
-        private IDateRange created = NameDateRange.All;
-        public IDateRange Created
+        private DateRange created = DateRange.Always;
+        public DateRange Created
         {
             get => created;
-            set => SetProperty(ref created, value ?? NameDateRange.All);
+            set => SetProperty(ref created, value);
         }
 
-        private IDateRange modified = NameDateRange.All;
-        public IDateRange Modified
+        private DateRange modified = DateRange.Always;
+        public DateRange Modified
         {
             get => modified;
-            set => SetProperty(ref modified, value ?? NameDateRange.All);
+            set => SetProperty(ref modified, value);
         }
 
         private SizeRange fileSize = SizeRange.All;
@@ -59,11 +61,15 @@ namespace Files.Filesystem.Search
         {
             var query = new StringBuilder();
 
-            string fileSizeQuery = fileSize.ToString("q");
-            if (!string.IsNullOrEmpty(fileSizeQuery))
-                query.Append(" System.ItemSize:" + fileSizeQuery);
+            return string.Join(' ', new List<string>
+            {
+                ToQuery("System.ItemDate", $"{Created:q}"),
+                ToQuery("System.DateModified", $"{Modified:q}"),
+                ToQuery("System.ItemSize", $"{FileSize:q}"),
+            }.Where(s => !string.IsNullOrEmpty(s)));
 
-            return query.ToString().Trim();
+            static string ToQuery(string name, string value)
+                => string.IsNullOrEmpty(value) ? string.Empty : $"{name}:{value}";
         }
     }
 }

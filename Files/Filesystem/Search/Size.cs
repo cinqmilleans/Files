@@ -30,14 +30,11 @@ namespace Files.Filesystem.Search
             _ => Units.Byte,
         };
 
-        public Size(long bytes)
+        public Size(long bytes) => size = bytes switch
         {
-            if (bytes < 0)
-            {
-                throw new ArgumentException("Size is always positive.");
-            }
-            size = ByteSize.FromBytes(bytes);
-        }
+            < 0 => ByteSize.FromBytes(0),
+            _ => ByteSize.FromBytes(bytes),
+        };
         public Size(double value, Units unit)
         {
             if (value < 0)
