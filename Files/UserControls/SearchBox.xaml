@@ -230,7 +230,7 @@
                     Content="&#xE71C;"
                     AutomationProperties.AccessibilityView="Raw">
                     <AppBarButton.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedRight">
+                        <Flyout Placement="BottomEdgeAlignedRight" Opened="Flyout_Opened" Closed="Flyout_Closed">
                             <Flyout.FlyoutPresenterStyle>
                                 <Style TargetType="FlyoutPresenter">
                                     <Setter Property="Template">

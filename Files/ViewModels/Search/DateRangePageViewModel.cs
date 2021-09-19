@@ -18,7 +18,7 @@ namespace Files.ViewModels.Search
 
         DateRange Range { get; set; }
         ICommand ClearCommand { get; }
-        IEnumerable<IDateRangeLink> Links { get; }
+        IReadOnlyList<IDateRangeLink> Links { get; }
     }
 
     public interface IDateRangeLink : INotifyPropertyChanged
@@ -68,7 +68,7 @@ namespace Files.ViewModels.Search
         }
 
         public ICommand ClearCommand { get; }
-        public IEnumerable<IDateRangeLink> Links { get; }
+        public IReadOnlyList<IDateRangeLink> Links { get; }
 
         public DateRangePageViewModel(string settingName, ISearchNavigatorViewModel navigator) : base(navigator)
         {
@@ -85,7 +85,7 @@ namespace Files.ViewModels.Search
                 DateRange.LastMonth,
                 DateRange.ThisYear,
                 DateRange.Older
-            }.Select(range => new DateRangeLink(this, range));
+            }.Select(range => new DateRangeLink(this, range)).Cast<IDateRangeLink>().ToList().AsReadOnly(); ;
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
         }

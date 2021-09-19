@@ -45,7 +45,14 @@ namespace Files.Filesystem.Search
 
         public override string ToString() => date.ToString("d");
         public string ToString(string format) => date.ToString(format, CultureInfo.CurrentCulture);
-        public string ToString(string format, IFormatProvider formatProvider) => date.ToString(format, formatProvider);
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (format is null || format == "G")
+            {
+                return date.ToString("d", formatProvider);
+            }
+            return date.ToString(format, formatProvider);
+        }
 
         public Date AddDays(int days) => new(date.AddDays(days));
         public Date AddMonths(int months) => new(date.AddMonths(months));
@@ -128,6 +135,11 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
+            if (Equals(None) || Equals(Always))
+            {
+                return string.Empty;
+            }
+
             if (format == "g")
             {
                 return ToString("n", formatProvider);
@@ -146,19 +158,14 @@ namespace Files.Filesystem.Search
             string minLabel = GetMinLabel();
             string maxLabel = GetMaxLabel();
 
-            if (minLabel == maxLabel)
-            {
-                return minLabel;
-            }
-
             return format switch
             {
                 "n" => string.Format(GetShortFormat(), minLabel, maxLabel),
                 "N" => string.Format(GetFullFormat(), minLabel, maxLabel),
                 "r" => string.Format(GetShortFormat(), minLabel, maxLabel),
                 "R" => string.Format(GetFullFormat(), minLabel, maxLabel),
-                "q" => string.Format(GetQueryFormat(), minLabel, maxLabel),
-                "Q" => string.Format(GetQueryFormat(), minLabel, maxLabel),
+                "q" => string.Format(GetQueryFormat(), minDate, maxDate),
+                "Q" => string.Format(GetQueryFormat(), minDate, maxDate),
                 _ => string.Empty,
             };
 
@@ -186,26 +193,29 @@ namespace Files.Filesystem.Search
                 true when ThisYear.MaxDate.Equals(maxDate) => "ItemTimeText_ThisYear".GetLocalized(),
                 true when Older.MaxDate.Equals(maxDate) => "ItemTimeText_Older".GetLocalized(),
                 true => string.Empty,
-                false => $"{minDate}",
+                false => $"{maxDate}",
             };
 
             string GetShortFormat() => (hasMin, hasMax) switch
             {
+                _ when minLabel == maxLabel => "{0}",
                 (false, _) => "< {1}",
                 (_, false) => "> {0}",
                 _ => "{0} - {1}",
             };
             string GetFullFormat() => (hasMin, hasMax) switch
             {
+                _ when minLabel == maxLabel => "{0}",
                 (false, _) => "Less than {1}",
                 (_, false) => "Greater than {0}",
                 _ => "Between {0} and {1}",
             };
             string GetQueryFormat() => (hasMin, hasMax) switch
             {
-                (false, _) => "<{1}",
-                (_, false) => ">{0}",
-                _ => "{0}..{1}",
+                _ when minDate == maxDate => "{0::yyyyMMdd}",
+                (false, _) => "<{1:yyyyMMdd}",
+                (_, false) => ">{0:yyyyMMdd}",
+                _ => "{0:yyyyMMdd}..{1:yyyyMMdd}",
             };
         }
 

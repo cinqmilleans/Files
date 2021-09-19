@@ -13,23 +13,27 @@ namespace Files.UserControls.Search
             = new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
 
         private readonly Frame frame;
-        private readonly ISearchNavigatorViewModel viewModel;
+
+        public ISearchNavigatorViewModel ViewModel { get; }
 
         public SearchNavigator(Frame frame, ISearchNavigatorViewModel viewModel)
         {
             this.frame = frame;
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
 
-            viewModel.PageOpened += ViewModel_PageOpened;
-            viewModel.BackRequested += ViewModel_BackRequested;
-            viewModel.ForwardRequested += ViewModel_ForwardRequested;
+            ViewModel.PageOpened += ViewModel_PageOpened;
+            ViewModel.BackRequested += ViewModel_BackRequested;
+            ViewModel.ForwardRequested += ViewModel_ForwardRequested;
         }
 
         ~SearchNavigator()
         {
-            viewModel.BackRequested -= ViewModel_BackRequested;
-            viewModel.ForwardRequested -= ViewModel_ForwardRequested;
+            ViewModel.BackRequested -= ViewModel_BackRequested;
+            ViewModel.ForwardRequested -= ViewModel_ForwardRequested;
         }
+
+        public void GoRoot() => ViewModel.OpenPage(new RootSearchPageViewModel(ViewModel));
+        public void Clean() => ViewModel.OpenPage(null);
 
         private void ViewModel_PageOpened(ISearchNavigatorViewModel sender, PageOpenedSearchNavigatorEventArgs e)
             => Go(e.PageViewModel);

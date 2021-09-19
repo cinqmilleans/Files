@@ -80,10 +80,15 @@ namespace Files.Filesystem.Search
 
         public override string ToString() => ToString("G");
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
-        public string ToString(string format, IFormatProvider formatProvider) => (format ?? "G") switch
+        public string ToString(string format, IFormatProvider formatProvider) => (format ?? "G").ToLower() switch
         {
+            "g" => size.ToBinaryString().ConvertSizeAbbreviation(),
             "G" => size.ToBinaryString().ConvertSizeAbbreviation(),
+            "n" => GetName() ?? ToString("G", formatProvider),
             "N" => GetName() ?? ToString("G", formatProvider),
+            "b" => Bytes.ToString(),
+            "B" => Bytes.ToString(),
+            "u" => size.LargestWholeNumberBinarySymbol.ConvertSizeAbbreviation(),
             "U" => size.LargestWholeNumberBinarySymbol.ConvertSizeAbbreviation(),
             _ => string.Empty,
         };
@@ -145,6 +150,11 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
+            if (Equals(None) || Equals(All))
+            {
+                return string.Empty;
+            }
+
             if (format == "g")
             {
                 return ToString("n", formatProvider);
@@ -163,19 +173,14 @@ namespace Files.Filesystem.Search
             string minLabel = GetMinLabel();
             string maxLabel = GetMaxLabel();
 
-            if (minLabel == maxLabel)
-            {
-                return minLabel;
-            }
-
             return format switch
             {
                 "n" => string.Format(GetShortFormat(), minLabel , maxLabel),
                 "N" => string.Format(GetFullFormat(), minLabel, maxLabel),
                 "r" => string.Format(GetShortFormat(), minLabel, maxLabel),
                 "R" => string.Format(GetFullFormat(), minLabel, maxLabel),
-                "q" => string.Format(GetQueryFormat(), minLabel, maxLabel),
-                "Q" => string.Format(GetQueryFormat(), minLabel, maxLabel),
+                "q" => string.Format(GetQueryFormat(), minSize, maxSize),
+                "Q" => string.Format(GetQueryFormat(), minSize, maxSize),
                 _ => string.Empty,
             };
 
@@ -206,21 +211,24 @@ namespace Files.Filesystem.Search
 
             string GetShortFormat() => (hasMin, hasMax) switch
             {
+                _ when minLabel == maxLabel => "{0}",
                 (false, _) => "< {1}",
                 (_, false) => "> {0}",
                 _ => "{0} - {1}",
             };
             string GetFullFormat() => (hasMin, hasMax) switch
             {
+                _ when minLabel == maxLabel => "{0}",
                 (false, _) => "Less than {1}",
                 (_, false) => "Greater than {0}",
                 _ => "Between {0} and {1}",
             };
             string GetQueryFormat() => (hasMin, hasMax) switch
             {
-                (false, _) => "<{1}",
-                (_, false) => ">{0}",
-                _ => "{0}..{1}",
+                _ when minSize == maxSize => "{0:B}",
+                (false, _) => "<{1:B}",
+                (_, false) => ">{0:B}",
+                _ => "{0:B}..{1:B}",
             };
         }
 

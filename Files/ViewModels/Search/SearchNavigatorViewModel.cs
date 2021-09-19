@@ -11,11 +11,13 @@ namespace Files.ViewModels.Search
     public interface ISearchNavigatorViewModel : INotifyPropertyChanged
     {
         event TypedEventHandler<ISearchNavigatorViewModel, PageOpenedSearchNavigatorEventArgs> PageOpened;
+        event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> SearchRequested;
         event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> BackRequested;
         event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> ForwardRequested;
 
         ISearchSettings Settings { get; }
 
+        ICommand SearchCommand { get; }
         ICommand BackCommand { get; }
         ICommand ForwardCommand { get; }
 
@@ -39,11 +41,13 @@ namespace Files.ViewModels.Search
     public class SearchNavigatorViewModel : ObservableObject, ISearchNavigatorViewModel
     {
         public event TypedEventHandler<ISearchNavigatorViewModel, PageOpenedSearchNavigatorEventArgs> PageOpened;
+        public event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> SearchRequested;
         public event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> BackRequested;
         public event TypedEventHandler<ISearchNavigatorViewModel, EventArgs> ForwardRequested;
 
         public ISearchSettings Settings { get; }
 
+        public ICommand SearchCommand { get; }
         public ICommand BackCommand { get; }
         public ICommand ForwardCommand { get; }
 
@@ -51,12 +55,15 @@ namespace Files.ViewModels.Search
         {
             Settings = settings;
 
+            SearchCommand = new RelayCommand(Search);
             BackCommand = new RelayCommand(Back);
             ForwardCommand = new RelayCommand(Forward);
         }
 
         public void OpenPage(object pageViewModel)
             => PageOpened?.Invoke(this, new PageOpenedSearchNavigatorEventArgs(pageViewModel));
+
+        public void Search() => SearchRequested?.Invoke(this, EventArgs.Empty);
         public void Back() => BackRequested?.Invoke(this, EventArgs.Empty);
         public void Forward() => ForwardRequested?.Invoke(this, EventArgs.Empty);
     }

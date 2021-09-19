@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Windows.Storage.Search;
 
 namespace Files.Filesystem.Search
 {
     [Flags]
-    public enum SearchSettingLocation : ushort
+    public enum SearchSettingLocations : ushort
     {
         None = 0x0000,
         SubFolders = 0x0001,
@@ -18,7 +19,7 @@ namespace Files.Filesystem.Search
 
     public interface ISearchSettings : INotifyPropertyChanged
     {
-        SearchSettingLocation Location { get; set; }
+        SearchSettingLocations Location { get; set; }
 
         DateRange Created { get; set; }
         DateRange Modified { get; set; }
@@ -29,8 +30,8 @@ namespace Files.Filesystem.Search
     {
         public static SearchSettings Default { get; } = new();
 
-        private SearchSettingLocation location = SearchSettingLocation.SubFolders;
-        public SearchSettingLocation Location
+        private SearchSettingLocations location = SearchSettingLocations.SubFolders;
+        public SearchSettingLocations Location
         {
             get => location;
             set => SetProperty(ref location, value);
@@ -57,18 +58,19 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref fileSize, value);
         }
 
+        public FolderDepth ToFolderDeepth()
+            => Location.HasFlag(SearchSettingLocations.SubFolders) ? FolderDepth.Deep : FolderDepth.Shallow;
+
         public string ToAdvancedQuerySyntax()
         {
-            var query = new StringBuilder();
-
             return string.Join(' ', new List<string>
             {
-                ToQuery("System.ItemDate", $"{Created:q}"),
-                ToQuery("System.DateModified", $"{Modified:q}"),
-                ToQuery("System.ItemSize", $"{FileSize:q}"),
+                ToSettingQuery("System.ItemDate", $"{Created:q}"),
+                ToSettingQuery("System.DateModified", $"{Modified:q}"),
+                ToSettingQuery("System.Size", $"{FileSize:q}"),
             }.Where(s => !string.IsNullOrEmpty(s)));
 
-            static string ToQuery(string name, string value)
+            static string ToSettingQuery(string name, string value)
                 => string.IsNullOrEmpty(value) ? string.Empty : $"{name}:{value}";
         }
     }

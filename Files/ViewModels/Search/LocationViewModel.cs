@@ -17,48 +17,48 @@ namespace Files.ViewModels.Search
 
         public bool UseSubFolders
         {
-            get => setting.Location.HasFlag(SearchSettingLocation.SubFolders);
+            get => setting.Location.HasFlag(SearchSettingLocations.SubFolders);
             set
             {
                 if (value)
                 {
-                    setting.Location |= SearchSettingLocation.SubFolders;
+                    setting.Location |= SearchSettingLocations.SubFolders;
                 }
                 else
                 {
-                    setting.Location &= ~SearchSettingLocation.SubFolders;
+                    setting.Location &= ~SearchSettingLocations.SubFolders;
                 }
             }
         }
 
         public bool UseSystemFiles
         {
-            get => setting.Location.HasFlag(SearchSettingLocation.SystemFiles);
+            get => setting.Location.HasFlag(SearchSettingLocations.SystemFiles);
             set
             {
                 if (value)
                 {
-                    setting.Location |= SearchSettingLocation.SystemFiles;
+                    setting.Location |= SearchSettingLocations.SystemFiles;
                 }
                 else
                 {
-                    setting.Location &= ~SearchSettingLocation.SystemFiles;
+                    setting.Location &= ~SearchSettingLocations.SystemFiles;
                 }
             }
         }
 
         public bool UseCompressedFiles
         {
-            get => setting.Location.HasFlag(SearchSettingLocation.CompressedFiles);
+            get => setting.Location.HasFlag(SearchSettingLocations.CompressedFiles);
             set
             {
                 if (value)
                 {
-                    setting.Location |= SearchSettingLocation.CompressedFiles;
+                    setting.Location |= SearchSettingLocations.CompressedFiles;
                 }
                 else
                 {
-                    setting.Location &= ~SearchSettingLocation.CompressedFiles;
+                    setting.Location &= ~SearchSettingLocations.CompressedFiles;
                 }
             }
         }

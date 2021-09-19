@@ -12,7 +12,7 @@ namespace Files.ViewModels.Search
     {
         SizeRange Range { get; set; }
         ICommand ClearCommand { get; }
-        IEnumerable<ISizeRangeLink> Links { get; }
+        IReadOnlyList<ISizeRangeLink> Links { get; }
     }
 
     public interface ISizeRangeLink : INotifyPropertyChanged
@@ -36,7 +36,7 @@ namespace Files.ViewModels.Search
         }
 
         public ICommand ClearCommand { get; }
-        public IEnumerable<ISizeRangeLink> Links { get; }
+        public IReadOnlyList<ISizeRangeLink> Links { get; }
 
         public SizeRangePageViewModel(ISearchNavigatorViewModel navigator) : base(navigator)
         {
@@ -50,7 +50,7 @@ namespace Files.ViewModels.Search
                 SizeRange.Large,
                 SizeRange.VeryLarge,
                 SizeRange.Huge
-            }.Select(range => new SizeRangeLink(this, range));
+            }.Select(range => new SizeRangeLink(this, range)).Cast<ISizeRangeLink>().ToList().AsReadOnly();
 
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
         }
@@ -98,7 +98,10 @@ namespace Files.ViewModels.Search
             }
 
             private bool GetIsSelected()
-                => viewModel.Range.IsNamed && viewModel.HasValue && viewModel.Range.Contains(Range);
+            {
+                var range = Range;
+                return viewModel.Range.IsNamed && viewModel.HasValue && viewModel.Range.Contains(range);
+            }
 
             private void Toggle()
             {
