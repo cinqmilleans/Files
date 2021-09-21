@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -36,24 +37,27 @@ namespace Files.ViewModels.Search
         }
 
         public ICommand ClearCommand { get; }
-        public IReadOnlyList<ISizeRangeLink> Links { get; }
+
+        private readonly Lazy<IReadOnlyList<ISizeRangeLink>> links;
+        public IReadOnlyList<ISizeRangeLink> Links => links.Value;
 
         public SizeRangePageViewModel(ISearchNavigatorViewModel navigator) : base(navigator)
         {
             ClearCommand = new RelayCommand(() => Range = SizeRange.All);
-            Links = new List<SizeRange>
-            {
-                SizeRange.Empty,
-                SizeRange.Tiny,
-                SizeRange.Small,
-                SizeRange.Medium,
-                SizeRange.Large,
-                SizeRange.VeryLarge,
-                SizeRange.Huge
-            }.Select(range => new SizeRangeLink(this, range)).Cast<ISizeRangeLink>().ToList().AsReadOnly();
-
+            links = new(GetLinks);
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
         }
+
+        private IReadOnlyList<ISizeRangeLink> GetLinks() => new List<SizeRange>
+        {
+            SizeRange.Empty,
+            SizeRange.Tiny,
+            SizeRange.Small,
+            SizeRange.Medium,
+            SizeRange.Large,
+            SizeRange.VeryLarge,
+            SizeRange.Huge
+        }.Select(range => new SizeRangeLink(this, range)).Cast<ISizeRangeLink>().ToList().AsReadOnly();
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

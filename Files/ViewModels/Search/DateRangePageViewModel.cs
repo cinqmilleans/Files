@@ -68,27 +68,29 @@ namespace Files.ViewModels.Search
         }
 
         public ICommand ClearCommand { get; }
-        public IReadOnlyList<IDateRangeLink> Links { get; }
+
+        private readonly Lazy<IReadOnlyList<IDateRangeLink>> links;
+        public IReadOnlyList<IDateRangeLink> Links => links.Value;
 
         public DateRangePageViewModel(string settingName, ISearchNavigatorViewModel navigator) : base(navigator)
         {
             this.settingName = settingName;
             ClearCommand = new RelayCommand(() => Range = DateRange.Always);
-
-            Links = new List<DateRange>
-            {
-                DateRange.Today,
-                DateRange.Yesterday,
-                DateRange.ThisWeek,
-                DateRange.LastWeek,
-                DateRange.ThisMonth,
-                DateRange.LastMonth,
-                DateRange.ThisYear,
-                DateRange.Older
-            }.Select(range => new DateRangeLink(this, range)).Cast<IDateRangeLink>().ToList().AsReadOnly(); ;
-
+            links = new(GetLinks);
             navigator.Settings.PropertyChanged += Settings_PropertyChanged;
         }
+
+        private IReadOnlyList<IDateRangeLink> GetLinks() => new List<DateRange>
+        {
+            DateRange.Today,
+            DateRange.Yesterday,
+            DateRange.ThisWeek,
+            DateRange.LastWeek,
+            DateRange.ThisMonth,
+            DateRange.LastMonth,
+            DateRange.ThisYear,
+            DateRange.Older
+        }.Select(range => new DateRangeLink(this, range)).Cast<IDateRangeLink>().ToList().AsReadOnly();
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
