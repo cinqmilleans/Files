@@ -13,65 +13,45 @@ namespace Files.ViewModels.Search
 
     public class LocationViewModel : ObservableObject, ILocationViewModel
     {
-        private readonly ISearchSettings setting;
+        private readonly ILocation location;
 
         public bool UseSubFolders
         {
-            get => setting.Location.HasFlag(SearchSettingLocations.SubFolders);
-            set
-            {
-                if (value)
-                {
-                    setting.Location |= SearchSettingLocations.SubFolders;
-                }
-                else
-                {
-                    setting.Location &= ~SearchSettingLocations.SubFolders;
-                }
-            }
+            get => location.Options.HasFlag(LocationOptions.SubFolders);
+            set => SetOption(value, LocationOptions.SubFolders);
         }
-
         public bool UseSystemFiles
         {
-            get => setting.Location.HasFlag(SearchSettingLocations.SystemFiles);
-            set
-            {
-                if (value)
-                {
-                    setting.Location |= SearchSettingLocations.SystemFiles;
-                }
-                else
-                {
-                    setting.Location &= ~SearchSettingLocations.SystemFiles;
-                }
-            }
+            get => location.Options.HasFlag(LocationOptions.SystemFiles);
+            set => SetOption(value, LocationOptions.SystemFiles);
         }
-
         public bool UseCompressedFiles
         {
-            get => setting.Location.HasFlag(SearchSettingLocations.CompressedFiles);
-            set
+            get => location.Options.HasFlag(LocationOptions.CompressedFiles);
+            set => SetOption(value, LocationOptions.CompressedFiles);
+        }
+
+        public LocationViewModel(ILocation location)
+        {
+            this.location = location;
+            location.PropertyChanged += Location_PropertyChanged;
+        }
+
+        private void SetOption(bool value, LocationOptions option)
+        {
+            if (value)
             {
-                if (value)
-                {
-                    setting.Location |= SearchSettingLocations.CompressedFiles;
-                }
-                else
-                {
-                    setting.Location &= ~SearchSettingLocations.CompressedFiles;
-                }
+                location.Options |= option;
+            }
+            else
+            {
+                location.Options &= ~option;
             }
         }
 
-        public LocationViewModel(ISearchSettings setting)
+        private void Location_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.setting = setting;
-            setting.PropertyChanged += Setting_PropertyChanged;
-        }
-
-        private void Setting_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ISearchSettings.Location))
+            if (e.PropertyName == nameof(ILocation.Options))
             {
                 OnPropertyChanged(nameof(UseSubFolders));
                 OnPropertyChanged(nameof(UseSystemFiles));

@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace Files.UserControls.Search
 {
-    public class SearchNavigator
+    public class Navigator
     {
         private readonly NavigationTransitionInfo emptyTransition
             = new SuppressNavigationTransitionInfo();
@@ -14,9 +14,9 @@ namespace Files.UserControls.Search
 
         private readonly Frame frame;
 
-        public ISearchNavigatorViewModel ViewModel { get; }
+        public INavigatorViewModel ViewModel { get; }
 
-        public SearchNavigator(Frame frame, ISearchNavigatorViewModel viewModel)
+        public Navigator(Frame frame, INavigatorViewModel viewModel)
         {
             this.frame = frame;
             ViewModel = viewModel;
@@ -26,31 +26,31 @@ namespace Files.UserControls.Search
             ViewModel.ForwardRequested += ViewModel_ForwardRequested;
         }
 
-        ~SearchNavigator()
+        ~Navigator()
         {
             ViewModel.BackRequested -= ViewModel_BackRequested;
             ViewModel.ForwardRequested -= ViewModel_ForwardRequested;
         }
 
-        public void GoRoot() => ViewModel.OpenPage(new RootSearchPageViewModel(ViewModel));
+        public void GoRoot() => ViewModel.OpenPage(new SettingsViewModel(ViewModel));
         public void Clean() => ViewModel.OpenPage(null);
 
-        private void ViewModel_PageOpened(ISearchNavigatorViewModel sender, PageOpenedSearchNavigatorEventArgs e)
+        private void ViewModel_PageOpened(INavigatorViewModel sender, PageOpenedNavigatorEventArgs e)
             => Go(e.PageViewModel);
-        private void ViewModel_BackRequested(ISearchNavigatorViewModel sender, EventArgs e)
+        private void ViewModel_BackRequested(INavigatorViewModel sender, EventArgs e)
             => frame.GoBack(toRightTransition);
-        private void ViewModel_ForwardRequested(ISearchNavigatorViewModel sender, EventArgs e)
+        private void ViewModel_ForwardRequested(INavigatorViewModel sender, EventArgs e)
             => frame.GoForward();
 
         private void Go(object viewModel)
         {
             switch (viewModel)
             {
-                case IRootSearchPageViewModel _ :
-                    frame.Navigate(typeof(RootSearchPage), viewModel, emptyTransition);
+                case ISettingsViewModel _ :
+                    frame.Navigate(typeof(SettingsPage), viewModel, emptyTransition);
                     break;
-                case ISettingSearchPageViewModel _:
-                    frame.Navigate(typeof(SettingSearchPage), viewModel, toRightTransition);
+                case IFilterViewModel _:
+                    //frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
                     break;
             }
         }

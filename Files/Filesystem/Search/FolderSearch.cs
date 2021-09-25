@@ -448,14 +448,13 @@ namespace Files.Filesystem.Search
 
         private QueryOptions ToQueryOptions()
         {
-            var settings = SearchSettings.Default;
+            var settings = Settings.Default;
 
             var query = new QueryOptions
             {
-                FolderDepth = FolderDepth.Deep,
-                UserSearchFilter = ((AQSQuery ?? string.Empty) + ' ' + settings.ToAdvancedQuerySyntax()).Trim(),
+                FolderDepth = settings.Location.Options.HasFlag(LocationOptions.SubFolders) ? FolderDepth.Deep : FolderDepth.Shallow,
+                UserSearchFilter = ((AQSQuery ?? string.Empty) + ' ' + settings.Filter.ToAdvancedQuerySyntax()).Trim(),
             };
-            query.FolderDepth = settings.ToFolderDeepth();
 
             query.IndexerOption = SearchUnindexedItems
                 ? IndexerOption.DoNotUseIndexer

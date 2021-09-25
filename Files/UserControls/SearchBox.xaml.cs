@@ -1,5 +1,4 @@
-﻿using Files.Filesystem.Search;
-using Files.UserControls.Search;
+﻿using Files.UserControls.Search;
 using Files.ViewModels;
 using Files.ViewModels.Search;
 using Windows.UI.Xaml;
@@ -34,13 +33,13 @@ namespace Files.UserControls
         private void SearchRegion_Escaped(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e)
             => SearchBoxViewModel.SearchRegion_Escaped(sender, e);
 
-        private SearchNavigator navigator;
+        private Navigator navigator;
         private void MenuFrame_Loaded(object sender, RoutedEventArgs e)
         {
             if (navigator is null && sender is Frame frame)
             {
-                var viewModel = new SearchNavigatorViewModel(SearchSettings.Default);
-                navigator = new SearchNavigator(frame, viewModel);
+                var viewModel = new NavigatorViewModel(Filesystem.Search.Settings.Default);
+                navigator = new Navigator(frame, viewModel);
                 navigator.GoRoot();
             }
         }
