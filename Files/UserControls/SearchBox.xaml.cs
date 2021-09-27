@@ -38,8 +38,7 @@ namespace Files.UserControls
         {
             if (navigator is null && sender is Frame frame)
             {
-                var viewModel = new NavigatorViewModel(Filesystem.Search.Settings.Default);
-                navigator = new Navigator(frame, viewModel);
+                navigator = new Navigator(frame, NavigatorViewModel.Default);
                 navigator.GoRoot();
             }
         }

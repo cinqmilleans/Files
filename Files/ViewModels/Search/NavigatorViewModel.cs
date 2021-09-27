@@ -1,5 +1,4 @@
-﻿using Files.Filesystem.Search;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
@@ -11,53 +10,45 @@ namespace Files.ViewModels.Search
     public interface INavigatorViewModel : INotifyPropertyChanged
     {
         event TypedEventHandler<INavigatorViewModel, PageOpenedNavigatorEventArgs> PageOpened;
-        event TypedEventHandler<INavigatorViewModel, EventArgs> SearchRequested;
         event TypedEventHandler<INavigatorViewModel, EventArgs> BackRequested;
         event TypedEventHandler<INavigatorViewModel, EventArgs> ForwardRequested;
+        event TypedEventHandler<INavigatorViewModel, EventArgs> SearchRequested;
 
-        ISettings Settings { get; }
-
-        ICommand SearchCommand { get; }
         ICommand BackCommand { get; }
         ICommand ForwardCommand { get; }
+        ICommand SearchCommand { get; }
 
-        void OpenPage(object pageViewModel);
+        void OpenPage(object viewModel);
         void Back();
         void Forward();
+        void Search();
     }
 
     public class PageOpenedNavigatorEventArgs : EventArgs
     {
-        public object PageViewModel { get; }
+        public object ViewModel { get; }
 
-        public PageOpenedNavigatorEventArgs(object pageViewModel) => PageViewModel = pageViewModel;
-    }
-
-    public interface IPageOpenedNavigatorEventArgs
-    {
-        object PageViewModel { get; }
+        public PageOpenedNavigatorEventArgs(object viewModel) => ViewModel = viewModel;
     }
 
     public class NavigatorViewModel : ObservableObject, INavigatorViewModel
     {
+        public static NavigatorViewModel Default { get; } = new NavigatorViewModel();
+
         public event TypedEventHandler<INavigatorViewModel, PageOpenedNavigatorEventArgs> PageOpened;
-        public event TypedEventHandler<INavigatorViewModel, EventArgs> SearchRequested;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> BackRequested;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> ForwardRequested;
+        public event TypedEventHandler<INavigatorViewModel, EventArgs> SearchRequested;
 
-        public ISettings Settings { get; }
-
-        public ICommand SearchCommand { get; }
         public ICommand BackCommand { get; }
         public ICommand ForwardCommand { get; }
+        public ICommand SearchCommand { get; }
 
-        public NavigatorViewModel(ISettings settings)
+        private NavigatorViewModel()
         {
-            Settings = settings;
-
-            SearchCommand = new RelayCommand(Search);
             BackCommand = new RelayCommand(Back);
             ForwardCommand = new RelayCommand(Forward);
+            SearchCommand = new RelayCommand(Search);
         }
 
         public void OpenPage(object pageViewModel)

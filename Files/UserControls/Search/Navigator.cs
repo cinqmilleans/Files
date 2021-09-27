@@ -32,11 +32,11 @@ namespace Files.UserControls.Search
             ViewModel.ForwardRequested -= ViewModel_ForwardRequested;
         }
 
-        public void GoRoot() => ViewModel.OpenPage(new SettingsViewModel(ViewModel));
+        public void GoRoot() => ViewModel.OpenPage(new SettingsViewModel(Filesystem.Search.Settings.Default, ViewModel));
         public void Clean() => ViewModel.OpenPage(null);
 
         private void ViewModel_PageOpened(INavigatorViewModel sender, PageOpenedNavigatorEventArgs e)
-            => Go(e.PageViewModel);
+            => Go(e.ViewModel);
         private void ViewModel_BackRequested(INavigatorViewModel sender, EventArgs e)
             => frame.GoBack(toRightTransition);
         private void ViewModel_ForwardRequested(INavigatorViewModel sender, EventArgs e)
@@ -50,7 +50,7 @@ namespace Files.UserControls.Search
                     frame.Navigate(typeof(SettingsPage), viewModel, emptyTransition);
                     break;
                 case IFilterViewModel _:
-                    //frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
+                    frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
                     break;
             }
         }

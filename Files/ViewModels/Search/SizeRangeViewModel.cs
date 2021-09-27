@@ -28,7 +28,7 @@ namespace Files.ViewModels.Search
         private readonly Lazy<IReadOnlyList<ISizeRangeLink>> links;
         public IReadOnlyList<ISizeRangeLink> Links => links.Value;
 
-        public SizeRangeViewModel(INavigatorViewModel navigator, ISizeRangeFilter filter) : base(navigator, filter)
+        public SizeRangeViewModel(ISizeRangeFilter filter) : base(filter)
         {
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;

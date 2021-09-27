@@ -1,10 +1,13 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface ISettingsViewModel
     {
+        INavigatorViewModel Navigator { get; }
+
         ILocationViewModel Location { get; }
         IFilterViewModel Filter { get; }
 
@@ -13,17 +16,20 @@ namespace Files.ViewModels.Search
 
     public class SettingsViewModel : ObservableObject, ISettingsViewModel
     {
+        public INavigatorViewModel Navigator { get; }
+
         public ILocationViewModel Location { get; }
         public IFilterViewModel Filter { get; }
 
         public ICommand SearchCommand { get; }
 
-        public SettingsViewModel(INavigatorViewModel navigator)
+        public SettingsViewModel(ISettings settings, INavigatorViewModel navigator)
         {
-            var factory = new FilterViewModelFactory(navigator);
+            var factory = new FilterViewModelFactory();
 
-            Location = new LocationViewModel(navigator.Settings.Location);
-            Filter = factory.GetViewModel(navigator.Settings.Filter);
+            Navigator = navigator;
+            Location = new LocationViewModel(settings.Location);
+            Filter = factory.GetViewModel(settings.Filter);
             SearchCommand = navigator.SearchCommand;
         }
     }

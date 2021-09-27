@@ -58,7 +58,7 @@ namespace Files.ViewModels.Search
             }
         }
 
-        public DateRangeViewModel(INavigatorViewModel navigator, IDateRangeFilter filter) : base(navigator, filter)
+        public DateRangeViewModel(IDateRangeFilter filter) : base(filter)
         {
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;

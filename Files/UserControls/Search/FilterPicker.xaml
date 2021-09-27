@@ -16,9 +16,20 @@
         <converters:VisiblityInvertConverter x:Key="VisiblityInvertConverter" />
 
         <local:FilterPickerTemplateSelector x:Key="SettingTemplateSelector"
+            CollectionTemplate="{StaticResource CollectionTemplate}"
             KindTemplate="{StaticResource KindTemplate}"
             DateRangeTemplate="{StaticResource DateRangeTemplate}"
             SizeRangeTemplate="{StaticResource SizeRangeTemplate}" />
+
+        <DataTemplate x:Key="CollectionTemplate" x:DataType="vm:IFilterCollectionViewModel">
+            <StackPanel Orientation="Vertical" Width="200">
+                <TextBlock Text="No filter selected. Add a new filter." TextWrapping="Wrap" Visibility="{x:Bind Filter.IsEmpty}" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,8,8" Spacing="8">
+                    <Button x:Name="AddFilterButton" Content="Add" Loaded="AddFilter_Loaded" />
+                    <Button Content="Clear" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
 
         <DataTemplate x:Key="KindTemplate" x:DataType="vm:IKindViewModel">
             <StackPanel Orientation="Vertical" Width="200">
@@ -116,7 +127,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <HyperlinkButton Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand}" />
+                    <HyperlinkButton x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Click="ClearButton_Click" />
                 </Grid>
             </StackPanel>
         </DataTemplate>
@@ -151,7 +162,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <HyperlinkButton Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand}" />
+                    <HyperlinkButton x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Click="ClearButton_Click" />
                 </Grid>
             </StackPanel>
         </DataTemplate>

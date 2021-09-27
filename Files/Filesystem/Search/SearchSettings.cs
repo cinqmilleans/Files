@@ -29,14 +29,21 @@ namespace Files.Filesystem.Search
         CompressedFiles = 0x0004,
     }
 
-    public interface IFilterCollection : ICollection<IFilter>, IFilter, INotifyCollectionChanged
+    public interface IFilterCollection : ICollection<IFilter>, IContainerFilter, INotifyCollectionChanged
     {
+    }
+
+    public interface IContainerFilter : IFilter
+    {
+        void Set(IFilter filter);
+        void Unset(IFilter filter);
     }
 
     public interface IFilter : INotifyPropertyChanged
     {
         bool IsEmpty { get; }
 
+        string Key { get; }
         string Glyph { get; }
         string ShortLabel { get; }
         string FullLabel { get; }
@@ -46,7 +53,7 @@ namespace Files.Filesystem.Search
         string ToAdvancedQuerySyntax();
     }
 
-    public interface IOperatorFilter : IFilter
+    public interface IOperatorFilter : IContainerFilter
     {
         IFilter SubFilter { get; set; }
     }
@@ -80,17 +87,18 @@ namespace Files.Filesystem.Search
         }
     }
 
-    public class AndFilter : ObservableCollection<IFilter>, IFilterCollection
+    public abstract class FilterCollection : ObservableCollection<IFilter>, IFilterCollection
     {
         public bool IsEmpty => Count == 0;
 
-        public string Glyph => "\xE168";
-        public string ShortLabel => "And";
-        public string FullLabel => "And Operator";
+        public abstract string Key { get; }
+        public abstract string Glyph { get; }
+        public abstract string ShortLabel { get; }
+        public virtual string FullLabel => ShortLabel;
 
-        public AndFilter() : base() {}
-        public AndFilter(IEnumerable<IFilter> filters) : base(filters) {}
-        public AndFilter(IList<IFilter> filters) : base(filters) {}
+        public FilterCollection() : base() {}
+        public FilterCollection(IEnumerable<IFilter> filters) : base(filters) {}
+        public FilterCollection(IList<IFilter> filters) : base(filters) {}
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
@@ -98,7 +106,36 @@ namespace Files.Filesystem.Search
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
         }
 
-        public string ToAdvancedQuerySyntax()
+        public abstract string ToAdvancedQuerySyntax();
+
+        public void Set(IFilter filter)
+        {
+            if (!Contains(filter))
+            {
+                Add(filter);
+            }
+        }
+        public void Unset(IFilter filter)
+        {
+            if (Contains(filter))
+            {
+                Remove(filter);
+            }
+        }
+    }
+
+    public class AndFilter : FilterCollection
+    {
+        public override string Key => "operator.and";
+        public override string Glyph => "\xE168";
+        public override string ShortLabel => "And";
+        public override string FullLabel => "And Operator";
+
+        public AndFilter() : base() {}
+        public AndFilter(IEnumerable<IFilter> filters) : base(filters) {}
+        public AndFilter(IList<IFilter> filters) : base(filters) {}
+
+        public override string ToAdvancedQuerySyntax()
         {
             var queries = Items.Where(filter => !filter.IsEmpty).Select(filter => ToQuery(filter));
             return string.Join(' ', queries);
@@ -110,25 +147,18 @@ namespace Files.Filesystem.Search
             }
         }
     }
-    public class OrFilter : ObservableCollection<IFilter>, IFilterCollection
+    public class OrFilter : FilterCollection
     {
-        public bool IsEmpty => Count == 0;
-
-        public string Glyph => "\xE168";
-        public string ShortLabel => "Or";
-        public string FullLabel => "Or Operator";
+        public override string Key => "operator.or";
+        public override string Glyph => "\xE168";
+        public override string ShortLabel => "Or";
+        public override string FullLabel => "Or Operator";
 
         public OrFilter() : base() {}
         public OrFilter(IEnumerable<IFilter> filters) : base(filters) {}
         public OrFilter(IList<IFilter> filters) : base(filters) {}
 
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
-        }
-
-        public string ToAdvancedQuerySyntax()
+        public override string ToAdvancedQuerySyntax()
         {
             var queries = Items.Where(filter => !filter.IsEmpty).Select(filter => ToQuery(filter));
             return string.Join(' ', queries);
@@ -144,6 +174,7 @@ namespace Files.Filesystem.Search
     {
         public bool IsEmpty => subFilter is null;
 
+        public string Key => "operator.not";
         public string Glyph => "\xE168";
         public string ShortLabel => "Not";
         public string FullLabel => "Not Operator";
@@ -168,12 +199,16 @@ namespace Files.Filesystem.Search
             null => string.Empty,
             _ => $"not({subFilter.ToAdvancedQuerySyntax()})"
         };
+
+        public void Set(IFilter filter) => SubFilter = filter;
+        public void Unset(IFilter filter) => SubFilter = null;
     }
 
-    public abstract class DateRangeSetting : ObservableObject, IDateRangeFilter
+    public abstract class DateRangeFilter : ObservableObject, IDateRangeFilter
     {
-        public bool IsEmpty => !range.Equals(DateRange.Always);
+        public bool IsEmpty => range.Equals(DateRange.Always);
 
+        public abstract string Key { get; }
         public string Glyph => "\xE163";
         public abstract string ShortLabel { get; }
         public virtual string FullLabel => ShortLabel;
@@ -210,23 +245,26 @@ namespace Files.Filesystem.Search
             };
         }
     }
-    public class CreatedSetting : DateRangeSetting
+    public class CreatedFilter : DateRangeFilter
     {
+        public override string Key => "file.created";
         public override string ShortLabel => "Created";
         public override string FullLabel => "Creation Date";
         protected override string QueryLabel => "System.ItemDate";
     }
-    public class ModifiedSetting : DateRangeSetting
+    public class ModifiedFilter : DateRangeFilter
     {
+        public override string Key => "file.modified";
         public override string ShortLabel => "Modified";
         public override string FullLabel => "Last modified Date";
         protected override string QueryLabel => "System.DateModified";
     }
 
-    public class FileSizeSetting : ObservableObject, ISizeRangeFilter
+    public class FileSizeFilter : ObservableObject, ISizeRangeFilter
     {
-        public bool IsEmpty => !range.Equals(SizeRange.All);
+        public bool IsEmpty => range.Equals(SizeRange.All);
 
+        public string Key => "file.size";
         public string Glyph => "\xE163";
         public string ShortLabel => "Size";
         public string FullLabel => "File Size";

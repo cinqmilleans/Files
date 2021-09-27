@@ -8,6 +8,6 @@ namespace Files.ViewModels.Search
 
     public class KindPageViewModel : FilterViewModel<IFilter>, IKindViewModel
     {
-        public KindPageViewModel(INavigatorViewModel navigator, IFilter filter) : base(navigator, filter) {}
+        public KindPageViewModel(IFilter filter) : base(filter) {}
     }
 }
