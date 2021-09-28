@@ -10,17 +10,15 @@ namespace Files.UserControls.Search
     public sealed partial class FilterPicker : UserControl
     {
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(IFilterViewModel), typeof(FilterPicker), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(IFilterPageViewModel), typeof(FilterPicker), new PropertyMetadata(null));
 
-        public IFilterViewModel ViewModel
+        public IFilterPageViewModel ViewModel
         {
-            get => (IFilterViewModel)GetValue(ViewModelProperty);
+            get => (IFilterPageViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         public FilterPicker() => InitializeComponent();
-
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => ViewModel?.Filter?.Clear();
 
         private MenuFlyout GetMenu()
         {
@@ -59,8 +57,13 @@ namespace Files.UserControls.Search
             Text = filter.ShortLabel,
             Command = new RelayCommand(() => {
                 var factory = new FilterViewModelFactory();
-                var viewModel = factory.GetViewModel(filter);
-                NavigatorViewModel.Default.OpenPage(viewModel);
+                var viewModel = new FilterPageViewModel
+                {
+                    Navigator = ViewModel.Navigator,
+                    Parent = ViewModel.Filter as IFilterViewModel<IContainerFilter>,
+                    Filter = factory.GetViewModel(filter),
+                };
+                ViewModel.Navigator.OpenPage(viewModel);
             })
         };
         private static MenuFlyoutItem GetMenuItem(string text) => new() { Text = text };

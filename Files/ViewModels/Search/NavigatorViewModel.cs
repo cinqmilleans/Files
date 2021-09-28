@@ -33,8 +33,6 @@ namespace Files.ViewModels.Search
 
     public class NavigatorViewModel : ObservableObject, INavigatorViewModel
     {
-        public static NavigatorViewModel Default { get; } = new NavigatorViewModel();
-
         public event TypedEventHandler<INavigatorViewModel, PageOpenedNavigatorEventArgs> PageOpened;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> BackRequested;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> ForwardRequested;
@@ -44,7 +42,7 @@ namespace Files.ViewModels.Search
         public ICommand ForwardCommand { get; }
         public ICommand SearchCommand { get; }
 
-        private NavigatorViewModel()
+        public NavigatorViewModel()
         {
             BackCommand = new RelayCommand(Back);
             ForwardCommand = new RelayCommand(Forward);

@@ -9,7 +9,7 @@ namespace Files.ViewModels.Search
         INavigatorViewModel Navigator { get; }
 
         ILocationViewModel Location { get; }
-        IFilterViewModel Filter { get; }
+        IFilterPageViewModel FilterPage { get; }
 
         ICommand SearchCommand { get; }
     }
@@ -19,7 +19,7 @@ namespace Files.ViewModels.Search
         public INavigatorViewModel Navigator { get; }
 
         public ILocationViewModel Location { get; }
-        public IFilterViewModel Filter { get; }
+        public IFilterPageViewModel FilterPage { get; }
 
         public ICommand SearchCommand { get; }
 
@@ -29,7 +29,11 @@ namespace Files.ViewModels.Search
 
             Navigator = navigator;
             Location = new LocationViewModel(settings.Location);
-            Filter = factory.GetViewModel(settings.Filter);
+            FilterPage = new FilterPageViewModel
+            {
+                Navigator = navigator,
+                Filter = factory.GetViewModel(settings.Filter),
+            };
             SearchCommand = navigator.SearchCommand;
         }
     }

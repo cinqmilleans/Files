@@ -38,7 +38,7 @@ namespace Files.UserControls
         {
             if (navigator is null && sender is Frame frame)
             {
-                navigator = new Navigator(frame, NavigatorViewModel.Default);
+                navigator = new Navigator(frame, new NavigatorViewModel());
                 navigator.GoRoot();
             }
         }

@@ -1,6 +1,8 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
@@ -12,8 +14,9 @@ namespace Files.ViewModels.Search
     public interface IFilterViewModel : INotifyPropertyChanged
     {
         IFilter Filter { get; }
+        ICommand ClearCommand { get; }
     }
-    public interface IFilterViewModel<T> : IFilterViewModel where T : IFilter
+    public interface IFilterViewModel<out T> : IFilterViewModel where T : IFilter
     {
         new T Filter { get; }
     }
@@ -42,7 +45,13 @@ namespace Files.ViewModels.Search
         IFilter IFilterViewModel.Filter => Filter;
         public T Filter { get; }
 
-        public FilterViewModel(T filter) => Filter = filter;
+        public ICommand ClearCommand { get; }
+
+        public FilterViewModel(T filter)
+        {
+            Filter = filter;
+            ClearCommand = new RelayCommand(Filter.Clear);
+        }
     }
 
     public class FilterCollectionViewModel : FilterViewModel<IFilterCollection>, IFilterCollectionViewModel

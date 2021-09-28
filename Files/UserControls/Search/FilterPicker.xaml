@@ -110,7 +110,8 @@
                 </StackPanel>
                 <CalendarDatePicker Header="From" Date="{x:Bind MinDateTime, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
                 <CalendarDatePicker Header="To" Date="{x:Bind MaxDateTime, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
-                <TextBlock Text="Or choose a file date range" Margin="0,32,0,0" />
+                <HyperlinkButton x:Name="ClearButton" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
+                <TextBlock Text="Or choose a file date range" Margin="0,16,0,0" />
                 <ItemsControl ItemsSource="{x:Bind Links}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:IDateRangeLink">
@@ -122,13 +123,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Grid Margin="0,8,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <HyperlinkButton x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Click="ClearButton_Click" />
-                </Grid>
             </StackPanel>
         </DataTemplate>
 
@@ -146,7 +140,8 @@
                     </StackPanel>
                 </StackPanel>
                 <local:SizeRangeSlider Range="{x:Bind Filter.Range, Mode=TwoWay}" />
-                <TextBlock Text="Or choose a file size range" Margin="0,32,0,0" />
+                <HyperlinkButton x:Name="ClearButton" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
+                <TextBlock Text="Or choose a file size range" Margin="0,16,0,0" />
                 <ItemsControl ItemsSource="{x:Bind Links}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:ISizeRangeLink">
@@ -157,13 +152,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Grid Margin="0,8,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <HyperlinkButton x:Name="ClearButton" Grid.Column="1" HorizontalAlignment="Right" Content="Clear" Click="ClearButton_Click" />
-                </Grid>
             </StackPanel>
         </DataTemplate>
 
@@ -181,7 +169,7 @@
     </UserControl.Resources>
 
     <ContentControl
-        Content="{x:Bind ViewModel, Mode=OneWay}" Width="200"
+        Content="{x:Bind ViewModel.Filter, Mode=OneWay}" Width="200"
         ContentTemplateSelector="{StaticResource SettingTemplateSelector}" />
 
 </UserControl>

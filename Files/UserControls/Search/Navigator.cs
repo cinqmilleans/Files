@@ -49,7 +49,7 @@ namespace Files.UserControls.Search
                 case ISettingsViewModel _ :
                     frame.Navigate(typeof(SettingsPage), viewModel, emptyTransition);
                     break;
-                case IFilterViewModel _:
+                case IFilterPageViewModel _ :
                     frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
                     break;
             }

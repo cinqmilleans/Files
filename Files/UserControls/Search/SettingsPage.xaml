@@ -9,7 +9,7 @@
 
     <StackPanel Orientation="Vertical">
         <TextBlock Text="Search Options" FontSize="18" FontWeight="SemiBold" />
-        <local:FilterPicker ViewModel="{x:Bind ViewModel.Filter, Mode=OneWay}" />
+        <local:FilterPicker ViewModel="{x:Bind ViewModel.FilterPage, Mode=OneWay}" />
         <StackPanel Orientation="Vertical" Spacing="4" Margin="0,16,0,0">
             <TextBlock FontSize="14" FontWeight="SemiBold" Text="Search in" />
             <CheckBox Content="Subfolders" IsChecked="{x:Bind ViewModel.Location.UseSubFolders, Mode=TwoWay}" />
