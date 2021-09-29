@@ -23,13 +23,16 @@ namespace Files.ViewModels.Search
         ICommand ToggleCommand { get; }
     }
 
-    public class SizeRangeViewModel : FilterViewModel<ISizeRangeFilter>, ISizeRangeViewModel
+    public class SizeRangeViewModel : FilterViewModel, ISizeRangeViewModel
     {
+        public new ISizeRangeFilter Filter { get; }
+
         private readonly Lazy<IReadOnlyList<ISizeRangeLink>> links;
         public IReadOnlyList<ISizeRangeLink> Links => links.Value;
 
-        public SizeRangeViewModel(ISizeRangeFilter filter) : base(filter)
+        public SizeRangeViewModel(ISizeRangeFilter filter)
         {
+            Filter = filter;
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;
         }

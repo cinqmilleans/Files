@@ -55,18 +55,21 @@ namespace Files.UserControls.Search
         {
             Icon = new FontIcon { FontSize = 14, Glyph = filter.Glyph },
             Text = filter.ShortLabel,
-            Command = new RelayCommand(() => {
-                var factory = new FilterViewModelFactory();
-                var viewModel = new FilterPageViewModel
-                {
-                    Navigator = ViewModel.Navigator,
-                    Parent = ViewModel.Filter as IFilterViewModel<IContainerFilter>,
-                    Filter = factory.GetViewModel(filter),
-                };
-                ViewModel.Navigator.OpenPage(viewModel);
-            })
+            Command = new RelayCommand(() => Select(filter)),
         };
         private static MenuFlyoutItem GetMenuItem(string text) => new() { Text = text };
+
+        private void Select(IFilter filter)
+        {
+            var factory = new FilterViewModelFactory();
+            var viewModel = new FilterPageViewModel
+            {
+                Navigator = ViewModel.Navigator,
+                Parent = ViewModel.Filter as IContainerFilterViewModel,
+                Filter = factory.GetViewModel(filter),
+            };
+            ViewModel.Navigator.OpenPage(viewModel);
+        }
 
         private void AddFilter_Loaded(object sender, RoutedEventArgs e)
             => (sender as Button).Flyout = GetMenu();

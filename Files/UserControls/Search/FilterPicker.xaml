@@ -15,7 +15,7 @@
         <converters:ToStringConverter x:Key="ToStringConverter" />
         <converters:VisiblityInvertConverter x:Key="VisiblityInvertConverter" />
 
-        <local:FilterPickerTemplateSelector x:Key="SettingTemplateSelector"
+        <local:FilterPickerTemplateSelector x:Key="PickerTemplateSelector"
             CollectionTemplate="{StaticResource CollectionTemplate}"
             KindTemplate="{StaticResource KindTemplate}"
             DateRangeTemplate="{StaticResource DateRangeTemplate}"
@@ -170,6 +170,6 @@
 
     <ContentControl
         Content="{x:Bind ViewModel.Filter, Mode=OneWay}" Width="200"
-        ContentTemplateSelector="{StaticResource SettingTemplateSelector}" />
+        ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
 
 </UserControl>

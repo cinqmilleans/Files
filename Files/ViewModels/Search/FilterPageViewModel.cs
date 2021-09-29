@@ -8,7 +8,7 @@ namespace Files.ViewModels.Search
     {
         INavigatorViewModel Navigator { get; }
 
-        IFilterViewModel<IContainerFilter> Parent { get; }
+        IContainerFilterViewModel Parent { get; }
         IFilterViewModel Filter { get; }
 
         ICommand BackCommand { get; }
@@ -22,7 +22,7 @@ namespace Files.ViewModels.Search
     {
         public INavigatorViewModel Navigator { get; set; }
 
-        public IFilterViewModel<IContainerFilter> Parent { get; set; }
+        public IContainerFilterViewModel Parent { get; set; }
         public IFilterViewModel Filter { get; set; }
 
         public ICommand BackCommand => Navigator?.BackCommand;

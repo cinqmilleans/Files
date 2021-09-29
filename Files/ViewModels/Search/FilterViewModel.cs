@@ -16,16 +16,18 @@ namespace Files.ViewModels.Search
         IFilter Filter { get; }
         ICommand ClearCommand { get; }
     }
-    public interface IFilterViewModel<out T> : IFilterViewModel where T : IFilter
-    {
-        new T Filter { get; }
-    }
 
-    public interface IFilterCollectionViewModel : IFilterViewModel<IFilterCollection>
+    public interface IContainerFilterViewModel : IFilterViewModel
     {
+        new IContainerFilter Filter { get; }
     }
-    public interface IOperatorFilterViewModel : IFilterViewModel<IOperatorFilter>
+    public interface IFilterCollectionViewModel : IContainerFilterViewModel
     {
+        new IFilterCollection Filter { get; }
+    }
+    public interface IOperatorFilterViewModel : IContainerFilterViewModel
+    {
+        new IOperatorFilter Filter { get; }
     }
 
     public class FilterViewModelFactory : IFilterViewModelFactory
@@ -40,26 +42,29 @@ namespace Files.ViewModels.Search
         };
     }
 
-    public class FilterViewModel<T> : ObservableObject, IFilterViewModel<T> where T : IFilter
+    public class FilterViewModel : ObservableObject, IFilterViewModel
     {
-        IFilter IFilterViewModel.Filter => Filter;
-        public T Filter { get; }
-
+        public IFilter Filter { get; }
         public ICommand ClearCommand { get; }
 
-        public FilterViewModel(T filter)
-        {
-            Filter = filter;
-            ClearCommand = new RelayCommand(Filter.Clear);
-        }
+        public FilterViewModel() => ClearCommand = new RelayCommand(Clear);
+        public FilterViewModel(IFilter filter) : this() => Filter = filter;
+
+        private void Clear() => Filter?.Clear();
     }
 
-    public class FilterCollectionViewModel : FilterViewModel<IFilterCollection>, IFilterCollectionViewModel
+    public class FilterCollectionViewModel : FilterViewModel, IFilterCollectionViewModel
     {
-        public FilterCollectionViewModel(IFilterCollection filter) : base(filter) {}
+        IContainerFilter IContainerFilterViewModel.Filter => Filter;
+        public new IFilterCollection Filter { get; }
+
+        public FilterCollectionViewModel(IFilterCollection filter): base(filter) {}
     }
-    public class OperatorFilterViewModel : FilterViewModel<IOperatorFilter>, IOperatorFilterViewModel
+    public class OperatorFilterViewModel : FilterViewModel, IOperatorFilterViewModel
     {
+        IContainerFilter IContainerFilterViewModel.Filter => Filter;
+        public new IOperatorFilter Filter { get; }
+
         public OperatorFilterViewModel(IOperatorFilter filter) : base(filter) { }
     }
 }

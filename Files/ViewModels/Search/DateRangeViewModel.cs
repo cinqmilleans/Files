@@ -26,8 +26,10 @@ namespace Files.ViewModels.Search
         ICommand ToggleCommand { get; }
     }
 
-    public class DateRangeViewModel : FilterViewModel<IDateRangeFilter>, IDateRangeViewModel
+    public class DateRangeViewModel : FilterViewModel, IDateRangeViewModel
     {
+        public new IDateRangeFilter Filter { get; }
+
         public DateTimeOffset? MinDateTime
         {
             get
@@ -58,8 +60,9 @@ namespace Files.ViewModels.Search
         private readonly Lazy<IReadOnlyList<IDateRangeLink>> links;
         public IReadOnlyList<IDateRangeLink> Links => links.Value;
 
-        public DateRangeViewModel(IDateRangeFilter filter) : base(filter)
+        public DateRangeViewModel(IDateRangeFilter filter)
         {
+            Filter = filter;
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;
         }
