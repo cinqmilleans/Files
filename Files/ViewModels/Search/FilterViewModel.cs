@@ -47,8 +47,11 @@ namespace Files.ViewModels.Search
         public IFilter Filter { get; }
         public ICommand ClearCommand { get; }
 
-        public FilterViewModel() => ClearCommand = new RelayCommand(Clear);
-        public FilterViewModel(IFilter filter) : this() => Filter = filter;
+        public FilterViewModel(IFilter filter)
+        {
+            Filter = filter;
+            ClearCommand = new RelayCommand(Clear);
+        }
 
         private void Clear() => Filter?.Clear();
     }

@@ -60,7 +60,7 @@ namespace Files.ViewModels.Search
         private readonly Lazy<IReadOnlyList<IDateRangeLink>> links;
         public IReadOnlyList<IDateRangeLink> Links => links.Value;
 
-        public DateRangeViewModel(IDateRangeFilter filter)
+        public DateRangeViewModel(IDateRangeFilter filter) : base(filter)
         {
             Filter = filter;
             links = new(GetLinks);

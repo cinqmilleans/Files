@@ -30,7 +30,7 @@ namespace Files.ViewModels.Search
         private readonly Lazy<IReadOnlyList<ISizeRangeLink>> links;
         public IReadOnlyList<ISizeRangeLink> Links => links.Value;
 
-        public SizeRangeViewModel(ISizeRangeFilter filter)
+        public SizeRangeViewModel(ISizeRangeFilter filter) : base(filter)
         {
             Filter = filter;
             links = new(GetLinks);
