@@ -6,7 +6,7 @@ namespace Files.ViewModels.Search
     {
     }
 
-    public class KindPageViewModel : FilterViewModel, IKindViewModel
+    public class KindPageViewModel : FilterViewModel<IFilter>, IKindViewModel
     {
         public KindPageViewModel(IFilter filter) : base(filter) {}
     }

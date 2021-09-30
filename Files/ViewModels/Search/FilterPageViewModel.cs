@@ -1,5 +1,4 @@
-﻿using Files.Filesystem.Search;
-using Microsoft.Toolkit.Mvvm.Input;
+﻿using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search

@@ -42,12 +42,14 @@ namespace Files.ViewModels.Search
         };
     }
 
-    public class FilterViewModel : ObservableObject, IFilterViewModel
+    public class FilterViewModel<T> : ObservableObject, IFilterViewModel where T : IFilter
     {
-        public IFilter Filter { get; }
+        IFilter IFilterViewModel.Filter => Filter;
+        public T Filter { get; }
+
         public ICommand ClearCommand { get; }
 
-        public FilterViewModel(IFilter filter)
+        public FilterViewModel(T filter)
         {
             Filter = filter;
             ClearCommand = new RelayCommand(Clear);
@@ -56,18 +58,16 @@ namespace Files.ViewModels.Search
         private void Clear() => Filter?.Clear();
     }
 
-    public class FilterCollectionViewModel : FilterViewModel, IFilterCollectionViewModel
+    public class FilterCollectionViewModel : FilterViewModel<IFilterCollection>, IFilterCollectionViewModel
     {
         IContainerFilter IContainerFilterViewModel.Filter => Filter;
-        public new IFilterCollection Filter { get; }
 
         public FilterCollectionViewModel(IFilterCollection filter): base(filter) {}
     }
-    public class OperatorFilterViewModel : FilterViewModel, IOperatorFilterViewModel
+    public class OperatorFilterViewModel : FilterViewModel<IOperatorFilter>, IOperatorFilterViewModel
     {
         IContainerFilter IContainerFilterViewModel.Filter => Filter;
-        public new IOperatorFilter Filter { get; }
 
-        public OperatorFilterViewModel(IOperatorFilter filter) : base(filter) { }
+        public OperatorFilterViewModel(IOperatorFilter filter) : base(filter) {}
     }
 }
