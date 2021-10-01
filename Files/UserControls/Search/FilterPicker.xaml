@@ -36,7 +36,7 @@
                     ItemTemplateSelector="{StaticResource ButtonTemplateSelector}" />
                 <StackPanel Orientation="Horizontal" Margin="0,8,8,8" Spacing="8">
                     <Button x:Name="AddFilterButton" Content="Add" Loaded="AddFilter_Loaded" />
-                    <Button Content="Clear" />
+                    <Button Content="Clear" Command="{x:Bind Filter.ClearCommand}" />
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
@@ -218,7 +218,7 @@
     </UserControl.Resources>
 
     <ContentControl
-        Content="{x:Bind ViewModel.Filter, Mode=OneWay}" Width="200"
+        x:Name="MainControl" Width="200"
         ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
 
 </UserControl>

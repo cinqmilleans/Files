@@ -33,6 +33,8 @@ namespace Files.ViewModels.Search
 
     public class NavigatorViewModel : ObservableObject, INavigatorViewModel
     {
+        public static NavigatorViewModel Default = new NavigatorViewModel();
+
         public event TypedEventHandler<INavigatorViewModel, PageOpenedNavigatorEventArgs> PageOpened;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> BackRequested;
         public event TypedEventHandler<INavigatorViewModel, EventArgs> ForwardRequested;

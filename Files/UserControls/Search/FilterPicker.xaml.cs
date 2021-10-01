@@ -9,13 +9,30 @@ namespace Files.UserControls.Search
 {
     public sealed partial class FilterPicker : UserControl
     {
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(IFilterPageViewModel), typeof(FilterPicker), new PropertyMetadata(null));
+        private readonly IFilterViewModelFactory factory = new FilterViewModelFactory();
 
-        public IFilterPageViewModel ViewModel
+        public static readonly DependencyProperty NavigatorProperty =
+            DependencyProperty.Register(nameof(Navigator), typeof(INavigatorViewModel), typeof(FilterPicker), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty FilterProperty =
+            DependencyProperty.Register(nameof(Filter), typeof(IFilter), typeof(FilterPicker), new PropertyMetadata(null));
+
+        public INavigatorViewModel Navigator
         {
-            get => (IFilterPageViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
+            get => (INavigatorViewModel)GetValue(NavigatorProperty);
+            set => SetValue(NavigatorProperty, value);
+        }
+
+        public IFilter Filter
+        {
+            get => (IFilter)GetValue(FilterProperty);
+            set
+            {
+                SetValue(FilterProperty, value);
+
+                var factory = new FilterViewModelFactory();
+                MainControl.Content = factory.GetViewModel(value);
+            }
         }
 
         public FilterPicker() => InitializeComponent();
@@ -61,6 +78,7 @@ namespace Files.UserControls.Search
 
         private void Select(IFilter filter)
         {
+            Navigator?.OpenPage(filter);
             var factory = new FilterViewModelFactory();
             var viewModel = new FilterPageViewModel
             {

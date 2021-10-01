@@ -13,8 +13,20 @@ namespace Files.ViewModels.Search
 
     public interface IFilterViewModel : INotifyPropertyChanged
     {
+        IContainerFilterViewModel Parent { get; }
+
         IFilter Filter { get; }
+
         ICommand ClearCommand { get; }
+        ICommand OpenPageCommand { get; }
+        ICommand BackCommand { get; }
+        ICommand SaveCommand { get; }
+        ICommand BackSaveCommand { get; }
+
+        void Clear();
+        void OpenPage();
+        void Back();
+        void Save();
     }
 
     public interface IContainerFilterViewModel : IFilterViewModel
@@ -44,18 +56,53 @@ namespace Files.ViewModels.Search
 
     public class FilterViewModel<T> : ObservableObject, IFilterViewModel where T : IFilter
     {
+        public IContainerFilterViewModel Parent { get; }
+
         IFilter IFilterViewModel.Filter => Filter;
         public T Filter { get; }
 
         public ICommand ClearCommand { get; }
+        public ICommand OpenPageCommand { get; }
+        public ICommand BackCommand { get; }
+        public ICommand SaveCommand { get; }
+        public ICommand BackSaveCommand { get; }
 
-        public FilterViewModel(T filter)
+        public FilterViewModel(T filter) : this(null, filter)
         {
+        }
+        public FilterViewModel(IContainerFilterViewModel parent, T filter)
+        {
+            Parent = parent;
             Filter = filter;
+
             ClearCommand = new RelayCommand(Clear);
+            OpenPageCommand = new RelayCommand(OpenPage);
+            BackCommand = new RelayCommand(Back);
+            SaveCommand = new RelayCommand(Save);
+            BackSaveCommand = new RelayCommand(BackSave);
         }
 
         private void Clear() => Filter?.Clear();
+        public void OpenPage()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Back()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void BackSave()
+        {
+            Back();
+            Save();
+        }
     }
 
     public class FilterCollectionViewModel : FilterViewModel<IFilterCollection>, IFilterCollectionViewModel
