@@ -32,11 +32,14 @@ namespace Files.Filesystem.Search
     public interface IFilterCollection : ICollection<IFilter>, IContainerFilter, INotifyCollectionChanged
     {
     }
-
     public interface IContainerFilter : IFilter
     {
         void Set(IFilter filter);
         void Unset(IFilter filter);
+    }
+    public interface IOperatorFilter : IContainerFilter
+    {
+        IFilter SubFilter { get; set; }
     }
 
     public interface IFilter : INotifyPropertyChanged
@@ -53,11 +56,15 @@ namespace Files.Filesystem.Search
         string ToAdvancedQuerySyntax();
     }
 
-    public interface IOperatorFilter : IContainerFilter
+    public interface IAndFilter : IFilterCollection
     {
-        IFilter SubFilter { get; set; }
     }
-
+    public interface IOrFilter : IFilterCollection
+    {
+    }
+    public interface INotFilter : IOperatorFilter
+    {
+    }
     public interface IDateRangeFilter : IFilter
     {
         DateRange Range { get; set; }
@@ -124,7 +131,7 @@ namespace Files.Filesystem.Search
         }
     }
 
-    public class AndFilter : FilterCollection
+    public class AndFilter : FilterCollection, IAndFilter
     {
         public override string Key => "operator.and";
         public override string Glyph => "\xE168";
@@ -147,7 +154,7 @@ namespace Files.Filesystem.Search
             }
         }
     }
-    public class OrFilter : FilterCollection
+    public class OrFilter : FilterCollection, IOrFilter
     {
         public override string Key => "operator.or";
         public override string Glyph => "\xE168";
@@ -170,7 +177,7 @@ namespace Files.Filesystem.Search
             }
         }
     }
-    public class NotFilter : ObservableObject, IOperatorFilter
+    public class NotFilter : ObservableObject, IOperatorFilter, INotFilter
     {
         public bool IsEmpty => subFilter is null;
 

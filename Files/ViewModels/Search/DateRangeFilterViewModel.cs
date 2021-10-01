@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
-    public interface IDateRangeViewModel : IFilterViewModel
+    public interface IDateRangeFilterViewModel : IFilterViewModel
     {
         new IDateRangeFilter Filter { get; }
 
@@ -26,7 +26,7 @@ namespace Files.ViewModels.Search
         ICommand ToggleCommand { get; }
     }
 
-    public class DateRangeViewModel : FilterViewModel<IDateRangeFilter>, IDateRangeViewModel
+    public class DateRangeFilterViewModel : FilterViewModel<IDateRangeFilter>, IDateRangeFilterViewModel
     {
         public DateTimeOffset? MinDateTime
         {
@@ -58,7 +58,7 @@ namespace Files.ViewModels.Search
         private readonly Lazy<IReadOnlyList<IDateRangeLink>> links;
         public IReadOnlyList<IDateRangeLink> Links => links.Value;
 
-        public DateRangeViewModel(IDateRangeFilter filter) : base(filter)
+        public DateRangeFilterViewModel(IDateRangeFilter filter) : base(filter)
         {
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;

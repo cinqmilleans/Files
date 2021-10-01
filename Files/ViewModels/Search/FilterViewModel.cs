@@ -36,8 +36,8 @@ namespace Files.ViewModels.Search
         {
             IFilterCollection f => new FilterCollectionViewModel(f),
             IOperatorFilter f => new OperatorFilterViewModel(f),
-            IDateRangeFilter f => new DateRangeViewModel(f),
-            ISizeRangeFilter f => new SizeRangeViewModel(f),
+            IDateRangeFilter f => new DateRangeFilterViewModel(f),
+            ISizeRangeFilter f => new SizeRangeFilterViewModel(f),
             _ => null,
         };
     }

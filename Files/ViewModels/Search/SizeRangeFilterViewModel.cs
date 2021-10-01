@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
-    public interface ISizeRangeViewModel : IFilterViewModel
+    public interface ISizeRangeFilterViewModel : IFilterViewModel
     {
         new ISizeRangeFilter Filter { get; }
 
@@ -23,12 +23,12 @@ namespace Files.ViewModels.Search
         ICommand ToggleCommand { get; }
     }
 
-    public class SizeRangeViewModel : FilterViewModel<ISizeRangeFilter>, ISizeRangeViewModel
+    public class SizeRangeFilterViewModel : FilterViewModel<ISizeRangeFilter>, ISizeRangeFilterViewModel
     {
         private readonly Lazy<IReadOnlyList<ISizeRangeLink>> links;
         public IReadOnlyList<ISizeRangeLink> Links => links.Value;
 
-        public SizeRangeViewModel(ISizeRangeFilter filter) : base(filter)
+        public SizeRangeFilterViewModel(ISizeRangeFilter filter) : base(filter)
         {
             links = new(GetLinks);
             filter.PropertyChanged += Filter_PropertyChanged;

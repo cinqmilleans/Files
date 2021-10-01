@@ -73,6 +73,10 @@ namespace Files.UserControls.Search
 
         private void AddFilter_Loaded(object sender, RoutedEventArgs e)
             => (sender as Button).Flyout = GetMenu();
+
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 
     public class FilterPickerTemplateSelector : DataTemplateSelector
@@ -87,8 +91,46 @@ namespace Files.UserControls.Search
         {
             IFilterCollectionViewModel => CollectionTemplate,
             IOperatorFilterViewModel => OperatorTemplate,
-            IDateRangeViewModel _ => DateRangeTemplate,
-            ISizeRangeViewModel _ => SizeRangeTemplate,
+            IDateRangeFilterViewModel _ => DateRangeTemplate,
+            ISizeRangeFilterViewModel _ => SizeRangeTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
+    }
+
+    public class FilterButtonTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DefaultTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            IFilterCollection => DefaultTemplate,
+            IOperatorFilter => DefaultTemplate,
+            IDateRangeFilter => DefaultTemplate,
+            ISizeRangeFilter => DefaultTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
+    }
+
+    public class FilterButtonContentTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate CollectionTemplate { get; set; }
+        public DataTemplate OperatorTemplate { get; set; }
+        public DataTemplate DateRangeTemplate { get; set; }
+        public DataTemplate SizeRangeTemplate { get; set; }
+        public DataTemplate KindTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            IFilterCollection => CollectionTemplate,
+            IOperatorFilter => OperatorTemplate,
+            IDateRangeFilter => DateRangeTemplate,
+            ISizeRangeFilter => SizeRangeTemplate,
             _ => null,
         };
 
