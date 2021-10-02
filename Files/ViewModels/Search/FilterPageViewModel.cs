@@ -10,11 +10,16 @@ namespace Files.ViewModels.Search
         IContainerFilterViewModel Parent { get; }
         IFilterViewModel Filter { get; }
 
+        //ICommand ClearCommand { get; }
+        //ICommand OpenPageCommand { get; }
         ICommand BackCommand { get; }
         ICommand SaveCommand { get; }
+        //ICommand BackSaveCommand { get; }
 
-        void Back();
-        void Save();
+        //void Clear();
+        //void OpenPage();
+        //void Back();
+        //void Save();
     }
 
     public class FilterPageViewModel : IFilterPageViewModel
@@ -24,10 +29,16 @@ namespace Files.ViewModels.Search
         public IContainerFilterViewModel Parent { get; set; }
         public IFilterViewModel Filter { get; set; }
 
-        public ICommand BackCommand => Navigator?.BackCommand;
+        //public ICommand ClearCommand { get; }
+        //public ICommand OpenPageCommand { get; }
+        public ICommand BackCommand { get; }
         public ICommand SaveCommand { get; }
+        //public ICommand BackSaveCommand { get; }
 
-        public FilterPageViewModel() => SaveCommand = new RelayCommand(Save);
+        public FilterPageViewModel()
+        {
+            SaveCommand = new RelayCommand(Save);
+        }
 
         public void Back() => Navigator?.Back();
 

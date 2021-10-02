@@ -11,27 +11,27 @@ namespace Files.UserControls.Search
     {
         private readonly IFilterViewModelFactory factory = new FilterViewModelFactory();
 
-        public static readonly DependencyProperty NavigatorProperty =
-            DependencyProperty.Register(nameof(Navigator), typeof(INavigatorViewModel), typeof(FilterPicker), new PropertyMetadata(null));
+        //public static readonly DependencyProperty NavigatorProperty =
+        //    DependencyProperty.Register(nameof(Navigator), typeof(INavigatorViewModel), typeof(FilterPicker), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty FilterProperty =
-            DependencyProperty.Register(nameof(Filter), typeof(IFilter), typeof(FilterPicker), new PropertyMetadata(null));
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register(nameof(ViewModel), typeof(IFilterPageViewModel), typeof(FilterPicker), new PropertyMetadata(null));
 
-        public INavigatorViewModel Navigator
+        //public INavigatorViewModel Navigator
+        //{
+        //    get => (INavigatorViewModel)GetValue(NavigatorProperty);
+        //    set => SetValue(NavigatorProperty, value);
+        //}
+
+        public IFilterPageViewModel ViewModel
         {
-            get => (INavigatorViewModel)GetValue(NavigatorProperty);
-            set => SetValue(NavigatorProperty, value);
-        }
-
-        public IFilter Filter
-        {
-            get => (IFilter)GetValue(FilterProperty);
+            get => (IFilterPageViewModel)GetValue(ViewModelProperty);
             set
             {
-                SetValue(FilterProperty, value);
+                SetValue(ViewModelProperty, value);
 
-                var factory = new FilterViewModelFactory();
-                MainControl.Content = factory.GetViewModel(value);
+                //var factory = new FilterViewModelFactory();
+                //MainControl.Content = factory.GetViewModel(value);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Files.UserControls.Search
 
         private void Select(IFilter filter)
         {
-            Navigator?.OpenPage(filter);
+            //Navigator?.OpenPage(filter);
             var factory = new FilterViewModelFactory();
             var viewModel = new FilterPageViewModel
             {

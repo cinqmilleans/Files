@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -13,22 +14,9 @@ namespace Files.ViewModels.Search
 
     public interface IFilterViewModel : INotifyPropertyChanged
     {
-        IContainerFilterViewModel Parent { get; }
-
         IFilter Filter { get; }
-
         ICommand ClearCommand { get; }
-        ICommand OpenPageCommand { get; }
-        ICommand BackCommand { get; }
-        ICommand SaveCommand { get; }
-        ICommand BackSaveCommand { get; }
-
-        void Clear();
-        void OpenPage();
-        void Back();
-        void Save();
     }
-
     public interface IContainerFilterViewModel : IFilterViewModel
     {
         new IContainerFilter Filter { get; }
