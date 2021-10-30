@@ -2848,4 +2848,58 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
   <data name="SearchGroupHeader_ItemsSuffixe" xml:space="preserve">
     <value>({0} items)</value>
   </data>
+  <data name="SearchSettingOptions_Title.Text" xml:space="preserve">
+    <value>Search Options</value>
+  </data>
+  <data name="SearchPickerAddMenu_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="SearchPickerAddMenu_Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="SearchPickerLocation_In.Text" xml:space="preserve">
+    <value>Search in</value>
+  </data>
+  <data name="SearchPickerLocation_Subfolders.Content" xml:space="preserve">
+    <value>Subfolders</value>
+  </data>
+  <data name="SearchPickerGroup_NoSelected.Text" xml:space="preserve">
+    <value>No filter selected.</value>
+  </data>
+  <data name="SearchPickerGroup_Add.Label" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SearchPickerGroup_Clear.Label" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="SearchPickerDateRange_NoSelected.Text" xml:space="preserve">
+    <value>No date size range selected.</value>
+  </data>
+  <data name="SearchPickerDateRange_Clear.Content" xml:space="preserve">
+    <value>No date range selected.</value>
+  </data>
+  <data name="SearchPickerDateRange_Choose.Text" xml:space="preserve">
+    <value>Or choose a date range</value>
+  </data>
+  <data name="SearchPickerSizeRange_NoSelected.Text" xml:space="preserve">
+    <value>No size range selected.</value>
+  </data>
+  <data name="SearchPickerSizeRange_Clear.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="SearchPickerSizeRange_Choose.Text" xml:space="preserve">
+    <value>Or choose a size range</value>
+  </data>
+  <data name="FilterPage_Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="FilterPage_Cancel.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MultiFilterPage_Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="MultiFilterPage_Cancel.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

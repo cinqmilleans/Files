@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Files.ViewModels.Search;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Files.UserControls.Search
@@ -32,10 +33,10 @@ namespace Files.UserControls.Search
             {
                 return;
             }
-            /*switch (viewModel)
+            switch (viewModel)
             {
-                case ISettingsViewModel:
-                    Frame.Navigate(typeof(SettingsPage), viewModel, emptyTransition);
+                case ISearchSettingsViewModel:
+                    Frame.Navigate(typeof(SearchSettingsPage), viewModel, emptyTransition);
                     break;
                 case IMultiSearchPageViewModel:
                     Frame.Navigate(typeof(MultiFilterPage), viewModel, toRightTransition);
@@ -46,7 +47,7 @@ namespace Files.UserControls.Search
                 default:
                     Frame.Content = null;
                     break;
-            }*/
+            }
         }
     }
 }

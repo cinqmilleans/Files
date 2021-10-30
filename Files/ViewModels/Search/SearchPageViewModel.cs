@@ -92,9 +92,9 @@ namespace Files.ViewModels.Search
 
         public ISearchPageViewModel GetViewModel(ISearchFilter filter) => filter switch
         {
-            //ISearchFilterCollection f => new GroupPageViewModel(context, f),
-            //IDateRangeFilter f => new DateRangePageViewModel(context, f),
-            //ISizeRangeFilter f => new SizeRangePageViewModel(context, f),
+            ISearchFilterCollection f => new GroupPageViewModel(context, f),
+            IDateRangeFilter f => new DateRangePageViewModel(context, f),
+            ISizeRangeFilter f => new SizeRangePageViewModel(context, f),
             _ => null,
         };
     }
@@ -107,9 +107,9 @@ namespace Files.ViewModels.Search
 
         public ISearchFilterContext GetContext(ISearchFilter filter) => filter switch
         {
-            //ISearchFilterCollection f => new GroupContext(parent, f),
-            //IDateRangeFilter f => new DateRangeContext(parent, f),
-            //ISizeRangeFilter f => new SizeRangeContext(parent, f),
+            ISearchFilterCollection f => new GroupContext(parent, f),
+            IDateRangeFilter f => new DateRangeContext(parent, f),
+            ISizeRangeFilter f => new SizeRangeContext(parent, f),
             _ => null,
         };
     }

@@ -349,7 +349,22 @@
     <Compile Include="UserControls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\FilterPage.xaml.cs">
+      <DependentUpon>FilterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\MultiFilterPage.xaml.cs">
+      <DependentUpon>MultiFilterPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\SearchNavigator.cs" />
+    <Compile Include="UserControls\Search\SearchPicker.xaml.cs">
+      <DependentUpon>SearchPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\SearchSettingsPage.xaml.cs">
+      <DependentUpon>SearchSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
+      <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Selection\ExtendPreviousItemSelectionStrategy.cs" />
     <Compile Include="Helpers\GenericItemsCollection.cs" />
     <Compile Include="UserControls\Selection\IgnorePreviousItemSelectionStrategy.cs" />
@@ -1275,6 +1290,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\SearchBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\FilterPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\MultiFilterPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SearchPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SearchSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Search\SizeRangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
