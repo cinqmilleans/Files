@@ -67,7 +67,7 @@ namespace Files.Filesystem.Search
 
     public class AndFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
-        public string Glyph => string.Empty;
+        public string Glyph => "\uEC26";
         public string Title => "SearchAndFilterCollection_Title".GetLocalized();
         public string Description => "SearchAndFilterCollection_Description".GetLocalized();
 
@@ -87,7 +87,7 @@ namespace Files.Filesystem.Search
     }
     public class OrFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
-        public string Glyph => string.Empty;
+        public string Glyph => "\uEC26";
         public string Title => "SearchOrFilterCollection_Title".GetLocalized();
         public string Description => "SearchOrFilterCollection_Description".GetLocalized();
 
@@ -107,7 +107,7 @@ namespace Files.Filesystem.Search
     }
     public class NotFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
-        public string Glyph => string.Empty;
+        public string Glyph => "\uEC26";
         public string Title => "SearchNotFilterCollection_Title".GetLocalized();
         public string Description => "SearchNotFilterCollection_Description".GetLocalized();
 
@@ -185,7 +185,7 @@ namespace Files.Filesystem.Search
 
     public class SizeRangeFilter : ISizeRangeFilter
     {
-        public string Glyph => string.Empty;
+        public string Glyph => "\uE130";
         public string Title => "SearchSizeFilter_Title".GetLocalized();
         public string Description => "SearchSizeFilter_Description".GetLocalized();
 

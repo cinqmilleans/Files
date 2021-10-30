@@ -9,7 +9,7 @@
 
     <StackPanel Orientation="Vertical">
         <TextBlock x:Uid="SearchSettingOptions_Title" Margin="0,0,0,8" FontSize="18" FontWeight="SemiBold" Text="Search Options" />
-        <local:Picker ViewModel="{x:Bind ViewModel.LocationViewModel}" />
         <local:Picker ViewModel="{x:Bind ViewModel.FilterViewModel}" />
+        <local:Picker ViewModel="{x:Bind ViewModel.LocationViewModel}" />
     </StackPanel>
 </Page>

@@ -21,17 +21,19 @@
             SizeRangeTemplate="{StaticResource SizeRangePickerTemplate}" />
 
         <DataTemplate x:Key="LocationPickerTemplate" x:DataType="vm:ILocationPickerViewModel">
-            <StackPanel Orientation="Vertical" Width="244" Spacing="4">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="4">
                 <TextBlock x:Uid="SearchPickerLocation_In" FontSize="14" FontWeight="SemiBold" Text="Search in" />
                 <CheckBox x:Uid="SearchPickerLocation_Subfolders" Content="Subfolders" IsChecked="{x:Bind SearchInSubFolders, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="GroupPickerTemplate" x:DataType="vm:IGroupPickerViewModel">
-            <StackPanel Orientation="Vertical" Width="244">
-                <TextBlock x:Uid="SearchPickerGroup_NoSelected" TextWrapping="Wrap" Text="No filter selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                <TextBlock x:Uid="SearchPickerGroup_NoSelected" Margin="8,0,8,0" TextWrapping="Wrap" Text="No filter selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <Grid Margin="8,0,8,0" Visibility="{x:Bind HasDescription}">
                 <TextBlock TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}"
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}" />
+                </Grid>
                 <ItemsControl Margin="0,8,0,8" ItemsSource="{x:Bind Contexts, Mode=OneWay}">
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -77,7 +79,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DateRangePickerTemplate" x:DataType="vm:IDateRangePickerViewModel">
-            <StackPanel Orientation="Vertical" Width="244">
+            <StackPanel Width="208" Orientation="Vertical">
                 <StackPanel MinHeight="64">
                     <StackPanel
                         Margin="8,0,8,16" Orientation="Vertical"
@@ -109,7 +111,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangePickerTemplate" x:DataType="vm:ISizeRangePickerViewModel">
-            <StackPanel Orientation="Vertical" Width="244">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                 <StackPanel MinHeight="64" HorizontalAlignment="Stretch">
                     <StackPanel
                         Margin="8,0,8,16" Orientation="Vertical"
@@ -145,8 +147,9 @@
 
         <ControlTemplate x:Name="HeaderItemTemplate" x:Key="HeaderItemTemplate" TargetType="MenuFlyoutItem">
             <Button
-                MaxWidth="244" HorizontalContentAlignment="Left" Background="Transparent" BorderBrush="Transparent"
-                Content="{TemplateBinding Tag}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}">
+                MaxWidth="244" Background="Transparent" BorderBrush="Transparent"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{TemplateBinding Tag}"
+                Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}">
                 <Button.ContentTemplate>
                     <DataTemplate x:DataType="vm:ISearchFilterHeader">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">

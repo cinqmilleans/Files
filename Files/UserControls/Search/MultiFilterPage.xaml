@@ -8,14 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel x:Name="RootPanel" Orientation="Vertical" Width="244">
+    <StackPanel x:Name="RootPanel" Orientation="Vertical" HorizontalAlignment="Stretch">
         <ComboBox x:Name="HeaderCombo" PointerEntered="HeaderCombo_PointerEntered"
-                Width="244" HorizontalAlignment="Stretch"
-                Background="Transparent" BorderBrush="Transparent"
-                ItemsSource="{x:Bind ViewModel.Headers}" SelectedValue="{x:Bind ViewModel.Header, Mode=TwoWay}">
+            HorizontalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent"
+            ItemsSource="{x:Bind ViewModel.Headers}" SelectedValue="{x:Bind ViewModel.Header, Mode=TwoWay}">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:ISearchFilterHeader">
-                    <StackPanel Orientation="Vertical" Width="200">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="32" />
@@ -32,7 +31,7 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
         <Rectangle Margin="0,0,0,8" Height="1" HorizontalAlignment="Stretch" Fill="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
-        <local:Picker Width="244" ViewModel="{x:Bind ViewModel.Picker, Mode=OneWay}" />
+        <local:Picker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind ViewModel.Picker, Mode=OneWay}" />
         <Grid HorizontalAlignment="Stretch" Margin="0,24,0,8" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

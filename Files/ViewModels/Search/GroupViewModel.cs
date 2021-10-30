@@ -16,6 +16,7 @@ namespace Files.ViewModels.Search
 
     public interface IGroupPickerViewModel : IPickerViewModel
     {
+        bool HasDescription { get; }
         string Description { get; set; }
         ISearchFilterCollection Filters { get; }
         IEnumerable<ISearchFilterContext> Contexts { get; }
@@ -162,12 +163,19 @@ namespace Files.ViewModels.Search
         private readonly ISearchPageContext context;
 
         public bool IsEmpty => !Filters.Any();
+        public bool HasDescription => !string.IsNullOrEmpty(Description);
 
         private string description;
         public string Description
         {
             get => description;
-            set => SetProperty(ref description, value);
+            set
+            {
+                if (SetProperty(ref description, value))
+                {
+                    OnPropertyChanged(nameof(HasDescription));
+                }
+            }
         }
 
         public ISearchFilterCollection Filters { get; }
