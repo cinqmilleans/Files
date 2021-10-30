@@ -191,7 +191,7 @@ namespace Files.Filesystem.Search
                 {
                     var isSystem = ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) == FileAttributes.System;
                     var isHidden = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden;
-                    
+
                     bool shouldBeListed = !isHidden || (UserSettingsService.FilesAndFoldersSettingsService.AreHiddenItemsVisible && (!isSystem || !UserSettingsService.FilesAndFoldersSettingsService.AreSystemItemsHidden));
 
                     if (shouldBeListed)
@@ -443,10 +443,12 @@ namespace Files.Filesystem.Search
 
         private QueryOptions ToQueryOptions()
         {
+            ISearchSettings settings = SearchSettings.Instance;
+
             var query = new QueryOptions
             {
-                FolderDepth = FolderDepth.Deep,
-                UserSearchFilter = AQSQuery ?? string.Empty,
+                FolderDepth = settings.Location.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
+                UserSearchFilter = ((AQSQuery ?? string.Empty) + ' ' + settings.Filter.ToAdvancedQuerySyntax()).Trim(),
             };
 
             query.IndexerOption = SearchUnindexedItems
