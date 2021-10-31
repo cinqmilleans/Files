@@ -102,7 +102,7 @@ namespace Files.Filesystem.Search
                 .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
                 .Where(query => !string.IsNullOrEmpty(query))
                 .Select(query => query.Contains(' ') ? $"({query})" : query);
-            return string.Join(" or ", queries);
+            return string.Join(" OR ", queries);
         }
     }
     public class NotFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
@@ -117,12 +117,8 @@ namespace Files.Filesystem.Search
 
         public string ToAdvancedQuerySyntax()
         {
-            var queries = this
-                .Where(filter => filter is not null)
-                .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
-                .Where(query => !string.IsNullOrEmpty(query))
-                .Select(query => $"not({query})");
-            return string.Join(' ', queries);
+            var query = new AndFilterCollection(this).ToAdvancedQuerySyntax();
+            return string.Join(' ', $"NOT({query})");
         }
     }
 
@@ -148,7 +144,7 @@ namespace Files.Filesystem.Search
             return (hasMin, hasMax) switch
             {
                 (false, false) => string.Empty,
-                _ when min == max => $"{min:yyyyMMdd}",
+                _ when min == max => $"{QueryKey}:={min:yyyyMMdd}",
                 (false, _) => $"{QueryKey}:<={max:yyyyMMdd}",
                 (_, false) => $"{QueryKey}:>={min:yyyyMMdd}",
                 _ => $"{QueryKey}:{min:yyyyMMdd}..{max:yyyyMMdd}"
@@ -203,10 +199,10 @@ namespace Files.Filesystem.Search
             return (hasMin, hasMax) switch
             {
                 (false, false) => string.Empty,
-                _ when min == max => $"{min:yyyyMMdd}",
-                (false, _) => $"System.Size:<={max:yyyyMMdd}",
-                (_, false) => $"System.Size:>={min:yyyyMMdd}",
-                _ => $"System.Size:{min:yyyyMMdd}..{max:yyyyMMdd}"
+                _ when min == max => $"System.Size:={min.Bytes}",
+                (false, _) => $"System.Size:<={max.Bytes}",
+                (_, false) => $"System.Size:>={min.Bytes}",
+                _ => $"System.Size:{min.Bytes}..{max.Bytes}"
             };
         }
     }

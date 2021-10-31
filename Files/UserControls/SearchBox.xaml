@@ -62,7 +62,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid x:Name="RootPanel">
+    <Grid x:Name="RootPanel" ColumnSpacing="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="36" />
@@ -99,7 +99,7 @@
             </Button.Content>
             <Button.Flyout>
                 <Flyout Placement="BottomEdgeAlignedRight" Opened="Flyout_Opened" Closed="Flyout_Closed">
-                    <Frame x:Name="MenuFrame" Width="208" Loaded="MenuFrame_Loaded" />
+                    <Frame x:Name="MenuFrame" Width="232" Loaded="MenuFrame_Loaded" />
                 </Flyout>
             </Button.Flyout>
         </Button>

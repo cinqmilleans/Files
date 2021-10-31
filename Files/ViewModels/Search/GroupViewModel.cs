@@ -51,14 +51,18 @@ namespace Files.ViewModels.Search
 
     public class GroupContext : SearchFilterContext<ISearchFilterCollection>, IGroupContext
     {
-        private readonly ISearchPageContext context;
-        private readonly ISearchFilterCollection filter;
-
-        public override string Parameter => filter.Count switch
+        public override string Parameter
         {
-            <= 1 => string.Format("SearchGroupHeader_ItemSuffixe".GetLocalized(), filter.Count),
-            _ => string.Format("SearchGroupHeader_ItemsSuffixe".GetLocalized(), filter.Count),
-        };
+            get
+            {
+                int count = GetFilter().Count;
+                return count switch
+                {
+                    <= 1 => string.Format("SearchGroupHeader_ItemSuffixe".GetLocalized(), count),
+                    _ => string.Format("SearchGroupHeader_ItemsSuffixe".GetLocalized(), count),
+                };
+            }
+        }
 
         public GroupContext(ISearchPageContext parentPageContext, ISearchFilterCollection filter) : base(parentPageContext, filter) {}
     }
