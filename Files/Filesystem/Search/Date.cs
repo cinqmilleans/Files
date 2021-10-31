@@ -153,7 +153,7 @@ namespace Files.Filesystem.Search
             bool useName = isNamed && format.ToLower() == "n";
 
             bool hasMin = minDate > Date.MinValue;
-            bool hasMax = maxDate < Date.MaxValue;
+            bool hasMax = maxDate < Date.Today;
 
             string minLabel = GetMinLabel();
             string maxLabel = GetMaxLabel();
