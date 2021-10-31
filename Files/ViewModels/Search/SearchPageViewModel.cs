@@ -1,5 +1,6 @@
 ﻿using Files.Filesystem.Search;
 using Files.UserControls.Search;
+using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -27,6 +28,8 @@ namespace Files.ViewModels.Search
         void Back();
         void GoPage(ISearchFilter filter);
         void Save(ISearchFilter filter);
+
+        ISearchPageContext GetChild(ISearchFilter filter);
     }
 
     public interface ISearchFilterHeader
@@ -130,7 +133,7 @@ namespace Files.ViewModels.Search
 
         public void GoPage(ISearchFilter filter)
         {
-            var child = new SearchPageContext(navigator, this.filter as ISearchFilterCollection, filter);
+            var child = GetChild(filter);
             var factory = new SearchPageViewModelFactory(child);
             var viewModel = factory.GetViewModel(filter);
 
@@ -160,5 +163,36 @@ namespace Files.ViewModels.Search
                 }
             }
         }
+
+        public ISearchPageContext GetChild(ISearchFilter filter)
+            => new SearchPageContext(navigator, this.filter as ISearchFilterCollection, filter);
+    }
+
+    public abstract class SearchFilterContext<T> : ISearchFilterContext where T : ISearchFilter
+    {
+        private readonly ISearchPageContext parentPageContext;
+        private readonly T filter;
+
+        public virtual string Glyph => (filter as IHeader)?.Glyph;
+        public virtual string Label => (filter as IHeader)?.Title;
+        public virtual string Parameter => string.Empty;
+
+        public ICommand ClearCommand { get; }
+        public ICommand OpenCommand { get; }
+
+        public SearchFilterContext(ISearchPageContext parentPageContext, T filter)
+        {
+            this.parentPageContext = parentPageContext;
+            this.filter = filter;
+
+            ClearCommand = new RelayCommand(Clear);
+            OpenCommand = new RelayCommand(Open);
+        }
+
+        ISearchFilter ISearchFilterContext.GetFilter() => filter;
+        public T GetFilter() => filter;
+
+        private void Clear() => parentPageContext.GetChild(filter).Save(null);
+        private void Open() => parentPageContext.GoPage(filter);
     }
 }

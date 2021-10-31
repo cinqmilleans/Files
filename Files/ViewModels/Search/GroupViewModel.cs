@@ -49,36 +49,18 @@ namespace Files.ViewModels.Search
         public NotFilterCollection GetFilter(IEnumerable<ISearchFilter> filters) => new(filters);
     }
 
-    public class GroupContext : IGroupContext
+    public class GroupContext : SearchFilterContext<ISearchFilterCollection>, IGroupContext
     {
         private readonly ISearchPageContext context;
         private readonly ISearchFilterCollection filter;
 
-        public string Glyph => filter.Glyph;
-        public string Label => filter.Title;
-        public string Parameter => filter.Count switch
+        public override string Parameter => filter.Count switch
         {
             <= 1 => string.Format("SearchGroupHeader_ItemSuffixe".GetLocalized(), filter.Count),
             _ => string.Format("SearchGroupHeader_ItemsSuffixe".GetLocalized(), filter.Count),
         };
 
-        public ICommand ClearCommand { get; }
-        public ICommand OpenCommand { get; }
-
-        public GroupContext(ISearchPageContext context, ISearchFilterCollection filter)
-        {
-            this.context = context;
-            this.filter = filter;
-
-            ClearCommand = new RelayCommand(Clear);
-            OpenCommand = new RelayCommand(Open);
-        }
-
-        ISearchFilter ISearchFilterContext.GetFilter() => filter;
-        public ISearchFilterCollection GetFilter() => filter;
-
-        private void Clear() => context.Save(null);
-        private void Open() => context.GoPage(filter);
+        public GroupContext(ISearchPageContext parentPageContext, ISearchFilterCollection filter) : base(parentPageContext, filter) {}
     }
 
     public class GroupPageViewModel : ObservableObject, IGroupPageViewModel

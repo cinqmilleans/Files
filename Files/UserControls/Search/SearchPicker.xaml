@@ -21,20 +21,29 @@
             SizeRangeTemplate="{StaticResource SizeRangePickerTemplate}" />
 
         <DataTemplate x:Key="LocationPickerTemplate" x:DataType="vm:ILocationPickerViewModel">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="4">
+            <Grid RowSpacing="8" Margin="0,8,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <TextBlock x:Uid="SearchPickerLocation_In" FontSize="14" FontWeight="SemiBold" Text="Search in" />
-                <CheckBox x:Uid="SearchPickerLocation_Subfolders" Content="Subfolders" IsChecked="{x:Bind SearchInSubFolders, Mode=TwoWay}" />
-            </StackPanel>
+                <CheckBox Grid.Row="1" x:Uid="SearchPickerLocation_Subfolders" Content="Subfolders" IsChecked="{x:Bind SearchInSubFolders, Mode=TwoWay}" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="GroupPickerTemplate" x:DataType="vm:IGroupPickerViewModel">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                <TextBlock x:Uid="SearchPickerGroup_NoSelected" Margin="8,0,8,0" TextWrapping="Wrap" Text="No filter selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
-                <Grid Margin="8,0,8,0" Visibility="{x:Bind HasDescription}">
-                <TextBlock TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}"
-                    Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}" />
+            <Grid RowSpacing="8" Margin="0,8,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Uid="SearchPickerGroup_NoSelected" TextWrapping="Wrap" Text="No filter selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <Grid Visibility="{x:Bind HasDescription}">
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}"
+                        Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}" />
                 </Grid>
-                <ItemsControl Margin="0,8,0,8" ItemsSource="{x:Bind Contexts, Mode=OneWay}">
+                <ItemsControl Grid.Row="1" ItemsSource="{x:Bind Contexts, Mode=OneWay}">
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
@@ -69,35 +78,37 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <CommandBar Margin="0,0,0,8" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="False">
+                <CommandBar Grid.Row="2" Margin="0,0,0,8" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="False">
                     <AppBarButton x:Name="AddFilterButton" x:Uid="SearchPickerGroup_Add" Icon="Add" Label="Add" Loaded="AddFilterButton_Loaded" />
                     <AppBarButton
                         x:Uid="SearchPickerGroup_Clear" Icon="Clear" Label="Clear" Command="{x:Bind ClearCommand}"
                         IsEnabled="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
                 </CommandBar>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DateRangePickerTemplate" x:DataType="vm:IDateRangePickerViewModel">
-            <StackPanel Width="208" Orientation="Vertical">
-                <StackPanel MinHeight="64">
-                    <StackPanel
-                        Margin="8,0,8,16" Orientation="Vertical"
-                        Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
-                        <TextBlock Margin="8,8,0,0" TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="8,0,0,0" FontSize="13" TextWrapping="Wrap" FontWeight="Bold"
-                            Text="{x:Bind Label, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="8,0,8,16" Visibility="{x:Bind IsEmpty, Mode=OneWay}">
-                        <TextBlock x:Uid="SearchPickerDateRange_NoSelected" Margin="8,8,0,0" TextWrapping="Wrap" Text="No date range selected." />
-                    </StackPanel>
+            <Grid RowSpacing="8" Margin="0,8,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="64" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Uid="SearchPickerDateRange_NoSelected" TextWrapping="Wrap" Text="No date range selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <StackPanel Orientation="Vertical" Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}" />
+                    <TextBlock FontSize="13" TextWrapping="Wrap" FontWeight="Bold" Text="{x:Bind Label, Mode=OneWay}" />
                 </StackPanel>
-                <CalendarDatePicker Header="From" Date="{x:Bind MinOffset, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
-                <CalendarDatePicker Header="To" Date="{x:Bind MaxOffset, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
-                <HyperlinkButton x:Uid="SearchPickerDateRange_Clear" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
-                <TextBlock x:Uid="SearchPickerDateRange_Choose" Margin="0,16,0,0" TextWrapping="Wrap" Text="Or choose a date range" />
-                <ItemsControl ItemsSource="{x:Bind Links}">
+                <CalendarDatePicker Grid.Row="1" Header="From" Date="{x:Bind MinOffset, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
+                <CalendarDatePicker Grid.Row="2" Header="To" Date="{x:Bind MaxOffset, Mode=TwoWay}" HorizontalAlignment="Stretch"  />
+                <HyperlinkButton x:Uid="SearchPickerDateRange_Clear"
+                    Grid.Row="3" HorizontalAlignment="Right"
+                    Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
+                <TextBlock x:Uid="SearchPickerDateRange_Choose" Grid.Row="4" TextWrapping="Wrap" Text="Or choose a date range" />
+                <ItemsControl Grid.Row="5" ItemsSource="{x:Bind Links}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:IDateRangeLink">
                             <ToggleButton
@@ -107,28 +118,28 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangePickerTemplate" x:DataType="vm:ISizeRangePickerViewModel">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                <StackPanel MinHeight="64" HorizontalAlignment="Stretch">
-                    <StackPanel
-                        Margin="8,0,8,16" Orientation="Vertical"
-                        Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
-                        <TextBlock Margin="8,8,0,0" TextWrapping="Wrap" Text="{x:Bind Description}" />
-                        <TextBlock
-                            Margin="8,0,0,0" FontSize="13" TextWrapping="Wrap" FontWeight="Bold"
-                            Text="{x:Bind Label, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="8,0,8,16" Visibility="{x:Bind IsEmpty, Mode=OneWay}">
-                        <TextBlock x:Uid="SearchPickerSizeRange_NoSelected" Margin="8,8,0,0" TextWrapping="Wrap" Text="No size range selected" />
-                    </StackPanel>
+            <Grid RowSpacing="8" Margin="0,8,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="64" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Uid="SearchPickerSizeRange_NoSelected" TextWrapping="Wrap" Text="No size range selected." Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <StackPanel Orientation="Vertical" Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description}" />
+                    <TextBlock FontSize="13" TextWrapping="Wrap" FontWeight="Bold" Text="{x:Bind Label, Mode=OneWay}" />
                 </StackPanel>
-                <local:SizeRangeSlider Range="{x:Bind Range, Mode=TwoWay}" HorizontalAlignment="Stretch" />
-                <HyperlinkButton x:Uid="SearchPickerSizeRange_Clear" HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
-                <TextBlock x:Uid="SearchPickerSizeRange_Choose" Margin="0,16,0,0" TextWrapping="Wrap" Text="Or choose a size range" />
-                <ItemsControl ItemsSource="{x:Bind Links}">
+                <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                <HyperlinkButton x:Uid="SearchPickerSizeRange_Clear" Grid.Row="2"
+                    HorizontalAlignment="Right" Content="Clear" Command="{x:Bind ClearCommand, Mode=OneWay}" />
+                <TextBlock x:Uid="SearchPickerSizeRange_Choose" Grid.Row="3" TextWrapping="Wrap" Text="Or choose a size range" />
+                <ItemsControl Grid.Row="4" ItemsSource="{x:Bind Links}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:ISizeRangeLink">
                             <ToggleButton
@@ -142,12 +153,12 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <ControlTemplate x:Name="HeaderItemTemplate" x:Key="HeaderItemTemplate" TargetType="MenuFlyoutItem">
             <Button
-                MaxWidth="244" Background="Transparent" BorderBrush="Transparent"
+                Background="Transparent" BorderBrush="Transparent"
                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{TemplateBinding Tag}"
                 Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}">
                 <Button.ContentTemplate>
@@ -174,6 +185,7 @@
 
     </UserControl.Resources>
 
-    <ContentControl Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
+    <ContentControl HorizontalContentAlignment="Stretch"
+        Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
 
 </UserControl>

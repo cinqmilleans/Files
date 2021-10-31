@@ -59,32 +59,11 @@ namespace Files.ViewModels.Search
         public AccessedFilter GetFilter(DateRange range) => new(range);
     }
 
-    public class DateRangeContext : IDateRangeContext
+    public class DateRangeContext : SearchFilterContext<IDateRangeFilter>, IDateRangeContext
     {
-        private readonly ISearchPageContext context;
-        private readonly IDateRangeFilter filter;
+        public override string Label => GetFilter().Range.ToString("n");
 
-        public string Glyph => filter.Glyph;
-        public string Label => filter.Range.ToString("n");
-        public string Parameter => string.Empty;
-
-        public ICommand ClearCommand { get; }
-        public ICommand OpenCommand { get; }
-
-        public DateRangeContext(ISearchPageContext context, IDateRangeFilter filter)
-        {
-            this.context = context;
-            this.filter = filter;
-
-            ClearCommand = new RelayCommand(Clear);
-            OpenCommand = new RelayCommand(Open);
-        }
-
-        ISearchFilter ISearchFilterContext.GetFilter() => filter;
-        public IDateRangeFilter GetFilter() => filter;
-
-        private void Clear() => context.Save(null);
-        private void Open() => context.GoPage(filter);
+        public DateRangeContext(ISearchPageContext parentPageContext, IDateRangeFilter filter) : base(parentPageContext, filter) {}
     }
 
     public class DateRangePageViewModel : ObservableObject, IDateRangePageViewModel

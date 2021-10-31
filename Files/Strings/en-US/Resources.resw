@@ -2783,7 +2783,7 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
     <value>Before {1}</value>
   </data>
   <data name="SearchDateRange_Between" xml:space="preserve">
-    <value>"Between {0} and {1}"</value>
+    <value>Between {0} and {1}</value>
   </data>
   <data name="SearchSizeRange_GreaterThan" xml:space="preserve">
     <value>Greater than {0}</value>
@@ -2873,10 +2873,10 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
     <value>Clear</value>
   </data>
   <data name="SearchPickerDateRange_NoSelected.Text" xml:space="preserve">
-    <value>No date size range selected.</value>
+    <value>No date range selected.</value>
   </data>
   <data name="SearchPickerDateRange_Clear.Content" xml:space="preserve">
-    <value>No date range selected.</value>
+    <value>Clear</value>
   </data>
   <data name="SearchPickerDateRange_Choose.Text" xml:space="preserve">
     <value>Or choose a date range</value>

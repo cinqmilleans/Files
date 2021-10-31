@@ -35,33 +35,11 @@ namespace Files.ViewModels.Search
         ICommand ToggleCommand { get; }
     }
 
-
-    public class SizeRangeContext : ISizeRangeContext
+    public class SizeRangeContext : SearchFilterContext<ISizeRangeFilter>, ISizeRangeContext
     {
-        private readonly ISearchPageContext context;
-        private readonly ISizeRangeFilter filter;
+        public override string Label => GetFilter().Range.ToString("n");
 
-        public string Glyph => filter.Glyph;
-        public string Label => filter.Range.ToString("n");
-        public string Parameter => string.Empty;
-
-        public ICommand ClearCommand { get; }
-        public ICommand OpenCommand { get; }
-
-        public SizeRangeContext(ISearchPageContext context, ISizeRangeFilter filter)
-        {
-            this.context = context;
-            this.filter = filter;
-
-            ClearCommand = new RelayCommand(Clear);
-            OpenCommand = new RelayCommand(Open);
-        }
-
-        ISearchFilter ISearchFilterContext.GetFilter() => filter;
-        public ISizeRangeFilter GetFilter() => filter;
-
-        private void Clear() => context.Save(null);
-        private void Open() => context.GoPage(filter);
+        public SizeRangeContext(ISearchPageContext parentPageContext, ISizeRangeFilter filter) : base(parentPageContext, filter) {}
     }
 
     public class SizeRangeHeader : SearchFilterHeader<SizeRangeFilter>

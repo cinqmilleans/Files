@@ -3567,8 +3567,8 @@ Usamos App Center para realizar un seguimiento del uso de la aplicación, encont
           <target state="new">Before {1}</target>
         </trans-unit>
         <trans-unit id="SearchDateRange_Between" translate="yes" xml:space="preserve">
-          <source>"Between {0} and {1}"</source>
-          <target state="new">"Between {0} and {1}"</target>
+          <source>Between {0} and {1}</source>
+          <target state="new">Between {0} and {1}</target>
         </trans-unit>
         <trans-unit id="SearchSizeRange_GreaterThan" translate="yes" xml:space="preserve">
           <source>Greater than {0}</source>
@@ -3675,12 +3675,12 @@ Usamos App Center para realizar un seguimiento del uso de la aplicación, encont
           <target state="new">Clear</target>
         </trans-unit>
         <trans-unit id="SearchPickerDateRange_NoSelected.Text" translate="yes" xml:space="preserve">
-          <source>No date size range selected.</source>
-          <target state="new">No date size range selected.</target>
-        </trans-unit>
-        <trans-unit id="SearchPickerDateRange_Clear.Content" translate="yes" xml:space="preserve">
           <source>No date range selected.</source>
           <target state="new">No date range selected.</target>
+        </trans-unit>
+        <trans-unit id="SearchPickerDateRange_Clear.Content" translate="yes" xml:space="preserve">
+          <source>Clear</source>
+          <target state="new">Clear</target>
         </trans-unit>
         <trans-unit id="SearchPickerDateRange_Choose.Text" translate="yes" xml:space="preserve">
           <source>Or choose a date range</source>

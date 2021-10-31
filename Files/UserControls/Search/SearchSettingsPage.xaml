@@ -7,9 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical">
-        <TextBlock x:Uid="SearchSettingOptions_Title" Margin="0,0,0,8" FontSize="18" FontWeight="SemiBold" Text="Search Options" />
-        <local:Picker ViewModel="{x:Bind ViewModel.FilterViewModel}" />
-        <local:Picker ViewModel="{x:Bind ViewModel.LocationViewModel}" />
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="SearchSettingOptions_Title" FontSize="18" FontWeight="SemiBold" Text="Search Options" />
+        <local:Picker Grid.Row="1" ViewModel="{x:Bind ViewModel.FilterViewModel}" />
+        <local:Picker Grid.Row="2" ViewModel="{x:Bind ViewModel.LocationViewModel}" />
+    </Grid>
+
 </Page>

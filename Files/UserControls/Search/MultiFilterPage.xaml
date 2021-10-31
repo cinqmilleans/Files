@@ -32,7 +32,7 @@
         </ComboBox>
         <Rectangle Margin="0,0,0,8" Height="1" HorizontalAlignment="Stretch" Fill="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
         <local:Picker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind ViewModel.Picker, Mode=OneWay}" />
-        <Grid HorizontalAlignment="Stretch" Margin="0,24,0,8" ColumnSpacing="8">
+        <Grid Margin="0,24,0,0" HorizontalAlignment="Stretch" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
