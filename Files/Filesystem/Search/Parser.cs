@@ -37,12 +37,13 @@ namespace Files.Filesystem.Search
 
     public class DateRangeParser : IParser<DateRange>
     {
-        private readonly IParser<DateRange> parser = new TrimParser<DateRange>(new ParserCollection<DateRange>
-        {
-            new TrimParser<DateRange>(new NamedParser()),
-            new TrimParser<DateRange>(new YearParser()),
-            new TrimParser<DateRange>(new DayParser()),
-        });
+        private readonly IParser<DateRange> parser =
+            new TrimParser<DateRange>(new ParserCollection<DateRange>
+            {
+                new TrimParser<DateRange>(new NamedParser()),
+                new TrimParser<DateRange>(new YearParser()),
+                new TrimParser<DateRange>(new DayParser()),
+            });
 
         public bool CanParse(string item)
         {
@@ -60,7 +61,7 @@ namespace Files.Filesystem.Search
             }
             if (item.Contains(".."))
             {
-                return item.Split("..", 2).All(part => string.IsNullOrEmpty(item) || parser.CanParse(part));
+                return item.Split("..", 2).All(part => parser.CanParse(part));
             }
             return parser.CanParse(item);
         }
@@ -152,11 +153,12 @@ namespace Files.Filesystem.Search
 
     public class SizeRangeParser : IParser<SizeRange>
     {
-        private readonly IParser<SizeRange> parser = new TrimParser<SizeRange>(new ParserCollection<SizeRange>
-        {
-            new TrimParser<SizeRange>(new NamedParser()),
-            new TrimParser<SizeRange>(new SizeParser()),
-        });
+        private readonly IParser<SizeRange> parser =
+            new TrimParser<SizeRange>(new ParserCollection<SizeRange>
+            {
+                new TrimParser<SizeRange>(new NamedParser()),
+                new TrimParser<SizeRange>(new SizeParser()),
+            });
 
         public bool CanParse(string item)
         {
@@ -174,7 +176,7 @@ namespace Files.Filesystem.Search
             }
             if (item.Contains(".."))
             {
-                return item.Split("..", 2).All(part => string.IsNullOrEmpty(item) || parser.CanParse(part));
+                return item.Split("..", 2).All(part => parser.CanParse(part));
             }
             return parser.CanParse(item);
         }
