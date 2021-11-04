@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByteSizeLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -131,7 +132,6 @@ namespace Files.Filesystem.Search
                 Date maxDate = new Date(year, 12, 31);
                 return new DateRange(minDate, maxDate);
             }
-            public Date ParseMax(string item) => new Date(ushort.Parse(item), 12, 31);
         }
 
         private class DayParser : IParser<DateRange>
@@ -146,6 +146,99 @@ namespace Files.Filesystem.Search
             {
                 var date = new Date(DateTime.Parse(item));
                 return new DateRange(date, date);
+            }
+        }
+    }
+
+    public class SizeRangeParser : IParser<SizeRange>
+    {
+        private readonly IParser<SizeRange> parser = new TrimParser<SizeRange>(new ParserCollection<SizeRange>
+        {
+            new TrimParser<SizeRange>(new NamedParser()),
+            new TrimParser<SizeRange>(new SizeParser()),
+        });
+
+        public bool CanParse(string item)
+        {
+            if (item.StartsWith('<') || item.StartsWith('>'))
+            {
+                return parser.CanParse(item.Substring(1));
+            }
+            if (item.StartsWith(".."))
+            {
+                return parser.CanParse(item.Substring(2));
+            }
+            if (item.EndsWith(".."))
+            {
+                return parser.CanParse(item.Substring(0, item.Length - 2));
+            }
+            if (item.Contains(".."))
+            {
+                return item.Split("..", 2).All(part => string.IsNullOrEmpty(item) || parser.CanParse(part));
+            }
+            return parser.CanParse(item);
+        }
+
+        public SizeRange Parse(string item)
+        {
+            Size minSize = Size.MinValue;
+            Size maxSize = Size.MaxValue;
+
+            if (item.StartsWith('<'))
+            {
+                maxSize = parser.Parse(item.Substring(1)).MaxSize;
+            }
+            else if (item.StartsWith('>'))
+            {
+                minSize = parser.Parse(item.Substring(1)).MinSize;
+            }
+            else if (item.StartsWith(".."))
+            {
+                maxSize = parser.Parse(item.Substring(2)).MaxSize;
+            }
+            else if (item.EndsWith(".."))
+            {
+                minSize = parser.Parse(item.Substring(0, item.Length - 2)).MinSize;
+            }
+            else if (item.Contains(".."))
+            {
+                var parts = item.Split("..", 2);
+                minSize = parser.Parse(parts[0]).MinSize;
+                maxSize = parser.Parse(parts[1]).MaxSize;
+            }
+            else
+            {
+                (minSize, maxSize) = parser.Parse(item);
+            }
+            return new SizeRange(minSize, maxSize);
+        }
+
+        private class NamedParser : IParser<SizeRange>
+        {
+            public IDictionary<string, SizeRange> Nameds = new List<SizeRange>
+            {
+                SizeRange.Empty,
+                SizeRange.Tiny,
+                SizeRange.Small,
+                SizeRange.Medium,
+                SizeRange.Large,
+                SizeRange.VeryLarge,
+                SizeRange.Huge,
+            }.ToDictionary(range => range.ToString("n").ToLower());
+
+            public bool CanParse(string item) => Nameds.ContainsKey(item.ToLower());
+            public SizeRange Parse(string item) => Nameds[item.ToLower()];
+        }
+
+        private class SizeParser : IParser<SizeRange>
+        {
+            public bool CanParse(string item)
+                => ByteSize.TryParse(item, out ByteSize _);
+
+            public SizeRange Parse(string item)
+            {
+                var size = ByteSize.Parse(item);
+                return new SizeRange(size, size);
             }
         }
     }
