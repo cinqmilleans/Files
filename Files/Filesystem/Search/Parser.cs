@@ -25,24 +25,26 @@ namespace Files.Filesystem.Search
         public T Parse(string item) => this.First(parser => parser.CanParse(item)).Parse(item);
     }
 
-    public class TrimParser<T> : IParser<T>
+    public class CleanParser<T> : IParser<T>
     {
         private readonly IParser<T> parser;
 
-        public TrimParser(IParser<T> parser) => this.parser = parser;
+        public CleanParser(IParser<T> parser) => this.parser = parser;
 
-        public bool CanParse(string item) => parser.CanParse(item.Trim());
-        public T Parse(string item) => parser.Parse(item.Trim());
+        public bool CanParse(string item) => parser.CanParse(Clean(item));
+        public T Parse(string item) => parser.Parse(Clean(item));
+
+        private static string Clean(string item) => (item ?? string.Empty).Trim();
     }
 
     public class DateRangeParser : IParser<DateRange>
     {
         private readonly IParser<DateRange> parser =
-            new TrimParser<DateRange>(new ParserCollection<DateRange>
+            new CleanParser<DateRange>(new ParserCollection<DateRange>
             {
-                new TrimParser<DateRange>(new NamedParser()),
-                new TrimParser<DateRange>(new YearParser()),
-                new TrimParser<DateRange>(new DayParser()),
+                new CleanParser<DateRange>(new NamedParser()),
+                new CleanParser<DateRange>(new YearParser()),
+                new CleanParser<DateRange>(new DayParser()),
             });
 
         public bool CanParse(string item)
@@ -154,10 +156,10 @@ namespace Files.Filesystem.Search
     public class SizeRangeParser : IParser<SizeRange>
     {
         private readonly IParser<SizeRange> parser =
-            new TrimParser<SizeRange>(new ParserCollection<SizeRange>
+            new CleanParser<SizeRange>(new ParserCollection<SizeRange>
             {
-                new TrimParser<SizeRange>(new NamedParser()),
-                new TrimParser<SizeRange>(new SizeParser()),
+                new CleanParser<SizeRange>(new NamedParser()),
+                new CleanParser<SizeRange>(new SizeParser()),
             });
 
         public bool CanParse(string item)
@@ -242,6 +244,27 @@ namespace Files.Filesystem.Search
                 var size = ByteSize.Parse(item);
                 return new SizeRange(size, size);
             }
+        }
+    }
+
+    public class CreatedFilterParser : IParser<CreatedFilter>
+    {
+        private readonly string Key = "created";
+        private readonly IParser<DateRange> ValueParser = new DateRangeParser();
+
+        public bool CanParse(string item)
+        {
+            var parts = item.Split(':', 2);
+            var key = parts[0].ToLower();
+            var value = parts[1];
+            return key == Key && ValueParser.CanParse(value);
+        }
+
+        public CreatedFilter Parse(string item)
+        {
+            var parts = item.Split(':', 2);
+            var value = ValueParser.Parse(parts[1]);
+            return new CreatedFilter(value);
         }
     }
 }
