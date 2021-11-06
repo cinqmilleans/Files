@@ -8,8 +8,30 @@ namespace Files.Filesystem.Search
 {
     public interface IParser<out T>
     {
-        bool CanParse(string item);
-        T Parse(string item);
+        bool CanParse(string value);
+        T Parse(string value);
+    }
+
+    public interface INamedParser<out T> : IParser<T>
+    {
+        string Name { get; }
+    }
+
+    public interface IMainFilterParser : IParser<ISearchFilter>
+    {
+        IEnumerable<string> Names { get; }
+    }
+
+    public class CleanParser<T> : IParser<T>
+    {
+        private readonly IParser<T> parser;
+
+        public CleanParser(IParser<T> parser) => this.parser = parser;
+
+        public bool CanParse(string item) => parser.CanParse(Clean(item));
+        public T Parse(string item) => parser.Parse(Clean(item));
+
+        private static string Clean(string item) => (item ?? string.Empty).Trim();
     }
 
     public class ParserCollection<T> : Collection<IParser<T>>, IParser<T>
@@ -25,16 +47,95 @@ namespace Files.Filesystem.Search
         public T Parse(string item) => this.First(parser => parser.CanParse(item)).Parse(item);
     }
 
-    public class CleanParser<T> : IParser<T>
+    public class MainFilterParser : IMainFilterParser
     {
-        private readonly IParser<T> parser;
+        private readonly ICollection<INamedParser<ISearchFilter>> Parsers = new Collection<INamedParser<ISearchFilter>>
+        {
+            new SizeRangeFilterParser(),
+            new CreatedFilterParser(),
+            new ModifiedFilterParser(),
+            new AccessedFilterParser(),
+        };
 
-        public CleanParser(IParser<T> parser) => this.parser = parser;
+        public IEnumerable<string> Names { get; }
 
-        public bool CanParse(string item) => parser.CanParse(Clean(item));
-        public T Parse(string item) => parser.Parse(Clean(item));
+        public MainFilterParser() => Names = Parsers.Select(parser => parser.Name);
 
-        private static string Clean(string item) => (item ?? string.Empty).Trim();
+        public bool CanParse(string value) => Parsers.Any(parser => parser.CanParse(value));
+        public ISearchFilter Parse(string value) => Parsers.First(parser => parser.CanParse(value)).Parse(value);
+    }
+
+    public abstract class AbstractFilterParser<T> : INamedParser<T> where T : ISearchFilter
+    {
+        public abstract string Name { get; }
+
+        public bool CanParse(string value)
+        {
+            var (name, parameter) = Split(value);
+            return Name == name && CanParseParameter(parameter);
+        }
+        public T Parse(string value)
+        {
+            var (_, parameter) = Split(value);
+            return ParseParameter(parameter);
+        }
+
+        protected abstract bool CanParseParameter(string parameter);
+        protected abstract T ParseParameter(string parameter);
+
+        private static (string key, string parameter) Split(string value)
+        {
+            value = (value ?? string.Empty).Trim();
+
+            if (!value.Contains(':'))
+            {
+                return (value, string.Empty);
+            }
+
+            var parts = value.Split(':');
+            string name = parts[0].ToLower();
+            string parameter = parts[1];
+
+            return (name, parameter);
+        }
+    }
+
+    public class SizeRangeFilterParser : AbstractFilterParser<ISizeRangeFilter>
+    {
+        private readonly IParser<SizeRange> parser = new SizeRangeParser();
+
+        public override string Name { get; } = "size";
+
+        protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
+        protected override ISizeRangeFilter ParseParameter(string parameter) => new SizeRangeFilter(parser.Parse(parameter));
+    }
+
+    public class CreatedFilterParser : AbstractFilterParser<CreatedFilter>
+    {
+        private readonly IParser<DateRange> parser = new DateRangeParser();
+
+        public override string Name { get; } = "created";
+
+        protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
+        protected override CreatedFilter ParseParameter(string parameter) => new CreatedFilter(parser.Parse(parameter));
+    }
+    public class ModifiedFilterParser : AbstractFilterParser<ModifiedFilter>
+    {
+        private readonly IParser<DateRange> parser = new DateRangeParser();
+
+        public override string Name { get; } = "modified";
+
+        protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
+        protected override ModifiedFilter ParseParameter(string parameter) => new ModifiedFilter(parser.Parse(parameter));
+    }
+    public class AccessedFilterParser : AbstractFilterParser<AccessedFilter>
+    {
+        private readonly IParser<DateRange> parser = new DateRangeParser();
+
+        public override string Name { get; } = "accessed";
+
+        protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
+        protected override AccessedFilter ParseParameter(string parameter) => new AccessedFilter(parser.Parse(parameter));
     }
 
     public class DateRangeParser : IParser<DateRange>
@@ -244,27 +345,6 @@ namespace Files.Filesystem.Search
                 var size = ByteSize.Parse(item);
                 return new SizeRange(size, size);
             }
-        }
-    }
-
-    public class CreatedFilterParser : IParser<CreatedFilter>
-    {
-        private readonly string Key = "created";
-        private readonly IParser<DateRange> ValueParser = new DateRangeParser();
-
-        public bool CanParse(string item)
-        {
-            var parts = item.Split(':', 2);
-            var key = parts[0].ToLower();
-            var value = parts[1];
-            return key == Key && ValueParser.CanParse(value);
-        }
-
-        public CreatedFilter Parse(string item)
-        {
-            var parts = item.Split(':', 2);
-            var value = ValueParser.Parse(parts[1]);
-            return new CreatedFilter(value);
         }
     }
 }
