@@ -1,4 +1,5 @@
 ﻿using Files.Filesystem;
+using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -63,8 +64,16 @@ namespace Files.ViewModels
             }
         }
 
+        private readonly IMainFilterParser filterParser = new MainFilterParser();
+
         public void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
         {
+            if (Query == "date")
+            {
+
+            }
+
+
             TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
         }
 
@@ -86,13 +95,52 @@ namespace Files.ViewModels
             Escaped?.Invoke(this, this);
         }
 
-        public class SuggestionComparer : IEqualityComparer<ListedItem>, IComparer<ListedItem>
+        public class SuggestionComparer : IEqualityComparer<object>, IComparer<object>
         {
-            public int Compare(ListedItem x, ListedItem y) => y.ItemPath.CompareTo(x.ItemPath);
+            public int Compare(object x, object y) => GetKey(y).CompareTo(GetKey(x));
+            public new bool Equals(object x, object y) => GetKey(y).Equals(GetKey(x));
+            public int GetHashCode(object o) => GetKey(o).GetHashCode();
 
-            public bool Equals(ListedItem x, ListedItem y) => y.ItemPath.Equals(x.ItemPath);
+            private static string GetKey(object o) => o switch
+            {
+                ParserSuggestion suggestion => string.Empty,
+                ListedItem item => item.ItemPath,
+                _ => throw new ArgumentException(),
+            };
+        }
 
-            public int GetHashCode(ListedItem o) => o.ItemPath.GetHashCode();
+        public interface IParserSuggestion
+        {
+            string Name { get; }
+            string Description { get; }
+
+            string
+        }
+
+        public interface IParserSuggestionSyntaxItem
+        {
+            string Name { get; }
+            string Description { get; }
+
+            string
+        }
+
+        public interface IParserSuggestionSample
+        {
+            string Parameter { get; }
+            string Description { get; }
+        }
+
+        private class ParserSuggestion
+        {
+            public enum Keys : ushort { Size, Created, Modified, Accessed }
+
+            public Keys Key { get; }
+
+            public ParserSuggestion(Keys key) => Key = key;
+
+
+
         }
     }
 }
