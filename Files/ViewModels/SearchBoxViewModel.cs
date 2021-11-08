@@ -1,10 +1,12 @@
 ﻿using Files.Filesystem;
+using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -37,7 +39,7 @@ namespace Files.ViewModels
 
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
-        public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
+        public ObservableCollection<object> Suggestions { get; } = new ObservableCollection<object>();
 
         public void Search() => QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(null));
 
@@ -95,13 +97,18 @@ namespace Files.ViewModels
             Escaped?.Invoke(this, this);
         }
 
-        public class SuggestionComparer : IEqualityComparer<ListedItem>, IComparer<ListedItem>
+        private class SuggestionComparer : IEqualityComparer<object>, IComparer<object>
         {
-            public int Compare(ListedItem x, ListedItem y) => y.ItemPath.CompareTo(x.ItemPath);
+            public int Compare(object x, object y) => GetKey(y).CompareTo(GetKey(x));
+            public new bool Equals(object x, object y) => GetKey(y).Equals(GetKey(x));
+            public int GetHashCode(object o) => GetKey(o).GetHashCode();
 
-            public bool Equals(ListedItem x, ListedItem y) => y.ItemPath.Equals(x.ItemPath);
-
-            public int GetHashCode(ListedItem o) => o.ItemPath.GetHashCode();
+            private static string GetKey(object o) => o switch
+            {
+                ISyntaxViewModel => string.Empty,
+                ListedItem listedItem => listedItem.ItemPath,
+                _ => throw new ArgumentException(),
+            };
         }
     }
 }

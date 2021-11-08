@@ -1,4 +1,5 @@
-﻿using Files.Filesystem.Search;
+﻿using Files.Filesystem;
+using Files.Filesystem.Search;
 using Files.UserControls.Search;
 using Files.ViewModels;
 using Files.ViewModels.Search;
@@ -97,5 +98,21 @@ namespace Files.UserControls
             ISearchSettingsViewModel viewModel = new SearchSettingsViewModel(context, settings);
             navigator.GoPage(viewModel);
         }
+    }
+
+    public class SuggestionTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate SyntaxTemplate { get; set; }
+        public DataTemplate ItemTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            ISyntaxViewModel => SyntaxTemplate,
+            ListedItem => ItemTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
     }
 }

@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fs="using:Files.Filesystem"
+    xmlns:vm="using:Files.ViewModels.Search"
+    xmlns:local="using:Files.UserControls"
+    xmlns:ctrl="using:Files.UserControls.Search"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -15,6 +18,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/ResourceDictionaries/ToolbarButtonStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <local:SuggestionTemplateSelector x:Key="SuggestionTemplateSelector"
+                SyntaxTemplate="{StaticResource SyntaxSuggestionTemplate}"
+                ItemTemplate="{StaticResource ItemSuggestionTemplate}" />
 
             <Style
                 x:Key="TextBoxStyle"
@@ -38,7 +45,11 @@
                 <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
             </Style>
 
-            <DataTemplate x:Key="SuggestionTemplate" x:DataType="fs:ListedItem">
+            <DataTemplate x:Key="SyntaxSuggestionTemplate" x:DataType="vm:ISyntaxViewModel">
+                <ctrl:Syntax ViewModel="{Binding}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="ItemSuggestionTemplate" x:DataType="fs:ListedItem">
                 <Grid Tag="{x:Bind ItemPath}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Grid

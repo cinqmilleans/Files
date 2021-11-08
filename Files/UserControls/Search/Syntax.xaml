@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="Files.UserControls.Search.Syntax"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Files.UserControls.Search"
+    xmlns:vm="using:Files.ViewModels.Search"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+
+        <local:SyntaxTemplateSelector x:Key="SyntaxTemplateSelector"
+            DateRangeTemplate="{StaticResource DateRangeSyntaxTemplate}" />
+
+        <DataTemplate x:Key="DateRangeSyntaxTemplate" x:DataType="vm:IDateRangeSyntaxViewModel">
+            <RichTextBlock Grid.Row="4" IsTextSelectionEnabled="True" SelectionHighlightColor="Pink" FontFamily="Arial"  >
+                <Paragraph>
+                    <Run Foreground="Blue" FontWeight="Light" Text="This is some" ></Run>
+                    <Span FontWeight="SemiBold">
+                        <Run FontStyle="Italic">sample text to</Run>
+                        <Run Foreground="Red">demonstrate some properties.</Run>
+                    </Span>
+                </Paragraph>
+                </RichTextBlock>
+        </DataTemplate>
+
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="{x:Bind ViewModel.Name, Mode=OneWay}" />
+        <ContentControl Grid.Row="1" HorizontalContentAlignment="Stretch"
+            Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource SyntaxTemplateSelector}" />
+    </Grid>
+</Page>
