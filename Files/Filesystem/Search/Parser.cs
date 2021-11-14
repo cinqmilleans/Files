@@ -12,14 +12,19 @@ namespace Files.Filesystem.Search
         T Parse(string value);
     }
 
-    public interface INamedParser<out T> : IParser<T>
+    public interface INamedParser<out T> : IParser<T>, IParserKey
     {
-        string Name { get; }
     }
 
     public interface IMainFilterParser : IParser<ISearchFilter>
     {
-        IEnumerable<string> Names { get; }
+        IEnumerable<IParserKey> Keys { get; }
+    }
+
+    public interface IParserKey
+    {
+        string Name { get; }
+        string Description { get; }
     }
 
     public class CleanParser<T> : IParser<T>
@@ -57,9 +62,7 @@ namespace Files.Filesystem.Search
             new AccessedFilterParser(),
         };
 
-        public IEnumerable<string> Names { get; }
-
-        public MainFilterParser() => Names = Parsers.Select(parser => parser.Name);
+        public IEnumerable<IParserKey> Keys => Parsers;
 
         public bool CanParse(string value) => Parsers.Any(parser => parser.CanParse(value));
         public ISearchFilter Parse(string value) => Parsers.First(parser => parser.CanParse(value)).Parse(value);
@@ -68,6 +71,7 @@ namespace Files.Filesystem.Search
     public abstract class AbstractFilterParser<T> : INamedParser<T> where T : ISearchFilter
     {
         public abstract string Name { get; }
+        public virtual string Description => string.Empty;
 
         public bool CanParse(string value)
         {
@@ -105,6 +109,7 @@ namespace Files.Filesystem.Search
         private readonly IParser<SizeRange> parser = new SizeRangeParser();
 
         public override string Name { get; } = "size";
+        public override string Description { get; } = "Size of the item";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override ISizeRangeFilter ParseParameter(string parameter) => new SizeRangeFilter(parser.Parse(parameter));
@@ -115,6 +120,7 @@ namespace Files.Filesystem.Search
         private readonly IParser<DateRange> parser = new DateRangeParser();
 
         public override string Name { get; } = "created";
+        public override string Description { get; } = "Date of creation";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override CreatedFilter ParseParameter(string parameter) => new CreatedFilter(parser.Parse(parameter));
@@ -124,6 +130,7 @@ namespace Files.Filesystem.Search
         private readonly IParser<DateRange> parser = new DateRangeParser();
 
         public override string Name { get; } = "modified";
+        public override string Description { get; } = "Size of the last modification";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override ModifiedFilter ParseParameter(string parameter) => new ModifiedFilter(parser.Parse(parameter));
@@ -133,6 +140,7 @@ namespace Files.Filesystem.Search
         private readonly IParser<DateRange> parser = new DateRangeParser();
 
         public override string Name { get; } = "accessed";
+        public override string Description { get; } = "Size of the last access";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override AccessedFilter ParseParameter(string parameter) => new AccessedFilter(parser.Parse(parameter));
