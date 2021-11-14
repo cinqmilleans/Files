@@ -2,6 +2,7 @@
 using Files.Filesystem;
 using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,16 +36,17 @@ namespace Files.ViewModels
         public void ClearSuggestions() => SetSuggestions<ListedItem>(Enumerable.Empty<ListedItem>());
         public void SetSuggestions(IEnumerable<ListedItem> suggestions) => SetSuggestions<ListedItem>(suggestions);
 
-        public void SearchRegion_TextChanged(AutoSuggestBox _, AutoSuggestBoxTextChangedEventArgs e)
+        public void SearchRegion_TextChanged(AutoSuggestBox s, AutoSuggestBoxTextChangedEventArgs e)
         {
-            string name = Query;
-            if (name.Length < 2)
+            var item = GetQueryItem(s.FindDescendant<TextBox>());
+
+            if (item.Length < 2)
             {
                 SetSuggestions(Enumerable.Empty<IParserKey>());
             }
             else
             {
-                var keySuggestions = parser.Keys.Where(key => key.Name.StartsWith(name));
+                var keySuggestions = parser.Keys.Where(key => key.Name.StartsWith(item));
                 SetSuggestions(keySuggestions);
             }
 
@@ -58,14 +60,13 @@ namespace Files.ViewModels
         {
             if (e.ChosenSuggestion is IParserKey key)
             {
-                Query = string.Format("{0}:", key.Name);
+                SetQueryItem(sender.FindDescendant<TextBox>(), string.Format("{0}:", key.Name));
             }
             else if (e.ChosenSuggestion is ListedItem item)
             {
                 QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(item));
             }
         }
-
 
         public void SearchRegion_Escaped(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e)
         {
@@ -93,6 +94,35 @@ namespace Files.ViewModels
                     Suggestions.Add(newSuggestion);
                 }
             }
+        }
+
+        private static string GetQueryItem(TextBox box)
+        {
+            if (box.SelectionLength > 0)
+            {
+                return string.Empty;
+            }
+
+            string item = box.Text;
+            int position = box.SelectionStart;
+
+            int index = item.Substring(0, position).LastIndexOf(' ');
+            if (index >= 0)
+            {
+                item = item.Substring(index + 1);
+            }
+
+            index = item.IndexOf(' ');
+            if (index >= 0)
+            {
+                item = item.Substring(0, index);
+            }
+
+            return item;
+        }
+        private void SetQueryItem(TextBox box, string item)
+        {
+            Query = item ?? string.Empty;
         }
 
         private class SuggestionComparer : IEqualityComparer<object>, IComparer<object>
