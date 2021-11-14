@@ -31,14 +31,14 @@ namespace Files.ViewModels
 
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
-        public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
+        public ObservableCollection<object> Suggestions { get; } = new ObservableCollection<object>();
 
         public void ClearSuggestions()
         {
             Suggestions.Clear();
         }
 
-        public void SetSuggestions(IEnumerable<ListedItem> suggestions)
+        public void SetSuggestions(IEnumerable<object> suggestions)
         {
             var items = suggestions.OrderBy(suggestion => suggestion, suggestionComparer).ToList();
 
@@ -70,11 +70,17 @@ namespace Files.ViewModels
         {
             if (Query == "date")
             {
+                var a = new ParserKeySuggestion { Name = "date:", Description = "Date of item" };
+                var b = new ParserKeySuggestion { Name = "size:", Description = "Size of item" };
 
+                SetSuggestions(new List<IParserKeySuggestion> { a, b});
             }
+            else
+            {
 
 
-            TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+               TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+            }
         }
 
         public void SearchRegion_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs e)
@@ -101,46 +107,24 @@ namespace Files.ViewModels
             public new bool Equals(object x, object y) => GetKey(y).Equals(GetKey(x));
             public int GetHashCode(object o) => GetKey(o).GetHashCode();
 
-            private static string GetKey(object o) => o switch
+            private static (ushort, string) GetKey(object o) => o switch
             {
-                ParserSuggestion suggestion => string.Empty,
-                ListedItem item => item.ItemPath,
+                IParserKeySuggestion suggestion => (1, suggestion.Name),
+                ListedItem item => (2, item.ItemPath),
                 _ => throw new ArgumentException(),
             };
         }
 
-        public interface IParserSuggestion
+        private class ParserKeySuggestion : IParserKeySuggestion
         {
-            string Name { get; }
-            string Description { get; }
-
-            string
+            public string Name { get; set; }
+            public string Description { get; set; }
         }
+    }
 
-        public interface IParserSuggestionSyntaxItem
-        {
-            string Name { get; }
-            string Description { get; }
-
-            string
-        }
-
-        public interface IParserSuggestionSample
-        {
-            string Parameter { get; }
-            string Description { get; }
-        }
-
-        private class ParserSuggestion
-        {
-            public enum Keys : ushort { Size, Created, Modified, Accessed }
-
-            public Keys Key { get; }
-
-            public ParserSuggestion(Keys key) => Key = key;
-
-
-
-        }
+    public interface IParserKeySuggestion
+    {
+        string Name { get; }
+        string Description { get; }
     }
 }

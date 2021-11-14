@@ -30,4 +30,19 @@ namespace Files.UserControls
 
         private void SearchRegion_Escaped(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e) => SearchBoxViewModel.SearchRegion_Escaped(sender, e);
     }
+
+    //public class SuggestionTemplateSelector : DataTemplateSelector
+    //{
+    //    public DataTemplate ParentItems { get; set; }
+    //    public DataTemplate CurrentItem { get; set; }
+
+    //    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+    //    {
+    //        var itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
+    //        return itemsControl.IndexFromContainer(container) == (itemsControl.ItemsSource as ObservableCollection<PathBoxItem>).Count - 1 ? CurrentItem : ParentItems;
+    //    }
+    //}
+
+
+
 }

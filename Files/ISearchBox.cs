@@ -20,7 +20,7 @@ namespace Files
 
         void ClearSuggestions();
 
-        void SetSuggestions(IEnumerable<ListedItem> suggestions);
+        void SetSuggestions(IEnumerable<object> suggestions);
     }
 
     public class SearchBoxTextChangedEventArgs
