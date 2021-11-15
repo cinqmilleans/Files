@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem;
 using Files.Filesystem.Search;
 using Files.ViewModels;
+using Files.ViewModels.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -45,4 +46,20 @@ namespace Files.UserControls
         };
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container) => SelectTemplateCore(item);
     }
+
+    public class SyntaxItemTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate TextTemplate { get; set; }
+        public DataTemplate ParameterTemplate { get; set; }
+        public DataTemplate DescribedParameterTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            ITextSyntaxItem => TextTemplate,
+            IParameterSyntaxItem syntaxItem => string.IsNullOrEmpty(syntaxItem.Description) ? ParameterTemplate : DescribedParameterTemplate,
+            _ => null,
+        };
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container) => SelectTemplateCore(item);
+    }
+
 }

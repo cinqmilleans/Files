@@ -1,6 +1,7 @@
 ﻿using Files.Extensions;
 using Files.Filesystem;
 using Files.Filesystem.Search;
+using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Uwp.UI;
 using System;
@@ -33,22 +34,22 @@ namespace Files.ViewModels
 
         public ObservableCollection<object> Suggestions { get; } = new ObservableCollection<object>();
 
-        public void ClearSuggestions() => SetSuggestions<ListedItem>(Enumerable.Empty<ListedItem>());
+        public void ClearSuggestions() => ClearSuggestions<ListedItem>();
         public void SetSuggestions(IEnumerable<ListedItem> suggestions) => SetSuggestions<ListedItem>(suggestions);
 
         public void SearchRegion_TextChanged(AutoSuggestBox s, AutoSuggestBoxTextChangedEventArgs e)
         {
             var item = GetQueryItem(s.FindDescendant<TextBox>());
 
-            if (item.Length < 2)
-            {
-                SetSuggestions(Enumerable.Empty<IParserKey>());
-            }
-            else
-            {
-                var keySuggestions = parser.Keys.Where(key => key.Name.StartsWith(item));
-                SetSuggestions(keySuggestions);
-            }
+            var syntaxSuggestions = item.Contains(':')
+                ? parser.Keys.Where(key => item.StartsWith(key.Name + ':')).Select(key => new ParserSyntax(key))
+                : Enumerable.Empty<IParserSyntax>();
+            SetSuggestions(syntaxSuggestions);
+
+            var keySuggestions = item.Length >= 2
+                ? parser.Keys.Where(key => key.Name.StartsWith(item))
+                : Enumerable.Empty<IParserKey>();
+            SetSuggestions(keySuggestions);
 
             TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
         }
@@ -73,6 +74,7 @@ namespace Files.ViewModels
             Escaped?.Invoke(this, this);
         }
 
+        private void ClearSuggestions<T>() => SetSuggestions(Enumerable.Empty<T>());
         private void SetSuggestions<T>(IEnumerable<T> suggestions)
         {
             var news = suggestions.OrderBy(suggestion => suggestion, suggestionComparer).ToList();
@@ -139,9 +141,5 @@ namespace Files.ViewModels
                 _ => throw new ArgumentException(),
             };
         }
-    }
-
-    public interface IParserSyntax : IParserKey
-    {
     }
 }

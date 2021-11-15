@@ -25,6 +25,7 @@ namespace Files.Filesystem.Search
     {
         string Name { get; }
         string Description { get; }
+        string Syntax { get; }
     }
 
     public class CleanParser<T> : IParser<T>
@@ -72,6 +73,7 @@ namespace Files.Filesystem.Search
     {
         public abstract string Name { get; }
         public virtual string Description => string.Empty;
+        public virtual string Syntax => string.Empty;
 
         public bool CanParse(string value)
         {
@@ -121,6 +123,8 @@ namespace Files.Filesystem.Search
 
         public override string Name { get; } = "created";
         public override string Description { get; } = "Date of creation";
+        public override string Syntax { get; } =
+            "Valid values are date ranges such as:11/05/04[Items with a date before 11/05/04]\nAs well as relative values such as:yesterday:lastweek";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override CreatedFilter ParseParameter(string parameter) => new CreatedFilter(parser.Parse(parameter));
@@ -131,6 +135,8 @@ namespace Files.Filesystem.Search
 
         public override string Name { get; } = "modified";
         public override string Description { get; } = "Size of the last modification";
+        public override string Syntax { get; } =
+            "Valid values are date ranges such as:11/05/04[Items with a date before 11/05/04]\nAs well as relative values such as:yesterday:lastweek";
 
         protected override bool CanParseParameter(string parameter) => parser.CanParse(parameter);
         protected override ModifiedFilter ParseParameter(string parameter) => new ModifiedFilter(parser.Parse(parameter));

@@ -6,6 +6,7 @@
     xmlns:local="using:Files.UserControls"
     xmlns:fs="using:Files.Filesystem"
     xmlns:vm="using:Files.ViewModels"
+    xmlns:vs="using:Files.ViewModels.Search"
     xmlns:search="using:Files.Filesystem.Search"
     xmlns:converters="using:Files.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,6 +22,11 @@
             SyntaxTemplate="{StaticResource SyntaxSuggestionTemplate}"
             KeyTemplate="{StaticResource KeySuggestionTemplate}"
             ResultTemplate="{StaticResource ResultSuggestionTemplate}" />
+
+        <local:SyntaxItemTemplateSelector x:Key="SyntaxItemTemplateSelector"
+            TextTemplate="{StaticResource TextSyntaxTemplate}"
+            ParameterTemplate="{StaticResource ParameterSyntaxTemplate}"
+            DescribedParameterTemplate="{StaticResource DescribedParameterSyntaxTemplate}" />
 
         <Style
             x:Key="TextBoxStyle"
@@ -44,13 +50,37 @@
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
         </Style>
 
-        <DataTemplate x:Key="SyntaxSuggestionTemplate" x:DataType="vm:IParserSyntax">
+        <DataTemplate x:Key="SyntaxSuggestionTemplate" x:DataType="vs:IParserSyntax">
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock FontWeight="Bold" Text="{x:Bind Name}" />
+                    <TextBlock Text="{x:Bind Description}" />
+                    <ItemsControl ItemsSource="{x:Bind Items}" ItemTemplateSelector="{StaticResource SyntaxItemTemplateSelector}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TextSyntaxTemplate" x:DataType="vs:ITextSyntaxItem">
+            <TextBlock TextWrapping="Wrap" Text="{x:Bind Text}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ParameterSyntaxTemplate" x:DataType="vs:IParameterSyntaxItem">
+            <TextBlock>
+                <Run Text="{x:Bind Key, Converter={StaticResource KeyNameConverter}}" />
+                <Run FontWeight="Bold" Text="{x:Bind Parameter}" />
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DescribedParameterSyntaxTemplate" x:DataType="vs:IParameterSyntaxItem">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock FontWeight="Bold" Text="{x:Bind Name}" />
+                <TextBlock>
+                    <Run Text="{x:Bind Key, Converter={StaticResource KeyNameConverter}}" />
+                    <Run FontWeight="Bold" Text="{x:Bind Parameter}" />
+                </TextBlock>
                 <TextBlock Grid.Row="1" Text="{x:Bind Description}" />
             </Grid>
         </DataTemplate>
