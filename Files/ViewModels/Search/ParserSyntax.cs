@@ -54,7 +54,7 @@ namespace Files.ViewModels.Search
                 if (0 <= newLineIndex && (!parameterMatch.Success || newLineIndex < parameterMatch.Index))
                 {
                     string text = syntax.Substring(0, newLineIndex);
-                    syntax = syntax.Substring(newLineIndex + 2);
+                    syntax = syntax.Substring(newLineIndex + 1);
 
                     yield return new TextItem(text);
                 }
