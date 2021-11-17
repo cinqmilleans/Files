@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Files.UserControls"
     xmlns:fs="using:Files.Filesystem"
-    xmlns:vm="using:Files.ViewModels"
     xmlns:vs="using:Files.ViewModels.Search"
     xmlns:search="using:Files.Filesystem.Search"
     xmlns:converters="using:Files.Converters"
