@@ -16,7 +16,7 @@ namespace Files.ViewModels
 {
     public class SearchBoxViewModel : ObservableObject, ISearchBox
     {
-        private readonly IMainFilterParser parser = new MainFilterParser();
+        private readonly IFilterParserFactory parserFactory = new FilterParserFactory();
 
         private string query;
         public string Query
@@ -41,14 +41,22 @@ namespace Files.ViewModels
         {
             var item = GetQueryItem(s.FindDescendant<TextBox>());
 
+            var parserNames = parserFactory.Names;
+
             var syntaxSuggestions = item.Contains(':')
-                ? parser.Keys.Where(key => item.StartsWith(key.Name + ':')).Select(key => new ParserSyntax(key))
+                ? parserNames.Where(name => item.StartsWith(name + ':')).Select(name => new ParserSyntax(parserFactory.GetParser(name)))
                 : Enumerable.Empty<IParserSyntax>();
             SetSuggestions(syntaxSuggestions);
 
+            if (syntaxSuggestions.Any())
+            {
+                ClearSuggestions<IFilterParser>();
+                ClearSuggestions<ListedItem>();
+            }
+
             var keySuggestions = item.Length >= 2
-                ? parser.Keys.Where(key => key.Name.StartsWith(item))
-                : Enumerable.Empty<IParserKey>();
+                ? parserNames.Where(name => name.StartsWith(item)).Select(name => parserFactory.GetParser(name))
+                : Enumerable.Empty<IFilterParser>();
             SetSuggestions(keySuggestions);
 
             TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
@@ -59,9 +67,9 @@ namespace Files.ViewModels
         }
         public void SearchRegion_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs e)
         {
-            if (e.ChosenSuggestion is IParserKey key)
+            if (e.ChosenSuggestion is IFilterParser parser)
             {
-                SetQueryItem(sender.FindDescendant<TextBox>(), string.Format("{0}:", key.Name));
+                SetQueryItem(sender.FindDescendant<TextBox>(), string.Format("{0}:", parser.Name));
             }
             else if (e.ChosenSuggestion is ListedItem item)
             {
@@ -136,7 +144,7 @@ namespace Files.ViewModels
             private static (ushort, string) GetKey(object o) => o switch
             {
                 IParserSyntax syntax => (1, syntax.Name),
-                IParserKey key => (2, key.Name),
+                IFilterParser key => (2, key.Name),
                 ListedItem item => (3, item.ItemPath),
                 _ => throw new ArgumentException(),
             };

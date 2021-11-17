@@ -20,7 +20,7 @@
 
         <local:SuggestionTemplateSelector x:Key="SuggestionTemplateSelector"
             SyntaxTemplate="{StaticResource SyntaxSuggestionTemplate}"
-            KeyTemplate="{StaticResource KeySuggestionTemplate}"
+            ParserTemplate="{StaticResource ParserSuggestionTemplate}"
             ResultTemplate="{StaticResource ResultSuggestionTemplate}" />
 
         <local:SyntaxItemTemplateSelector x:Key="SyntaxItemTemplateSelector"
@@ -51,10 +51,10 @@
         </Style>
 
         <DataTemplate x:Key="SyntaxSuggestionTemplate" x:DataType="vs:IParserSyntax">
-            <Grid>
+            <Grid Margin="0,16,0,16">
                 <StackPanel Orientation="Vertical">
                     <TextBlock FontWeight="Bold" Text="{x:Bind Name}" />
-                    <TextBlock Text="{x:Bind Description}" />
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description}" />
                     <ItemsControl ItemsSource="{x:Bind Items}" ItemTemplateSelector="{StaticResource SyntaxItemTemplateSelector}" />
                 </StackPanel>
             </Grid>
@@ -85,7 +85,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="KeySuggestionTemplate" x:DataType="search:IParserKey">
+        <DataTemplate x:Key="ParserSuggestionTemplate" x:DataType="search:IFilterParser">
             <Grid>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Width="24" Glyph="&#xE16E;" />

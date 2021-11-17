@@ -34,13 +34,13 @@ namespace Files.UserControls
     public class SuggestionTemplateSelector : DataTemplateSelector
     {
         public DataTemplate SyntaxTemplate { get; set; }
-        public DataTemplate KeyTemplate { get; set; }
+        public DataTemplate ParserTemplate { get; set; }
         public DataTemplate ResultTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
             IParserSyntax => SyntaxTemplate,
-            IParserKey => KeyTemplate,
+            IFilterParser => ParserTemplate,
             ListedItem => ResultTemplate,
             _ => null,
         };

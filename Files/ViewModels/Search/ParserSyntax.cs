@@ -34,18 +34,18 @@ namespace Files.ViewModels.Search
         public string Description { get; }
         public IEnumerable<IParserSyntaxItem> Items { get; }
 
-        public ParserSyntax(IParserKey key)
+        public ParserSyntax(IFilterParser parser)
         {
-            Name = key.Name;
-            Description = key.Description;
-            Items = GetItems(key).ToList();
+            Name = parser.Name;
+            Description = parser.Description;
+            Items = GetItems(parser).ToList();
         }
 
-        private IEnumerable<IParserSyntaxItem> GetItems(IParserKey key)
+        private IEnumerable<IParserSyntaxItem> GetItems(IFilterParser parser)
         {
             Regex parameterRegex = new(@":([^:\[\s]+)(\[([^\[\]]+)])?");
 
-            string syntax = key.Syntax;
+            string syntax = parser.Syntax;
             while (syntax.Length > 0)
             {
                 int newLineIndex = syntax.IndexOf('\n');
@@ -69,7 +69,7 @@ namespace Files.ViewModels.Search
                     {
                         yield return new TextItem(text);
                     }
-                    yield return new ParameterItem(key.Name, parameter, description);
+                    yield return new ParameterItem(parser.Name, parameter, description);
                 }
                 else
                 {

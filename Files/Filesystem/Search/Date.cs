@@ -262,4 +262,155 @@ namespace Files.Filesystem.Search
             return named.Any(n => n.MinDate == minDate) && named.Any(n => n.MaxDate == maxDate);
         }
     }
+
+    public abstract class DateRangeParser : IFilterParser
+    {
+        private readonly IParser<DateRange> parser =
+            new CleanParser<DateRange>(new RangeParser(new ParserCollection<DateRange> { new NamedParser(), new YearParser(), new DayParser() }));
+
+        public abstract string Name { get; }
+        public virtual IEnumerable<string> Alias => Enumerable.Empty<string>();
+
+        public abstract string Description { get; }
+        public virtual string Syntax { get; } =
+            "Valid values are date ranges such as:11/05/04[Items with a date before 11/05/04]\nAs well as relative values such as:yesterday:lastweek";
+
+        public bool CanParse(string parameter) => parser.CanParse(parameter);
+        public ISearchFilter Parse(string parameter) => CreateFilter(parser.Parse(parameter));
+
+        protected abstract DateRangeFilter CreateFilter(DateRange range);
+
+        private class RangeParser : IParser<DateRange>
+        {
+            private readonly IParser<DateRange> parser;
+
+            public RangeParser(IParser<DateRange> parser) => this.parser = parser;
+
+            public bool CanParse(string item)
+            {
+                if (item.StartsWith('<') || item.StartsWith('>'))
+                {
+                    return parser.CanParse(item.Substring(1));
+                }
+                if (item.StartsWith(".."))
+                {
+                    return parser.CanParse(item.Substring(2));
+                }
+                if (item.EndsWith(".."))
+                {
+                    return parser.CanParse(item.Substring(0, item.Length - 2));
+                }
+                if (item.Contains(".."))
+                {
+                    return item.Split("..", 2).All(part => parser.CanParse(part));
+                }
+                return parser.CanParse(item);
+            }
+
+            public DateRange Parse(string item)
+            {
+                Date minDate = Date.MinValue;
+                Date maxDate = Date.Today;
+
+                if (item.StartsWith('<'))
+                {
+                    maxDate = parser.Parse(item.Substring(1)).MaxDate;
+                }
+                else if (item.StartsWith('>'))
+                {
+                    minDate = parser.Parse(item.Substring(1)).MinDate;
+                }
+                else if (item.StartsWith(".."))
+                {
+                    maxDate = parser.Parse(item.Substring(2)).MaxDate;
+                }
+                else if (item.EndsWith(".."))
+                {
+                    minDate = parser.Parse(item.Substring(0, item.Length - 2)).MinDate;
+                }
+                else if (item.Contains(".."))
+                {
+                    var parts = item.Split("..", 2);
+                    minDate = parser.Parse(parts[0]).MinDate;
+                    maxDate = parser.Parse(parts[1]).MaxDate;
+                }
+                else
+                {
+                    (minDate, maxDate) = parser.Parse(item);
+                }
+                return new DateRange(minDate, maxDate);
+            }
+        }
+
+        private class NamedParser : IParser<DateRange>
+        {
+            public IDictionary<string, DateRange> Nameds = new List<DateRange>
+            {
+                DateRange.Today,
+                DateRange.Yesterday,
+                DateRange.ThisWeek,
+                DateRange.LastWeek,
+                DateRange.ThisMonth,
+                DateRange.LastMonth,
+                DateRange.ThisYear,
+                DateRange.Older,
+            }.ToDictionary(range => range.ToString("n").ToLower());
+
+            public bool CanParse(string item) => Nameds.ContainsKey(item.ToLower());
+            public DateRange Parse(string item) => Nameds[item.ToLower()];
+        }
+
+        private class YearParser : IParser<DateRange>
+        {
+            private const ushort minYear = 1900;
+            private const ushort maxYear = 2299;
+
+            public bool CanParse(string item)
+                => ushort.TryParse(item, out ushort year) && year >= minYear && year <= maxYear;
+
+            public DateRange Parse(string item)
+            {
+                ushort year = ushort.Parse(item);
+                Date minDate = new Date(year, 1, 1);
+                Date maxDate = new Date(year, 12, 31);
+                return new DateRange(minDate, maxDate);
+            }
+        }
+
+        private class DayParser : IParser<DateRange>
+        {
+            private readonly DateTime minDay = new DateTime(1900, 1, 1);
+            private readonly DateTime maxDay = new DateTime(2299, 12, 31);
+
+            public bool CanParse(string item)
+                => DateTime.TryParse(item, out DateTime day) && day >= minDay && day <= maxDay;
+
+            public DateRange Parse(string item)
+            {
+                var date = new Date(DateTime.Parse(item));
+                return new DateRange(date, date);
+            }
+        }
+    }
+    public class CreatedParser : DateRangeParser
+    {
+        public override string Name { get; } = "created";
+        public override string Description { get; } = "Date of creation";
+
+        protected override DateRangeFilter CreateFilter(DateRange range) => new CreatedFilter(range);
+    }
+    public class ModifiedParser : DateRangeParser
+    {
+        public override string Name { get; } = "modified";
+        public override IEnumerable<string> Alias { get; } = new string[] { "date" };
+        public override string Description { get; } = "Size of the last modification";
+        protected override DateRangeFilter CreateFilter(DateRange range) => new ModifiedFilter(range);
+    }
+    public class AccessedParser : DateRangeParser
+    {
+        public override string Name { get; } = "accessed";
+        public override string Description { get; } = "Size of the last access";
+
+        protected override DateRangeFilter CreateFilter(DateRange range) => new AccessedFilter(range);
+    }
 }
