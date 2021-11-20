@@ -4,10 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fs="using:Files.Filesystem"
+    xmlns:converters="using:Files.Converters"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
     <UserControl.Resources>
+
+        <converters:IntToVisibilityConverter x:Key="BadgeToVisibilityConverter" MinValue="1" />
 
         <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -111,6 +115,10 @@
                         </Flyout>
                     </Button.Flyout>
                 </Button>
+                <muxc:InfoBadge x:Name="MenuBadge" Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
+                    Height="14" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Value="{Binding BadgeCount, Mode=OneWay}"
+                    Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource BadgeToVisibilityConverter}}" />
                 <Button x:Name="QueryButton" Grid.Row="1" Grid.Column="3"
                     Width="28" FontSize="{TemplateBinding FontSize}"
                     VerticalAlignment="Stretch" BorderThickness="{TemplateBinding BorderThickness}"
