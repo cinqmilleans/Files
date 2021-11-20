@@ -116,7 +116,7 @@
                     </Button.Flyout>
                 </Button>
                 <muxc:InfoBadge x:Name="MenuBadge" Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
-                    Height="14" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
                     Value="{Binding BadgeCount, Mode=OneWay}"
                     Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource BadgeToVisibilityConverter}}" />
                 <Button x:Name="QueryButton" Grid.Row="1" Grid.Column="3"
