@@ -59,7 +59,7 @@ namespace Files.Filesystem.Search
         public Date AddYears(int years) => new(date.AddYears(years));
     }
 
-    public struct DateRange : IEquatable<DateRange>, IFormattable
+    public struct DateRange : IRange<Date>, IEquatable<DateRange>, IFormattable
     {
         public static event EventHandler TodayUpdated;
 
@@ -87,6 +87,9 @@ namespace Files.Filesystem.Search
 
         public bool IsNamed => GetIsNamed();
 
+        public Date MinValue => MinDate;
+        public Date MaxValue => MaxDate;
+
         public Date MinDate { get; }
         public Date MaxDate { get; }
 
@@ -108,6 +111,8 @@ namespace Files.Filesystem.Search
             : this(Min(minRange.MinDate, maxDate), Max(minRange.MaxDate, maxDate)) {}
         public DateRange(DateRange minRange, DateRange maxRange)
             : this(Min(minRange.MinDate, maxRange.MinDate), Max(minRange.MaxDate, maxRange.MaxDate)) {}
+        public DateRange(IRange<Date> range)
+            : this(range.MinValue, range.MaxValue) {}
         private DateRange(bool _) => (MinDate, MaxDate) = (Date.MaxValue, Date.MinValue);
 
         public void Deconstruct(out Date minDate, out Date maxDate)
@@ -280,66 +285,11 @@ namespace Files.Filesystem.Search
 
         protected abstract DateRangeFilter CreateFilter(DateRange range);
 
-        private class RangeParser : IParser<DateRange>
+        private class RangeParser : RangeParser<DateRange, Date>
         {
-            private readonly IParser<DateRange> parser;
+            public RangeParser(IParser<DateRange> parser) : base(DateRange.Always, parser) {}
 
-            public RangeParser(IParser<DateRange> parser) => this.parser = parser;
-
-            public bool CanParse(string item)
-            {
-                if (item.StartsWith('<') || item.StartsWith('>'))
-                {
-                    return parser.CanParse(item.Substring(1));
-                }
-                if (item.StartsWith(".."))
-                {
-                    return parser.CanParse(item.Substring(2));
-                }
-                if (item.EndsWith(".."))
-                {
-                    return parser.CanParse(item.Substring(0, item.Length - 2));
-                }
-                if (item.Contains(".."))
-                {
-                    return item.Split("..", 2).All(part => parser.CanParse(part));
-                }
-                return parser.CanParse(item);
-            }
-
-            public DateRange Parse(string item)
-            {
-                Date minDate = Date.MinValue;
-                Date maxDate = Date.Today;
-
-                if (item.StartsWith('<'))
-                {
-                    maxDate = parser.Parse(item.Substring(1)).MaxDate;
-                }
-                else if (item.StartsWith('>'))
-                {
-                    minDate = parser.Parse(item.Substring(1)).MinDate;
-                }
-                else if (item.StartsWith(".."))
-                {
-                    maxDate = parser.Parse(item.Substring(2)).MaxDate;
-                }
-                else if (item.EndsWith(".."))
-                {
-                    minDate = parser.Parse(item.Substring(0, item.Length - 2)).MinDate;
-                }
-                else if (item.Contains(".."))
-                {
-                    var parts = item.Split("..", 2);
-                    minDate = parser.Parse(parts[0]).MinDate;
-                    maxDate = parser.Parse(parts[1]).MaxDate;
-                }
-                else
-                {
-                    (minDate, maxDate) = parser.Parse(item);
-                }
-                return new DateRange(minDate, maxDate);
-            }
+            protected override DateRange GetRange(IRange<Date> range) => new(range);
         }
 
         private class NamedParser : IParser<DateRange>
@@ -402,7 +352,6 @@ namespace Files.Filesystem.Search
     public class ModifiedParser : DateRangeParser
     {
         public override string Name { get; } = "modified";
-        public override IEnumerable<string> Alias { get; } = new string[] { "date" };
         public override string Description { get; } = "Size of the last modification";
         protected override DateRangeFilter CreateFilter(DateRange range) => new ModifiedFilter(range);
     }
@@ -412,5 +361,28 @@ namespace Files.Filesystem.Search
         public override string Description { get; } = "Size of the last access";
 
         protected override DateRangeFilter CreateFilter(DateRange range) => new AccessedFilter(range);
+    }
+
+    public class BeforeParser : IFilterParser
+    {
+        private DateRangeParser parser = new ModifiedParser();
+
+        public string Name => "before";
+        public string Description => "Before the last of modification";
+        public string Syntax => string.Empty;
+
+        public bool CanParse(string value) => parser.CanParse($"<{value}");
+        public ISearchFilter Parse(string value) => parser.Parse($"<{value}");
+    }
+    public class AfterParser : IFilterParser
+    {
+        private DateRangeParser parser = new ModifiedParser();
+
+        public string Name => "after";
+        public string Description => "After the last of modification";
+        public string Syntax => string.Empty;
+
+        public bool CanParse(string value) => parser.CanParse($">{value}");
+        public ISearchFilter Parse(string value) => parser.Parse($">{value}");
     }
 }
