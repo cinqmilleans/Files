@@ -365,7 +365,7 @@ namespace Files.Filesystem.Search
 
     public class BeforeParser : IFilterParser
     {
-        private DateRangeParser parser = new ModifiedParser();
+        private readonly DateRangeParser parser = new ModifiedParser();
 
         public string Name => "before";
         public string Description => "Before the last of modification";
@@ -376,7 +376,7 @@ namespace Files.Filesystem.Search
     }
     public class AfterParser : IFilterParser
     {
-        private DateRangeParser parser = new ModifiedParser();
+        private readonly DateRangeParser parser = new ModifiedParser();
 
         public string Name => "after";
         public string Description => "After the last of modification";
