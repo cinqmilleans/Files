@@ -8,6 +8,7 @@
     xmlns:vs="using:Files.ViewModels.Search"
     xmlns:search="using:Files.Filesystem.Search"
     xmlns:converters="using:Files.Converters"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -52,8 +53,12 @@
         <DataTemplate x:Key="SyntaxSuggestionTemplate" x:DataType="vs:IParserSyntax">
             <Grid Margin="0,16,0,16">
                 <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16" Spacing="8">
+                        <muxc:InfoBadge Style="{ThemeResource SuccessIconInfoBadgeStyle}" />
+                        <TextBlock FontStyle="Italic" Text="After 01/01/2020" />
+                    </StackPanel>
                     <TextBlock FontWeight="Bold" Text="{x:Bind Name}" />
-                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description}" />
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description}" Margin="0,0,0,8" />
                     <ItemsControl ItemsSource="{x:Bind Items}" ItemTemplateSelector="{StaticResource SyntaxItemTemplateSelector}" />
                 </StackPanel>
             </Grid>
@@ -65,7 +70,7 @@
 
         <DataTemplate x:Key="ParameterSyntaxTemplate" x:DataType="vs:IParameterSyntaxItem">
             <TextBlock>
-                <Run Text="{x:Bind Key, Converter={StaticResource KeyNameConverter}}" />
+                <Run Foreground="{ThemeResource SystemAccentColor}" Text="{x:Bind Key, Converter={StaticResource KeyNameConverter}}" />
                 <Run FontWeight="Bold" Text="{x:Bind Parameter}" />
             </TextBlock>
         </DataTemplate>
@@ -77,7 +82,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock>
-                    <Run Text="{x:Bind Key, Converter={StaticResource KeyNameConverter}}" />
+                    <Run Foreground="{ThemeResource SystemAccentColor}" Text="{x:Bind Keyy}" />
                     <Run FontWeight="Bold" Text="{x:Bind Parameter}" />
                 </TextBlock>
                 <TextBlock Grid.Row="1" Text="{x:Bind Description}" />

@@ -59,7 +59,7 @@ namespace Files.ViewModels
                 : Enumerable.Empty<IFilterParser>();
             SetSuggestions(keySuggestions);
 
-            TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
+            //TextChanged?.Invoke(this, new SearchBoxTextChangedEventArgs(e.Reason));
         }
         public void SearchRegion_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs e)
         {

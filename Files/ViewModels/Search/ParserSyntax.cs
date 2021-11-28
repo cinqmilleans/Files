@@ -26,6 +26,8 @@ namespace Files.ViewModels.Search
         string Key { get; }
         string Parameter { get; }
         string Description { get; }
+
+        string Keyy { get; }
     }
 
     public class ParserSyntax : IParserSyntax
@@ -93,6 +95,7 @@ namespace Files.ViewModels.Search
             public string Key { get; }
             public string Parameter { get; }
             public string Description { get; }
+            public string Keyy => $"{Key}:";
 
             public ParameterItem(string key, string parameter, string description)
                 => (Key, Parameter, Description) = (key, parameter, description);
