@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml.Media.Imaging;
 using static Files.Helpers.NativeFindStorageItemHelper;
 using FileAttributes = System.IO.FileAttributes;
@@ -154,7 +155,7 @@ namespace Files.Filesystem.StorageEnumerators
                 opacity = Constants.UI.DimItemOpacity;
             }
 
-            return new ListedItem(null, dateReturnFormat)
+            var item = new ListedItem(null, dateReturnFormat)
             {
                 PrimaryItemAttribute = StorageItemTypes.Folder,
                 ItemNameRaw = itemName,
@@ -169,6 +170,68 @@ namespace Files.Filesystem.StorageEnumerators
                 FileSize = null,
                 FileSizeBytes = 0,
             };
+
+            _ = Task.Run(async () =>
+              {
+                  try
+                  {
+                      long _ = await GetFolderSize(item, item.ItemPath);
+                  }
+                  catch (Exception)
+                  {
+                  }
+                  //item.FileSize = ByteSize.FromBytes(size).ToBinaryString().ConvertSizeAbbreviation();
+              });
+
+            return item;
+        }
+
+        private static async Task<long> GetFolderSize(ListedItem item, string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return 0;
+            }
+
+            long size = 0;
+            //var count = 0;
+
+            FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
+            int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
+
+            IntPtr hFile = FindFirstFileExFromApp(path + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findData,
+                FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+
+            if (hFile.ToInt64() != -1)
+            {
+                do
+                {
+                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) != FileAttributes.Directory)
+                    {
+                        size += findData.GetSize();
+                        item.FileSize = ByteSize.FromBytes(size).ToBinaryString().ConvertSizeAbbreviation();
+                        item.FileSizeBytes = size;
+                        //++count;
+                    }
+                    else if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        if (findData.cFileName != "." && findData.cFileName != "..")
+                        {
+                            var itemPath = Path.Combine(path, findData.cFileName);
+                            size += await GetFolderSize(item, itemPath);
+                            item.FileSize = ByteSize.FromBytes(size).ToBinaryString().ConvertSizeAbbreviation();
+                            item.FileSizeBytes = size;
+                            //++count;
+                        }
+                    }
+                } while (FindNextFile(hFile, out findData));
+                FindClose(hFile);
+                return size;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         public static async Task<ListedItem> GetFile(
