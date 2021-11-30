@@ -121,6 +121,7 @@ namespace Files
                 NotifyPropertyChanged(nameof(CollectionViewSource));
                 if (collectionViewSource?.View is not null)
                 {
+
                     collectionViewSource.View.VectorChanged += View_VectorChanged;
                 }
             }

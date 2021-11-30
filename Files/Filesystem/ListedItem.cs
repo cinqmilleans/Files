@@ -15,8 +15,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
+using static Files.Helpers.NativeFindStorageItemHelper;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -24,6 +28,84 @@ namespace Files.Filesystem
 {
     public class ListedItem : ObservableObject, IGroupableItem
     {
+        private bool isFolderSizeUpdated = false;
+
+        public async void UpdateFolderSize()
+        {
+            CancellationToken token;
+            CoreDispatcher dispatcher;
+
+            if (!isFolderSizeUpdated && ContainsFilesOrFolders)
+            {
+                isFolderSizeUpdated = true;
+
+                FileSizeBytes = 0;
+                FileSize = GetSizeString(FileSizeBytes);
+
+                token = new CancellationToken();
+                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+
+                long size = await Calculate(ItemPath);
+                FileSize = GetSizeString(size);
+            }
+
+            static string GetSizeString(long size) => ByteSize.FromBytes(size).ToBinaryString().ConvertSizeAbbreviation();
+
+            async Task<long> Calculate(string path)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return 0;
+                }
+
+                FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
+                int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
+
+                IntPtr hFile = FindFirstFileExFromApp(path + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findData,
+                                    FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+
+                long size = 0;
+                if (hFile.ToInt64() != -1)
+                {
+                    do
+                    {
+                        if (((System.IO.FileAttributes)findData.dwFileAttributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
+                        {
+                            size += findData.GetSize();
+                        }
+                        else if (((System.IO.FileAttributes)findData.dwFileAttributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
+                        {
+                            if (findData.cFileName != "." && findData.cFileName != "..")
+                            {
+                                string itemPath = Path.Combine(path, findData.cFileName);
+                                size += await Calculate(itemPath);
+                            }
+                        }
+
+                        if (size > FileSizeBytes)
+                        {
+                            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                            {
+                                FileSizeBytes = size;
+                                FileSize = GetSizeString(size);
+                            });
+                        }
+
+                        if (token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    } while (FindNextFile(hFile, out findData));
+                    FindClose(hFile);
+                    return size;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
         protected static IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
 
         protected static IFileTagsSettingsService FileTagsSettingsService { get; } = Ioc.Default.GetService<IFileTagsSettingsService>();
@@ -432,7 +514,7 @@ namespace Files.Filesystem
         public string Key { get; set; }
 
         /// <summary>
-        /// Manually check if a folder path contains child items, 
+        /// Manually check if a folder path contains child items,
         /// updating the ContainsFilesOrFolders property from its default value of true
         /// </summary>
         public void UpdateContainsFilesFolders()
