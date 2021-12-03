@@ -73,6 +73,13 @@
                 </local:SettingsBlockControl.ExpandableContent>
             </local:SettingsBlockControl>
 
+            <local:SettingsBlockControl HorizontalAlignment="Stretch" Title="Show folder size">
+                <local:SettingsBlockControl.Icon>
+                    <FontIcon Glyph="&#xE2B2;" />
+                </local:SettingsBlockControl.Icon>
+                <ToggleSwitch IsOn="{Binding ShowFolderSize, Mode=TwoWay}" Style="{StaticResource RightAlignedToggleSwitchStyle}" />
+            </local:SettingsBlockControl>
+
             <TextBlock
                 Padding="0,12,0,4"
                 FontSize="14"
