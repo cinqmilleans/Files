@@ -150,7 +150,7 @@ namespace Files.Filesystem.StorageEnumerators
                 opacity = Constants.UI.DimItemOpacity;
             }
 
-            return new ListedItem(null, dateReturnFormat)
+            var item = new ListedItem(null, dateReturnFormat)
             {
                 PrimaryItemAttribute = StorageItemTypes.Folder,
                 ItemNameRaw = itemName,
@@ -165,6 +165,10 @@ namespace Files.Filesystem.StorageEnumerators
                 FileSize = null,
                 FileSizeBytes = 0,
             };
+
+            item.UpdateFolder(cancellationToken);
+
+            return item;
         }
 
         public static async Task<ListedItem> GetFile(

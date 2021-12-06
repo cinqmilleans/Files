@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -24,6 +25,8 @@ namespace Files.Filesystem
 {
     public class ListedItem : ObservableObject, IGroupableItem
     {
+        private bool isFolderUpdated = false;
+
         protected static IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
 
         protected static IFileTagsSettingsService FileTagsSettingsService { get; } = Ioc.Default.GetService<IFileTagsSettingsService>();
@@ -432,12 +435,13 @@ namespace Files.Filesystem
         public string Key { get; set; }
 
         /// <summary>
-        /// Manually check if a folder path contains child items, 
+        /// Manually check if a folder path contains child items,
         /// updating the ContainsFilesOrFolders property from its default value of true
         /// </summary>
         public void UpdateContainsFilesFolders()
         {
             ContainsFilesOrFolders = FolderHelpers.CheckForFilesFolders(ItemPath);
+            //UpdateFolder(CancellationToken.None);
         }
 
         public void SetDefaultIcon(BitmapImage img)
@@ -445,6 +449,15 @@ namespace Files.Filesystem
             NeedsPlaceholderGlyph = false;
             LoadDefaultIcon = true;
             PlaceholderDefaultIcon = img;
+        }
+
+        public void UpdateFolder(CancellationToken cancellationToken)
+        {
+            if (!isFolderUpdated)
+            {
+                isFolderUpdated = true;
+                FolderHelpers.UpdateFolder(this, cancellationToken);
+            }
         }
     }
 
