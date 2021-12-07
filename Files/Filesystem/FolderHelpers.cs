@@ -64,22 +64,22 @@ namespace Files.Filesystem
         {
             CoreDispatcher dispatcher;
 
-            //long size = 0;
-
             if (item.ContainsFilesOrFolders)
             {
                 dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-                //item.FileSizeBytes = 0;
-                //item.FileSize = string.Empty;
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    item.FileSizeBytes = 0;
+                    item.FileSize = GetSizeString(0);
+                });
 
-                _ = await Calculate(item.ItemPath, false).ConfigureAwait(false);
-                //item.FileSize = GetSizeString(size);
+                _ = await Calculate(item.ItemPath);
             }
 
             static string GetSizeString(long size) => ByteSize.FromBytes(size).ToBinaryString().ConvertSizeAbbreviation();
 
-            async Task<long> Calculate(string path, bool b)
+            async Task<long> Calculate(string path)
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -106,18 +106,18 @@ namespace Files.Filesystem
                             if (findData.cFileName is not "." and not "..")
                             {
                                 string itemPath = Path.Combine(path, findData.cFileName);
-                                size += await Calculate(itemPath, true).ConfigureAwait(false);
+                                size += await Calculate(itemPath);
                             }
                         }
 
-                        if (size > item.FileSizeBytes)
+                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
-                            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                            if (size > item.FileSizeBytes)
                             {
                                 item.FileSizeBytes = size;
-                                //if (b) item.FileSize = GetSizeString(size);
-                            });
-                        }
+                                item.FileSize = GetSizeString(size);
+                            };
+                        });
 
                         if (cancellationToken.IsCancellationRequested)
                         {
