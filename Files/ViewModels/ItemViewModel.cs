@@ -2155,7 +2155,7 @@ namespace Files.ViewModels
                             if (result.Value.Size != null)
                             {
                                 item.FileSizeBytes = result.Value.Size.Value;
-                                item.FileSize = ByteSizeLib.ByteSize.FromBytes(item.FileSizeBytes).ToBinaryString().ConvertSizeAbbreviation();
+                                item.FileSize = item.FileSizeBytes.ToSizeString();
                             }
                         }
                     }

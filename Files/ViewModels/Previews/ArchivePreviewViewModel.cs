@@ -53,7 +53,7 @@ namespace Files.ViewModels.Previews
             details.Add(new FileProperty()
             {
                 NameResource = "PropertyUncompressedSize",
-                Value = $"{ByteSize.FromBytes(totalSize).ToBinaryString().ConvertSizeAbbreviation()} ({ByteSize.FromBytes(totalSize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})",
+                Value = $"{totalSize.ToSizeString()} ({ByteSize.FromBytes(totalSize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})",
             });
 
             _ = await base.LoadPreviewAndDetails(); // Loads the thumbnail preview

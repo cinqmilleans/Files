@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp;
+﻿using ByteSizeLib;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,5 +90,9 @@ namespace Files.Extensions
             }
             return value;
         }
+
+        public static string ToSizeString(this long size) => ToSizeString(ByteSize.FromBytes(size));
+        public static string ToSizeString(this ulong size) => ToSizeString(ByteSize.FromBytes(size));
+        public static string ToSizeString(this ByteSize size) => size.ToBinaryString().ConvertSizeAbbreviation();
     }
 }

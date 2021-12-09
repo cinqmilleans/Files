@@ -122,7 +122,7 @@ namespace Files.ViewModels.Properties
                     librarySize += await Task.Run(async () => await CalculateFolderSizeAsync(folder.Path, token));
                 }
                 ViewModel.ItemSizeBytes = librarySize;
-                ViewModel.ItemSize = $"{ByteSize.FromBytes(librarySize).ToBinaryString().ConvertSizeAbbreviation()} ({ByteSize.FromBytes(librarySize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
+                ViewModel.ItemSize = $"{librarySize.ToSizeString()} ({ByteSize.FromBytes(librarySize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
             }
             catch (Exception ex)
             {

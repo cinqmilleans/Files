@@ -89,7 +89,7 @@ namespace Files.ViewModels.Properties
             if (Item.IsShortcutItem)
             {
                 ViewModel.ItemSizeVisibility = Visibility.Visible;
-                ViewModel.ItemSize = $"{ByteSize.FromBytes(Item.FileSizeBytes).ToBinaryString().ConvertSizeAbbreviation()} ({ByteSize.FromBytes(Item.FileSizeBytes).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
+                ViewModel.ItemSize = $"{Item.FileSizeBytes.ToSizeString()} ({ByteSize.FromBytes(Item.FileSizeBytes).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
                 ViewModel.ItemCreatedTimestamp = Item.ItemDateCreated;
                 ViewModel.ItemAccessedTimestamp = Item.ItemDateAccessed;
                 if (Item.IsLinkItem || string.IsNullOrWhiteSpace(((ShortcutItem)Item).TargetPath))
@@ -185,7 +185,7 @@ namespace Files.ViewModels.Properties
             {
                 var folderSize = await fileSizeTask;
                 ViewModel.ItemSizeBytes = folderSize;
-                ViewModel.ItemSize = $"{ByteSize.FromBytes(folderSize).ToBinaryString().ConvertSizeAbbreviation()} ({ByteSize.FromBytes(folderSize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
+                ViewModel.ItemSize = $"{folderSize.ToSizeString()} ({ByteSize.FromBytes(folderSize).Bytes:#,##0} {"ItemSizeBytes".GetLocalized()})";
             }
             catch (Exception ex)
             {
