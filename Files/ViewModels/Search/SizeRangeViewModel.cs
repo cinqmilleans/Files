@@ -117,7 +117,7 @@ namespace Files.ViewModels.Search
             {
                 this.saveAction = saveAction;
 
-                Description = new SizeRangeHeader().Description;
+                Description = string.Empty; // new SizeRangeHeader().Description;
                 Range = range;
 
                 links = new List<SizeRange>

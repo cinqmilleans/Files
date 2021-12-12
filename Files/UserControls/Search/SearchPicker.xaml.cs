@@ -83,6 +83,29 @@ namespace Files.UserControls.Search
                 }
             }
         }
+
+        private void ContextItem_PointerEntered1(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                var button = element.FindDescendant("CloseButton1") as FontIcon;
+                if (button is not null)
+                {
+                    button.Visibility = Visibility.Visible;
+                }
+            }
+        }
+        private void ContextItem_PointerExited1(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                var button = element.FindDescendant("CloseButton1") as FontIcon;
+                if (button is not null)
+                {
+                    button.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
     }
 
     public class PickerTemplateSelector : DataTemplateSelector

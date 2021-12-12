@@ -90,7 +90,7 @@ namespace Files.ViewModels.Search
             {
                 if (SetProperty(ref header, value))
                 {
-                    Picker.Description = header.Description;
+                    Picker.Description = string.Empty;
                     Save();
                 }
             }
@@ -115,7 +115,7 @@ namespace Files.ViewModels.Search
             };
 
             Picker = new PickerViewModel(Save);
-            Picker.Description = header?.Description;
+            Picker.Description = string.Empty;
             if (filter is not null)
             {
                 Picker.Range = filter.Range;

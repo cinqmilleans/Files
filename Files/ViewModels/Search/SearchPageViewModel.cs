@@ -43,6 +43,7 @@ namespace Files.ViewModels.Search
         string Glyph { get; }
         string Title { get; }
         string Description { get; }
+        bool HasDescription { get; }
 
         ISearchFilter GetFilter();
     }
@@ -84,6 +85,8 @@ namespace Files.ViewModels.Search
         public string Glyph { get; }
         public string Title { get; }
         public string Description { get; }
+
+        public bool HasDescription => GetFilter() is not DateRangeFilter && GetFilter() is not SizeRangeFilter;
 
         public SearchFilterHeader()
         {
