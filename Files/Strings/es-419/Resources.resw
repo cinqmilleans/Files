@@ -108,9 +108,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Ingrese una ubicación</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Buscar</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>Los archivos a los que haya accedido anteriormente aparecerán aquí</value>
   </data>

@@ -108,9 +108,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>შეიყვანეთ გზა</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>ძებნა</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>საქაღალდეებზე, რომლებზეც წვდომა ადრე გქონდათ აქ გამოჩნდებიან</value>
   </data>

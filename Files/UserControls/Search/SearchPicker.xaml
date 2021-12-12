@@ -154,7 +154,7 @@
                         <ColumnDefinition Width="18" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="1" Spacing="4">
+                    <StackPanel Grid.Column="1" Spacing="4" Margin="0,2,0,0">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon FontSize="14" Glyph="&#xEA90;" />
                                 <TextBlock>

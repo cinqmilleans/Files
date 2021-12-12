@@ -93,9 +93,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Insira um caminho</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Pesquisar</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>Os arquivos que você acessou anteriormente serão exibidos aqui</value>
   </data>

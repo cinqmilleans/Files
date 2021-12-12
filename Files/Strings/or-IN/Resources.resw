@@ -93,9 +93,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>ଏକ ପଥ ପ୍ରବେଶ କରନ୍ତୁ</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>ସନ୍ଧାନ କର</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>ଆପଣ ପୂର୍ବରୁ ଉପଲବ୍ଧ କରିଥିବା ଫାଇଲ ଏବଂ ଫୋଲ୍ଡରଗୁଡ଼ିକ ଏଠାରେ ଦେଖାଯିବ |</value>
   </data>

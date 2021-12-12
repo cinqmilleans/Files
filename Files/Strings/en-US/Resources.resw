@@ -2795,19 +2795,19 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
     <value>Finds items that do not meet any condition in the list.</value>
   </data>
   <data name="Created" xml:space="preserve">
-    <value>Created</value>
+    <value>Date created</value>
   </data>
   <data name="SearchCreatedFilter_Description" xml:space="preserve">
     <value>Date of creation</value>
   </data>
   <data name="Modified" xml:space="preserve">
-    <value>Modified</value>
+    <value>Date modified</value>
   </data>
   <data name="SearchModifiedFilter_Description" xml:space="preserve">
     <value>Date of last modification</value>
   </data>
   <data name="Accessed" xml:space="preserve">
-    <value>Accessed</value>
+    <value>Date accessed</value>
   </data>
   <data name="SearchAccessedFilter_Description" xml:space="preserve">
     <value>Date of last access</value>

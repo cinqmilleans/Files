@@ -90,9 +90,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>ஒரு பாதையை உள்ளிடுக</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>தேடு</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>நீங்கள் முன்பு அணுகிய கோப்புகள் மற்றும் கோப்புறைகள் இங்கு காட்டப்படும்</value>
   </data>

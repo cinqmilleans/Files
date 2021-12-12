@@ -93,9 +93,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Ange en sökväg</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Sök</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>Filer som du använt tidigare kommer att visas här</value>
   </data>

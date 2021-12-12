@@ -66,9 +66,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Введіть шлях</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Пошук</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>Тут відображатимуться файли, до яких ви раніше отримували доступ</value>
   </data>

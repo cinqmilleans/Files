@@ -90,9 +90,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>הזן נתיב</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>חיפוש</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>הקבצים שניגשת אליהם בעבר יופיעו כאן</value>
   </data>

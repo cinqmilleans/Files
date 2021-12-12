@@ -93,9 +93,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>ادخل وجهة معينة</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>بحث</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>الملفات التي قمت بالوصول اليها مؤخرا سوف تظهر هنا</value>
   </data>

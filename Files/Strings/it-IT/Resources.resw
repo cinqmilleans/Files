@@ -84,9 +84,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Inserisci un percorso</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Cerca</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>I file e le cartelle a cui hai avuto accesso di recente verranno visualizzati qui</value>
   </data>

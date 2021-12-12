@@ -93,9 +93,6 @@
   <data name="NavigationToolbarVisiblePath.PlaceholderText" xml:space="preserve">
     <value>Zadejte cestu</value>
   </data>
-  <data name="NavigationToolbarSearchReigon.PlaceholderText" xml:space="preserve">
-    <value>Hledat</value>
-  </data>
   <data name="RecentItemDescription.Text" xml:space="preserve">
     <value>Zde se zobrazí soubory, ke kterým jste dříve přistupovali.</value>
   </data>
