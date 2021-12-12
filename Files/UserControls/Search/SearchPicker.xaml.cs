@@ -1,6 +1,7 @@
 ﻿using Files.ViewModels.Search;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,6 +24,8 @@ namespace Files.UserControls.Search
 
         private void AddFilterButton_Loaded(object sender, RoutedEventArgs e)
         {
+            var keys = (ViewModel as GroupPickerViewModel).Filters.Select(filter => filter.Key);
+
             var menu = new MenuFlyout();
             menu.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
 
@@ -42,13 +45,20 @@ namespace Files.UserControls.Search
 
             (sender as Button).Flyout = menu;
 
-            MenuFlyoutItem GetItem(ISearchFilterHeader header) => new MenuFlyoutItem
+            MenuFlyoutItem GetItem(ISearchFilterHeader header)
             {
-                Tag = header,
-                Template = HeaderItemTemplate,
-                Command = (ViewModel as IGroupPickerViewModel).OpenCommand,
-                CommandParameter = header,
-            };
+                var key = header.GetFilter().Key;
+                bool isEnabled = !keys.Contains(key);
+
+                return new MenuFlyoutItem
+                {
+                    Tag = header,
+                    IsEnabled = isEnabled,
+                    Template = HeaderItemTemplate,
+                    Command = (ViewModel as IGroupPickerViewModel).OpenCommand,
+                    CommandParameter = header,
+                };
+            }
         }
 
         private void ContextItem_PointerEntered(object sender, PointerRoutedEventArgs e)

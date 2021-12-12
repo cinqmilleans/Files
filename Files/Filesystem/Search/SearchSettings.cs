@@ -12,7 +12,8 @@ namespace Files.Filesystem.Search
     public interface ISearchSettings
     {
         ISearchLocation Location { get; }
-        ISearchFilter Filter { get; }
+        ISearchFilterCollection Filter { get; }
+        ObservableCollection<string> PinnedKeys { get; }
     }
 
     public interface ISearchLocation : INotifyPropertyChanged
@@ -22,6 +23,8 @@ namespace Files.Filesystem.Search
 
     public interface ISearchFilter
     {
+        string Key { get; }
+        ISearchFilter ToEmpty();
         string ToAdvancedQuerySyntax();
     }
 
@@ -48,7 +51,10 @@ namespace Files.Filesystem.Search
     public class SearchSettings : ObservableObject, ISearchSettings
     {
         public ISearchLocation Location { get; } = new SearchLocation();
-        public ISearchFilter Filter { get; } = new AndFilterCollection();
+        public ISearchFilterCollection Filter { get; } = new AndFilterCollection{ new SizeRangeFilter(), new ModifiedFilter() };
+        public ObservableCollection<string> PinnedKeys { get; }
+
+        public SearchSettings() => PinnedKeys = new ObservableCollection<string>(Filter.Select(filter => filter.Key));
     }
 
     public class SearchLocation : ObservableObject, ISearchLocation
@@ -63,6 +69,7 @@ namespace Files.Filesystem.Search
 
     public class AndFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
+        public string Key => "and";
         public string Glyph => "\uEC26";
         public string Title => "And".GetLocalized();
         public string Description => "SearchAndFilterCollection_Description".GetLocalized();
@@ -70,6 +77,8 @@ namespace Files.Filesystem.Search
         public AndFilterCollection() : base() {}
         public AndFilterCollection(IEnumerable<ISearchFilter> filters) : base(filters) {}
         public AndFilterCollection(IList<ISearchFilter> filters) : base(filters) {}
+
+        public ISearchFilter ToEmpty() => new AndFilterCollection();
 
         public string ToAdvancedQuerySyntax()
         {
@@ -83,6 +92,7 @@ namespace Files.Filesystem.Search
     }
     public class OrFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
+        public string Key => "or";
         public string Glyph => "\uEC26";
         public string Title => "Or".GetLocalized();
         public string Description => "SearchOrFilterCollection_Description".GetLocalized();
@@ -90,6 +100,8 @@ namespace Files.Filesystem.Search
         public OrFilterCollection() : base() {}
         public OrFilterCollection(IEnumerable<ISearchFilter> filters) : base(filters) {}
         public OrFilterCollection(IList<ISearchFilter> filters) : base(filters) {}
+
+        public ISearchFilter ToEmpty() => new OrFilterCollection();
 
         public string ToAdvancedQuerySyntax()
         {
@@ -103,6 +115,7 @@ namespace Files.Filesystem.Search
     }
     public class NotFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
+        public string Key => "not";
         public string Glyph => "\uEC26";
         public string Title => "Not".GetLocalized();
         public string Description => "SearchNotFilterCollection_Description".GetLocalized();
@@ -110,6 +123,8 @@ namespace Files.Filesystem.Search
         public NotFilterCollection() : base() {}
         public NotFilterCollection(IEnumerable<ISearchFilter> filters) : base(filters) {}
         public NotFilterCollection(IList<ISearchFilter> filters) : base(filters) {}
+
+        public ISearchFilter ToEmpty() => new NotFilterCollection();
 
         public string ToAdvancedQuerySyntax()
         {
@@ -124,6 +139,7 @@ namespace Files.Filesystem.Search
 
     public abstract class DateRangeFilter : IDateRangeFilter
     {
+        public abstract string Key { get; }
         public virtual string Glyph => "\uEC92";
         public abstract string Title { get; }
         public abstract string Description { get; }
@@ -134,6 +150,8 @@ namespace Files.Filesystem.Search
 
         public DateRangeFilter() => Range = DateRange.Always;
         public DateRangeFilter(DateRange range) => Range = range;
+
+        public abstract ISearchFilter ToEmpty();
 
         public string ToAdvancedQuerySyntax()
         {
@@ -153,34 +171,44 @@ namespace Files.Filesystem.Search
     }
     public class CreatedFilter : DateRangeFilter
     {
+        public override string Key => "created";
         public override string Title => "Created".GetLocalized();
         public override string Description => "SearchCreatedFilter_Description".GetLocalized();
         protected override string QueryKey => "System.ItemDate";
 
         public CreatedFilter() : base() {}
         public CreatedFilter(DateRange range) : base(range) {}
+
+        public override ISearchFilter ToEmpty() => new CreatedFilter();
     }
     public class ModifiedFilter : DateRangeFilter
     {
+        public override string Key => "modified";
         public override string Title => "Modified".GetLocalized();
         public override string Description => "SearchModifiedFilter_Description".GetLocalized();
         protected override string QueryKey => "System.DateModified";
 
         public ModifiedFilter() : base() {}
         public ModifiedFilter(DateRange range) : base(range) {}
+
+        public override ISearchFilter ToEmpty() => new ModifiedFilter();
     }
     public class AccessedFilter : DateRangeFilter
     {
+        public override string Key => "accessed";
         public override string Title => "Accessed".GetLocalized();
         public override string Description => "SearchAccessedFilter_Description".GetLocalized();
         protected override string QueryKey => "System.DateAccessed";
 
         public AccessedFilter() : base() {}
         public AccessedFilter(DateRange range) : base(range) {}
+
+        public override ISearchFilter ToEmpty() => new AccessedFilter();
     }
 
     public class SizeRangeFilter : ISizeRangeFilter
     {
+        public string Key => "size";
         public string Glyph => "\uE2B2";
         public string Title => "Size".GetLocalized();
         public string Description => "SearchSizeFilter_Description".GetLocalized();
@@ -189,6 +217,8 @@ namespace Files.Filesystem.Search
 
         public SizeRangeFilter() => Range = SizeRange.All;
         public SizeRangeFilter(SizeRange range) => Range = range;
+
+        public ISearchFilter ToEmpty() => new SizeRangeFilter();
 
         public string ToAdvancedQuerySyntax()
         {

@@ -52,6 +52,8 @@ namespace Files.ViewModels.Search
 
     public class GroupContext : SearchFilterContext<ISearchFilterCollection>, IGroupContext
     {
+        public override bool IsEmpty => !GetFilter().Any();
+        public override string Title => GetFilter().Title;
         public override string Parameter
         {
             get

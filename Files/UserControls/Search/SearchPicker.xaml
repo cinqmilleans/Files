@@ -38,6 +38,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock
                     x:Uid="SearchPickerGroup_NoSelected"
@@ -59,53 +60,173 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:ISearchFilterContext">
-                            <Grid
+                            <StackPanel Orientation="Vertical">
+                                <Grid
                                 x:Name="ContextItem"
+                                Margin="0,4,0,4"
+                                Background="Transparent"
+                                ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="18" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="18" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="{x:Bind Glyph}" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" FontSize="15" FontWeight="SemiBold" />
+                                    <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent"
+
+                                            BorderBrush="Transparent" Command="{x:Bind OpenCommand}">
+                                        <Button.Content>
+                                            <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                                <Grid Visibility="{x:Bind IsEmpty, Converter={StaticResource VisiblityInvertConverter}}"
                                 Margin="0,4,0,4"
                                 Background="Transparent"
                                 ColumnSpacing="8"
                                 PointerEntered="ContextItem_PointerEntered"
                                 PointerExited="ContextItem_PointerExited">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="18" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="18" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="{x:Bind Glyph}" />
-                                <Button Grid.Column="1" Style="{StaticResource FilterButtonStyle}" Command="{x:Bind OpenCommand}">
-                                    <Button.Content>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock TextWrapping="Wrap">
-                                                <Run Text="{x:Bind Label}" />
-                                                <Run FontWeight="Light" Text="{x:Bind Parameter}" />
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="18" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="18" />
+                                        </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                            <TextBlock>
+                                    <Run Text="After:" Foreground="{StaticResource SystemAccentColor}" />
+                                    <Run Text="Last month" Foreground="{StaticResource SystemAccentColor}" FontWeight="Bold" />
                                             </TextBlock>
-                                            <Grid Grid.Column="1" Width="12" Margin="0,0,-8,0">
-                                                <Button x:Name="CloseButton" Command="{x:Bind ClearCommand}"
-                                                Width="12" Padding="0" Opacity="0.60" VerticalAlignment="Center" Visibility="Collapsed"
+                                                <TextBlock>
+                                    <Run Text="Before:" Foreground="{StaticResource SystemAccentColor}" />
+                                    <Run Text="Yesterday" Foreground="{StaticResource SystemAccentColor}" FontWeight="Bold" />
+                                                </TextBlock>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" x:Name="CloseButton" Visibility="Collapsed" Command="{x:Bind ClearCommand}"
+                                                Width="12" Padding="0" Opacity="0.60" VerticalAlignment="Center"
                                                       Background="Transparent" BorderBrush="Transparent"  Style="{StaticResource FilterButtonStyle}">
-                                                    <Button.Content>
-                                                        <FontIcon FontSize="10" Glyph="&#xE10A;" />
-                                                    </Button.Content>
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
-                                    </Button.Content>
-                                </Button>
-                                <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent" Command="{x:Bind OpenCommand}">
-                                    <Button.Content>
-                                        <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
-                                    </Button.Content>
-                                </Button>
-                            </Grid>
+                                        <Button.Content>
+                                            <FontIcon FontSize="10" Glyph="&#xE840;" />
+                                            <!--<FontIcon FontSize="10" Glyph="&#xE10A;" />-->
+                                        </Button.Content>
+                                    </Button>
+
+                                </Grid>
+                                </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <StackPanel Orientation="Vertical" Grid.Row="2">
+                    <Rectangle Width="200" Height="1" Fill="Gray" Margin="20,4,0,16" Opacity="0.6" />
+
+
+                    <Grid
+                                x:Name="ContextItem"
+                                Margin="0,-4,0,0"
+                                Background="Transparent"
+                                ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="18" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="18" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="&#xE97C;" />
+                    <TextBlock Grid.Column="1" Text="Kind" FontSize="15" FontWeight="SemiBold" />
+                    <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent"
+
+                                            BorderBrush="Transparent">
+                        <Button.Content>
+                            <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+                <Grid Visibility="{x:Bind IsEmpty, Converter={StaticResource VisiblityInvertConverter}}"
+                                Margin="0,4,0,4"
+                                Background="Transparent"
+                                ColumnSpacing="8"
+                                PointerEntered="ContextItem_PointerEntered"
+                                PointerExited="ContextItem_PointerExited">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="18" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="18" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="1" Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="14" Glyph="&#xEA90;" />
+                                <TextBlock>
+                                    <Run Text="PDF" Foreground="{StaticResource SystemAccentColor}"  />
+                        </TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="14" Glyph="&#xE8A6;" />
+                                <TextBlock>
+                                    <Run Text="Word" Foreground="{StaticResource SystemAccentColor}" />
+                        </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                </Grid>
+
+                    <Rectangle Width="200" Height="1" Fill="Gray" Margin="20,8,0,16" Opacity="0.6" />
+
+                    <Grid
+                                x:Name="ContextItem2"
+                                Margin="0,-4,0,0"
+                                Background="Transparent"
+                                ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="18" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="18" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="&#xE97C;" />
+                        <TextBlock Grid.Column="1" Text="Or" FontSize="15" FontWeight="SemiBold" />
+                        <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent"
+
+                                            BorderBrush="Transparent">
+                            <Button.Content>
+                                <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+
+                    <Grid Visibility="{x:Bind IsEmpty, Converter={StaticResource VisiblityInvertConverter}}"
+                                Margin="0,4,0,4"
+                                Background="Transparent"
+                                ColumnSpacing="8"
+                                PointerEntered="ContextItem_PointerEntered"
+                                PointerExited="ContextItem_PointerExited">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="18" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="18" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="1" Spacing="4">
+                            <TextBlock>
+                                    <Run Text="Size" />
+                            </TextBlock>
+                            <TextBlock Margin="16,0,0,0">
+                                    <Run Text="greater than:" Foreground="{StaticResource SystemAccentColor}" />
+                                    <Run Text="1 Gb" Foreground="{StaticResource SystemAccentColor}" FontWeight="Bold" />
+                            </TextBlock>
+                            <TextBlock>
+                                    <Run Text="Date accessed"  />
+                            </TextBlock>
+                            <TextBlock Margin="16,0,0,0">
+                                    <Run Text="Today" Foreground="{StaticResource SystemAccentColor}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                    <!--<Rectangle Width="200" Height="1" Fill="Gray" Margin="20,8,0,16" Opacity="0.6" />-->
+
+                </StackPanel>
+
                 <CommandBar
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Margin="0,0,0,8"
                     Background="Transparent"
                     DefaultLabelPosition="Right"

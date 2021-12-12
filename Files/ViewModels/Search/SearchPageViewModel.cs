@@ -1,5 +1,6 @@
 ﻿using Files.Filesystem.Search;
 using Files.UserControls.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,6 +49,8 @@ namespace Files.ViewModels.Search
 
     public interface ISearchFilterContext
     {
+        bool IsEmpty { get; }
+        string Title { get; }
         string Glyph { get; }
         string Label { get; }
         string Parameter { get; }
@@ -162,6 +165,15 @@ namespace Files.ViewModels.Search
             {
                 return;
             }
+
+            ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
+            bool isPinned = collection == settings.Filter && settings.PinnedKeys.Contains(this.filter.Key);
+
+            if (isPinned)
+            {
+                filter ??= this.filter.ToEmpty();
+            }
+
             if (filter is null && collection.Contains(this.filter))
             {
                 collection.Remove(this.filter);
@@ -187,6 +199,9 @@ namespace Files.ViewModels.Search
 
     public abstract class SearchFilterContext<T> : ISearchFilterContext where T : ISearchFilter
     {
+        public abstract bool IsEmpty { get; }
+        public abstract string Title { get; }
+
         private readonly ISearchPageContext parentPageContext;
         private readonly T filter;
 

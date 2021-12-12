@@ -38,7 +38,9 @@ namespace Files.ViewModels.Search
 
     public class SizeRangeContext : SearchFilterContext<ISizeRangeFilter>, ISizeRangeContext
     {
-        public override string Label => GetFilter().Range.ToString("n");
+        public override bool IsEmpty => GetFilter().Range == SizeRange.All;
+        public override string Title => GetFilter().Title;
+        public override string Label => IsEmpty ? GetFilter().Title : GetFilter().Range.ToString("n");
 
         public SizeRangeContext(ISearchPageContext parentPageContext, ISizeRangeFilter filter) : base(parentPageContext, filter) {}
     }

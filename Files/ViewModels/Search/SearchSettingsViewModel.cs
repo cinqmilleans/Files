@@ -25,10 +25,11 @@ namespace Files.ViewModels.Search
         public SearchSettingsViewModel(ISearchPageContext context, ISearchSettings settings)
         {
             Navigator = context;
-            var filter = settings.Filter as ISearchFilterCollection;
 
             LocationViewModel = new LocationPickerViewModel(settings.Location);
-            FilterViewModel = new GroupPageViewModel(context, filter).Picker;
+            var picker = new GroupPageViewModel(context, settings.Filter).Picker;
+            picker.Description = string.Empty;
+            FilterViewModel = picker;
 
             SearchCommand = new RelayCommand(context.Search);
         }

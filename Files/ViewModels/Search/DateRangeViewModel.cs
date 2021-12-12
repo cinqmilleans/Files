@@ -62,7 +62,9 @@ namespace Files.ViewModels.Search
 
     public class DateRangeContext : SearchFilterContext<IDateRangeFilter>, IDateRangeContext
     {
-        public override string Label => GetFilter().Range.ToString("n");
+        public override bool IsEmpty => GetFilter().Range == DateRange.Always;
+        public override string Title => GetFilter().Title;
+        public override string Label => IsEmpty ? GetFilter().Title : GetFilter().Range.ToString("n");
 
         public DateRangeContext(ISearchPageContext parentPageContext, IDateRangeFilter filter) : base(parentPageContext, filter) {}
     }
