@@ -181,7 +181,7 @@
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
     <Compile Include="Filesystem\Search\Date.cs" />
-    <Compile Include="Filesystem\Search\Parser.cs" />
+    <Compile Include="Filesystem\Search\Range.cs" />
     <Compile Include="Filesystem\Search\SearchSettings.cs" />
     <Compile Include="Filesystem\Search\Size.cs" />
     <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
@@ -373,6 +373,7 @@
     <Compile Include="ViewModels\Properties\CompatibilityProperties.cs" />
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchFilterViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="Models\JsonSettings\BaseJsonSettingsModel.cs" />
     <Compile Include="ViewModels\ColumnsViewModel.cs" />

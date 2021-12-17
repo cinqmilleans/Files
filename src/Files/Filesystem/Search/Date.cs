@@ -264,5 +264,40 @@ namespace Files.Filesystem.Search
             var named = new List<DateRange> { Today, Yesterday, ThisWeek, LastWeek, ThisMonth, LastMonth, ThisYear, Older };
             return named.Any(n => n.MinValue == minValue) && named.Any(n => n.MaxValue == maxValue);
         }
+
+        private static readonly IRangeFormatter<Date> formatter = new RangeFormatterCollection<Date>
+        {
+            new YearFormatter(),
+        };
+
+        private class MonthFormatter : IRangeFormatter<Date>
+        {
+            public bool CanFormat(IRange<Date> date)
+                => date.MinValue > date.MinValue && date.MinValue.Month == 1 && date.MinValue.Day == 1
+                && date.MaxValue < date.MaxValue && date.MaxValue.Month == 12 && date.MinValue.Day == 31;
+
+            public IRangeLabel Format(IRange<Date> range)
+            {
+                string minYear = range.MinValue > Date.MinValue ? $"{range.MinValue.Year}" : null;
+                string maxYear = range.MaxValue < Today.MaxValue ? $"{range.MaxValue.Year}" : null;
+
+                return new RangeLabel(minYear, maxYear);
+            }
+        }
+
+        private class YearFormatter : IRangeFormatter<Date>
+        {
+            public bool CanFormat(IRange<Date> date)
+                => date.MinValue > date.MinValue && date.MinValue.Month == 1 && date.MinValue.Day == 1
+                && date.MaxValue < date.MaxValue && date.MaxValue.Month == 12 && date.MinValue.Day == 31;
+
+            public IRangeLabel Format(IRange<Date> range)
+            {
+                string minYear = range.MinValue > Date.MinValue ? $"{range.MinValue.Year}" : null;
+                string maxYear = range.MaxValue < Today.MaxValue ? $"{range.MaxValue.Year}" : null;
+
+                return new RangeLabel(minYear, maxYear);
+            }
+        }
     }
 }
