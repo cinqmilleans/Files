@@ -29,7 +29,7 @@ namespace Files.UserControls.Search
         private void HeaderCombo_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             // prevent a bug of lost focus in uwp. This bug close the flyout when combobox is open.
-            ClearButton.Focus(FocusState.Programmatic);
+            SearchButton.Focus(FocusState.Programmatic);
         }
     }
 }
