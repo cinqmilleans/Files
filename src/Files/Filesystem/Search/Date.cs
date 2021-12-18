@@ -8,12 +8,18 @@ namespace Files.Filesystem.Search
 {
     public struct Date : IEquatable<Date>, IComparable<Date>, IFormattable
     {
+        public static event EventHandler<TodayUpdatedEventArgs> TodayUpdated;
+
+        private const ushort minYear = 1600;
+        private const ushort maxYear = 9999;
+
         private readonly DateTime date;
 
-        public static readonly Date MinValue = new(1600, 1, 1);
-        public static readonly Date MaxValue = new(9999, 12, 31);
+        public static readonly Date MinValue = new(minYear, 1, 1);
+        public static readonly Date MaxValue = new(maxYear, 12, 31);
 
-        public static Date Today => new(DateTime.Today);
+        private static Date today = new(DateTime.Today);
+        public static Date Today => today;
 
         public ushort Year => (ushort)date.Year;
         public ushort Month => (ushort)date.Month;
@@ -26,8 +32,8 @@ namespace Files.Filesystem.Search
             : this(new DateTime(year, month, day)) {}
         public Date(DateTime date) => this.date = date.Year switch
         {
-            < 1600 => MinValue.date,
-            > 9999 => MaxValue.date,
+            < minYear => MinValue.date,
+            > maxYear => MaxValue.date,
             _ => date.Date,
         };
 
@@ -37,6 +43,18 @@ namespace Files.Filesystem.Search
         public static bool operator >(Date d1, Date d2) => d1.date > d2.date;
         public static bool operator <=(Date d1, Date d2) => d1.date <= d2.date;
         public static bool operator >=(Date d1, Date d2) => d1.date >= d2.date;
+
+        public static void UpdateToday()
+        {
+            var oldToday = Today;
+            var newToday = new Date(DateTime.Today);
+
+            if (oldToday < newToday)
+            {
+                today = new(DateTime.Today);
+                TodayUpdated.Invoke(null, new TodayUpdatedEventArgs(oldToday, newToday));
+            }
+        }
 
         public override int GetHashCode() => date.GetHashCode();
         public override bool Equals(object other) => other is Date date && Equals(date);
@@ -59,10 +77,8 @@ namespace Files.Filesystem.Search
         public Date AddYears(int years) => new(date.AddYears(years));
     }
 
-    public struct DateRange : IEquatable<DateRange>, IFormattable
+    public struct DateRange : IRange<Date>, IEquatable<DateRange>, IFormattable
     {
-        public static event EventHandler TodayUpdated;
-
         private static DateRange always;
         private static DateRange today;
         private static DateRange yesterday;
@@ -87,57 +103,60 @@ namespace Files.Filesystem.Search
 
         public bool IsNamed => GetIsNamed();
 
-        public Date MinDate { get; }
-        public Date MaxDate { get; }
+        public RangeDirections Direction { get; }
 
-        static DateRange() => UpdateToday();
+        public Date MinValue { get; }
+        public Date MaxValue { get; }
 
-        public DateRange(Date minDate, Date maxDate)
+        static DateRange()
         {
-            var today = Date.Today;
+            Date.TodayUpdated += Date_TodayUpdated;
+            UpdateToday();
+        }
+        public DateRange(Date minValue, Date maxValue)
+        {
+            minValue = minValue < Date.Today ? minValue : Date.Today;
+            maxValue = maxValue < Date.Today ? maxValue : Date.Today;
 
-            minDate = minDate < today ? minDate : today;
-            maxDate = maxDate < today ? maxDate : today;
+            if (minValue > maxValue)
+            {
+                (minValue, maxValue) = (maxValue, minValue);
+            }
 
-            (MinDate, MaxDate) = (minDate <= maxDate) ? (minDate, maxDate) : (maxDate, minDate);
+            bool hasMin = Date.MinValue < minValue && minValue < Date.Today;
+            bool hasMax = Date.MinValue < maxValue && maxValue < Date.Today;
+
+            var direction = (hasMin, hasMax) switch
+            {
+                (false, false) => RangeDirections.None,
+                (true, false) => RangeDirections.GreaterThan,
+                (false, true) => RangeDirections.LessThan,
+                _ when minValue == maxValue => RangeDirections.EqualTo,
+                _ => RangeDirections.Between,
+            };
+
+            (Direction, MinValue, MaxValue) = (direction, minValue, maxValue);
         }
 
-        public DateRange(Date minDate, DateRange maxRange)
-            : this(Min(minDate, maxRange.MinDate), Max(minDate, maxRange.MaxDate)) {}
-        public DateRange(DateRange minRange, Date maxDate)
-            : this(Min(minRange.MinDate, maxDate), Max(minRange.MaxDate, maxDate)) {}
+        public DateRange(Date minValue, DateRange maxRange)
+            : this(Min(minValue, maxRange.MinValue), Max(minValue, maxRange.MaxValue)) {}
+        public DateRange(DateRange minRange, Date maxValue)
+            : this(Min(minRange.MinValue, maxValue), Max(minRange.MaxValue, maxValue)) {}
         public DateRange(DateRange minRange, DateRange maxRange)
-            : this(Min(minRange.MinDate, maxRange.MinDate), Max(minRange.MaxDate, maxRange.MaxDate)) {}
-        private DateRange(bool _) => (MinDate, MaxDate) = (Date.MaxValue, Date.MinValue);
+            : this(Min(minRange.MinValue, maxRange.MinValue), Max(minRange.MaxValue, maxRange.MaxValue)) {}
+        private DateRange(bool _) => (Direction, MinValue, MaxValue) = (RangeDirections.None, Date.MaxValue, Date.MinValue);
 
-        public void Deconstruct(out Date minDate, out Date maxDate)
-            => (minDate, maxDate) = (MinDate, MaxDate);
-        public void Deconstruct(out bool isNamed, out Date minDate, out Date maxDate)
-            => (isNamed, minDate, maxDate) = (IsNamed, MinDate, MaxDate);
-
-        public static void UpdateToday()
-        {
-            var date = Date.Today;
-
-            always = new(Date.MinValue, date);
-            today = new(date, date);
-            yesterday = new(date.AddDays(-1), date.AddDays(-1));
-            thisWeek = new(date.AddDays(-6), date.AddDays(-2));
-            lastWeek = new(date.AddDays(-13), date.AddDays(-7));
-            thisMonth = new(date.AddMonths(-1).AddDays(1), date.AddDays(-14));
-            lastMonth = new(date.AddMonths(-2).AddDays(1), date.AddMonths(-1));
-            thisYear = new(date.AddYears(-1).AddDays(1), date.AddMonths(-2));
-            older = new(Date.MinValue, date.AddYears(-1));
-
-            TodayUpdated?.Invoke(null, EventArgs.Empty);
-        }
+        public void Deconstruct(out Date minValue, out Date maxValue)
+            => (minValue, maxValue) = (MinValue, MaxValue);
+        public void Deconstruct(out bool isNamed, out Date minValue, out Date maxValue)
+            => (isNamed, minValue, maxValue) = (IsNamed, MinValue, MaxValue);
 
         public override int GetHashCode()
-            => (MinDate, MaxDate).GetHashCode();
+            => (MinValue, MaxValue).GetHashCode();
         public override bool Equals(object other)
             => other is DateRange range && Equals(range);
         public bool Equals(DateRange other)
-            => other is DateRange range && range.MinDate == MinDate && range.MaxDate == MaxDate;
+            => other is DateRange range && range.MinValue == MinValue && range.MaxValue == MaxValue;
 
         public override string ToString() => ToString("G");
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
@@ -157,11 +176,11 @@ namespace Files.Filesystem.Search
                 return ToString("N", formatProvider);
             }
 
-            var (isNamed, minDate, maxDate) = this;
+            var (isNamed, minValue, maxValue) = this;
             bool useName = isNamed && format.ToLower() == "n";
 
-            bool hasMin = minDate > Date.MinValue;
-            bool hasMax = maxDate < Date.Today;
+            bool hasMin = minValue > Date.MinValue;
+            bool hasMax = maxValue < Date.Today;
 
             string minLabel = GetMinLabel();
             string maxLabel = GetMaxLabel();
@@ -172,36 +191,36 @@ namespace Files.Filesystem.Search
                 "N" => string.Format(GetFullFormat(), minLabel, maxLabel),
                 "r" => string.Format(GetShortFormat(), minLabel, maxLabel),
                 "R" => string.Format(GetFullFormat(), minLabel, maxLabel),
-                "q" => string.Format(GetQueryFormat(), minDate, maxDate),
-                "Q" => string.Format(GetQueryFormat(), minDate, maxDate),
+                "q" => string.Format(GetQueryFormat(), minValue, maxValue),
+                "Q" => string.Format(GetQueryFormat(), minValue, maxValue),
                 _ => string.Empty,
             };
 
             string GetMinLabel() => useName switch
             {
-                true when Today.MinDate.Equals(minDate) => "ItemTimeText_Today".GetLocalized(),
-                true when Yesterday.MinDate.Equals(minDate) => "ItemTimeText_Yesterday".GetLocalized(),
-                true when ThisWeek.MinDate.Equals(minDate) => "ItemTimeText_ThisWeek".GetLocalized(),
-                true when LastWeek.MinDate.Equals(minDate) => "ItemTimeText_LastWeek".GetLocalized(),
-                true when ThisMonth.MinDate.Equals(minDate) => "ItemTimeText_ThisMonth".GetLocalized(),
-                true when LastMonth.MinDate.Equals(minDate) => "ItemTimeText_LastMonth".GetLocalized(),
-                true when ThisYear.MinDate.Equals(minDate) => "ItemTimeText_ThisYear".GetLocalized(),
-                true when Older.MinDate.Equals(minDate) => "ItemTimeText_Older".GetLocalized(),
+                true when Today.MinValue.Equals(minValue) => "ItemTimeText_Today".GetLocalized(),
+                true when Yesterday.MinValue.Equals(minValue) => "ItemTimeText_Yesterday".GetLocalized(),
+                true when ThisWeek.MinValue.Equals(minValue) => "ItemTimeText_ThisWeek".GetLocalized(),
+                true when LastWeek.MinValue.Equals(minValue) => "ItemTimeText_LastWeek".GetLocalized(),
+                true when ThisMonth.MinValue.Equals(minValue) => "ItemTimeText_ThisMonth".GetLocalized(),
+                true when LastMonth.MinValue.Equals(minValue) => "ItemTimeText_LastMonth".GetLocalized(),
+                true when ThisYear.MinValue.Equals(minValue) => "ItemTimeText_ThisYear".GetLocalized(),
+                true when Older.MinValue.Equals(minValue) => "ItemTimeText_Older".GetLocalized(),
                 true => string.Empty,
-                false => $"{minDate}",
+                false => $"{minValue}",
             };
             string GetMaxLabel() => useName switch
             {
-                true when Today.MaxDate.Equals(maxDate) => "ItemTimeText_Today".GetLocalized(),
-                true when Yesterday.MaxDate.Equals(maxDate) => "ItemTimeText_Yesterday".GetLocalized(),
-                true when ThisWeek.MaxDate.Equals(maxDate) => "ItemTimeText_ThisWeek".GetLocalized(),
-                true when LastWeek.MaxDate.Equals(maxDate) => "ItemTimeText_LastWeek".GetLocalized(),
-                true when ThisMonth.MaxDate.Equals(maxDate) => "ItemTimeText_ThisMonth".GetLocalized(),
-                true when LastMonth.MaxDate.Equals(maxDate) => "ItemTimeText_LastMonth".GetLocalized(),
-                true when ThisYear.MaxDate.Equals(maxDate) => "ItemTimeText_ThisYear".GetLocalized(),
-                true when Older.MaxDate.Equals(maxDate) => "ItemTimeText_Older".GetLocalized(),
+                true when Today.MaxValue.Equals(maxValue) => "ItemTimeText_Today".GetLocalized(),
+                true when Yesterday.MaxValue.Equals(maxValue) => "ItemTimeText_Yesterday".GetLocalized(),
+                true when ThisWeek.MaxValue.Equals(maxValue) => "ItemTimeText_ThisWeek".GetLocalized(),
+                true when LastWeek.MaxValue.Equals(maxValue) => "ItemTimeText_LastWeek".GetLocalized(),
+                true when ThisMonth.MaxValue.Equals(maxValue) => "ItemTimeText_ThisMonth".GetLocalized(),
+                true when LastMonth.MaxValue.Equals(maxValue) => "ItemTimeText_LastMonth".GetLocalized(),
+                true when ThisYear.MaxValue.Equals(maxValue) => "ItemTimeText_ThisYear".GetLocalized(),
+                true when Older.MaxValue.Equals(maxValue) => "ItemTimeText_Older".GetLocalized(),
                 true => string.Empty,
-                false => $"{maxDate}",
+                false => $"{maxValue}",
             };
 
             string GetShortFormat() => (hasMin, hasMax) switch
@@ -220,7 +239,7 @@ namespace Files.Filesystem.Search
             };
             string GetQueryFormat() => (hasMin, hasMax) switch
             {
-                _ when minDate == maxDate => "{0::yyyyMMdd}",
+                _ when minValue == maxValue => "{0::yyyyMMdd}",
                 (false, _) => "<{1:yyyyMMdd}",
                 (_, false) => ">{0:yyyyMMdd}",
                 _ => "{0:yyyyMMdd}..{1:yyyyMMdd}",
@@ -231,35 +250,61 @@ namespace Files.Filesystem.Search
         public static DateRange operator -(DateRange a, DateRange b) => Substract(a, b);
         public static bool operator ==(DateRange a, DateRange b) => a.Equals(b);
         public static bool operator !=(DateRange a, DateRange b) => !a.Equals(b);
-        public static bool operator <(DateRange a, DateRange b) => a.MaxDate < b.MinDate;
-        public static bool operator >(DateRange a, DateRange b) => a.MaxDate > b.MinDate;
-        public static bool operator <=(DateRange a, DateRange b) => a.MaxDate <= b.MinDate;
-        public static bool operator >=(DateRange a, DateRange b) => a.MaxDate >= b.MinDate;
+        public static bool operator <(DateRange a, DateRange b) => a.MaxValue < b.MinValue;
+        public static bool operator >(DateRange a, DateRange b) => a.MaxValue > b.MinValue;
+        public static bool operator <=(DateRange a, DateRange b) => a.MaxValue <= b.MinValue;
+        public static bool operator >=(DateRange a, DateRange b) => a.MaxValue >= b.MinValue;
 
-        public bool Contains(Date size) => size >= MinDate && size <= MaxDate;
-        public bool Contains(DateRange range) => range.MinDate >= MinDate && range.MaxDate <= MaxDate;
+        public bool Contains(Date size) => size >= MinValue && size <= MaxValue;
+        public bool Contains(DateRange range) => range.MinValue >= MinValue && range.MaxValue <= MaxValue;
 
         private static Date Min(Date a, Date b) => a <= b ? a : b;
         private static Date Max(Date a, Date b) => a >= b ? a : b;
 
         private static DateRange Substract(DateRange a, DateRange b)
         {
-            if (b.MinDate == a.MinDate && b.MaxDate < a.MaxDate)
+            if (b.MinValue == a.MinValue && b.MaxValue < a.MaxValue)
             {
-                return new(b.MaxDate.AddDays(1), a.MaxDate);
+                return new(b.MaxValue.AddDays(1), a.MaxValue);
             }
-            if (b.MaxDate == a.MaxDate && b.MinDate > a.MinDate)
+            if (b.MaxValue == a.MaxValue && b.MinValue > a.MinValue)
             {
-                return new(a.MinDate, b.MinDate.AddDays(-1));
+                return new(a.MinValue, b.MinValue.AddDays(-1));
             }
-            return None;
+            return new(Date.MinValue, Date.MinValue);
         }
 
         private bool GetIsNamed()
         {
-            var (minDate, maxDate) = this;
+            var (minValue, maxValue) = this;
             var named = new List<DateRange> { Today, Yesterday, ThisWeek, LastWeek, ThisMonth, LastMonth, ThisYear, Older };
-            return named.Any(n => n.MinDate == minDate) && named.Any(n => n.MaxDate == maxDate);
+            return named.Any(n => n.MinValue == minValue) && named.Any(n => n.MaxValue == maxValue);
         }
+
+        private static void Date_TodayUpdated(object sender, TodayUpdatedEventArgs e) => UpdateToday();
+
+        private static void UpdateToday()
+        {
+            Date date = Date.Today;
+
+            always = new(Date.MinValue, date);
+            today = new(date, date);
+            yesterday = new(date.AddDays(-1), date.AddDays(-1));
+            thisWeek = new(date.AddDays(-6), date.AddDays(-2));
+            lastWeek = new(date.AddDays(-13), date.AddDays(-7));
+            thisMonth = new(date.AddMonths(-1).AddDays(1), date.AddDays(-14));
+            lastMonth = new(date.AddMonths(-2).AddDays(1), date.AddMonths(-1));
+            thisYear = new(date.AddYears(-1).AddDays(1), date.AddMonths(-2));
+            older = new(Date.MinValue, date.AddYears(-1));
+        }
+    }
+
+    public class TodayUpdatedEventArgs : EventArgs
+    {
+        public Date OldToday { get; }
+        public Date NewToday { get; }
+
+        public TodayUpdatedEventArgs(Date oldToday, Date newToday)
+            => (OldToday, NewToday) = (oldToday, newToday);
     }
 }

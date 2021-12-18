@@ -173,20 +173,20 @@ namespace Files.ViewModels.Search
 
             public DateTimeOffset? MinOffset
             {
-                get => range.MinDate > Date.MinValue ? range.MinDate.Offset : null;
+                get => range.MinValue > Date.MinValue ? range.MinValue.Offset : null;
                 set
                 {
-                    var minDate = value.HasValue ? new Date(value.Value.DateTime) : Date.MinValue;
-                    Range = new DateRange(minDate, range.MaxDate);
+                    var minValue = value.HasValue ? new Date(value.Value.DateTime) : Date.MinValue;
+                    Range = new DateRange(minValue, range.MaxValue);
                 }
             }
             public DateTimeOffset? MaxOffset
             {
-                get => range.MaxDate < Date.MaxValue ? range.MaxDate.Offset : null;
+                get => range.MaxValue < Date.MaxValue ? range.MaxValue.Offset : null;
                 set
                 {
-                    var maxDate = value.HasValue ? new Date(value.Value.DateTime) : Date.MaxValue;
-                    Range = new DateRange(range.MinDate, maxDate);
+                    var maxValue = value.HasValue ? new Date(value.Value.DateTime) : Date.MaxValue;
+                    Range = new DateRange(range.MinValue, maxValue);
                 }
             }
 

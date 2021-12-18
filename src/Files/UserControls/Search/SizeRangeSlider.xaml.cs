@@ -55,10 +55,10 @@ namespace Files.UserControls.Search
 
                 SetValue(RangeProperty, value);
 
-                var (minSize, maxSize) = (value.MinSize, value.MaxSize);
+                var (minValue, maxValue) = (value.MinValue, value.MaxValue);
 
-                int minStep = Steps.Contains(minSize) ? 3 * Steps.IndexOf(minSize) : 3 * Steps.IndexOf(Steps.Last(step => step <= minSize)) + 1;
-                int maxStep = Steps.Contains(maxSize) ? 3 * Steps.IndexOf(maxSize) : 3 * Steps.IndexOf(Steps.Last(step => step <= maxSize)) + 2;
+                int minStep = Steps.Contains(minValue) ? 3 * Steps.IndexOf(minValue) : 3 * Steps.IndexOf(Steps.Last(step => step <= minValue)) + 1;
+                int maxStep = Steps.Contains(maxValue) ? 3 * Steps.IndexOf(maxValue) : 3 * Steps.IndexOf(Steps.Last(step => step <= maxValue)) + 2;
 
                 isInUpdateRange = true;
                 if (Selector.RangeStart > maxStep)
@@ -86,8 +86,8 @@ namespace Files.UserControls.Search
                     int index = int.Parse(value);
                     var size = (index % 3) switch
                     {
-                        1 => Range.MinSize,
-                        2 => Range.MaxSize,
+                        1 => Range.MinValue,
+                        2 => Range.MaxValue,
                         _ => Steps[index / 3],
                     };
                     ToolTipBlock.Text = size.ToString("N");
@@ -122,8 +122,8 @@ namespace Files.UserControls.Search
             {
                 Range = e.ChangedRangeProperty switch
                 {
-                    RangeSelectorProperty.MinimumValue => new SizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxSize),
-                    RangeSelectorProperty.MaximumValue => new SizeRange(Range.MinSize, Steps[((int)Selector.RangeEnd) / 3]),
+                    RangeSelectorProperty.MinimumValue => new SizeRange(Steps[((int)Selector.RangeStart) / 3], Range.MaxValue),
+                    RangeSelectorProperty.MaximumValue => new SizeRange(Range.MinValue, Steps[((int)Selector.RangeEnd) / 3]),
                     _ => throw new ArgumentException(),
                 };
             }
