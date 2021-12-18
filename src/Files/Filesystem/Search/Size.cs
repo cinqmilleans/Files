@@ -113,6 +113,8 @@ namespace Files.Filesystem.Search
 
         public bool IsNamed { get; }
 
+        public RangeDirections Direction => RangeDirections.None;
+
         public Size MinValue { get; }
         public Size MaxValue { get; }
 

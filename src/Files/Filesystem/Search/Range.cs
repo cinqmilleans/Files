@@ -1,41 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-
-namespace Files.Filesystem.Search
+﻿namespace Files.Filesystem.Search
 {
-    public interface IRange<out T>
+    public enum RangeDirections : ushort
     {
-        T MinValue { get; }
-        T MaxValue { get; }
-    }
-
-    public interface IRangeLabel : IRange<string>
-    {
-        RangeLabelDirections Direction { get; }
-
-        new string MinValue { get; }
-        new string MaxValue { get; }
-    }
-
-    public enum RangeLabelDirections : ushort
-    {
-        Empty,
+        None,
         EqualTo,
         LessThan,
         GreaterThan,
         Between,
     }
 
-    public interface IRangeFormatter<T>
+    public interface IRange<out T>
     {
-        bool CanFormat(IRange<T> range);
-        IRangeLabel Format(IRange<T> range);
+        RangeDirections Direction { get; }
+
+        T MinValue { get; }
+        T MaxValue { get; }
     }
 
-    public class RangeLabel : IRangeLabel
+    public class RangeLabel : IRange<string>
     {
-        public RangeLabelDirections Direction { get; }
+        public RangeDirections Direction { get; }
 
         public string MinValue { get; }
         public string MaxValue { get; }
@@ -47,25 +31,12 @@ namespace Files.Filesystem.Search
 
             Direction = (MinValue, MaxValue) switch
             {
-                ("", "") => RangeLabelDirections.Empty,
-                (_, "") => RangeLabelDirections.GreaterThan,
-                ("", _) => RangeLabelDirections.LessThan,
-                _ when MinValue == MaxValue => RangeLabelDirections.EqualTo,
-                _ => RangeLabelDirections.Between,
+                ("", "") => RangeDirections.None,
+                (_, "") => RangeDirections.GreaterThan,
+                ("", _) => RangeDirections.LessThan,
+                _ when MinValue == MaxValue => RangeDirections.EqualTo,
+                _ => RangeDirections.Between,
             };
         }
-    }
-
-    public class RangeFormatterCollection<T> : Collection<IRangeFormatter<T>>, IRangeFormatter<T>
-    {
-        public RangeFormatterCollection() : base()
-        {
-        }
-        public RangeFormatterCollection(IList<IRangeFormatter<T>> formatters) : base(formatters)
-        {
-        }
-
-        public bool CanFormat(IRange<T> range) => this.Any(formatter => formatter.CanFormat(range));
-        public IRangeLabel Format(IRange<T> range) => this.First(formatter => formatter.CanFormat(range)).Format(range);
     }
 }

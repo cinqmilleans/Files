@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
-    public interface ISearchFilterViewModel
+    /*public interface ISearchFilterViewModel
     {
         ISearchFilter Filter { get; }
 
@@ -28,5 +28,5 @@ namespace Files.ViewModels.Search
 
         ICommand OpenCommand { get; }
         ICommand DeleteCommand { get; }
-    }
+    }*/
 }
