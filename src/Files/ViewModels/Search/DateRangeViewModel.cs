@@ -1,10 +1,8 @@
-﻿using Files.Extensions;
-using Files.Filesystem.Search;
+﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 
@@ -17,15 +15,10 @@ namespace Files.ViewModels.Search
 
     public interface IDateRangePickerViewModel : IPickerViewModel
     {
-        string Description { get; set; }
-        string Label { get; }
         DateRange Range { get; set; }
 
-        DateTimeOffset Today { get; }
-        DateTimeOffset? MinOffset { get; set; }
-        DateTimeOffset? MaxOffset { get; set; }
-
-        IReadOnlyList<IDateRangeLink> Links { get; }
+        string Label { get; }
+        string Description { get; set; }
     }
 
     public interface IDateRangeHeader : ISearchFilterHeader
@@ -35,13 +28,6 @@ namespace Files.ViewModels.Search
 
     public interface IDateRangeContext : ISearchFilterContext
     {
-    }
-
-    public interface IDateRangeLink : INotifyPropertyChanged
-    {
-        bool IsSelected { get; }
-        string Label { get; }
-        ICommand ToggleCommand { get; }
     }
 
     public class CreatedHeader : SearchFilterHeader<CreatedFilter>, IDateRangeHeader
@@ -140,8 +126,6 @@ namespace Files.ViewModels.Search
 
             public bool IsEmpty => range == DateRange.Always;
 
-            public DateTimeOffset Today => Date.Today.Offset;
-
             private DateRange range = DateRange.Always;
             public DateRange Range
             {
@@ -152,15 +136,13 @@ namespace Files.ViewModels.Search
                     {
                         OnPropertyChanged(nameof(IsEmpty));
                         OnPropertyChanged(nameof(Label));
-                        OnPropertyChanged(nameof(MinOffset));
-                        OnPropertyChanged(nameof(MaxOffset));
-
-                        links.ForEach(link => link.UpdateProperties());
 
                         saveAction();
                     }
                 }
             }
+
+            public string Label => range.ToString("N");
 
             private string description;
             public string Description
@@ -169,103 +151,16 @@ namespace Files.ViewModels.Search
                 set => SetProperty(ref description, value);
             }
 
-            public string Label => range.ToString("N");
-
-            public DateTimeOffset? MinOffset
-            {
-                get => range.MinValue > Date.MinValue ? range.MinValue.Offset : null;
-                set
-                {
-                    var minValue = value.HasValue ? new Date(value.Value.DateTime) : Date.MinValue;
-                    Range = new DateRange(minValue, range.MaxValue);
-                }
-            }
-            public DateTimeOffset? MaxOffset
-            {
-                get => range.MaxValue < Date.MaxValue ? range.MaxValue.Offset : null;
-                set
-                {
-                    var maxValue = value.HasValue ? new Date(value.Value.DateTime) : Date.MaxValue;
-                    Range = new DateRange(range.MinValue, maxValue);
-                }
-            }
-
-            private readonly IReadOnlyList<DateRangeLink> links;
-            public IReadOnlyList<IDateRangeLink> Links => links;
-
             public ICommand ClearCommand { get; }
 
             public PickerViewModel(Action saveAction)
             {
                 this.saveAction = saveAction;
 
-                links = new List<DateRange>
-                {
-                    DateRange.Today,
-                    DateRange.Yesterday,
-                    DateRange.ThisWeek,
-                    DateRange.LastWeek,
-                    DateRange.ThisMonth,
-                    DateRange.LastMonth,
-                    DateRange.ThisYear,
-                    DateRange.Older,
-                }.Select(range => new DateRangeLink(this, range)).ToList().AsReadOnly();
-
                 ClearCommand = new RelayCommand(Clear);
             }
 
             public void Clear() => Range = DateRange.Always;
-
-            private class DateRangeLink : ObservableObject, IDateRangeLink
-            {
-                private readonly IDateRangePickerViewModel picker;
-                private readonly DateRange range;
-
-                public bool IsSelected
-                {
-                    get => !picker.IsEmpty && picker.Range.IsNamed && picker.Range.Contains(range);
-                    set
-                    {
-                        if (IsSelected != value)
-                        {
-                            Toggle();
-                        }
-                    }
-                }
-
-                public string Label => range.ToString("n");
-
-                public ICommand ToggleCommand { get; }
-
-                public DateRangeLink(IDateRangePickerViewModel picker, DateRange range)
-                {
-                    this.picker = picker;
-                    this.range = range;
-                    ToggleCommand = new RelayCommand(Toggle);
-                }
-
-                public void UpdateProperties() => OnPropertyChanged(nameof(IsSelected));
-
-                private void Toggle()
-                {
-                    if (picker.IsEmpty)
-                    {
-                        picker.Range = range;
-                    }
-                    else if (IsSelected)
-                    {
-                        picker.Range -= range;
-                    }
-                    else if (picker.Range.IsNamed)
-                    {
-                        picker.Range += range;
-                    }
-                    else
-                    {
-                        picker.Range = range;
-                    }
-                }
-            }
         }
     }
 }

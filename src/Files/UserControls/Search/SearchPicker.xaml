@@ -116,54 +116,26 @@
         <DataTemplate x:Key="DateRangePickerTemplate" x:DataType="vm:IDateRangePickerViewModel">
             <Grid Margin="0,8,0,0" RowSpacing="8">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" MinHeight="64" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" MinHeight="64" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock
                     VerticalAlignment="Top"
                     Text="{helpers:ResourceString Name=NoDateRangeSelected}"
                     Style="{StaticResource IndicatorStyle}"
                     Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
-                <StackPanel Orientation="Vertical" Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
-                    <TextBlock Text="{x:Bind Description, Mode=OneWay}" TextWrapping="Wrap" />
-                    <TextBlock
-                        FontSize="13"
-                        FontWeight="Bold"
-                        Text="{x:Bind Label, Mode=OneWay}"
-                        TextWrapping="Wrap" />
+                <StackPanel Orientation="Vertical"
+                        Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
+                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Description, Mode=OneWay}" />
+                    <TextBlock FontSize="13" FontWeight="Bold" TextWrapping="Wrap" Text="{x:Bind Label, Mode=OneWay}" />
                 </StackPanel>
-                <CalendarDatePicker
-                    Grid.Row="1"
-                    HorizontalAlignment="Stretch"
-                    Date="{x:Bind MinOffset, Mode=TwoWay}"
-                    Header="From" />
-                <CalendarDatePicker
-                    Grid.Row="2"
-                    HorizontalAlignment="Stretch"
-                    Date="{x:Bind MaxOffset, Mode=TwoWay}"
-                    Header="To"
-                    MaxDate="{x:Bind Today, Mode=OneWay}" />
-                <TextBlock Grid.Row="4"
+                <local:CalendarRangePicker Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Margin="0,8,0,-12"
                     Text="{helpers:ResourceString Name=OrChooseADateRange}"
                     Style="{StaticResource IndicatorStyle}" />
-                <ItemsControl Grid.Row="5" ItemsSource="{x:Bind Links}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:IDateRangeLink">
-                            <ToggleButton
-                                Margin="0,8,0,0"
-                                HorizontalAlignment="Stretch"
-                                Command="{x:Bind ToggleCommand}"
-                                Content="{x:Bind Label}"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                IsChecked="{x:Bind IsSelected, Mode=OneWay}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <local:NamedDateRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 

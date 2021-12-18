@@ -343,11 +343,17 @@
     <Compile Include="UserControls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\CalendarRangePicker.xaml.cs">
+      <DependentUpon>CalendarRangePicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\FilterPage.xaml.cs">
       <DependentUpon>FilterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\MultiFilterPage.xaml.cs">
       <DependentUpon>MultiFilterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Search\NamedDateRangePicker.xaml.cs">
+      <DependentUpon>NamedDateRangePicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\SearchNavigator.cs" />
     <Compile Include="UserControls\Search\SearchPicker.xaml.cs">
@@ -1284,6 +1290,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Search\CalendarRangePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\Search\FilterPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1291,6 +1301,10 @@
     <Page Include="UserControls\Search\MultiFilterPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\NamedDateRangePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Search\SearchPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
