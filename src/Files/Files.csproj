@@ -352,6 +352,9 @@
     <Compile Include="UserControls\Search\MultiFilterPage.xaml.cs">
       <DependentUpon>MultiFilterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\NamedSizeRangePicker.xaml.cs">
+      <DependentUpon>NamedSizeRangePicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\NamedDateRangePicker.xaml.cs">
       <DependentUpon>NamedDateRangePicker.xaml</DependentUpon>
     </Compile>
@@ -1299,6 +1302,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\Search\MultiFilterPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\NamedSizeRangePicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

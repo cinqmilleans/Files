@@ -7,12 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
-    <ItemsControl ItemsSource="{x:Bind Periods}">
+    <ItemsControl ItemsSource="{x:Bind NamedRanges}">
         <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="local:IPeriod">
+            <DataTemplate x:DataType="local:INamedDateRange">
                 <ToggleButton
                     Margin="0,8,0,0" HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold"
-                    Content="{x:Bind Label}" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                    Content="{x:Bind Name}" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

@@ -9,14 +9,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace Files.UserControls.Search
 {
-    public sealed partial class NamedDateRangePicker : UserControl
+    public sealed partial class NamedSizeRangePicker : UserControl
     {
         public static readonly DependencyProperty RangeProperty =
-            DependencyProperty.Register(nameof(Range), typeof(DateRange), typeof(NamedDateRangePicker), new PropertyMetadata(DateRange.Always));
+            DependencyProperty.Register(nameof(Range), typeof(SizeRange), typeof(NamedSizeRangePicker), new PropertyMetadata(SizeRange.All));
 
-        public DateRange Range
+        public SizeRange Range
         {
-            get => (DateRange)GetValue(RangeProperty);
+            get => (SizeRange)GetValue(RangeProperty);
             set
             {
                 if (Range != value)
@@ -27,35 +27,35 @@ namespace Files.UserControls.Search
             }
         }
 
-        private IEnumerable<NamedDateRange> NamedRanges { get; }
+        private IEnumerable<NamedSizeRange> NamedRanges { get; }
 
-        public NamedDateRangePicker()
+        public NamedSizeRangePicker()
         {
             InitializeComponent();
 
-            NamedRanges = new List<DateRange>
+            NamedRanges = new List<SizeRange>
             {
-                DateRange.Today,
-                DateRange.Yesterday,
-                DateRange.ThisWeek,
-                DateRange.LastWeek,
-                DateRange.ThisMonth,
-                DateRange.LastMonth,
-                DateRange.ThisYear,
-                DateRange.Older,
-            }.Select(range => new NamedDateRange(this, range)).ToList();
+                SizeRange.Empty,
+                SizeRange.Tiny,
+                SizeRange.Small,
+                SizeRange.Medium,
+                SizeRange.Large,
+                SizeRange.VeryLarge,
+                SizeRange.Huge,
+            }.Select(range => new NamedSizeRange(this, range)).ToList();
         }
 
-        private class NamedDateRange : ObservableObject, INamedDateRange
+        private class NamedSizeRange : ObservableObject, INamedSizeRange
         {
-            private readonly NamedDateRangePicker picker;
-            private readonly DateRange range;
+            private readonly NamedSizeRangePicker picker;
+            private readonly SizeRange range;
 
-            public string Name => range.ToString("N");
+            public string Name => range.ToString("n");
+            public string Value => range.ToString("r");
 
             public bool IsSelected
             {
-                get => picker.Range != DateRange.Always && picker.Range.IsNamed && picker.Range.Contains(range);
+                get => picker.Range != SizeRange.All && picker.Range.IsNamed && picker.Range.Contains(range);
                 set
                 {
                     if (IsSelected != value)
@@ -65,13 +65,13 @@ namespace Files.UserControls.Search
                 }
             }
 
-            public NamedDateRange(NamedDateRangePicker picker, DateRange range) => (this.picker, this.range) = (picker, range);
+            public NamedSizeRange(NamedSizeRangePicker picker, SizeRange range) => (this.picker, this.range) = (picker, range);
 
             public void UpdateProperties() => OnPropertyChanged(nameof(IsSelected));
 
             private void Toggle()
             {
-                if (picker.Range == DateRange.Always)
+                if (picker.Range == SizeRange.All)
                 {
                     picker.Range = range;
                 }
@@ -91,9 +91,10 @@ namespace Files.UserControls.Search
         }
     }
 
-    public interface INamedDateRange : INotifyPropertyChanged
+    public interface INamedSizeRange : INotifyPropertyChanged
     {
         string Name { get; }
+        string Value { get; }
         bool IsSelected { get; set; }
     }
 }
