@@ -12,7 +12,7 @@ namespace Files.Filesystem.Search
     public interface ISearchSettings
     {
         ISearchLocation Location { get; }
-        ISearchFilter Filter { get; }
+        ISearchFilterCollection Filter { get; }
     }
 
     public interface ISearchLocation : INotifyPropertyChanged
@@ -48,7 +48,7 @@ namespace Files.Filesystem.Search
     public class SearchSettings : ObservableObject, ISearchSettings
     {
         public ISearchLocation Location { get; } = new SearchLocation();
-        public ISearchFilter Filter { get; } = new AndFilterCollection();
+        public ISearchFilterCollection Filter { get; } = new AndFilterCollection();
     }
 
     public class SearchLocation : ObservableObject, ISearchLocation

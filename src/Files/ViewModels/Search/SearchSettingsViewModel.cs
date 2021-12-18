@@ -1,12 +1,13 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Input;
+using System.Collections.Specialized;
 
 namespace Files.ViewModels.Search
 {
     public interface ISearchSettingsViewModel
     {
+        int BadgeCount { get; }
+
         ISearchPageNavigator Navigator { get; }
 
         IPickerViewModel LocationViewModel { get; }
@@ -15,22 +16,26 @@ namespace Files.ViewModels.Search
 
     public class SearchSettingsViewModel : ObservableObject, ISearchSettingsViewModel
     {
+        private readonly ISearchFilterCollection filter;
+
+        public int BadgeCount => filter.Count;
+
         public ISearchPageNavigator Navigator { get; }
 
         public IPickerViewModel LocationViewModel { get; }
         public IPickerViewModel FilterViewModel { get; }
 
-        public ICommand SearchCommand { get; }
-
         public SearchSettingsViewModel(ISearchPageContext context, ISearchSettings settings)
         {
             Navigator = context;
-            var filter = settings.Filter as ISearchFilterCollection;
+            filter = settings.Filter;
+            filter.CollectionChanged += Filter_CollectionChanged;
 
             LocationViewModel = new LocationPickerViewModel(settings.Location);
             FilterViewModel = new GroupPageViewModel(context, filter).Picker;
-
-            SearchCommand = new RelayCommand(context.Search);
         }
+
+        private void Filter_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) =>
+            OnPropertyChanged(nameof(BadgeCount));
     }
 }

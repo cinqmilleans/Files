@@ -12,7 +12,8 @@ namespace Files.UserControls
 {
     public sealed partial class SearchBox : UserControl
     {
-        private readonly SearchNavigator navigator = new SearchNavigator();
+        private readonly SearchNavigator navigator = new();
+        private readonly ISearchSettingsViewModel searchSettingsViewModel;
 
         public static readonly DependencyProperty SearchBoxViewModelProperty =
             DependencyProperty.Register(nameof(SearchBoxViewModel), typeof(SearchBoxViewModel), typeof(SearchBox), new PropertyMetadata(null));
@@ -23,7 +24,14 @@ namespace Files.UserControls
             set => SetValue(SearchBoxViewModelProperty, value);
         }
 
-        public SearchBox() => InitializeComponent();
+        public SearchBox()
+        {
+            InitializeComponent();
+
+            ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
+            ISearchPageContext context = new SearchPageContext(navigator, settings.Filter);
+            searchSettingsViewModel = new SearchSettingsViewModel(context, settings);
+        }
 
         private void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
             => SearchBoxViewModel.SearchRegion_TextChanged(sender, e);
@@ -36,25 +44,22 @@ namespace Files.UserControls
         {
             navigator.SearchBox = SearchBoxViewModel;
             navigator.Frame = sender as Frame;
-            GoRootPage();
+            navigator.GoPage(searchSettingsViewModel);
         }
         private void MenuButton_Loaded(object sender, RoutedEventArgs e)
         {
-            var allowFocusOnInteractionAvailable = ApiInformation.IsPropertyPresent("Windows.UI.Xaml.FrameworkElement", "AllowFocusOnInteraction");
+            bool allowFocusOnInteractionAvailable =
+                ApiInformation.IsPropertyPresent("Windows.UI.Xaml.FrameworkElement", "AllowFocusOnInteraction");
             if (allowFocusOnInteractionAvailable && sender is FrameworkElement element)
             {
                 element.AllowFocusOnInteraction = true;
             }
         }
-        private void MenuFlyout_Opened(object sender, object e) => GoRootPage();
-        private void MenuFlyout_Closed(object sender, object e) => navigator.GoPage(null);
 
-        private void GoRootPage()
-        {
-            ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
-            ISearchPageContext context = new SearchPageContext(navigator, settings.Filter);
-            ISearchSettingsViewModel viewModel = new SearchSettingsViewModel(context, settings);
-            navigator.GoPage(viewModel);
-        }
+        private void MenuBadge_Loaded(object sender, RoutedEventArgs e) =>
+            (sender as FrameworkElement).DataContext = searchSettingsViewModel;
+
+        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(searchSettingsViewModel);
+        private void MenuFlyout_Closed(object sender, object e) => navigator.GoPage(null);
     }
 }

@@ -5,10 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fs="using:Files.Filesystem"
     xmlns:helpers="using:Files.Helpers"
+    xmlns:converters="using:Files.Converters"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
     <UserControl.Resources>
+
+        <converters:IntToVisibilityConverter x:Key="NumberBadgeToVisibilityConverter" MinValue="1" MaxValue="9" />
+        <converters:IntToVisibilityConverter x:Key="StarBadgeToVisibilityConverter" MinValue="10" />
 
         <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -112,6 +117,13 @@
                         </Flyout>
                     </Button.Flyout>
                 </Button>
+                <muxc:InfoBadge Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Value="{Binding BadgeCount, Mode=OneWay}" Style="{StaticResource AttentionValueInfoBadgeStyle}"
+                    Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource NumberBadgeToVisibilityConverter}}" />
+                <muxc:InfoBadge Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionIconInfoBadgeStyle}"
+                    Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource StarBadgeToVisibilityConverter}}" />
                 <Button x:Name="QueryButton" Grid.Row="1" Grid.Column="3"
                     Width="28" FontSize="{TemplateBinding FontSize}"
                     VerticalAlignment="Stretch" BorderThickness="{TemplateBinding BorderThickness}"
