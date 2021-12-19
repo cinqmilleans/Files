@@ -107,6 +107,7 @@ namespace Files
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
                 .AddSingleton<ISearchSettings, SearchSettings>()
+                .AddSingleton<ISearchFilterManager, SearchFilterManager>()
 
                 // TODO: Dialogs:
 
@@ -197,7 +198,7 @@ namespace Files
         {
             await logWriter.InitializeAsync("debug.log");
             Logger.Info($"App launched. Prelaunch: {e.PrelaunchActivated}");
-            
+
             //start tracking app usage
             SystemInformation.Instance.TrackAppUse(e);
 

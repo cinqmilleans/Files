@@ -61,6 +61,7 @@ namespace Files.Filesystem.Search
         }
     }
 
+    [SearchFilter("and")]
     public class AndFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
         public string Glyph => "\uEC26";
@@ -81,6 +82,7 @@ namespace Files.Filesystem.Search
             return string.Join(' ', queries);
         }
     }
+    [SearchFilter("or")]
     public class OrFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
         public string Glyph => "\uEC26";
@@ -101,6 +103,7 @@ namespace Files.Filesystem.Search
             return string.Join(" OR ", queries);
         }
     }
+    [SearchFilter("not")]
     public class NotFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
         public string Glyph => "\uEC26";
@@ -151,6 +154,7 @@ namespace Files.Filesystem.Search
             };
         }
     }
+    [SearchFilter("created")]
     public class CreatedFilter : DateRangeFilter
     {
         public override string Title => "Created".GetLocalized();
@@ -160,6 +164,7 @@ namespace Files.Filesystem.Search
         public CreatedFilter() : base() {}
         public CreatedFilter(DateRange range) : base(range) {}
     }
+    [SearchFilter("modified")]
     public class ModifiedFilter : DateRangeFilter
     {
         public override string Title => "Modified".GetLocalized();
@@ -169,6 +174,7 @@ namespace Files.Filesystem.Search
         public ModifiedFilter() : base() {}
         public ModifiedFilter(DateRange range) : base(range) {}
     }
+    [SearchFilter("accessed")]
     public class AccessedFilter : DateRangeFilter
     {
         public override string Title => "Accessed".GetLocalized();
@@ -179,6 +185,7 @@ namespace Files.Filesystem.Search
         public AccessedFilter(DateRange range) : base(range) {}
     }
 
+    [SearchFilter("size")]
     public class SizeRangeFilter : ISizeRangeFilter
     {
         public string Glyph => "\uE2B2";

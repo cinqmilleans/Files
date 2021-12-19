@@ -183,6 +183,7 @@
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
     <Compile Include="Filesystem\Search\Date.cs" />
     <Compile Include="Filesystem\Search\Range.cs" />
+    <Compile Include="Filesystem\Search\SearchFilterManager.cs" />
     <Compile Include="Filesystem\Search\SearchSettings.cs" />
     <Compile Include="Filesystem\Search\Size.cs" />
     <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
