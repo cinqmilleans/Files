@@ -271,7 +271,7 @@ namespace Files.Filesystem.Search
             {
                 return new(a.MinValue, b.MinValue.AddDays(-1));
             }
-            return new(Date.MinValue, Date.MinValue);
+            return None;
         }
 
         private bool GetIsNamed()

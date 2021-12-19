@@ -19,6 +19,10 @@ namespace Files.UserControls.Search
             get => (SizeRange)GetValue(RangeProperty);
             set
             {
+                if (value.Equals(SizeRange.None))
+                {
+                    value = SizeRange.All;
+                }
                 if (Range != value)
                 {
                     SetValue(RangeProperty, value);

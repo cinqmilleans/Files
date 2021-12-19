@@ -19,6 +19,10 @@ namespace Files.UserControls.Search
             get => (DateRange)GetValue(RangeProperty);
             set
             {
+                if (value.Equals(DateRange.None))
+                {
+                    value = DateRange.Always;
+                }
                 if (Range != value)
                 {
                     SetValue(RangeProperty, value);
