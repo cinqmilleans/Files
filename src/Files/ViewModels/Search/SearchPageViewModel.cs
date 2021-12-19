@@ -49,6 +49,7 @@ namespace Files.ViewModels.Search
     public interface ISearchFilterContext
     {
         string Glyph { get; }
+        string Title { get; }
         string Label { get; }
         string Parameter { get; }
 
@@ -191,6 +192,7 @@ namespace Files.ViewModels.Search
         private readonly T filter;
 
         public virtual string Glyph => (filter as IHeader)?.Glyph;
+        public virtual string Title => (filter as IHeader)?.Title;
         public virtual string Label => (filter as IHeader)?.Title;
         public virtual string Parameter => string.Empty;
 

@@ -37,15 +37,10 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock
-                    VerticalAlignment="Top"
-                    Text="{helpers:ResourceString Name=NoFilterSelected}"
-                    Style="{StaticResource IndicatorStyle}"
-                    Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <TextBlock VerticalAlignment="Top" Style="{StaticResource IndicatorStyle}" Visibility="{x:Bind IsEmpty, Mode=OneWay}"
+                    Text="{helpers:ResourceString Name=NoFilterSelected}" />
                 <Grid Visibility="{x:Bind HasDescription}">
-                    <TextBlock
-                        Text="{x:Bind Description, Mode=OneWay}"
-                        TextWrapping="Wrap"
+                    <TextBlock Text="{x:Bind Description, Mode=OneWay}" TextWrapping="Wrap"
                         Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}" />
                 </Grid>
                 <ItemsControl Grid.Row="1" ItemsSource="{x:Bind Contexts, Mode=OneWay}">
@@ -56,58 +51,54 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:ISearchFilterContext">
-                            <Grid
-                                x:Name="ContextItem"
-                                Margin="0,4,0,4"
-                                Background="Transparent"
-                                ColumnSpacing="8"
-                                PointerEntered="ContextItem_PointerEntered"
-                                PointerExited="ContextItem_PointerExited">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="18" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="18" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="{x:Bind Glyph}" />
-                                <Button Grid.Column="1" Style="{StaticResource FilterButtonStyle}" Command="{x:Bind OpenCommand}">
-                                    <Button.Content>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Vertical">
+                                <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="18" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="18" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="{x:Bind Glyph}" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" FontSize="15" FontWeight="SemiBold" />
+                                    <Button Grid.Column="2" Command="{x:Bind OpenCommand}"
+                                            Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
+                                        <Button.Content>
+                                            <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                                <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8"
+                                        PointerEntered="ContextItem_PointerEntered" PointerExited="ContextItem_PointerExited">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="18" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="18" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="1" Style="{StaticResource FilterButtonStyle}" Command="{x:Bind OpenCommand}">
+                                        <Button.Content>
                                             <TextBlock TextWrapping="Wrap">
                                                 <Run Text="{x:Bind Label}" />
                                                 <Run FontWeight="Light" Text="{x:Bind Parameter}" />
                                             </TextBlock>
-                                            <Grid Grid.Column="1" Width="12" Margin="0,0,-8,0">
-                                                <Button x:Name="CloseButton" Command="{x:Bind ClearCommand}"
-                                                Width="12" Padding="0" Opacity="0.60" VerticalAlignment="Center" Visibility="Collapsed"
-                                                      Background="Transparent" BorderBrush="Transparent"  Style="{StaticResource FilterButtonStyle}">
-                                                    <Button.Content>
-                                                        <FontIcon FontSize="10" Glyph="&#xE10A;" />
-                                                    </Button.Content>
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
-                                    </Button.Content>
-                                </Button>
-                                <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent" Command="{x:Bind OpenCommand}">
-                                    <Button.Content>
-                                        <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
-                                    </Button.Content>
-                                </Button>
-                            </Grid>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button x:Name="CloseButton" Grid.Column="2"
+                                        Width="12" Padding="0" Opacity="0.60"
+                                        VerticalAlignment="Center" Visibility="Collapsed"
+                                        Background="Transparent" BorderBrush="Transparent"
+                                        Style="{StaticResource FilterButtonStyle}"
+                                        Command="{x:Bind ClearCommand}">
+                                        <Button.Content>
+                                            <FontIcon FontSize="10" Glyph="&#xE10A;" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <CommandBar
-                    Grid.Row="2"
-                    Margin="0,0,0,8"
-                    Background="Transparent"
-                    DefaultLabelPosition="Right"
-                    IsDynamicOverflowEnabled="False"
-                    IsOpen="False">
+                <CommandBar Grid.Row="2" IsOpen="False"
+                        Margin="0,0,0,8" Background="Transparent" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="False">
                     <AppBarButton x:Name="AddFilterButton" Icon="Add" Label="{helpers:ResourceString Name=Add}" Loaded="AddFilterButton_Loaded" />
                 </CommandBar>
             </Grid>

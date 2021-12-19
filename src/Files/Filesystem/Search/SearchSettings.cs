@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Files.Filesystem.Search
 {
     public interface ISearchSettings
     {
+        ObservableCollection<string> PinnedKeys { get; }
+
         ISearchLocation Location { get; }
         ISearchFilterCollection Filter { get; }
     }
@@ -47,8 +50,20 @@ namespace Files.Filesystem.Search
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
+        public ObservableCollection<string> PinnedKeys { get; }
+
         public ISearchLocation Location { get; } = new SearchLocation();
-        public ISearchFilterCollection Filter { get; } = new AndFilterCollection();
+        public ISearchFilterCollection Filter { get; }
+
+        public SearchSettings()
+        {
+            var pinnedKeys = new string[] { /*"size", "modified"*/ };
+
+            var manager = Ioc.Default.GetService<ISearchFilterManager>();
+
+            PinnedKeys = new ObservableCollection<string>(pinnedKeys);
+            Filter = new AndFilterCollection(pinnedKeys.Select(key => manager.GetFilter(key)));
+        }
     }
 
     public class SearchLocation : ObservableObject, ISearchLocation
