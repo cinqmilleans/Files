@@ -1,8 +1,10 @@
 ﻿using Files.Extensions;
 using Files.Filesystem.StorageItems;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -13,6 +15,8 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
+        private static readonly ConcurrentDictionary<string, long?> cacheSizes = new();
+
         public static bool CheckFolderAccessWithWin32(string path)
         {
             FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
@@ -62,16 +66,19 @@ namespace Files.Filesystem
         {
             CoreDispatcher dispatcher;
 
-            if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder && folder.FileSizeBytes == 0 && folder.ContainsFilesOrFolders)
+            if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder && folder.ContainsFilesOrFolders)
             {
                 dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
+                long size = await Calculate(folder.ItemPath);
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    folder.FileSize = 0L.ToSizeString();
+                    if (size > folder.FileSizeBytes)
+                    {
+                        folder.FileSizeBytes = size;
+                        folder.FileSize = size.ToSizeString();
+                    };
                 });
-
-                _ = await Calculate(folder.ItemPath);
             }
 
             async Task<long> Calculate(string folderPath)
@@ -81,6 +88,12 @@ namespace Files.Filesystem
                     return 0;
                 }
 
+                cacheSizes.TryGetValue(folderPath, out long? cacheSize);
+                if (cacheSize.HasValue)
+                {
+                    return cacheSize.Value;
+                }
+
                 FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
                 int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
 
@@ -88,6 +101,8 @@ namespace Files.Filesystem
                                     FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
 
                 long size = 0;
+                string localPath = string.Empty;
+                long localSize = 0;
                 if (hFile.ToInt64() != -1)
                 {
                     do
@@ -100,13 +115,15 @@ namespace Files.Filesystem
                         {
                             if (findData.cFileName is not "." and not "..")
                             {
-                                string path = Path.Combine(folderPath, findData.cFileName);
-                                size += await Calculate(path);
+                                localPath = Path.Combine(folderPath, findData.cFileName);
+                                localSize = await Calculate(localPath);
+                                size += localSize;
                             }
                         }
 
                         await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
+                            cacheSizes.TryAdd(localPath, localSize);
                             if (size > folder.FileSizeBytes)
                             {
                                 folder.FileSizeBytes = size;
