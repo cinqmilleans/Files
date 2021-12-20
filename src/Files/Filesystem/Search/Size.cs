@@ -125,7 +125,7 @@ namespace Files.Filesystem.Search
                 (minValue, maxValue) = (maxValue, minValue);
             }
 
-            bool hasMin = minValue < Size.MaxValue;
+            bool hasMin = minValue > Size.MinValue;
             bool hasMax = maxValue < Size.MaxValue;
 
             var direction = (hasMin, hasMax) switch
@@ -136,7 +136,6 @@ namespace Files.Filesystem.Search
                 _ when minValue == maxValue => RangeDirections.EqualTo,
                 _ => RangeDirections.Between,
             };
-
 
             var named = new List<SizeRange> { Empty, Tiny, Small, Medium, Large, VeryLarge, Huge };
             bool isNamed = named.Any(n => n.MinValue == minValue) && named.Any(n => n.MaxValue == maxValue);
@@ -152,10 +151,8 @@ namespace Files.Filesystem.Search
         private SizeRange(bool isNamed, RangeDirections direction, Size minValue, Size maxValue)
             => (IsNamed, Direction, MinValue, MaxValue) = (isNamed, direction, minValue, maxValue);
 
-        public void Deconstruct(out Size minValue, out Size maxValue)
-            => (minValue, maxValue) = (MinValue, MaxValue);
-        public void Deconstruct(out bool isNamed, out Size minValue, out Size maxValue)
-            => (isNamed, minValue, maxValue) = (IsNamed, MinValue, MaxValue);
+        public void Deconstruct(out bool isNamed, out RangeDirections direction, out Size minValue, out Size maxValue)
+            => (isNamed, direction, minValue, maxValue) = (IsNamed, Direction, MinValue, MaxValue);
 
         public override int GetHashCode()
             => (MinValue, MaxValue).GetHashCode();
@@ -168,7 +165,7 @@ namespace Files.Filesystem.Search
         public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            if (Equals(None) || Equals(All))
+            if (Direction == RangeDirections.None)
             {
                 return string.Empty;
             }
@@ -182,72 +179,88 @@ namespace Files.Filesystem.Search
                 return ToString("N", formatProvider);
             }
 
-            var (isNamed, minValue, maxValue) = this;
-            bool useName = isNamed && format.ToLower() == "n";
+            bool useName = IsNamed && format.ToLower() == "n";
+            var (direction, minLabel, maxLabel) = ToLabel(useName);
 
-            bool hasMin = minValue > Size.MinValue;
-            bool hasMax = maxValue < Size.MaxValue;
-
-            string minLabel = GetMinLabel();
-            string maxLabel = GetMaxLabel();
-
-            return format switch
+            string text = format switch
             {
-                "n" => string.Format(GetShortFormat(), minLabel , maxLabel),
-                "N" => string.Format(GetFullFormat(), minLabel, maxLabel),
-                "r" => string.Format(GetShortFormat(), minLabel, maxLabel),
-                "R" => string.Format(GetFullFormat(), minLabel, maxLabel),
-                "q" => string.Format(GetQueryFormat(), minValue, maxValue),
-                "Q" => string.Format(GetQueryFormat(), minValue, maxValue),
+                "n" => GetShortFormat(),
+                "N" => GetFullFormat(),
+                "r" => GetShortFormat(),
+                "R" => GetFullFormat(),
+                "q" => GetQueryFormat(),
+                "Q" => GetQueryFormat(),
+                _ => string.Empty
+            };
+
+            return string.Format(text, minLabel, maxLabel);
+
+            string GetShortFormat() => direction switch
+            {
+                RangeDirections.EqualTo => "{0}",
+                RangeDirections.LessThan => "< {1}",
+                RangeDirections.GreaterThan => "> {0}",
+                _ => "{0} - {1}",
+            };
+            string GetFullFormat() => direction switch
+            {
+                RangeDirections.EqualTo => "{0}",
+                RangeDirections.LessThan => "SearchSizeRange_LessThan".GetLocalized(),
+                RangeDirections.GreaterThan => "SearchSizeRange_GreaterThan".GetLocalized(),
+                _ => "SearchSizeRange_Between".GetLocalized(),
+            };
+            string GetQueryFormat() => direction switch
+            {
+                RangeDirections.EqualTo => "{0:B}",
+                RangeDirections.LessThan => "<{1:B}",
+                RangeDirections.GreaterThan => ">{0:B}",
+                _ => "{0:B}..{1:B}",
+            };
+        }
+
+        public RangeLabel ToLabel(bool useName = true)
+        {
+            useName &= IsNamed;
+
+            if (Direction == RangeDirections.None)
+            {
+                return RangeLabel.None;
+            }
+            if (useName && Equals(Empty))
+            {
+                return new RangeLabel("ItemSizeText_Empty".GetLocalized());
+            }
+            if (useName && Equals(Huge))
+            {
+                return new RangeLabel("ItemSizeText_Huge".GetLocalized());
+            }
+
+            string minLabel = useName switch
+            {
+                _ when Direction == RangeDirections.LessThan => string.Empty,
+                true when Tiny.MinValue.Equals(MinValue) => "ItemSizeText_Tiny".GetLocalized(),
+                true when Small.MinValue.Equals(MinValue) => "ItemSizeText_Small".GetLocalized(),
+                true when Medium.MinValue.Equals(MinValue) => "ItemSizeText_Medium".GetLocalized(),
+                true when Large.MinValue.Equals(MinValue) => "ItemSizeText_Large".GetLocalized(),
+                true when VeryLarge.MinValue.Equals(MinValue) => "ItemSizeText_VeryLarge".GetLocalized(),
+                true when Huge.MinValue.Equals(MinValue) => "ItemSizeText_Huge".GetLocalized(),
+                false => $"{MinValue}",
+                _ => string.Empty,
+            };
+            string maxLabel = useName switch
+            {
+                _ when Direction == RangeDirections.GreaterThan => string.Empty,
+                true when Empty.MaxValue.Equals(MaxValue) => "ItemSizeText_Empty".GetLocalized(),
+                true when Tiny.MaxValue.Equals(MaxValue) => "ItemSizeText_Tiny".GetLocalized(),
+                true when Small.MaxValue.Equals(MaxValue) => "ItemSizeText_Small".GetLocalized(),
+                true when Medium.MaxValue.Equals(MaxValue) => "ItemSizeText_Medium".GetLocalized(),
+                true when Large.MaxValue.Equals(MaxValue) => "ItemSizeText_Large".GetLocalized(),
+                true when VeryLarge.MaxValue.Equals(MaxValue) => "ItemSizeText_VeryLarge".GetLocalized(),
+                false => $"{MaxValue}",
                 _ => string.Empty,
             };
 
-            string GetMinLabel() => useName switch
-            {
-                true when Empty.MinValue.Equals(minValue) => "SearchSizeRange_Empty".GetLocalized(),
-                true when Tiny.MinValue.Equals(minValue) => "ItemSizeText_Tiny".GetLocalized(),
-                true when Small.MinValue.Equals(minValue) => "ItemSizeText_Small".GetLocalized(),
-                true when Medium.MinValue.Equals(minValue) => "ItemSizeText_Medium".GetLocalized(),
-                true when Large.MinValue.Equals(minValue) => "ItemSizeText_Large".GetLocalized(),
-                true when VeryLarge.MinValue.Equals(minValue) => "ItemSizeText_VeryLarge".GetLocalized(),
-                true when Huge.MinValue.Equals(minValue) => "ItemSizeText_Huge".GetLocalized(),
-                true => string.Empty,
-                false => $"{minValue}",
-            };
-            string GetMaxLabel() => useName switch
-            {
-                true when Empty.MaxValue.Equals(maxValue) => "SearchSizeRange_Empty".GetLocalized(),
-                true when Tiny.MaxValue.Equals(maxValue) => "ItemSizeText_Tiny".GetLocalized(),
-                true when Small.MaxValue.Equals(maxValue) => "ItemSizeText_Small".GetLocalized(),
-                true when Medium.MaxValue.Equals(maxValue) => "ItemSizeText_Medium".GetLocalized(),
-                true when Large.MaxValue.Equals(maxValue) => "ItemSizeText_Large".GetLocalized(),
-                true when VeryLarge.MaxValue.Equals(maxValue) => "ItemSizeText_VeryLarge".GetLocalized(),
-                true when Huge.MaxValue.Equals(maxValue) => "ItemSizeText_Huge".GetLocalized(),
-                true => string.Empty,
-                false => $"{maxValue}",
-            };
-
-            string GetShortFormat() => (hasMin, hasMax) switch
-            {
-                _ when minLabel == maxLabel => "{0}",
-                (false, _) => "< {1}",
-                (_, false) => "> {0}",
-                _ => "{0} - {1}",
-            };
-            string GetFullFormat() => (hasMin, hasMax) switch
-            {
-                _ when minLabel == maxLabel => "{0}",
-                (false, _) => "SearchSizeRange_LessThan".GetLocalized(),
-                (_, false) => "SearchSizeRange_GreaterThan".GetLocalized(),
-                _ => "SearchSizeRange_Between".GetLocalized(),
-            };
-            string GetQueryFormat() => (hasMin, hasMax) switch
-            {
-                _ when minValue == maxValue => "{0:B}",
-                (false, _) => "<{1:B}",
-                (_, false) => ">{0:B}",
-                _ => "{0:B}..{1:B}",
-            };
+            return new RangeLabel(minLabel, maxLabel);
         }
 
         public static SizeRange operator +(SizeRange a, SizeRange b) => new(a, b);

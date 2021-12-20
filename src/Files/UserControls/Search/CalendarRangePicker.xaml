@@ -13,14 +13,11 @@
         </Grid.RowDefinitions>
 
         <CalendarDatePicker Grid.Row="0"
-            HorizontalAlignment="Stretch"
-            Header="From"
-            Date="{x:Bind MinOffset, Mode=TwoWay}" />
+            HorizontalAlignment="Stretch" Header="From"
+            Date="{x:Bind MinOffset, Mode=TwoWay}" MaxDate="{x:Bind Today}"/>
         <CalendarDatePicker Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            Header="To"
-            Date="{x:Bind MaxOffset, Mode=TwoWay}"
-            MaxDate="{x:Bind Today}" />
+            HorizontalAlignment="Stretch" Header="To"
+            Date="{x:Bind MaxOffset, Mode=TwoWay}" MaxDate="{x:Bind Yesterday}" />
     </Grid>
 
 </UserControl>

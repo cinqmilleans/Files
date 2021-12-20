@@ -2764,7 +2764,7 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
   <data name="SearchSizeRange_Between" xml:space="preserve">
     <value>Between {0} and {1}</value>
   </data>
-  <data name="SearchSizeRange_Empty" xml:space="preserve">
+  <data name="ItemSizeText_Empty" xml:space="preserve">
     <value>Empty</value>
   </data>
   <data name="SearchSize_NoLimit" xml:space="preserve">

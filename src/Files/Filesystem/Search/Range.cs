@@ -17,13 +17,16 @@
         T MaxValue { get; }
     }
 
-    internal class RangeLabel : IRange<string>
+    public struct RangeLabel : IRange<string>
     {
+        public static RangeLabel None { get; } = new(string.Empty, string.Empty);
+
         public RangeDirections Direction { get; }
 
         public string MinValue { get; }
         public string MaxValue { get; }
 
+        public RangeLabel(string value) : this(value, value) {}
         public RangeLabel(string minValue, string maxValue)
         {
             MinValue = (minValue ?? string.Empty).Trim();
@@ -38,5 +41,8 @@
                 _ => RangeDirections.Between,
             };
         }
+
+        public void Deconstruct(out RangeDirections direction, out string minValue, out string maxValue)
+            => (direction, minValue, maxValue) = (Direction, MinValue, MaxValue);
     }
 }

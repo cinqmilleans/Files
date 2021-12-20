@@ -155,17 +155,15 @@ namespace Files.Filesystem.Search
 
         public string ToAdvancedQuerySyntax()
         {
-            var (min, max) = Range;
-            bool hasMin = min > Date.MinValue;
-            bool hasMax = max < Date.Today;
+            var (_, direction, minValue, maxValue) = Range;
 
-            return (hasMin, hasMax) switch
+            return direction switch
             {
-                (false, false) => string.Empty,
-                _ when min == max => $"{QueryKey}:={min:yyyy-MM-dd}",
-                (false, _) => $"{QueryKey}:<={max:yyyy-MM-dd}",
-                (_, false) => $"{QueryKey}:>={min:yyyy-MM-dd}",
-                _ => $"{QueryKey}:{min:yyyy-MM-dd}..{max:yyyy-MM-dd}"
+                RangeDirections.EqualTo => $"{QueryKey}:={minValue:yyyy-MM-dd}",
+                RangeDirections.LessThan => $"{QueryKey}:<={maxValue:yyyy-MM-dd}",
+                RangeDirections.GreaterThan => $"{QueryKey}:>={minValue:yyyy-MM-dd}",
+                RangeDirections.Between => $"{QueryKey}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
+                _ => string.Empty,
             };
         }
     }
@@ -214,17 +212,15 @@ namespace Files.Filesystem.Search
 
         public string ToAdvancedQuerySyntax()
         {
-            var (min, max) = Range;
-            bool hasMin = min > Size.MinValue;
-            bool hasMax = max < Size.MaxValue;
+            var (_, direction, minValue, maxValue) = Range;
 
-            return (hasMin, hasMax) switch
+            return direction switch
             {
-                (false, false) => string.Empty,
-                _ when min == max => $"System.Size:={min.Bytes}",
-                (false, _) => $"System.Size:<={max.Bytes}",
-                (_, false) => $"System.Size:>={min.Bytes}",
-                _ => $"System.Size:{min.Bytes}..{max.Bytes}"
+                RangeDirections.EqualTo => $"System.Size:={minValue.Bytes}",
+                RangeDirections.LessThan => $"System.Size:<={maxValue.Bytes}",
+                RangeDirections.GreaterThan => $"System.Size:>={minValue.Bytes}",
+                RangeDirections.Between => $"System.Size:{minValue.Bytes}..{maxValue.Bytes}",
+                _ => string.Empty,
             };
         }
     }
