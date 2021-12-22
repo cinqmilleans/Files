@@ -118,6 +118,8 @@ namespace Files.Filesystem.Search
         public Size MinValue { get; }
         public Size MaxValue { get; }
 
+        public IRange<string> Label => ToLabel();
+
         public SizeRange(Size minValue, Size maxValue)
         {
             if (minValue > maxValue)

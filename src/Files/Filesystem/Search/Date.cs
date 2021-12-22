@@ -137,6 +137,8 @@ namespace Files.Filesystem.Search
         public Date MinValue { get; }
         public Date MaxValue { get; }
 
+        public IRange<string> Label => ToLabel();
+
         static DateRange()
         {
             Date.TodayUpdated += Date_TodayUpdated;
