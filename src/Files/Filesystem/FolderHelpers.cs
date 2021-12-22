@@ -1,5 +1,7 @@
 ﻿using Files.Extensions;
 using Files.Filesystem.StorageItems;
+using Files.Helpers;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +15,15 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
+        private static readonly IDictionary<string, long> cacheSizes =
+            new SizedDictionary<string, long>(Constants.Filesystem.FolderSizeCacheCount);
+
         public static bool CheckFolderAccessWithWin32(string path)
         {
             FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
             int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
-            IntPtr hFileTsk = FindFirstFileExFromApp(path + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findDataTsk, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero,
-                additionalFlags);
+            IntPtr hFileTsk = FindFirstFileExFromApp(path + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findDataTsk,
+                FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
             if (hFileTsk.ToInt64() != -1)
             {
                 FindClose(hFileTsk);
@@ -35,7 +40,8 @@ namespace Files.Filesystem
             }
             if (Path.IsPathRooted(path) && Path.GetPathRoot(path) == path)
             {
-                IDictionary<string, object> extraProperties = await rootFolder.Properties.RetrievePropertiesAsync(new string[] { "System.Volume.BitLockerProtection" });
+                IDictionary<string, object> extraProperties =
+                    await rootFolder.Properties.RetrievePropertiesAsync(new string[] { "System.Volume.BitLockerProtection" });
                 return (int?)extraProperties["System.Volume.BitLockerProtection"] == 6; // Drive is bitlocker protected and locked
             }
             return false;
@@ -51,7 +57,8 @@ namespace Files.Filesystem
             FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
             int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
 
-            IntPtr hFile = FindFirstFileExFromApp(targetPath + "\\*.*", findInfoLevel, out WIN32_FIND_DATA _, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+            IntPtr hFile = FindFirstFileExFromApp(targetPath + "\\*.*", findInfoLevel, out WIN32_FIND_DATA _,
+                FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
             FindNextFile(hFile, out _);
             var result = FindNextFile(hFile, out _);
             FindClose(hFile);
@@ -60,21 +67,36 @@ namespace Files.Filesystem
 
         public static async void UpdateFolder(ListedItem folder, CancellationToken cancellationToken)
         {
-            CoreDispatcher dispatcher;
+            CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-            if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder && folder.FileSizeBytes == 0 && folder.ContainsFilesOrFolders)
+            if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder)
             {
-                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    if (cacheSizes.ContainsKey(folder.ItemPath))
+                    {
+                        long size = cacheSizes[folder.ItemPath];
+                        folder.FileSizeBytes = size;
+                        folder.FileSize = size.ToSizeString();
+                    }
+                    else
+                    {
+                        folder.FileSizeBytes = 0;
+                        folder.FileSize = string.Empty;
+                    }
+                });
+
+                long size = await Calculate(folder.ItemPath);
 
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    folder.FileSize = 0L.ToSizeString();
+                    cacheSizes[folder.ItemPath] = size;
+                    folder.FileSizeBytes = size;
+                    folder.FileSize = size.ToSizeString();
                 });
-
-                _ = await Calculate(folder.ItemPath);
             }
 
-            async Task<long> Calculate(string folderPath)
+            async Task<long> Calculate(string folderPath, int level = 0)
             {
                 if (string.IsNullOrEmpty(folderPath))
                 {
@@ -88,6 +110,9 @@ namespace Files.Filesystem
                                     FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
 
                 long size = 0;
+                string localPath = string.Empty;
+                long localSize = 0;
+
                 if (hFile.ToInt64() != -1)
                 {
                     do
@@ -100,19 +125,20 @@ namespace Files.Filesystem
                         {
                             if (findData.cFileName is not "." and not "..")
                             {
-                                string path = Path.Combine(folderPath, findData.cFileName);
-                                size += await Calculate(path);
+                                localPath = Path.Combine(folderPath, findData.cFileName);
+                                localSize = await Calculate(localPath, 1 + level);
+                                size += localSize;
                             }
                         }
 
-                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        if (level <= 2)
                         {
-                            if (size > folder.FileSizeBytes)
+                            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                             {
+                                cacheSizes[localPath] = localSize;
                                 folder.FileSizeBytes = size;
-                                folder.FileSize = size.ToSizeString();
-                            };
-                        });
+                            });
+                        }
 
                         if (cancellationToken.IsCancellationRequested)
                         {

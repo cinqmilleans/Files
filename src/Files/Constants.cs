@@ -173,6 +173,8 @@
             public const int ExtendedAsciiCodePage = 437;
 
             public const string CachedEmptyItemName = "fileicon_cache";
+
+            public const int FolderSizeCacheCount = 1000;
         }
     }
 }
