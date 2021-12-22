@@ -269,12 +269,17 @@ namespace Files
                         {
                             SelectedItemsPropertiesViewModel.SelectedItemsCountString = $"{SelectedItems.Count} {"ItemsSelected/Text".GetLocalized()}";
                             ResetRenameDoubleClick();
-
-                            bool isSizeKnown = !selectedItems.Any(item => string.IsNullOrEmpty(item.FileSize));
+                            string text = "ItemSizeNotCalculated".GetLocalized();
+                            bool isSizeKnown = !selectedItems.Any(item => string.IsNullOrEmpty(item.FileSize) || item.FileSize != text);
                             if (isSizeKnown)
                             {
                                 long size = selectedItems.Sum(item => item.FileSizeBytes);
+                                SelectedItemsPropertiesViewModel.ItemSizeBytes = size;
                                 SelectedItemsPropertiesViewModel.ItemSize = size.ToSizeString();
+                            }
+                            else
+                            {
+                                SelectedItemsPropertiesViewModel.ItemSize = string.Empty;
                             }
                         }
                     }
@@ -624,13 +629,19 @@ namespace Files
                 var items = selectedItems;
                 if (items is not null)
                 {
-                    bool isSizeKnown = !items.Any(item => string.IsNullOrEmpty(item.FileSize));
+                    string text = "ItemSizeNotCalculated".GetLocalized();
+                    bool isSizeKnown = !items.Any(item => string.IsNullOrEmpty(item.FileSize) || item.FileSize != text);
                     if (isSizeKnown)
                     {
                         long size = items.Sum(item => item.FileSizeBytes);
                         SelectedItemsPropertiesViewModel.ItemSizeBytes = size;
                         SelectedItemsPropertiesViewModel.ItemSize = size.ToSizeString();
                     }
+                    else
+                    {
+                        SelectedItemsPropertiesViewModel.ItemSize = string.Empty;
+                    }
+
                 }
             }
         }

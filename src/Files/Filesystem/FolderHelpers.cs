@@ -1,10 +1,12 @@
 ﻿using Files.Extensions;
 using Files.Filesystem.StorageItems;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -15,7 +17,7 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
-        private static readonly ConcurrentDictionary<string, long?> cacheSizes = new();
+        private static readonly IDictionary<string, long> cacheSizes = new SizedDictionary<string, long>(50);
 
         public static bool CheckFolderAccessWithWin32(string path)
         {
@@ -70,29 +72,42 @@ namespace Files.Filesystem
             {
                 dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    if (cacheSizes.ContainsKey(folder.ItemPath))
+                    {
+                        long size = cacheSizes[folder.ItemPath];
+                        folder.FileSizeBytes = size;
+                        folder.FileSize = size.ToSizeString();
+                    }
+                    else
+                    {
+                        folder.FileSizeBytes = 0;
+                        folder.FileSize = "ItemSizeNotCalculated".GetLocalized();
+                    }
+                });
+
                 long size = await Calculate(folder.ItemPath);
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    if (size > folder.FileSizeBytes)
-                    {
-                        folder.FileSizeBytes = size;
-                        folder.FileSize = size.ToSizeString();
-                    };
+                    cacheSizes[folder.ItemPath] = size;
+                    folder.FileSizeBytes = size;
+                    folder.FileSize = size.ToSizeString();
                 });
             }
 
-            async Task<long> Calculate(string folderPath)
+            async Task<long> Calculate(string folderPath, int level = 0)
             {
                 if (string.IsNullOrEmpty(folderPath))
                 {
                     return 0;
                 }
 
-                cacheSizes.TryGetValue(folderPath, out long? cacheSize);
-                if (cacheSize.HasValue)
-                {
-                    return cacheSize.Value;
-                }
+                //cacheSizes.TryGetValue(folderPath, out long? cacheSize);
+                //if (cacheSize.HasValue)
+               // {
+                //    return cacheSize.Value;
+                //}
 
                 FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
                 int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
@@ -116,20 +131,24 @@ namespace Files.Filesystem
                             if (findData.cFileName is not "." and not "..")
                             {
                                 localPath = Path.Combine(folderPath, findData.cFileName);
-                                localSize = await Calculate(localPath);
+                                localSize = await Calculate(localPath, 1 + level);
                                 size += localSize;
                             }
                         }
 
-                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        if (level <= 2)
                         {
-                            cacheSizes.TryAdd(localPath, localSize);
-                            if (size > folder.FileSizeBytes)
+                            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                             {
+                                cacheSizes[localPath] = localSize;
                                 folder.FileSizeBytes = size;
-                                folder.FileSize = size.ToSizeString();
-                            };
-                        });
+                            });
+                            //if (size > folder.FileSizeBytes)
+                            //{
+                            //
+                            //    //folder.FileSize = size.ToSizeString();
+                            //};
+                        }
 
                         if (cancellationToken.IsCancellationRequested)
                         {
@@ -144,6 +163,47 @@ namespace Files.Filesystem
                     return 0;
                 }
             }
+        }
+    }
+
+    public sealed class SizedDictionary<Key, Value> : Dictionary<Key, Value>
+    {
+        private readonly int maxSize;
+
+        private Queue<Key> keys = new();
+
+        public SizedDictionary(int maxSize) : base(maxSize) => this.maxSize = maxSize;
+
+        new public void Add(Key key, Value value)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (keys.Count == maxSize)
+            {
+                base.Remove(keys.Dequeue());
+            }
+
+            base.Add(key, value);
+            keys.Enqueue(key);
+        }
+
+        new public bool Remove(Key key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (!keys.Contains(key))
+            {
+                return false;
+            }
+
+            keys = new Queue<Key>(keys.Where(k => !k.Equals(key)));
+            return base.Remove(key);
         }
     }
 }
