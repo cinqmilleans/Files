@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Files.Filesystem;
+using System;
 using System.Diagnostics;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -59,6 +60,7 @@ namespace Files.UserControls
         {
             App.AppSettings.ResumeAfterRestart = true;
             App.SaveSessionTabs();
+            FolderHelpers.SaveCacheSizes();
             await Launcher.LaunchUriAsync(new Uri("files-uwp:"));
             Process.GetCurrentProcess().Kill();
         }

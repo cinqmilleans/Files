@@ -1,4 +1,5 @@
-﻿using Files.Models.JsonSettings;
+﻿using Files.Helpers;
+using Files.Models.JsonSettings;
 using System.Collections.Generic;
 
 namespace Files.Services.Implementation
@@ -156,6 +157,12 @@ namespace Files.Services.Implementation
         public List<string> LastSessionTabList
         {
             get => Get<List<string>>(null);
+            set => Set(value);
+        }
+
+        public List<(string Path, long Size)> CacheFolderSizes
+        {
+            get => Get<List<(string Path, long Sizes)>>(null);
             set => Set(value);
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp;
+﻿using Files.Filesystem;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,6 +85,7 @@ namespace Files.Helpers
             }
 
             App.SaveSessionTabs(); // save the tabs so they can be restored after the update completes
+            FolderHelpers.SaveCacheSizes();
             var downloadOperation = context.RequestDownloadAndInstallStorePackageUpdatesAsync(updateList);
             return await downloadOperation.AsTask();
         }

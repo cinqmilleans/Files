@@ -79,11 +79,12 @@ namespace Files
             InitializeComponent();
             Suspending += OnSuspending;
             LeavingBackground += OnLeavingBackground;
-            
+
             AppServiceConnectionHelper.Register();
-            
+
             this.Services = ConfigureServices();
             Ioc.Default.ConfigureServices(Services);
+            FolderHelpers.LoadCacheSizes();
         }
 
         private IServiceProvider ConfigureServices()
@@ -196,7 +197,7 @@ namespace Files
         {
             await logWriter.InitializeAsync("debug.log");
             Logger.Info($"App launched. Prelaunch: {e.PrelaunchActivated}");
-            
+
             //start tracking app usage
             SystemInformation.Instance.TrackAppUse(e);
 
@@ -500,6 +501,7 @@ namespace Files
             var deferral = e.SuspendingOperation.GetDeferral();
 
             SaveSessionTabs();
+            FolderHelpers.SaveCacheSizes();
 
             if (OutputPath != null)
             {
@@ -597,6 +599,8 @@ namespace Files
             Debugger.Break(); // Please check "Output Window" for exception details (View -> Output Window) (CTRL + ALT + O)
 
             SaveSessionTabs();
+            FolderHelpers.SaveCacheSizes();
+
             Logger.UnhandledError(ex, ex.Message);
             if (ShowErrorNotification)
             {

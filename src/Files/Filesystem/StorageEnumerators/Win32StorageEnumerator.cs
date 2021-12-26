@@ -90,7 +90,7 @@ namespace Files.Filesystem.StorageEnumerators
 
                                 if (showFolderSize)
                                 {
-                                    FolderHelpers.UpdateFolder(folder, cancellationToken);
+                                    folder.UpdateFolder(cancellationToken);
                                 }
                             }
                         }

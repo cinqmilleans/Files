@@ -1,9 +1,11 @@
 ﻿using Files.Extensions;
 using Files.Filesystem.StorageItems;
-using Files.Helpers;
+using Files.Services;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -14,8 +16,7 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
-        private static readonly ISizedDictionary<string, long> cacheSizes =
-            new SizedDictionary<string, long>(Constants.Filesystem.FolderSizeCacheCount);
+        private static FolderSizes cacheSizes;
 
         public static bool CheckFolderAccessWithWin32(string path)
         {
@@ -64,17 +65,19 @@ namespace Files.Filesystem
             return result;
         }
 
-        public static async void UpdateFolder(ListedItem folder, CancellationToken cancellationToken)
+        public static void LoadCacheSizes() => cacheSizes = FolderSizes.Load();
+        public static void SaveCacheSizes() => cacheSizes.Save();
+
+        public static async void UpdateFolder(this ListedItem folder, CancellationToken cancellationToken)
         {
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder)
             {
-                cacheSizes.Size = Constants.Filesystem.FolderSizeCacheCount;
-
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    if (cacheSizes.ContainsKey(folder.ItemPath))
+                    //var a = cacheSizes.paths.OrderBy(p => p).ToList();
+                    if (cacheSizes.ContainsPath(folder.ItemPath))
                     {
                         long size = cacheSizes[folder.ItemPath];
                         folder.FileSizeBytes = size;
@@ -153,6 +156,67 @@ namespace Files.Filesystem
                 {
                     return 0;
                 }
+            }
+        }
+
+        private class FolderSizes
+        {
+            private const int maxCount = Constants.Filesystem.FolderSizeCacheCount;
+
+            public readonly IList<string> paths = new List<string>();
+            private readonly IDictionary<string, long> sizes = new Dictionary<string, long>();
+
+            private FolderSizes(IEnumerable<(string Path, long Size)> items)
+            {
+                if (items is not null)
+                {
+                    paths = items.Select(item => item.Path).ToList();
+                    sizes = items.ToDictionary(item => item.Path, item => item.Size);
+                }
+            }
+
+            public long this[string path]
+            {
+                get => sizes[path];
+                set
+                {
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        return;
+                    }
+
+                    if (sizes.ContainsKey(path))
+                    {
+                        paths.Remove(path);
+                    }
+
+                    while (paths.Count >= maxCount)
+                    {
+                        string olderPath = paths[0];
+                        paths.RemoveAt(0);
+                        sizes.Remove(olderPath);
+                    }
+
+                    paths.Add(path);
+                    sizes[path] = value;
+                }
+            }
+
+            public bool ContainsPath(string path) => sizes.ContainsKey(path);
+
+            public static FolderSizes Load()
+            {
+                var userSettingsService = Ioc.Default.GetService<IUserSettingsService>();
+                var items = userSettingsService.PreferencesSettingsService.CacheFolderSizes;
+
+                return new FolderSizes(items);
+            }
+            public void Save()
+            {
+                var items = paths.Select(path => (path, sizes[path])).ToList();
+
+                var userSettingsService = Ioc.Default.GetService<IUserSettingsService>();
+                userSettingsService.PreferencesSettingsService.CacheFolderSizes = items;
             }
         }
     }

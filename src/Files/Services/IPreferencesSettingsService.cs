@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Files.Helpers;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Files.Services
@@ -104,5 +105,7 @@ namespace Files.Services
         /// A list containing all paths to tabs closed on last session.
         /// </summary>
         List<string> LastSessionTabList { get; set; }
+
+        List<(string Path,long Size)> CacheFolderSizes { get; set; }
     }
 }

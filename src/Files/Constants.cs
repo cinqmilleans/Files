@@ -174,7 +174,7 @@
 
             public const string CachedEmptyItemName = "fileicon_cache";
 
-            public const int FolderSizeCacheCount = 1000;
+            public const int FolderSizeCacheCount = 10000;
         }
     }
 }

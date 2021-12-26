@@ -77,6 +77,7 @@ namespace Files.Helpers
                     userSettingsService.PreferencesSettingsService.AlwaysOpenNewInstance = appSettings.Get(false, "AlwaysOpenANewInstance");
                     userSettingsService.PreferencesSettingsService.TabsOnStartupList = appSettings.Get<string[]>(null, "PagesOnStartupList")?.ToList();
                     userSettingsService.PreferencesSettingsService.LastSessionTabList = appSettings.Get<string[]>(null, "LastSessionPages")?.ToList();
+                    userSettingsService.PreferencesSettingsService.CacheFolderSizes = appSettings.Get<(string Key, long Size)[]>(null, "CacheFolderSizes")?.ToList();
 
                     // Layout settings
                     userSettingsService.LayoutSettingsService.ShowDateColumn = appSettings.Get(true, "ShowDateColumn");
