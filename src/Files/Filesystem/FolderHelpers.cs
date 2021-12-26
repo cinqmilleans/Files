@@ -1,7 +1,6 @@
 ﻿using Files.Extensions;
 using Files.Filesystem.StorageItems;
 using Files.Helpers;
-using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,7 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
-        private static readonly IDictionary<string, long> cacheSizes =
+        private static readonly ISizedDictionary<string, long> cacheSizes =
             new SizedDictionary<string, long>(Constants.Filesystem.FolderSizeCacheCount);
 
         public static bool CheckFolderAccessWithWin32(string path)
@@ -71,6 +70,8 @@ namespace Files.Filesystem
 
             if (folder.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder)
             {
+                cacheSizes.Size = Constants.Filesystem.FolderSizeCacheCount;
+
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
                     if (cacheSizes.ContainsKey(folder.ItemPath))

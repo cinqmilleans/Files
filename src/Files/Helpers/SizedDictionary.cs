@@ -1,16 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Files.Helpers
 {
-    public sealed class SizedDictionary<Key, Value> : Dictionary<Key, Value>
+    public interface ISizedDictionary<Key, Value> : IDictionary<Key, Value>
     {
-        private readonly int maxSize;
+        int Size { get; set; }
+    }
 
-        private Queue<Key> keys = new();
+    public class SizedDictionary<Key, Value> : Dictionary<Key, Value>, ISizedDictionary<Key, Value>
+    {
+        private readonly List<Key> keys = new();
 
-        public SizedDictionary(int maxSize) : base(maxSize) => this.maxSize = maxSize;
+        private int size = 0;
+        public int Size
+        {
+            get => size;
+            set
+            {
+                if (size != value)
+                {
+                    size = value;
+
+                    while (keys.Count > size)
+                    {
+                        RemoveOlderKey();
+                    }
+                }
+            }
+        }
+
+        public SizedDictionary(int size) : base(size) => this.size = size;
 
         new public void Add(Key key, Value value)
         {
@@ -19,29 +39,31 @@ namespace Files.Helpers
                 throw new ArgumentNullException();
             }
 
-            if (keys.Count == maxSize)
+            while (keys.Count >= size)
             {
-                base.Remove(keys.Dequeue());
+                RemoveOlderKey();
             }
 
             base.Add(key, value);
-            keys.Enqueue(key);
+            keys.Add(key);
         }
 
         new public bool Remove(Key key)
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!keys.Contains(key))
+            if (key is null || !keys.Contains(key))
             {
                 return false;
             }
 
-            keys = new Queue<Key>(keys.Where(k => !k.Equals(key)));
+            keys.Remove(key);
             return base.Remove(key);
+        }
+
+        private void RemoveOlderKey()
+        {
+            Key olderKey = keys[0];
+            keys.RemoveAt(0);
+            base.Remove(olderKey);
         }
     }
 }
