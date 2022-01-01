@@ -23,6 +23,15 @@ namespace Files.ViewModels.Search
         IEnumerable<ISearchFilterContext> Contexts { get; }
 
         ICommand OpenCommand { get; }
+
+        IEnumerable<object> Tests { get; }
+    }
+
+    public class Test
+    {
+        public bool IsChecked { get; set; } = true;
+        public string Title { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
     }
 
     public interface IGroupHeader : ISearchFilterHeader
@@ -126,6 +135,20 @@ namespace Files.ViewModels.Search
 
     public class GroupPickerViewModel : ObservableObject, IGroupPickerViewModel
     {
+        public IEnumerable<object> Tests => new object[]
+        {
+            new Test{ IsChecked = false, Title = "Modification Date" },
+            new Test{ IsChecked = false, Title = "Size" },
+            new Test{ Title = "Creation Date:", Value = " 2021" },
+            "Kind:",
+            new Test{ Value = " PDF" },
+            new Test{ Value = "Docx" },
+            "Access Date:",
+            new Test{ Title = "after:", Value = " 01/08/2021" },
+            new Test{ Title = "before:", Value = " 01/14/2021" },
+        };
+
+
         private readonly ISearchPageContext context;
         private readonly Action saveAction;
 

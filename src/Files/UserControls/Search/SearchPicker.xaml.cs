@@ -1,9 +1,11 @@
 ﻿using Files.ViewModels.Search;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 
 namespace Files.UserControls.Search
@@ -74,6 +76,23 @@ namespace Files.UserControls.Search
             }
         }
     }
+
+    public class ATemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate STemplate { get; set; }
+        public DataTemplate TTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            string => STemplate,
+            Test => TTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
+    }
+
 
     public class PickerTemplateSelector : DataTemplateSelector
     {
