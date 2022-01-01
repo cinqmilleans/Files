@@ -191,7 +191,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="18" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="&#xEC92;" />
+                        <FontIcon Width="18" FontSize="18" VerticalAlignment="Center" Glyph="&#xEC26;" />
                     <TextBlock Grid.Column="1" Text="Or" FontSize="15" FontWeight="SemiBold" />
                     <Button Grid.Column="2"
                                             Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
