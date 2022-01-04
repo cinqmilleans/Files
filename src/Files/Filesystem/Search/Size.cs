@@ -8,6 +8,11 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
+    public interface ISizeRangeFilter : ISearchFilter
+    {
+        SizeRange Range { get; }
+    }
+
     public struct Size : IEquatable<Size>, IComparable<Size>, IFormattable
     {
         public enum Units : ushort { Byte, Kibi, Mebi, Gibi, Tebi, Pebi }
@@ -252,6 +257,33 @@ namespace Files.Filesystem.Search
             };
 
             return new RangeLabel(minLabel, maxLabel);
+        }
+    }
+
+    [SearchFilter("size")]
+    public class SizeRangeFilter : ISizeRangeFilter
+    {
+        public string Glyph => "\uE2B2";
+        public string Title => "Size".GetLocalized();
+        public string Description => string.Empty;
+
+        public SizeRange Range { get; }
+
+        public SizeRangeFilter() => Range = SizeRange.All;
+        public SizeRangeFilter(SizeRange range) => Range = range;
+
+        public string ToAdvancedQuerySyntax()
+        {
+            var (direction, minValue, maxValue) = Range;
+
+            return direction switch
+            {
+                RangeDirections.EqualTo => $"System.Size:={minValue.Bytes}",
+                RangeDirections.LessThan => $"System.Size:<={maxValue.Bytes}",
+                RangeDirections.GreaterThan => $"System.Size:>={minValue.Bytes}",
+                RangeDirections.Between => $"System.Size:{minValue.Bytes}..{maxValue.Bytes}",
+                _ => string.Empty,
+            };
         }
     }
 }

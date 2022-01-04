@@ -40,7 +40,16 @@ namespace Files.Filesystem.Search
 
         public EventHandler SearchTick;
 
-        private bool IsAQSQuery => Query is not null && (Query.StartsWith('$') || Query.Contains(":", StringComparison.Ordinal));
+        private bool IsAQSQuery
+        {
+            get
+            {
+                ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
+                bool isManualAqs = Query is not null && (Query.StartsWith("$") || Query.Contains(":", StringComparison.Ordinal));
+                bool hasSearchFilter = !string.IsNullOrEmpty(settings.Filter.ToAdvancedQuerySyntax());
+                return isManualAqs || hasSearchFilter;
+            }
+        }
 
         private string QueryWithWildcard
         {
@@ -451,10 +460,12 @@ namespace Files.Filesystem.Search
 
         private QueryOptions ToQueryOptions()
         {
+            ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
+
             var query = new QueryOptions
             {
-                FolderDepth = FolderDepth.Deep,
-                UserSearchFilter = AQSQuery ?? string.Empty,
+                FolderDepth = settings.Location.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
+                UserSearchFilter = ((AQSQuery ?? string.Empty) + ' ' + settings.Filter.ToAdvancedQuerySyntax()).Trim(),
             };
 
             query.IndexerOption = SearchUnindexedItems

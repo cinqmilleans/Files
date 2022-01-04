@@ -7,6 +7,11 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
+    public interface IDateRangeFilter : ISearchFilter
+    {
+        DateRange Range { get; }
+    }
+
     public struct Date : IEquatable<Date>, IComparable<Date>, IFormattable
     {
         public static event EventHandler TodayUpdated;
@@ -404,4 +409,63 @@ namespace Files.Filesystem.Search
             }
         }
     }
+
+    public abstract class DateRangeFilter : IDateRangeFilter
+    {
+        public virtual string Glyph => "\uEC92";
+        public abstract string Title { get; }
+        public abstract string Description { get; }
+
+        public DateRange Range { get; }
+
+        protected abstract string QueryKey { get; }
+
+        public DateRangeFilter() => Range = DateRange.Always;
+        public DateRangeFilter(DateRange range) => Range = range;
+
+        public string ToAdvancedQuerySyntax()
+        {
+            var (direction, minValue, maxValue) = Range;
+
+            return direction switch
+            {
+                RangeDirections.EqualTo => $"{QueryKey}:={minValue:yyyy-MM-dd}",
+                RangeDirections.LessThan => $"{QueryKey}:<={maxValue:yyyy-MM-dd}",
+                RangeDirections.GreaterThan => $"{QueryKey}:>={minValue:yyyy-MM-dd}",
+                RangeDirections.Between => $"{QueryKey}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
+                _ => string.Empty,
+            };
+        }
+    }
+    [SearchFilter("created")]
+    public class CreatedFilter : DateRangeFilter
+    {
+        public override string Title => "DateCreated".GetLocalized();
+        public override string Description => string.Empty;
+        protected override string QueryKey => "System.ItemDate";
+
+        public CreatedFilter() : base() {}
+        public CreatedFilter(DateRange range) : base(range) {}
+    }
+    [SearchFilter("modified")]
+    public class ModifiedFilter : DateRangeFilter
+    {
+        public override string Title => "DateModified".GetLocalized();
+        public override string Description => string.Empty;
+        protected override string QueryKey => "System.DateModified";
+
+        public ModifiedFilter() : base() {}
+        public ModifiedFilter(DateRange range) : base(range) {}
+    }
+    [SearchFilter("accessed")]
+    public class AccessedFilter : DateRangeFilter
+    {
+        public override string Title => "DateAccessed".GetLocalized();
+        public override string Description => string.Empty;
+        protected override string QueryKey => "System.DateAccessed";
+
+        public AccessedFilter() : base() {}
+        public AccessedFilter(DateRange range) : base(range) {}
+    }
+
 }

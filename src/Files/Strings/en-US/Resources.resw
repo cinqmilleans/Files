@@ -2710,4 +2710,31 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
   <data name="ItemSizeText_NoLimit" xml:space="preserve">
     <value>No limit</value>
   </data>
+  <data name="And" xml:space="preserve">
+    <value>And</value>
+  </data>
+  <data name="SearchAndFilterCollection_Description" xml:space="preserve">
+    <value>Finds items that meet all the conditions in the list.</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Or</value>
+  </data>
+  <data name="SearchOrFilterCollection_Description" xml:space="preserve">
+    <value>Finds items that meet at least one condition in the list.</value>
+  </data>
+  <data name="Not" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="SearchNotFilterCollection_Description" xml:space="preserve">
+    <value>Finds items that do not meet any condition in the list.</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Date Modified</value>
+  </data>
+  <data name="DateAccessed" xml:space="preserve">
+    <value>Date Accessed</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
 </root>
