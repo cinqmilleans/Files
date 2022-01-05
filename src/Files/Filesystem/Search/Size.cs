@@ -1,5 +1,6 @@
 ﻿using ByteSizeLib;
 using Files.Extensions;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Files.Filesystem.Search
 {
     public interface ISizeRangeFilter : ISearchFilter
     {
-        SizeRange Range { get; }
+        SizeRange Range { get; set; }
     }
 
     public struct Size : IEquatable<Size>, IComparable<Size>, IFormattable
@@ -165,22 +166,14 @@ namespace Files.Filesystem.Search
         public bool Equals(IRange<Size> other)
             => other is SizeRange range && range.MinValue.Equals(MinValue) && range.MaxValue.Equals(MaxValue);
 
-        public static SizeRange operator +(SizeRange a, IRange<Size> b) => new(a, b);
-        public static SizeRange operator +(IRange<Size> a, SizeRange b) => new(a, b);
-        public static SizeRange operator -(SizeRange a, IRange<Size> b) => Substract(a, b);
-        public static SizeRange operator -(IRange<Size> a, SizeRange b) => Substract(a, b);
-        public static bool operator ==(SizeRange a, IRange<Size> b) => a.Equals(b);
-        public static bool operator ==(IRange<Size> a, SizeRange b) => a.Equals(b);
-        public static bool operator !=(SizeRange a, IRange<Size> b) => !a.Equals(b);
-        public static bool operator !=(IRange<Size> a, SizeRange b) => !a.Equals(b);
-        public static bool operator <(SizeRange a, IRange<Size> b) => a.MaxValue < b.MinValue;
-        public static bool operator <(IRange<Size> a, SizeRange b) => a.MaxValue < b.MinValue;
-        public static bool operator >(SizeRange a, IRange<Size> b) => a.MaxValue > b.MinValue;
-        public static bool operator >(IRange<Size> a, SizeRange b) => a.MaxValue > b.MinValue;
-        public static bool operator <=(SizeRange a, IRange<Size> b) => a.MaxValue <= b.MinValue;
-        public static bool operator <=(IRange<Size> a, SizeRange b) => a.MaxValue <= b.MinValue;
-        public static bool operator >=(SizeRange a, IRange<Size> b) => a.MaxValue >= b.MinValue;
-        public static bool operator >=(IRange<Size> a, SizeRange b) => a.MaxValue >= b.MinValue;
+        public static SizeRange operator +(SizeRange a, SizeRange b) => new(a, b);
+        public static SizeRange operator -(SizeRange a, SizeRange b) => Substract(a, b);
+        public static bool operator ==(SizeRange a, SizeRange b) => a.Equals(b);
+        public static bool operator !=(SizeRange a, SizeRange b) => !a.Equals(b);
+        public static bool operator <(SizeRange a, SizeRange b) => a.MaxValue < b.MinValue;
+        public static bool operator >(SizeRange a, SizeRange b) => a.MaxValue > b.MinValue;
+        public static bool operator <=(SizeRange a, SizeRange b) => a.MaxValue <= b.MinValue;
+        public static bool operator >=(SizeRange a, SizeRange b) => a.MaxValue >= b.MinValue;
 
         public bool Contains(Size size) => size >= MinValue && size <= MaxValue;
         public bool Contains(IRange<Size> range) => range.MinValue >= MinValue && range.MaxValue <= MaxValue;
@@ -260,16 +253,45 @@ namespace Files.Filesystem.Search
         }
     }
 
-    [SearchFilter("size")]
-    public class SizeRangeFilter : ISizeRangeFilter
+    [SearchHeader]
+    public class SizeHeader : ISearchHeader
     {
+        public string Key => "size";
         public string Glyph => "\uE2B2";
         public string Title => "Size".GetLocalized();
         public string Description => string.Empty;
 
-        public SizeRange Range { get; }
+        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
+        public ISizeRangeFilter GetFilter() => new SizeRangeFilter();
+    }
 
-        public SizeRangeFilter() => Range = SizeRange.All;
+    public class SizeRangeFilter : ObservableObject, ISizeRangeFilter
+    {
+        public ISearchHeader Header { get; } = new SizeHeader();
+
+        private SizeRange range = SizeRange.All;
+        public SizeRange Range
+        {
+            get => range;
+            set
+            {
+                if (SetProperty(ref range, value))
+                {
+                    OnPropertyChanged(nameof(Tags));
+                }
+            }
+        }
+
+        public IEnumerable<ISearchTag> Tags => Range.Direction switch
+        {
+            RangeDirections.EqualTo => new EqualTag(this).CreateEnumerable(),
+            RangeDirections.GreaterThan => new FromTag(this).CreateEnumerable(),
+            RangeDirections.LessThan => new ToTag(this).CreateEnumerable(),
+            RangeDirections.Between => new List<ISearchTag> { new FromTag(this), new ToTag(this) },
+            _ => Enumerable.Empty<ISearchTag>(),
+        };
+
+        public SizeRangeFilter() {}
         public SizeRangeFilter(SizeRange range) => Range = range;
 
         public string ToAdvancedQuerySyntax()
@@ -284,6 +306,43 @@ namespace Files.Filesystem.Search
                 RangeDirections.Between => $"System.Size:{minValue.Bytes}..{maxValue.Bytes}",
                 _ => string.Empty,
             };
+        }
+
+        private class EqualTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public ISizeRangeFilter Filter { get; }
+
+            public string Title => string.Empty;
+            public string Parameter => Filter.Range.Label.MinValue;
+
+            public EqualTag(ISizeRangeFilter filter) => Filter = filter;
+
+            public void Delete() => Filter.Range = SizeRange.All;
+        }
+        private class FromTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public ISizeRangeFilter Filter { get; }
+
+            public string Title => "from";
+            public string Parameter => Filter.Range.Label.MinValue;
+
+            public FromTag(ISizeRangeFilter filter) => Filter = filter;
+
+            public void Delete() => Filter.Range = new SizeRange(Size.MinValue, Filter.Range.MaxValue);
+        }
+        private class ToTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public ISizeRangeFilter Filter { get; }
+
+            public string Title => "to";
+            public string Parameter => Filter.Range.Label.MinValue;
+
+            public ToTag(ISizeRangeFilter filter) => Filter = filter;
+
+            public void Delete() => Filter.Range = new SizeRange(Filter.Range.MinValue, Size.MaxValue);
         }
     }
 }

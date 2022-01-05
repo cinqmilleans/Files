@@ -464,7 +464,7 @@ namespace Files.Filesystem.Search
 
             var query = new QueryOptions
             {
-                FolderDepth = settings.Location.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
+                FolderDepth = settings.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
                 UserSearchFilter = ((AQSQuery ?? string.Empty) + ' ' + settings.Filter.ToAdvancedQuerySyntax()).Trim(),
             };
 

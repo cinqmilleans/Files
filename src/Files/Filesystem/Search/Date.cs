@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Uwp;
+﻿using Files.Extensions;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,9 +9,20 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
+    public enum DateOrigins : ushort { Created, Modified, Accessed }
+
+    public interface IDateRangeHeader : ISearchHeader
+    {
+        DateOrigins Origin { get; }
+
+        string QueryKey { get; }
+
+        new IDateRangeFilter GetFilter();
+    }
+
     public interface IDateRangeFilter : ISearchFilter
     {
-        DateRange Range { get; }
+        DateRange Range { get; set; }
     }
 
     public struct Date : IEquatable<Date>, IComparable<Date>, IFormattable
@@ -410,62 +423,152 @@ namespace Files.Filesystem.Search
         }
     }
 
-    public abstract class DateRangeFilter : IDateRangeFilter
+    [SearchHeader]
+    public class CreatedHeader : IDateRangeHeader
     {
-        public virtual string Glyph => "\uEC92";
-        public abstract string Title { get; }
-        public abstract string Description { get; }
+        public DateOrigins Origin => DateOrigins.Created;
 
-        public DateRange Range { get; }
+        public string Key => "created";
+        public string Glyph => "\uEC26";
+        public string Title => "DateCreated".GetLocalized();
+        public string Description => string.Empty;
+        public string QueryKey => "System.ItemDate";
 
-        protected abstract string QueryKey { get; }
+        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
+        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+    }
+
+    [SearchHeader]
+    public class ModifiedHeader : IDateRangeHeader
+    {
+        public DateOrigins Origin => DateOrigins.Modified;
+
+        public string Key => "modified";
+        public string Glyph => "\uEC26";
+        public string Title => "DateModified".GetLocalized();
+        public string Description => string.Empty;
+        public string QueryKey => "System.DateModified";
+
+        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
+        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+    }
+
+    [SearchHeader]
+    public class AccessedHeader : IDateRangeHeader
+    {
+        public DateOrigins Origin => DateOrigins.Accessed;
+
+        public string Key => "accessed";
+        public string Glyph => "\uEC26";
+        public string Title => "AccessedDate".GetLocalized();
+        public string Description => string.Empty;
+        public string QueryKey => "System.DateAccessed";
+
+        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
+        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+    }
+
+    public class DateRangeFilter : ObservableObject, IDateRangeFilter
+    {
+        public DateOrigins Origin
+        {
+            get => Header.Origin;
+            set
+            {
+                if (value != Origin)
+                {
+                    Header = value switch
+                    {
+                        DateOrigins.Created => new CreatedHeader(),
+                        DateOrigins.Modified => new ModifiedHeader(),
+                        DateOrigins.Accessed => new AccessedHeader(),
+                        _ => throw new NotSupportedException(),
+                    };
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        ISearchHeader ISearchFilter.Header => Header;
+        public IDateRangeHeader Header = new ModifiedHeader();
+
+        private DateRange range = DateRange.Always;
+        public DateRange Range
+        {
+            get => range;
+            set
+            {
+                if (SetProperty(ref range, value))
+                {
+                    OnPropertyChanged(nameof(Tags));
+                }
+            }
+        }
+
+        public IEnumerable<ISearchTag> Tags => Range.Direction switch
+        {
+            RangeDirections.EqualTo => new EqualTag(this).CreateEnumerable(),
+            RangeDirections.GreaterThan => new FromTag(this).CreateEnumerable(),
+            RangeDirections.LessThan => new ToTag(this).CreateEnumerable(),
+            RangeDirections.Between => new List<ISearchTag> { new FromTag(this), new ToTag(this) },
+            _ => Enumerable.Empty<ISearchTag>(),
+        };
 
         public DateRangeFilter() => Range = DateRange.Always;
+        public DateRangeFilter(DateOrigins origin) => Origin = origin;
         public DateRangeFilter(DateRange range) => Range = range;
+        public DateRangeFilter(DateOrigins origin, DateRange range) => (Origin, Range) = (origin, range);
 
         public string ToAdvancedQuerySyntax()
         {
+            string key = Header.QueryKey;
             var (direction, minValue, maxValue) = Range;
 
             return direction switch
             {
-                RangeDirections.EqualTo => $"{QueryKey}:={minValue:yyyy-MM-dd}",
-                RangeDirections.LessThan => $"{QueryKey}:<={maxValue:yyyy-MM-dd}",
-                RangeDirections.GreaterThan => $"{QueryKey}:>={minValue:yyyy-MM-dd}",
-                RangeDirections.Between => $"{QueryKey}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
+                RangeDirections.EqualTo => $"{key}:={minValue:yyyy-MM-dd}",
+                RangeDirections.LessThan => $"{key}:<={maxValue:yyyy-MM-dd}",
+                RangeDirections.GreaterThan => $"{key}:>={minValue:yyyy-MM-dd}",
+                RangeDirections.Between => $"{key}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
                 _ => string.Empty,
             };
         }
-    }
-    [SearchFilter("created")]
-    public class CreatedFilter : DateRangeFilter
-    {
-        public override string Title => "DateCreated".GetLocalized();
-        public override string Description => string.Empty;
-        protected override string QueryKey => "System.ItemDate";
 
-        public CreatedFilter() : base() {}
-        public CreatedFilter(DateRange range) : base(range) {}
-    }
-    [SearchFilter("modified")]
-    public class ModifiedFilter : DateRangeFilter
-    {
-        public override string Title => "DateModified".GetLocalized();
-        public override string Description => string.Empty;
-        protected override string QueryKey => "System.DateModified";
+        private class EqualTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public IDateRangeFilter Filter { get; }
 
-        public ModifiedFilter() : base() {}
-        public ModifiedFilter(DateRange range) : base(range) {}
-    }
-    [SearchFilter("accessed")]
-    public class AccessedFilter : DateRangeFilter
-    {
-        public override string Title => "DateAccessed".GetLocalized();
-        public override string Description => string.Empty;
-        protected override string QueryKey => "System.DateAccessed";
+            public string Title => string.Empty;
+            public string Parameter => Filter.Range.Label.MinValue;
 
-        public AccessedFilter() : base() {}
-        public AccessedFilter(DateRange range) : base(range) {}
-    }
+            public EqualTag(IDateRangeFilter filter) => Filter = filter;
 
+            public void Delete() => Filter.Range = DateRange.Always;
+        }
+        private class FromTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public IDateRangeFilter Filter { get; }
+
+            public string Title => "from";
+            public string Parameter => Filter.Range.Label.MinValue;
+
+            public FromTag(IDateRangeFilter filter) => Filter = filter;
+
+            public void Delete() => Filter.Range = new DateRange(Date.MinValue, Filter.Range.MaxValue);
+        }
+        private class ToTag : ISearchTag
+        {
+            ISearchFilter ISearchTag.Filter => Filter;
+            public IDateRangeFilter Filter { get; }
+
+            public string Title => "to";
+            public string Parameter => Filter.Range.Label.MinValue;
+
+            public ToTag(IDateRangeFilter filter) => Filter = filter;
+
+            public void Delete() => Filter.Range = new DateRange(Filter.Range.MinValue, Date.MaxValue);
+        }
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace Files.Filesystem.Search
+﻿using System;
+
+namespace Files.Filesystem.Search
 {
     public enum RangeDirections : ushort
     {
