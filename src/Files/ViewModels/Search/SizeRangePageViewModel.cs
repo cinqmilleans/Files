@@ -7,19 +7,19 @@ namespace Files.ViewModels.Search
 {
     public interface ISizeRangePageViewModel : ISearchPageViewModel
     {
-        new IDateRangeFilter Filter { get; }
+        new ISizeRangeFilter Filter { get; }
     }
 
     public class SizeRangePageViewModel : ObservableObject, ISizeRangePageViewModel
     {
-        public ISearchNavigator Navigator { get; }
+        public ISearchContext Context { get; }
 
         ISearchFilter ISearchPageViewModel.Filter => Filter;
-        public IDateRangeFilter Filter { get; }
+        public ISizeRangeFilter Filter { get; }
 
         public IEnumerable<ISearchHeader> Alternatives => Filter.Header.CreateEnumerable();
 
-        public SizeRangePageViewModel(ISearchNavigator navigator, IDateRangeFilter filter)
-            => (Navigator, Filter) = (navigator, filter);
+        public SizeRangePageViewModel(ISearchContext context, ISizeRangeFilter filter)
+            => (Context, Filter) = (context, filter);
     }
 }

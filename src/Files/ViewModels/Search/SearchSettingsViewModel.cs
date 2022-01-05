@@ -5,16 +5,16 @@ namespace Files.ViewModels.Search
 {
     public interface ISearchSettingsViewModel
     {
-        ISearchNavigator Navigator { get; }
+        ISearchContext Context { get; }
         ISearchSettings Settings { get; }
     }
 
     public class SearchSettingsViewModel : ObservableObject, ISearchSettingsViewModel
     {
-        public ISearchNavigator Navigator { get; }
+        public ISearchContext Context { get; }
         public ISearchSettings Settings { get; }
 
-        public SearchSettingsViewModel(ISearchNavigator navigator, ISearchSettings settings)
-            => (Navigator, Settings) = (navigator, settings);
+        public SearchSettingsViewModel(ISearchContext context, ISearchSettings settings)
+            => (Context, Settings) = (context, settings);
     }
 }

@@ -3,6 +3,7 @@ using Files.Common;
 using Files.Controllers;
 using Files.Filesystem;
 using Files.Filesystem.FilesystemHistory;
+using Files.Filesystem.Search;
 using Files.Helpers;
 using Files.Services;
 using Files.Services.Implementation;
@@ -105,6 +106,7 @@ namespace Files
                 // Settings not related to IUserSettingsService:
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
+                .AddSingleton<ISearchSettings, SearchSettings>()
 
                 // TODO: Dialogs:
 
