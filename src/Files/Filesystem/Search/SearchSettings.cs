@@ -11,7 +11,7 @@ namespace Files.Filesystem.Search
     {
         bool SearchInSubFolders { get; set; }
 
-        SearchFilterCollection Filter { get; }
+        ISearchFilterCollection Filter { get; }
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
@@ -25,7 +25,7 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref searchInSubFolders, value);
         }
 
-        public SearchFilterCollection Filter { get; } = new SearchFilterCollection(GroupAggregates.And);
+        public ISearchFilterCollection Filter { get; } = new SearchFilterCollection(GroupAggregates.And);
 
         public SearchSettings()
         {

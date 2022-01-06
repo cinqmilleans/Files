@@ -1,5 +1,7 @@
-﻿using Files.Filesystem.Search;
+﻿using Files.Extensions;
+using Files.Filesystem.Search;
 using Files.UserControls.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,16 +9,18 @@ using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
-    public interface ISearchPageViewModel : INotifyPropertyChanged
+    public interface ISearchFilterViewModel : INotifyPropertyChanged
     {
+        ICommand ClearCommand { get; }
+
         ISearchContext Context { get; }
         ISearchFilter Filter { get; }
         IEnumerable<ISearchHeader> Alternatives { get; }
     }
 
-    public interface ISearchPageViewModelFactory
+    public interface ISearchFilterViewModelFactory
     {
-        ISearchPageViewModel GetViewModel(ISearchFilter filter);
+        ISearchFilterViewModel GetViewModel(ISearchFilter filter);
     }
 
     public interface ISearchContext
@@ -33,17 +37,37 @@ namespace Files.ViewModels.Search
         ISearchContext GetChild(ISearchFilter filter);
     }
 
-    public class SearchPageViewModelFactory : ISearchPageViewModelFactory
+    public class SearchFilterViewModel<T> : ObservableObject, ISearchFilterViewModel where T : ISearchFilter
+    {
+        public ISearchContext Context { get; }
+
+        ISearchFilter ISearchFilterViewModel.Filter => Filter;
+        public T Filter { get; }
+
+        public virtual IEnumerable<ISearchHeader> Alternatives => Filter.Header.CreateEnumerable();
+
+        public ICommand ClearCommand { get; }
+
+        public SearchFilterViewModel(ISearchContext context, T filter)
+        {
+            Context = context;
+            Filter = filter;
+
+            ClearCommand = new RelayCommand(Filter.Clear);
+        }
+    }
+
+    public class SearchFilterViewModelFactory : ISearchFilterViewModelFactory
     {
         private readonly ISearchContext context;
 
-        public SearchPageViewModelFactory(ISearchContext context) => this.context = context;
+        public SearchFilterViewModelFactory(ISearchContext context) => this.context = context;
 
-        public ISearchPageViewModel GetViewModel(ISearchFilter filter) => filter switch
+        public ISearchFilterViewModel GetViewModel(ISearchFilter filter) => filter switch
         {
             //ISearchFilterCollection f => new GroupPageViewModel(context, f),
             //IDateRangeFilter f => new DateRangePageViewModel(context, f),
-            ISizeRangeFilter f => new SizeRangePageViewModel(context, f),
+            ISizeRangeFilter f => new SearchFilterViewModel<ISizeRangeFilter>(context, f),
             _ => null,
         };
     }
@@ -74,7 +98,7 @@ namespace Files.ViewModels.Search
         public void GoPage(ISearchFilter filter)
         {
             var child = GetChild(filter);
-            var factory = new SearchPageViewModelFactory(child);
+            var factory = new SearchFilterViewModelFactory(child);
             var viewModel = factory.GetViewModel(filter);
 
             navigator.GoPage(viewModel);

@@ -269,6 +269,8 @@ namespace Files.Filesystem.Search
     {
         public ISearchHeader Header { get; } = new SizeHeader();
 
+        public bool IsEmpty => range == SizeRange.None || range == SizeRange.All;
+
         private SizeRange range = SizeRange.All;
         public SizeRange Range
         {
@@ -277,6 +279,7 @@ namespace Files.Filesystem.Search
             {
                 if (SetProperty(ref range, value))
                 {
+                    OnPropertyChanged(nameof(IsEmpty));
                     OnPropertyChanged(nameof(Tags));
                 }
             }
@@ -293,6 +296,8 @@ namespace Files.Filesystem.Search
 
         public SizeRangeFilter() {}
         public SizeRangeFilter(SizeRange range) => Range = range;
+
+        public void Clear() => Range = SizeRange.All;
 
         public string ToAdvancedQuerySyntax()
         {
@@ -325,7 +330,7 @@ namespace Files.Filesystem.Search
             ISearchFilter ISearchTag.Filter => Filter;
             public ISizeRangeFilter Filter { get; }
 
-            public string Title => "from";
+            public string Title => "Range_From".GetLocalized();
             public string Parameter => Filter.Range.Label.MinValue;
 
             public FromTag(ISizeRangeFilter filter) => Filter = filter;
@@ -337,7 +342,7 @@ namespace Files.Filesystem.Search
             ISearchFilter ISearchTag.Filter => Filter;
             public ISizeRangeFilter Filter { get; }
 
-            public string Title => "to";
+            public string Title => "Range_To".GetLocalized();
             public string Parameter => Filter.Range.Label.MinValue;
 
             public ToTag(ISizeRangeFilter filter) => Filter = filter;

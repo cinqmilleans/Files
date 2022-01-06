@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Files.ViewModels.Search;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Files.UserControls.Search
@@ -43,7 +44,7 @@ namespace Files.UserControls.Search
 
         public void GoPage(object viewModel)
         {
-            /*if (Frame is null)
+            if (Frame is null)
             {
                 return;
             }
@@ -52,16 +53,16 @@ namespace Files.UserControls.Search
                 case ISearchSettingsViewModel:
                     Frame.Navigate(typeof(SearchSettingsPage), viewModel, emptyTransition);
                     break;
-                case IMultiSearchPageViewModel:
-                    Frame.Navigate(typeof(MultiFilterPage), viewModel, toRightTransition);
-                    break;
-                case ISearchPageViewModel:
-                    Frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
-                    break;
-                default:
-                    Frame.Content = null;
-                    break;
-            }*/
+                //case IMultiSearchPageViewModel:
+                //    Frame.Navigate(typeof(MultiFilterPage), viewModel, toRightTransition);
+                //    break;
+                //case ISearchPageViewModel:
+                //    Frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
+                //    break;
+                //default:
+                //    Frame.Content = null;
+                //    break;
+            }
         }
     }
 }

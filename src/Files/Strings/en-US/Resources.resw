@@ -2734,7 +2734,22 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
   <data name="DateAccessed" xml:space="preserve">
     <value>Date Accessed</value>
   </data>
-  <data name="Size" xml:space="preserve">
-    <value>Size</value>
+  <data name="Range_From" xml:space="preserve">
+    <value>from</value>
+  </data>
+  <data name="Range_To" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchOptions" xml:space="preserve">
+    <value>Search Options</value>
+  </data>
+  <data name="IncludeSubfolders" xml:space="preserve">
+    <value>Include Subfolders</value>
   </data>
 </root>

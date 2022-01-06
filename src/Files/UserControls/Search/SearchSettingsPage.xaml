@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="Files.UserControls.Search.SearchSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Files.UserControls.Search"
+    xmlns:converters="using:Files.Converters"
+    xmlns:helpers="using:Files.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="SearchSettingOptions_Title" FontSize="18" FontWeight="SemiBold" Text="{helpers:ResourceString Name=SearchOptions}" />
+        <!--<local:Picker Grid.Row="1" ViewModel="{x:Bind ViewModel.FilterViewModel}" />-->
+        <CheckBox Grid.Row="1"
+            Content="{helpers:ResourceString Name=IncludeSubfolders}" IsChecked="{x:Bind ViewModel.Settings.SearchInSubFolders, Mode=TwoWay}" />
+        <Grid Grid.Row="3" Margin="0,24,0,0" HorizontalAlignment="Stretch" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="SearchButton"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" Command="{x:Bind ViewModel.Context.SearchCommand}" />
+            <Button x:Name="ClearButton" Grid.Column="1"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}" Command="{x:Bind ViewModel.ClearCommand}"
+                IsEnabled="{x:Bind ViewModel.Filter.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
+        </Grid>
+    </Grid>
+
+</Page>

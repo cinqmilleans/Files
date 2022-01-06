@@ -478,13 +478,12 @@
             <uc:SearchBox
                 x:Name="SearchRegion"
                 Grid.Column="2"
-                Width="240"
+                Width="256"
                 Height="33"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Canvas.ZIndex="100"
                 CornerRadius="{StaticResource ControlCornerRadius}"
-                LostFocus="SearchRegion_LostFocus"
                 SearchBoxViewModel="{x:Bind ViewModel.SearchBoxViewModel, Mode=OneWay}"
                 Visibility="{x:Bind converters:MultiBooleanConverter.OrConvertToVisibility(ShowSearchBox, ViewModel.IsSearchBoxVisible), Mode=OneWay}">
                 <uc:SearchBox.KeyboardAccelerators>

@@ -17,7 +17,11 @@ namespace Files.Filesystem.Search
     public interface ISearchFilter : INotifyPropertyChanged
     {
         ISearchHeader Header { get; }
+
+        bool IsEmpty { get; }
         IEnumerable<ISearchTag> Tags { get; }
+
+        void Clear();
 
         string ToAdvancedQuerySyntax();
     }

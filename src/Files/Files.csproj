@@ -357,6 +357,9 @@
       <DependentUpon>NamedSizeRangePicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\SearchNavigator.cs" />
+    <Compile Include="UserControls\Search\SearchSettingsPage.xaml.cs">
+      <DependentUpon>SearchSettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
       <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
     </Compile>
@@ -390,9 +393,8 @@
     <Compile Include="ViewModels\Properties\CompatibilityProperties.cs" />
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
-    <Compile Include="ViewModels\Search\SearchPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchFilterViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Search\SizeRangePageViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="Models\JsonSettings\BaseJsonSettingsModel.cs" />
     <Compile Include="ViewModels\ColumnsViewModel.cs" />
@@ -1290,6 +1292,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\Search\NamedSizeRangePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\SearchSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

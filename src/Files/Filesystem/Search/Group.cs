@@ -120,6 +120,8 @@ namespace Files.Filesystem.Search
         ISearchHeader ISearchFilter.Header => Header;
         public IGroupHeader Header = new AndHeader();
 
+        public bool IsEmpty => !this.Any();
+
         public IEnumerable<ISearchTag> Tags => this.Any()
             ? new ISearchTag[1] { new Tag(this) }
             : Enumerable.Empty<ISearchTag>();
@@ -139,6 +141,7 @@ namespace Files.Filesystem.Search
         {
             base.OnCollectionChanged(e);
 
+            OnPropertyChanged(nameof(IsEmpty));
             OnPropertyChanged(nameof(Tags));
         }
 
@@ -155,7 +158,7 @@ namespace Files.Filesystem.Search
 
             public Tag(ISearchFilterCollection filter) => Filter = filter;
 
-            public void Delete() => Filter.Clear();
+            public void Delete() => (Filter as ISearchFilter).Clear();
         }
     }
 }

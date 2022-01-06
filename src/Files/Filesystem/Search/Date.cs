@@ -492,6 +492,8 @@ namespace Files.Filesystem.Search
         ISearchHeader ISearchFilter.Header => Header;
         public IDateRangeHeader Header = new ModifiedHeader();
 
+        public bool IsEmpty => range == DateRange.None || range == DateRange.Always;
+
         private DateRange range = DateRange.Always;
         public DateRange Range
         {
@@ -500,6 +502,7 @@ namespace Files.Filesystem.Search
             {
                 if (SetProperty(ref range, value))
                 {
+                    OnPropertyChanged(nameof(IsEmpty));
                     OnPropertyChanged(nameof(Tags));
                 }
             }
@@ -518,6 +521,8 @@ namespace Files.Filesystem.Search
         public DateRangeFilter(DateOrigins origin) => Origin = origin;
         public DateRangeFilter(DateRange range) => Range = range;
         public DateRangeFilter(DateOrigins origin, DateRange range) => (Origin, Range) = (origin, range);
+
+        public void Clear() => Range = DateRange.Always;
 
         public string ToAdvancedQuerySyntax()
         {
@@ -551,7 +556,7 @@ namespace Files.Filesystem.Search
             ISearchFilter ISearchTag.Filter => Filter;
             public IDateRangeFilter Filter { get; }
 
-            public string Title => "from";
+            public string Title => "Range_From".GetLocalized();
             public string Parameter => Filter.Range.Label.MinValue;
 
             public FromTag(IDateRangeFilter filter) => Filter = filter;
@@ -563,7 +568,7 @@ namespace Files.Filesystem.Search
             ISearchFilter ISearchTag.Filter => Filter;
             public IDateRangeFilter Filter { get; }
 
-            public string Title => "to";
+            public string Title => "Range_To".GetLocalized();
             public string Parameter => Filter.Range.Label.MinValue;
 
             public ToTag(IDateRangeFilter filter) => Filter = filter;
