@@ -20,11 +20,8 @@ namespace Files.UserControls.Search
 
     public class SearchFilterPickerTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate SettingsTemplate { get; set; }
-
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            ISettingsFilterViewModel => SettingsTemplate,
             _ => null,
         };
 
