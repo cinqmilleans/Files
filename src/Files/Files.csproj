@@ -350,6 +350,9 @@
     <Compile Include="UserControls\Search\CalendarRangePicker.xaml.cs">
       <DependentUpon>CalendarRangePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\SearchFilterPage.xaml.cs">
+      <DependentUpon>SearchFilterPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\RelativeDateRangePicker.xaml.cs">
       <DependentUpon>RelativeDateRangePicker.xaml</DependentUpon>
     </Compile>
@@ -357,8 +360,8 @@
       <DependentUpon>NamedSizeRangePicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\SearchNavigator.cs" />
-    <Compile Include="UserControls\Search\SearchSettingsPage.xaml.cs">
-      <DependentUpon>SearchSettingsPage.xaml</DependentUpon>
+    <Compile Include="UserControls\Search\SearchFilterPicker.xaml.cs">
+      <DependentUpon>SearchFilterPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
       <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
@@ -394,7 +397,7 @@
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchFilterViewModel.cs" />
-    <Compile Include="ViewModels\Search\SearchSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Search\SettingsFilterViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="Models\JsonSettings\BaseJsonSettingsModel.cs" />
     <Compile Include="ViewModels\ColumnsViewModel.cs" />
@@ -1287,6 +1290,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControls\Search\SearchFilterPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\Search\RelativeDateRangePicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1295,7 +1302,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\Search\SearchSettingsPage.xaml">
+    <Page Include="UserControls\Search\SearchFilterPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

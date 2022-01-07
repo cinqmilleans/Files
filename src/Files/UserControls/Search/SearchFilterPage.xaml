@@ -1,0 +1,51 @@
+﻿<Page
+    x:Class="Files.UserControls.Search.SearchFilterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Files.UserControls.Search"
+    xmlns:vm="using:Files.ViewModels.Search"
+    xmlns:converters="using:Files.Converters"
+    xmlns:helpers="using:Files.Helpers"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+
+        <local:SearchFilterPageTemplateSelector x:Key="PageTemplateSelector"
+            SettingsPageTemplate="{StaticResource SettingsPageTemplate}"
+            SinglePageTemplate="{StaticResource SinglePageTemplate}"
+            MultiPageTemplate="{StaticResource MultiPageTemplate}" />
+
+        <DataTemplate x:Key="SettingsPageTemplate" x:DataType="vm:ISettingsFilterViewModel">
+            <Grid />
+        </DataTemplate>
+
+        <DataTemplate x:Key="SinglePageTemplate" x:DataType="vm:ISearchFilterViewModel">
+            <Grid />
+        </DataTemplate>
+
+        <DataTemplate x:Key="MultiPageTemplate" x:DataType="vm:ISettingsFilterViewModel">
+            <Grid />
+        </DataTemplate>
+
+    </Page.Resources>
+
+    <StackPanel x:Name="RootPanel" Orientation="Vertical" VerticalAlignment="Stretch">
+        <ContentControl HorizontalContentAlignment="Stretch"
+            Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PageTemplateSelector}" />
+        <Grid Margin="0,24,0,0" HorizontalAlignment="Stretch" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="SearchButton"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" Command="{x:Bind ViewModel.Context.SearchCommand}" />
+            <Button x:Name="ClearButton" Grid.Column="1"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}" Command="{x:Bind ViewModel.ClearCommand}"
+                IsEnabled="{x:Bind ViewModel.Filter.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
+        </Grid>
+    </StackPanel>
+
+</Page>

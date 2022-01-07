@@ -50,18 +50,15 @@ namespace Files.UserControls.Search
             }
             switch (viewModel)
             {
-                case ISearchSettingsViewModel:
-                    Frame.Navigate(typeof(SearchSettingsPage), viewModel, emptyTransition);
+                case ISettingsFilterViewModel:
+                    Frame.Navigate(typeof(SearchFilterPage), viewModel, emptyTransition);
                     break;
-                //case IMultiSearchPageViewModel:
-                //    Frame.Navigate(typeof(MultiFilterPage), viewModel, toRightTransition);
-                //    break;
-                //case ISearchPageViewModel:
-                //    Frame.Navigate(typeof(FilterPage), viewModel, toRightTransition);
-                //    break;
-                //default:
-                //    Frame.Content = null;
-                //    break;
+                case ISearchFilterViewModel:
+                    Frame.Navigate(typeof(SearchFilterPage), viewModel, toRightTransition);
+                    break;
+                default:
+                    Frame.Content = null;
+                    break;
             }
         }
     }

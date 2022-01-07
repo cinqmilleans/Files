@@ -13,7 +13,7 @@ namespace Files.UserControls
     public sealed partial class SearchBox : UserControl
     {
         private readonly SearchNavigator navigator = new();
-        private readonly ISearchSettingsViewModel searchSettingsViewModel;
+        private readonly ISettingsFilterViewModel settingsFilterViewModel;
 
         public static readonly DependencyProperty SearchBoxViewModelProperty =
             DependencyProperty.Register(nameof(SearchBoxViewModel), typeof(SearchBoxViewModel), typeof(SearchBox), new PropertyMetadata(null));
@@ -30,7 +30,7 @@ namespace Files.UserControls
 
             ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
             ISearchContext context = new SearchContext(navigator, settings.Filter);
-            searchSettingsViewModel = new SearchSettingsViewModel(context, settings);
+            settingsFilterViewModel = new SettingsFilterViewModel(context, settings);
         }
 
         private void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
@@ -44,7 +44,7 @@ namespace Files.UserControls
         {
             navigator.SearchBox = SearchBoxViewModel;
             navigator.Frame = sender as Frame;
-            navigator.GoPage(searchSettingsViewModel);
+            navigator.GoPage(settingsFilterViewModel);
         }
         private void MenuButton_Loaded(object sender, RoutedEventArgs e)
         {
@@ -57,9 +57,9 @@ namespace Files.UserControls
         }
 
         private void MenuBadge_Loaded(object sender, RoutedEventArgs e) =>
-            (sender as FrameworkElement).DataContext = searchSettingsViewModel;
+            (sender as FrameworkElement).DataContext = settingsFilterViewModel;
 
-        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(searchSettingsViewModel);
+        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(settingsFilterViewModel);
         private void MenuFlyout_Closed(object sender, object e) => navigator.GoPage(null);
     }
 }
