@@ -366,6 +366,9 @@
     <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
       <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Search\TagControl.xaml.cs">
+      <DependentUpon>TagControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Selection\ExtendPreviousItemSelectionStrategy.cs" />
     <Compile Include="Helpers\GenericItemsCollection.cs" />
     <Compile Include="UserControls\Selection\IgnorePreviousItemSelectionStrategy.cs" />
@@ -1309,6 +1312,10 @@
     <Page Include="UserControls\Search\SizeRangeSlider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\TagControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Settings\SettingsBlockControl.xaml">
       <Generator>MSBuild:Compile</Generator>

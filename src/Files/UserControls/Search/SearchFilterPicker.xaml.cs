@@ -1,4 +1,4 @@
-﻿using Files.ViewModels.Search;
+﻿using Files.Filesystem.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -7,11 +7,11 @@ namespace Files.UserControls.Search
     public sealed partial class SearchFilterPicker : UserControl
     {
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(ISearchFilterViewModel), typeof(SearchFilterPicker), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(ISearchFilter), typeof(SearchFilterPicker), new PropertyMetadata(null));
 
-        public ISearchFilterViewModel ViewModel
+        public ISearchFilter ViewModel
         {
-            get => (ISearchFilterViewModel)GetValue(ViewModelProperty);
+            get => (ISearchFilter)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
@@ -20,8 +20,15 @@ namespace Files.UserControls.Search
 
     public class SearchFilterPickerTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate CollectionTemplate { get; set; }
+        public DataTemplate SizeRangeTemplate { get; set; }
+        public DataTemplate DateRangeTemplate { get; set; }
+
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
+            ISearchFilterCollection => CollectionTemplate,
+            ISizeRangeFilter => SizeRangeTemplate,
+            IDateRangeFilter => DateRangeTemplate,
             _ => null,
         };
 

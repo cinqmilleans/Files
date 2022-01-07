@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:vm="using:Files.ViewModels.Search"
+    xmlns:s="using:Files.Filesystem.Search"
     xmlns:local="using:Files.UserControls.Search"
     xmlns:helpers="using:Files.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,7 +11,28 @@
 
     <UserControl.Resources>
 
-        <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector" />
+        <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
+            CollectionTemplate="{StaticResource CollectionTemplate}"
+            SizeRangeTemplate="{StaticResource SizeRangeTemplate}"
+            DateRangeTemplate="{StaticResource DateRangeTemplate}" />
+
+        <DataTemplate x:Key="CollectionTemplate" x:DataType="s:ISearchFilterCollection">
+            <ItemsControl ItemsSource="{x:Bind Tags}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="s:ISearchTag">
+                        <local:TagControl SearchTag="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeRangeFilter">
+            <Grid />
+        </DataTemplate>
+
+        <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateRangeFilter">
+            <Grid />
+        </DataTemplate>
 
     </UserControl.Resources>
 
