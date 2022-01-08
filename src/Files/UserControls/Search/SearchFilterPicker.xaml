@@ -32,7 +32,8 @@
                             </Grid.RowDefinitions>
                             <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="&#xEC92;" />
                             <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
-                            <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
+                            <Button x:Name="OpenButton" Grid.Column="2" Tapped="OpenButton_Tapped"
+                                Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
                                 <Button.Content>
                                     <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
                                 </Button.Content>

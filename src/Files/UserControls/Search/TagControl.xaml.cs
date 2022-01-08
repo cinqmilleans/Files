@@ -42,7 +42,7 @@ namespace Files.UserControls.Search
             }
         }
 
-        private void MainButton_Click(object sender, RoutedEventArgs e) {}
-        private void CloseButton_Click(object sender, RoutedEventArgs e) => SearchTag.Delete();
+        private void MainButton_Tapped(object sender, TappedRoutedEventArgs e) {}
+        private void CloseButton_Tapped(object sender, TappedRoutedEventArgs e) => SearchTag.Delete();
     }
 }

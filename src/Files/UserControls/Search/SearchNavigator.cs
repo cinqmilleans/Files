@@ -6,9 +6,11 @@ namespace Files.UserControls.Search
 {
     public interface ISearchNavigator
     {
+        void Initialize(ISearchBox box, Frame frame);
+
         void Search();
         void Back();
-        void GoPage(object viewModel);
+        void GoPage(object ISearchFilter);
     }
 
     public class SearchNavigator : ISearchNavigator
@@ -18,16 +20,18 @@ namespace Files.UserControls.Search
         private readonly NavigationTransitionInfo toRightTransition =
             new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
 
-        public ISearchBox SearchBox { get; set; }
-        public Frame Frame { get; set; }
+        private ISearchBox box;
+        private Frame frame;
+
+        public void Initialize(ISearchBox box, Frame frame) => (this.box, this.frame) = (box, frame);
 
         public void Search()
         {
-            if (SearchBox is not null)
+            if (box is not null)
             {
-                if (string.IsNullOrWhiteSpace(SearchBox.Query))
+                if (string.IsNullOrWhiteSpace(box.Query))
                 {
-                    SearchBox.Query = "*";
+                    box.Query = "*";
                 }
                 //SearchBox.Search();
                 //SearchBox.IsMenuOpen = false;
@@ -36,28 +40,28 @@ namespace Files.UserControls.Search
 
         public void Back()
         {
-            if (Frame is not null && Frame.CanGoBack)
+            if (frame is not null && frame.CanGoBack)
             {
-                Frame.GoBack(toRightTransition);
+                frame.GoBack(toRightTransition);
             }
         }
 
         public void GoPage(object viewModel)
         {
-            if (Frame is null)
+            if (frame is null)
             {
                 return;
             }
             switch (viewModel)
             {
-                case ISettingsFilterViewModel:
-                    Frame.Navigate(typeof(SearchFilterPage), viewModel, emptyTransition);
+                case ISettingsPageViewModel:
+                    frame.Navigate(typeof(SearchFilterPage), viewModel, emptyTransition);
                     break;
-                case ISearchFilterViewModel:
-                    Frame.Navigate(typeof(SearchFilterPage), viewModel, toRightTransition);
+                case ISearchPageViewModel:
+                    frame.Navigate(typeof(SearchFilterPage), viewModel, toRightTransition);
                     break;
                 default:
-                    Frame.Content = null;
+                    frame.Content = null;
                     break;
             }
         }

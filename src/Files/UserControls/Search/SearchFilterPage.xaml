@@ -18,7 +18,7 @@
             SinglePageTemplate="{StaticResource SinglePageTemplate}"
             MultiPageTemplate="{StaticResource MultiPageTemplate}" />
 
-        <DataTemplate x:Key="SettingsPageTemplate" x:DataType="vm:ISettingsFilterViewModel">
+        <DataTemplate x:Key="SettingsPageTemplate" x:DataType="vm:ISettingsPageViewModel">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -32,11 +32,11 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="SinglePageTemplate" x:DataType="vm:ISearchFilterViewModel">
+        <DataTemplate x:Key="SinglePageTemplate" x:DataType="vm:ISearchPageViewModel">
             <Grid />
         </DataTemplate>
 
-        <DataTemplate x:Key="MultiPageTemplate" x:DataType="vm:ISettingsFilterViewModel">
+        <DataTemplate x:Key="MultiPageTemplate" x:DataType="vm:ISettingsPageViewModel">
             <Grid />
         </DataTemplate>
 
@@ -51,9 +51,9 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button x:Name="SearchButton"
-                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" Command="{x:Bind ViewModel.Context.SearchCommand}" />
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" Tapped="SearchButton_Tapped" />
             <Button x:Name="ClearButton" Grid.Column="1"
-                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}" Command="{x:Bind ViewModel.ClearCommand}"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}" Tapped="ClearButton_Tapped"
                 IsEnabled="{x:Bind ViewModel.Filter.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
         </Grid>
     </StackPanel>

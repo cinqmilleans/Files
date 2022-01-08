@@ -13,7 +13,7 @@ namespace Files.UserControls
     public sealed partial class SearchBox : UserControl
     {
         private readonly SearchNavigator navigator = new();
-        private readonly ISettingsFilterViewModel settingsFilterViewModel;
+        private readonly ISettingsPageViewModel settingsPageViewModel;
 
         public static readonly DependencyProperty SearchBoxViewModelProperty =
             DependencyProperty.Register(nameof(SearchBoxViewModel), typeof(SearchBoxViewModel), typeof(SearchBox), new PropertyMetadata(null));
@@ -29,8 +29,7 @@ namespace Files.UserControls
             InitializeComponent();
 
             ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
-            ISearchContext context = new SearchContext(navigator, settings.Filter);
-            settingsFilterViewModel = new SettingsFilterViewModel(context, settings);
+            settingsPageViewModel = new SettingsPageViewModel(settings);
         }
 
         private void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
@@ -42,9 +41,8 @@ namespace Files.UserControls
 
         private void MenuFrame_Loaded(object sender, RoutedEventArgs e)
         {
-            navigator.SearchBox = SearchBoxViewModel;
-            navigator.Frame = sender as Frame;
-            navigator.GoPage(settingsFilterViewModel);
+            navigator.Initialize(SearchBoxViewModel, sender as Frame);
+            navigator.GoPage(settingsPageViewModel);
         }
         private void MenuButton_Loaded(object sender, RoutedEventArgs e)
         {
@@ -57,9 +55,9 @@ namespace Files.UserControls
         }
 
         private void MenuBadge_Loaded(object sender, RoutedEventArgs e) =>
-            (sender as FrameworkElement).DataContext = settingsFilterViewModel;
+            (sender as FrameworkElement).DataContext = settingsPageViewModel;
 
-        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(settingsFilterViewModel);
+        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(settingsPageViewModel);
         private void MenuFlyout_Closed(object sender, object e) => navigator.GoPage(null);
     }
 }

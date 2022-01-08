@@ -3,17 +3,18 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using System.Linq;
+using Windows.UI.Xaml.Input;
 
 namespace Files.UserControls.Search
 {
     public sealed partial class SearchFilterPage : Page
     {
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(ISearchFilterViewModel), typeof(SearchFilterPage), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(ISearchPageViewModel), typeof(SearchFilterPage), new PropertyMetadata(null));
 
-        private ISearchFilterViewModel ViewModel
+        private ISearchPageViewModel ViewModel
         {
-            get => (ISearchFilterViewModel)GetValue(ViewModelProperty);
+            get => (ISearchPageViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
@@ -22,8 +23,11 @@ namespace Files.UserControls.Search
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ViewModel = e.Parameter as ISearchFilterViewModel;
+            ViewModel = e.Parameter as ISearchPageViewModel;
         }
+
+        private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e) {}
+        private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.Filter.Clear();
     }
 
     public class SearchFilterPageTemplateSelector : DataTemplateSelector
@@ -34,8 +38,8 @@ namespace Files.UserControls.Search
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            ISettingsFilterViewModel => SettingsPageTemplate,
-            ISearchFilterViewModel vm => vm.Alternatives.Count() switch
+            ISettingsPageViewModel => SettingsPageTemplate,
+            ISearchPageViewModel vm => vm.Headers.Count() switch
             {
                 0 => null,
                 1 => SinglePageTemplate,

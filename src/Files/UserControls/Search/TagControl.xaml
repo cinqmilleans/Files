@@ -21,8 +21,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Button x:Name="MainButton" Padding="4" CornerRadius="4" FontSize="12"
-            PointerEntered="MainButton_PointerEntered" PointerExited="MainButton_PointerExited" Click="MainButton_Click">
+    <Button x:Name="MainButton" Padding="4" CornerRadius="4" FontSize="12" Tapped="MainButton_Tapped"
+            PointerEntered="MainButton_PointerEntered" PointerExited="MainButton_PointerExited">
         <Button.Content>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -34,8 +34,9 @@
                     <Run Text="{x:Bind SearchTag.Parameter}" FontWeight="Bold" Foreground="{ThemeResource ParameterForeground}" />
                 </TextBlock>
                 <Grid Grid.Column="1" Width="12" Margin="0,0,-8,0">
-                    <Button x:Name="CloseButton" Visibility="Collapsed" Click="CloseButton_Click"
-                        Width="12" Padding="0" VerticalAlignment="Center" Opacity="0.60" Background="Transparent" BorderBrush="Transparent">
+                    <Button x:Name="CloseButton" Visibility="Collapsed" Tapped="CloseButton_Tapped"
+                        Width="12" Padding="0" VerticalAlignment="Center" Opacity="0.60"
+                        Background="Transparent" BorderBrush="Transparent">
                         <Button.Content>
                             <FontIcon FontSize="10" Glyph="&#xE10A;" />
                         </Button.Content>

@@ -16,7 +16,8 @@ namespace Files.Filesystem.Search
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
-        public IReadOnlyList<ISearchHeader> Headers { get; } = GetHeaders().ToList().AsReadOnly();
+        private readonly IReadOnlyDictionary<string, ISearchHeader> Headers
+            = GetHeaders().ToDictionary(header => header.Key);
 
         public bool searchInSubFolders = true;
         public bool SearchInSubFolders
@@ -31,9 +32,7 @@ namespace Files.Filesystem.Search
         {
             var pinnedKeys = new string[] { "size", "modified" };
 
-            var filters = Headers
-                .Where(header => pinnedKeys.Contains(header.Key))
-                .Select(header => header.GetFilter()).ToList();
+            var filters = pinnedKeys.Select(key => Headers[key].GetFilter()).ToList();
             Filter = new SearchFilterCollection(GroupAggregates.And, filters);
         }
 

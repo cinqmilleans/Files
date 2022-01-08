@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Files.UserControls.Search
 {
@@ -16,6 +17,11 @@ namespace Files.UserControls.Search
         }
 
         public SearchFilterPicker() => InitializeComponent();
+
+        private void OpenButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var filter = (sender as FrameworkElement).DataContext as ISearchFilter;
+        }
     }
 
     public class SearchFilterPickerTemplateSelector : DataTemplateSelector
