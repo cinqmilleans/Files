@@ -20,13 +20,13 @@ namespace Files.UserControls.Search
 
     public class SearchFilterPickerTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate CollectionTemplate { get; set; }
+        public DataTemplate GroupTemplate { get; set; }
         public DataTemplate SizeRangeTemplate { get; set; }
         public DataTemplate DateRangeTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            ISearchFilterCollection => CollectionTemplate,
+            ISearchFilterCollection => GroupTemplate,
             ISizeRangeFilter => SizeRangeTemplate,
             IDateRangeFilter => DateRangeTemplate,
             _ => null,

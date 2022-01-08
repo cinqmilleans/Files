@@ -112,7 +112,7 @@ namespace Files.Filesystem.Search
         public static readonly DateRange ThisYear = new(new RelativeRange(RelativeRange.Moments.ThisYear));
         public static readonly DateRange Older = new(new RelativeRange(RelativeRange.Moments.Older));
 
-        public bool IsRelative => range is RelativeRange;
+        public bool IsRelative => range is NoneRange || range is AlwaysRange || range is RelativeRange;
 
         public RangeDirections Direction => range.Direction;
 
@@ -167,8 +167,17 @@ namespace Files.Filesystem.Search
         public static bool operator <=(DateRange a, DateRange b) => a.MaxValue <= b.MinValue;
         public static bool operator >=(DateRange a, DateRange b) => a.MaxValue >= b.MinValue;
 
-        public bool Contains(Date size) => size >= MinValue && size <= MaxValue;
-        public bool Contains(DateRange range) => range.MinValue >= MinValue && range.MaxValue <= MaxValue;
+        public bool Contains(Date date)
+        {
+            var (minValue, maxValue) = this;
+            return minValue <= date && date <= maxValue;
+        }
+        public bool Contains(DateRange range)
+        {
+            var (minValueThis, maxValueThis) = this;
+            var (minValueRange, maxValueRange) = range;
+            return minValueThis <= minValueRange && maxValueRange <= maxValueThis;
+        }
 
         private static IRange GetRange(Date minDate, Date maxDate)
         {
@@ -187,16 +196,23 @@ namespace Files.Filesystem.Search
                 maxDate = today;
             }
 
-            var moments = RelativeRange.MomentRanges.ToList();
+            if (minDate == Date.MinValue && maxDate == today)
+            {
+                return new AlwaysRange();
+            }
 
-            bool hasMinMoment = moments.Any(n => n.MinDate == minDate);
-            bool hasMaxMoment = moments.Any(n => n.MaxDate == maxDate);
+            var momentDates = RelativeRange.MomentDates.ToList();
+
+            bool hasMinMoment = momentDates.Any(momentDate => momentDate.minDate == minDate);
+            bool hasMaxMoment = momentDates.Any(momentDate => momentDate.maxDate == maxDate);
 
             if (!hasMinMoment || !hasMaxMoment)
-                return new DayRange(minDate, maxDate);
+            {
+                return new CustomRange(minDate, maxDate);
+            }
 
-            RelativeRange minMoment = moments.First(n => n.MinDate == minDate).Range;
-            RelativeRange maxMoment = moments.First(n => n.MaxDate == maxDate).Range;
+            RelativeRange.Moments minMoment = momentDates.First(momentDate => momentDate.minDate == minDate).moment;
+            RelativeRange.Moments maxMoment = momentDates.First(momentDate => momentDate.maxDate == maxDate).moment;
 
             return new RelativeRange(minMoment, maxMoment);
         }
@@ -223,61 +239,98 @@ namespace Files.Filesystem.Search
             public bool Equals(IRange<Date> other) => other is NoneRange;
         }
 
+        private struct AlwaysRange : IRange
+        {
+            public RangeDirections Direction => RangeDirections.None;
+
+            public Date MinValue => Date.MinValue;
+            public Date MaxValue => Date.Today;
+
+            public IRange<string> Label => RangeLabel.None;
+
+            public void Deconstruct(out RangeDirections direction, out Date minValue, out Date maxValue)
+                => (direction, minValue, maxValue) = (Direction, MinValue, MaxValue);
+
+            public override int GetHashCode() => Direction.GetHashCode();
+            public override bool Equals(object other) => other is AlwaysRange;
+            public bool Equals(IRange<Date> other) => other is AlwaysRange;
+        }
+
         private struct RelativeRange : IRange
         {
             public enum Moments : ushort { Today, Yesterday, ThisWeek, LastWeek, ThisMonth, LastMonth, ThisYear, Older }
 
-            public static IEnumerable<(RelativeRange Range, Date MinDate, Date MaxDate)> MomentRanges
+            public static IEnumerable<(Moments moment, Date minDate, Date maxDate)> MomentDates
             {
                 get
                 {
                     Date today = Date.Today;
 
                     return Enum.GetValues(typeof(Moments)).Cast<Moments>()
-                        .Select(moment => new RelativeRange(moment))
-                        .Select(range => (range, range.GetMinDate(today), range.GetMinDate(today)));
+                        .Select(moment => (moment, GetMinDate(today, moment), GetMaxDate(today, moment)));
                 }
             }
 
-            public readonly Moments MinMoment { get; }
-            public readonly Moments MaxMoment { get; }
+            private readonly Moments minMoment;
+            private readonly Moments maxMoment;
 
-            public RangeDirections Direction => (MinMoment, MaxMoment) switch
+            public RangeDirections Direction => (minMoment, maxMoment) switch
             {
-                (Moments.Older, Moments.Today) => RangeDirections.None,
-                _ when MinMoment == MaxMoment => RangeDirections.EqualTo,
                 (Moments.Older, _) => RangeDirections.LessThan,
                 (_, Moments.Today) => RangeDirections.GreaterThan,
+                _ when minMoment == maxMoment => RangeDirections.EqualTo,
                 _ => RangeDirections.Between,
             };
 
-            public Date MinValue => GetMinDate(Date.Today);
-            public Date MaxValue => GetMaxDate(Date.Today);
+            public Date MinValue => GetMinDate(Date.Today, minMoment);
+            public Date MaxValue => GetMaxDate(Date.Today, maxMoment);
 
-            public IRange<string> Label => new RangeLabel(GetText(MinMoment), GetText(MaxMoment));
+            public IRange<string> Label => new RangeLabel(GetText(minMoment), GetText(maxMoment));
 
-            public RelativeRange(Moments moment) => MinMoment = MaxMoment = moment;
-            public RelativeRange(RelativeRange minRange, RelativeRange maxRange)
-            {
-                MinMoment = minRange.MinMoment <= maxRange.MinMoment ? minRange.MinMoment : maxRange.MinMoment;
-                MaxMoment = maxRange.MaxMoment >= minRange.MaxMoment ? maxRange.MaxMoment : minRange.MaxMoment;
-            }
+            public RelativeRange(Moments moment)
+                => minMoment = maxMoment = moment;
+            public RelativeRange(Moments minMoment, Moments maxMoment)
+                => (this.minMoment, this.maxMoment) = (minMoment, maxMoment);
 
             public void Deconstruct(out RangeDirections direction, out Date minValue, out Date maxValue)
             {
                 Date today = Date.Today;
                 direction = Direction;
-                minValue = GetMinDate(today);
-                maxValue = GetMaxDate(today);
+                minValue = GetMinDate(today, minMoment);
+                maxValue = GetMaxDate(today, maxMoment);
             }
 
             public override int GetHashCode()
-                => (MinMoment, MaxMoment).GetHashCode();
+                => (minMoment, maxMoment).GetHashCode();
             public override bool Equals(object other)
                 => other is RelativeRange range && Equals(range);
             public bool Equals(IRange<Date> other)
-                => other is RelativeRange range && range.MinMoment == MinMoment && range.MaxMoment == MaxMoment;
+                => other is RelativeRange range && range.minMoment == minMoment && range.maxMoment == maxMoment;
 
+            private static Date GetMinDate(Date today, Moments moment) => moment switch
+            {
+                Moments.Today => today,
+                Moments.Yesterday => today.AddDays(-1),
+                Moments.ThisWeek => today.AddDays(-6),
+                Moments.LastWeek => today.AddDays(-13),
+                Moments.ThisMonth => today.AddMonths(-1).AddDays(1),
+                Moments.LastMonth => today.AddMonths(-2).AddDays(1),
+                Moments.ThisYear => today.AddYears(-1).AddDays(1),
+                Moments.Older => Date.MinValue,
+                _ => throw new ArgumentException(),
+            };
+            private static Date GetMaxDate(Date today, Moments moment) => moment switch
+            {
+                Moments.Today => today,
+                Moments.Yesterday => today.AddDays(-1),
+                Moments.ThisWeek => today.AddDays(-2),
+                Moments.LastWeek => today.AddDays(-7),
+                Moments.ThisMonth => today.AddDays(-14),
+                Moments.LastMonth => today.AddMonths(-1),
+                Moments.ThisYear => today.AddMonths(-2),
+                Moments.Older => today.AddYears(-1),
+                _ => throw new ArgumentException(),
+            };
             private static string GetText(Moments moment) => moment switch
             {
                 Moments.Today => "ItemTimeText_Today".GetLocalized(),
@@ -290,33 +343,9 @@ namespace Files.Filesystem.Search
                 Moments.Older => "ItemTimeText_Older".GetLocalized(),
                 _ => throw new ArgumentException(),
             };
-            private Date GetMinDate(Date today) => MinMoment switch
-            {
-                Moments.Today => today,
-                Moments.Yesterday => today.AddDays(-1),
-                Moments.ThisWeek => today.AddDays(-6),
-                Moments.LastWeek => today.AddDays(-13),
-                Moments.ThisMonth => today.AddMonths(-1).AddDays(1),
-                Moments.LastMonth => today.AddMonths(-2).AddDays(1),
-                Moments.ThisYear => today.AddYears(-1).AddDays(1),
-                Moments.Older => Date.MinValue,
-                _ => throw new ArgumentException(),
-            };
-            private Date GetMaxDate(Date today) => MaxMoment switch
-            {
-                Moments.Today => today,
-                Moments.Yesterday => today.AddDays(-1),
-                Moments.ThisWeek => today.AddDays(-2),
-                Moments.LastWeek => today.AddDays(-7),
-                Moments.ThisMonth => today.AddDays(-14),
-                Moments.LastMonth => today.AddMonths(-1),
-                Moments.ThisYear => today.AddMonths(-2),
-                Moments.Older => today.AddYears(-1),
-                _ => throw new ArgumentException(),
-            };
         }
 
-        public struct DayRange : IRange
+        public struct CustomRange : IRange
         {
             private static readonly ILabelBuilder labelBuilder = new LabelBuilderCollection
             {
@@ -360,7 +389,7 @@ namespace Files.Filesystem.Search
                 }
             }
 
-            public DayRange(Date minDate, Date maxDate)
+            public CustomRange(Date minDate, Date maxDate)
             {
                 MinValue = minDate <= maxDate ? minDate : maxDate;
                 MaxValue = maxDate >= minDate ? maxDate : minDate;
@@ -372,9 +401,9 @@ namespace Files.Filesystem.Search
             public override int GetHashCode()
                 => (MinValue, MaxValue).GetHashCode();
             public override bool Equals(object other)
-                => other is DayRange range && Equals(range);
+                => other is CustomRange range && Equals(range);
             public bool Equals(IRange<Date> other)
-                => other is DayRange range && range.MinValue == MinValue && range.MaxValue == MaxValue;
+                => other is CustomRange range && range.MinValue == MinValue && range.MaxValue == MaxValue;
 
             private interface ILabelBuilder
             {
@@ -430,7 +459,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "created";
         public string Glyph => "\uEC26";
-        public string Title => "DateCreated".GetLocalized();
+        public string Label => "DateCreated".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.ItemDate";
 
@@ -445,7 +474,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "modified";
         public string Glyph => "\uEC26";
-        public string Title => "DateModified".GetLocalized();
+        public string Label => "DateModified".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.DateModified";
 
@@ -460,7 +489,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "accessed";
         public string Glyph => "\uEC26";
-        public string Title => "AccessedDate".GetLocalized();
+        public string Label => "AccessedDate".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.DateAccessed";
 
@@ -517,9 +546,9 @@ namespace Files.Filesystem.Search
             _ => Enumerable.Empty<ISearchTag>(),
         };
 
-        public DateRangeFilter() => Range = DateRange.Always;
-        public DateRangeFilter(DateOrigins origin) => Origin = origin;
-        public DateRangeFilter(DateRange range) => Range = range;
+        public DateRangeFilter() : this(DateOrigins.Modified, DateRange.Always) {}
+        public DateRangeFilter(DateOrigins origin) : this(origin, DateRange.Always) {}
+        public DateRangeFilter(DateRange range) : this(DateOrigins.Modified, range) {}
         public DateRangeFilter(DateOrigins origin, DateRange range) => (Origin, Range) = (origin, range);
 
         public void Clear() => Range = DateRange.Always;

@@ -8,7 +8,7 @@ namespace Files.Filesystem.Search
     {
         string Key { get; }
         string Glyph { get; }
-        string Title { get; }
+        string Label { get; }
         string Description { get; }
 
         ISearchFilter GetFilter();

@@ -3,6 +3,7 @@
     public enum RangeDirections : ushort
     {
         None,
+        All,
         EqualTo,
         GreaterThan,
         LessThan,
@@ -39,7 +40,7 @@
 
             Direction = (MinValue, MaxValue) switch
             {
-                ("", "") => RangeDirections.None,
+                ("", "") => RangeDirections.All,
                 _ when MinValue == MaxValue => RangeDirections.EqualTo,
                 (_, "") => RangeDirections.GreaterThan,
                 ("", _) => RangeDirections.LessThan,

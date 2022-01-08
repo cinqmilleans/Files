@@ -12,15 +12,41 @@
     <UserControl.Resources>
 
         <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
-            CollectionTemplate="{StaticResource CollectionTemplate}"
+            GroupTemplate="{StaticResource GroupTemplate}"
             SizeRangeTemplate="{StaticResource SizeRangeTemplate}"
             DateRangeTemplate="{StaticResource DateRangeTemplate}" />
 
-        <DataTemplate x:Key="CollectionTemplate" x:DataType="s:ISearchFilterCollection">
-            <ItemsControl ItemsSource="{x:Bind Tags}">
+        <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterCollection">
+            <ItemsControl ItemsSource="{x:Bind Filters}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="s:ISearchTag">
-                        <local:TagControl SearchTag="{Binding}" />
+                    <DataTemplate x:DataType="s:ISearchFilter">
+                        <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="18" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="18" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="&#xEC92;" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
+                            <Button Grid.Column="2" Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
+                                <Button.Content>
+                                    <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                </Button.Content>
+                            </Button>
+                            <ItemsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{x:Bind Tags}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="s:ISearchTag">
+                                        <StackPanel>
+                                            <local:TagControl SearchTag="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -107,50 +107,29 @@ namespace Files.Filesystem.Search
 
     public struct SizeRange : IRange<Size>, IEquatable<IRange<Size>>
     {
-        public static readonly SizeRange None
-            = new(RangeDirections.None, Size.MaxValue, Size.MaxValue);
-        public static readonly SizeRange All
-            = new(RangeDirections.None, Size.MinValue, Size.MaxValue);
-        public static readonly SizeRange Empty
-            = new(RangeDirections.EqualTo, Size.MinValue, Size.MinValue, "ItemSizeText_Empty");
-        public static readonly SizeRange Tiny
-            = new(RangeDirections.Between, new Size(1), new Size(16, Size.Units.Kibi), "ItemSizeText_Tiny");
-        public static readonly SizeRange Small
-            = new(RangeDirections.Between, new Size(16, Size.Units.Kibi), new Size(1, Size.Units.Mebi), "ItemSizeText_Small");
-        public static readonly SizeRange Medium
-            = new(RangeDirections.Between, new Size(1, Size.Units.Mebi), new Size(128, Size.Units.Mebi), "ItemSizeText_Medium");
-        public static readonly SizeRange Large
-            = new(RangeDirections.Between, new Size(128, Size.Units.Mebi), new Size(1, Size.Units.Gibi), "ItemSizeText_Large");
-        public static readonly SizeRange VeryLarge
-            = new(RangeDirections.Between, new Size(1, Size.Units.Gibi), new Size(5, Size.Units.Gibi), "ItemSizeText_VeryLarge");
-        public static readonly SizeRange Huge
-            = new(RangeDirections.GreaterThan, new Size(5, Size.Units.Gibi), Size.MaxValue, "ItemSizeText_Huge");
+        public static readonly SizeRange None = new(new NoneRange());
+        public static readonly SizeRange All = new(new AllRange());
+        public static readonly SizeRange Empty = new(new NamedRange(NamedRange.Names.Empty));
+        public static readonly SizeRange Tiny = new(new NamedRange(NamedRange.Names.Tiny));
+        public static readonly SizeRange Small = new(new NamedRange(NamedRange.Names.Small));
+        public static readonly SizeRange Medium = new(new NamedRange(NamedRange.Names.Medium));
+        public static readonly SizeRange Large = new(new NamedRange(NamedRange.Names.Large));
+        public static readonly SizeRange VeryLarge = new(new NamedRange(NamedRange.Names.VeryLarge));
+        public static readonly SizeRange Huge = new(new NamedRange(NamedRange.Names.Huge));
 
-        public bool IsNamed { get; }
+        private readonly IRange range;
 
-        public RangeDirections Direction { get; }
+        public bool IsNamed => range is not CustomRange;
 
-        public Size MinValue { get; }
-        public Size MaxValue { get; }
+        public RangeDirections Direction => range.Direction;
 
-        public IRange<string> Label { get; }
+        public Size MinValue => range.MinValue;
+        public Size MaxValue => range.MaxValue;
 
-        public SizeRange(Size minValue, Size maxValue)
-        {
-            (MinValue, MaxValue) = (minValue <= maxValue) ? (minValue, maxValue) : (maxValue, minValue);
+        public IRange<string> Label => range.Label;
 
-            var names = new List<IRange<Size>> { Empty, Tiny, Small, Medium, Large, VeryLarge, Huge };
-            IsNamed = names.Any(n => n.MinValue == minValue) && names.Any(n => n.MaxValue == maxValue);
-
-            Direction = GetDirection(minValue, MaxValue);
-            Label = GetLabel(IsNamed, Direction, MinValue, MaxValue);
-        }
-        private SizeRange(IRange<Size> minRange, IRange<Size> maxRange)
-            : this(Min(minRange.MinValue, maxRange.MinValue), Max(minRange.MaxValue, maxRange.MaxValue)) {}
-        private SizeRange(RangeDirections direction, Size minValue, Size maxValue)
-            => (IsNamed, Direction, MinValue, MaxValue, Label) = (true, direction, minValue, maxValue, RangeLabel.None);
-        private SizeRange(RangeDirections direction, Size minValue, Size maxValue, string labelKey)
-            => (IsNamed, Direction, MinValue, MaxValue, Label) = (true, direction, minValue, maxValue, new RangeLabel(labelKey.GetLocalized()));
+        public SizeRange(Size minSize, Size maxSize) => range = GetRange(minSize, maxSize);
+        private SizeRange(IRange range) => this.range = range;
 
         public void Deconstruct(out Size minValue, out Size maxValue)
             => (minValue, maxValue) = (MinValue, MaxValue);
@@ -166,22 +145,14 @@ namespace Files.Filesystem.Search
         public bool Equals(IRange<Size> other)
             => other is SizeRange range && range.MinValue.Equals(MinValue) && range.MaxValue.Equals(MaxValue);
 
-        public static SizeRange operator +(SizeRange a, SizeRange b) => new(a, b);
-        public static SizeRange operator -(SizeRange a, SizeRange b) => Substract(a, b);
-        public static bool operator ==(SizeRange a, SizeRange b) => a.Equals(b);
-        public static bool operator !=(SizeRange a, SizeRange b) => !a.Equals(b);
-        public static bool operator <(SizeRange a, SizeRange b) => a.MaxValue < b.MinValue;
-        public static bool operator >(SizeRange a, SizeRange b) => a.MaxValue > b.MinValue;
-        public static bool operator <=(SizeRange a, SizeRange b) => a.MaxValue <= b.MinValue;
-        public static bool operator >=(SizeRange a, SizeRange b) => a.MaxValue >= b.MinValue;
+        public static SizeRange operator +(SizeRange a, SizeRange b)
+        {
+            Size minSize = a.MinValue <= b.MinValue ? a.MinValue : b.MinValue;
+            Size maxSize = b.MaxValue >= a.MaxValue ? b.MaxValue : a.MaxValue;
 
-        public bool Contains(Size size) => size >= MinValue && size <= MaxValue;
-        public bool Contains(IRange<Size> range) => range.MinValue >= MinValue && range.MaxValue <= MaxValue;
-
-        private static Size Min(Size a, Size b) => a <= b ? a : b;
-        private static Size Max(Size a, Size b) => a >= b ? a : b;
-
-        private static SizeRange Substract(IRange<Size> a, IRange<Size> b)
+            return new(minSize, maxSize);
+        }
+        public static SizeRange operator -(SizeRange a, SizeRange b)
         {
             if (b.MinValue == a.MinValue && b.MaxValue < a.MaxValue)
             {
@@ -193,63 +164,183 @@ namespace Files.Filesystem.Search
             }
             return None;
         }
+        public static bool operator ==(SizeRange a, SizeRange b) => a.Equals(b);
+        public static bool operator !=(SizeRange a, SizeRange b) => !a.Equals(b);
+        public static bool operator <(SizeRange a, SizeRange b) => a.MaxValue < b.MinValue;
+        public static bool operator >(SizeRange a, SizeRange b) => a.MaxValue > b.MinValue;
+        public static bool operator <=(SizeRange a, SizeRange b) => a.MaxValue <= b.MinValue;
+        public static bool operator >=(SizeRange a, SizeRange b) => a.MaxValue >= b.MinValue;
 
-        private static RangeDirections GetDirection(Size minValue, Size maxValue)
+        public bool Contains(Size size) => size >= MinValue && size <= MaxValue;
+        public bool Contains(IRange<Size> range) => range.MinValue >= MinValue && range.MaxValue <= MaxValue;
+
+        private static IRange GetRange(Size minSize, Size maxSize)
         {
-            bool hasMin = minValue > Size.MinValue;
-            bool hasMax = maxValue < Size.MaxValue;
-
-            return (hasMin, hasMax) switch
+            if (minSize > maxSize)
             {
-                (false, false) => RangeDirections.None,
-                (true, false) => RangeDirections.GreaterThan,
-                (false, true) => RangeDirections.LessThan,
-                _ when minValue == maxValue => RangeDirections.EqualTo,
-                _ => RangeDirections.Between,
+                (minSize, maxSize) = (maxSize, minSize);
+            }
+
+            if (minSize == Size.MinValue && maxSize == Size.MaxValue)
+            {
+                return new AllRange();
+            }
+
+            var namedSizes = NamedRange.NamedSizes.ToList();
+
+            bool hasMinName = namedSizes.Any(namedSize => namedSize.minSize == minSize);
+            bool hasMaxName = namedSizes.Any(namedSize => namedSize.maxSize == maxSize);
+
+            if (!hasMinName || !hasMaxName)
+            {
+                return new CustomRange(minSize, maxSize);
+            }
+
+            NamedRange.Names minName = namedSizes.First(namedSize => namedSize.minSize == minSize).name;
+            NamedRange.Names maxName = namedSizes.First(namedSize => namedSize.maxSize == maxSize).name;
+
+            return new NamedRange(minName, maxName);
+        }
+
+        private interface IRange : IRange<Size>, IEquatable<IRange<Size>>
+        {
+        }
+
+        private struct NoneRange : IRange
+        {
+            public RangeDirections Direction => RangeDirections.None;
+
+            public Size MinValue => Size.MaxValue;
+            public Size MaxValue => Size.MinValue;
+
+            public IRange<string> Label => RangeLabel.None;
+
+            public override int GetHashCode() => Direction.GetHashCode();
+            public override bool Equals(object other) => other is NoneRange;
+            public bool Equals(IRange<Size> other) => other is NoneRange;
+        }
+
+        private struct AllRange : IRange
+        {
+            public RangeDirections Direction => RangeDirections.None;
+
+            public Size MinValue => Size.MinValue;
+            public Size MaxValue => Size.MaxValue;
+
+            public IRange<string> Label => RangeLabel.None;
+
+            public override int GetHashCode() => Direction.GetHashCode();
+            public override bool Equals(object other) => other is AllRange;
+            public bool Equals(IRange<Size> other) => other is AllRange;
+        }
+
+        private struct NamedRange : IRange
+        {
+            public enum Names { Empty, Tiny, Small, Medium, Large, VeryLarge, Huge }
+
+            public static IEnumerable<(Names name, Size minSize, Size maxSize)> NamedSizes
+                => Enum.GetValues(typeof(Names)).Cast<Names>()
+                    .Select(name => (name, GetMinSize(name), GetMaxSize(name)));
+
+            private readonly Names minName;
+            private readonly Names maxName;
+
+            public RangeDirections Direction { get; }
+
+            public Size MinValue => GetMinSize(minName);
+            public Size MaxValue => GetMaxSize(minName);
+
+            public IRange<string> Label => new RangeLabel(GetText(minName), GetText(maxName));
+
+            public NamedRange(Names name) : this(name, name) {}
+            public NamedRange(Names minName, Names maxName)
+            {
+                (this.minName, this.maxName) = (minName, maxName);
+
+                Direction = (minName, maxName) switch
+                {
+                    (Names.Empty, _) => RangeDirections.LessThan,
+                    (_, Names.Huge) => RangeDirections.GreaterThan,
+                    _ when minName == maxName => RangeDirections.EqualTo,
+                    _ => RangeDirections.Between,
+                };
+            }
+
+            public override int GetHashCode()
+                => (minName, maxName).GetHashCode();
+            public override bool Equals(object other)
+                => other is NamedRange range && Equals(range);
+            public bool Equals(IRange<Size> other)
+                => other is NamedRange range && range.minName == minName && range.maxName == maxName;
+
+            private static Size GetMinSize(Names name) => name switch
+            {
+                Names.Empty => Size.MinValue,
+                Names.Tiny => new Size(1),
+                Names.Small => new Size(16, Size.Units.Kibi),
+                Names.Medium => new Size(1, Size.Units.Mebi),
+                Names.Large => new Size(128, Size.Units.Mebi),
+                Names.VeryLarge => new Size(1, Size.Units.Gibi),
+                Names.Huge => new Size(5, Size.Units.Gibi),
+                _ => throw new ArgumentException(),
+            };
+            private static Size GetMaxSize(Names name) => name switch
+            {
+                Names.Empty => Size.MinValue,
+                Names.Tiny => new Size(16, Size.Units.Kibi),
+                Names.Small => new Size(1, Size.Units.Mebi),
+                Names.Medium => new Size(128, Size.Units.Mebi),
+                Names.Large => new Size(1, Size.Units.Gibi),
+                Names.VeryLarge => new Size(5, Size.Units.Gibi),
+                Names.Huge => Size.MaxValue,
+                _ => throw new ArgumentException(),
+            };
+            private static string GetText(Names name) => name switch
+            {
+                Names.Empty => "ItemSizeText_Empty".GetLocalized(),
+                Names.Tiny => "ItemSizeText_Tiny".GetLocalized(),
+                Names.Small => "ItemSizeText_Small".GetLocalized(),
+                Names.Medium => "ItemSizeText_Medium".GetLocalized(),
+                Names.Large => "ItemSizeText_Large".GetLocalized(),
+                Names.VeryLarge => "ItemSizeText_Large".GetLocalized(),
+                Names.Huge => "ItemSizeText_Huge".GetLocalized(),
+                _ => throw new ArgumentException(),
             };
         }
 
-        private static IRange<string> GetLabel(bool isNamed, RangeDirections direction, Size minValue, Size maxValue)
+        private struct CustomRange : IRange
         {
-            if (direction == RangeDirections.None)
+            public RangeDirections Direction { get; }
+
+            public Size MinValue { get; }
+            public Size MaxValue { get; }
+
+            public IRange<string> Label => new RangeLabel($"{MinValue}", $"{MaxValue}");
+
+            public CustomRange(Size minSize, Size maxSize)
             {
-                return RangeLabel.None;
-            }
-            if (minValue == Empty.MinValue && maxValue == Empty.MaxValue)
-            {
-                return Empty.Label;
-            }
-            if (minValue == Huge.MinValue && maxValue == Huge.MaxValue)
-            {
-                return Huge.Label;
+                MinValue = minSize <= maxSize ? minSize : maxSize;
+                MaxValue = maxSize >= minSize ? maxSize : minSize;
+
+                bool hasMin = MinValue > Size.MinValue;
+                bool hasMax = MaxValue < Size.MaxValue;
+
+                Direction = (hasMin, hasMax) switch
+                {
+                    (false, false) => RangeDirections.None,
+                    _ when MinValue == MaxValue => RangeDirections.EqualTo,
+                    (true, false) => RangeDirections.GreaterThan,
+                    (false, true) => RangeDirections.LessThan,
+                    _ => RangeDirections.Between,
+                };
             }
 
-            string minLabel = isNamed switch
-            {
-                _ when direction == RangeDirections.LessThan => string.Empty,
-                true when Tiny.MinValue.Equals(minValue) => Tiny.Label.MinValue,
-                true when Small.MinValue.Equals(minValue) => Small.Label.MinValue,
-                true when Medium.MinValue.Equals(minValue) => Medium.Label.MinValue,
-                true when Large.MinValue.Equals(minValue) => Large.Label.MinValue,
-                true when VeryLarge.MinValue.Equals(minValue) => VeryLarge.Label.MinValue,
-                true when Huge.MinValue.Equals(minValue) => Huge.Label.MinValue,
-                false => $"{minValue}",
-                _ => string.Empty,
-            };
-            string maxLabel = isNamed switch
-            {
-                _ when direction == RangeDirections.GreaterThan => string.Empty,
-                true when Empty.MaxValue.Equals(maxValue) => Empty.Label.MaxValue,
-                true when Tiny.MaxValue.Equals(maxValue) => Tiny.Label.MaxValue,
-                true when Small.MaxValue.Equals(maxValue) => Small.Label.MaxValue,
-                true when Medium.MaxValue.Equals(maxValue) => Medium.Label.MaxValue,
-                true when Large.MaxValue.Equals(maxValue) => Large.Label.MaxValue,
-                true when VeryLarge.MaxValue.Equals(maxValue) => VeryLarge.Label.MaxValue,
-                false => $"{maxValue}",
-                _ => string.Empty,
-            };
-
-            return new RangeLabel(minLabel, maxLabel);
+            public override int GetHashCode()
+                => (MinValue, MaxValue).GetHashCode();
+            public override bool Equals(object other)
+                => other is CustomRange range && Equals(range);
+            public bool Equals(IRange<Size> other)
+                => other is CustomRange range && range.MinValue == MinValue && range.MaxValue == MaxValue;
         }
     }
 
@@ -258,7 +349,7 @@ namespace Files.Filesystem.Search
     {
         public string Key => "size";
         public string Glyph => "\uE2B2";
-        public string Title => "Size".GetLocalized();
+        public string Label => "Size".GetLocalized();
         public string Description => string.Empty;
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();

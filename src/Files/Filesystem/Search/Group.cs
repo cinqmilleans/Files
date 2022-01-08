@@ -22,6 +22,7 @@ namespace Files.Filesystem.Search
 
     public interface ISearchFilterCollection : IList<ISearchFilter>, ISearchFilter, INotifyCollectionChanged
     {
+        IEnumerable<ISearchFilter> Filters { get; }
     }
 
     [SearchHeader]
@@ -31,7 +32,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "and";
         public string Glyph => "\uEC26";
-        public string Title => "And".GetLocalized();
+        public string Label => "And".GetLocalized();
         public string Description => string.Empty;
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
@@ -55,7 +56,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "or";
         public string Glyph => "\uEC26";
-        public string Title => "Or".GetLocalized();
+        public string Label => "Or".GetLocalized();
         public string Description => string.Empty;
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
@@ -79,7 +80,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "not";
         public string Glyph => "\uEC26";
-        public string Title => "Not".GetLocalized();
+        public string Label => "Not".GetLocalized();
         public string Description => string.Empty;
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
@@ -121,6 +122,8 @@ namespace Files.Filesystem.Search
         public IGroupHeader Header = new AndHeader();
 
         public bool IsEmpty => !this.Any();
+
+        public IEnumerable<ISearchFilter> Filters => this;
 
         public IEnumerable<ISearchTag> Tags => this.Any()
             ? new ISearchTag[1] { new Tag(this) }
