@@ -12,7 +12,7 @@ namespace Files.UserControls
 {
     public sealed partial class SearchBox : UserControl
     {
-        private readonly SearchNavigator navigator = new();
+        private readonly ISearchNavigator navigator = Ioc.Default.GetService<ISearchNavigator>();
         private readonly ISettingsPageViewModel settingsPageViewModel;
 
         public static readonly DependencyProperty SearchBoxViewModelProperty =
@@ -42,7 +42,7 @@ namespace Files.UserControls
         private void MenuFrame_Loaded(object sender, RoutedEventArgs e)
         {
             navigator.Initialize(SearchBoxViewModel, sender as Frame);
-            navigator.GoPage(settingsPageViewModel);
+            navigator.GoPage(settingsPageViewModel.Settings);
         }
         private void MenuButton_Loaded(object sender, RoutedEventArgs e)
         {
@@ -54,10 +54,12 @@ namespace Files.UserControls
             }
         }
 
-        private void MenuBadge_Loaded(object sender, RoutedEventArgs e) =>
-            (sender as FrameworkElement).DataContext = settingsPageViewModel;
+        private void MenuBadge_Loaded(object sender, RoutedEventArgs e)
+            => (sender as FrameworkElement).DataContext = settingsPageViewModel;
 
-        private void MenuFlyout_Opened(object sender, object e) => navigator.GoPage(settingsPageViewModel);
-        private void MenuFlyout_Closed(object sender, object e) => navigator.GoPage(null);
+        private void MenuFlyout_Opened(object sender, object e)
+            => navigator.GoPage(settingsPageViewModel.Settings);
+        private void MenuFlyout_Closed(object sender, object e)
+            => navigator.ClearPage();
     }
 }

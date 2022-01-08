@@ -1,4 +1,5 @@
 ﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -20,7 +21,9 @@ namespace Files.UserControls.Search
 
         private void OpenButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            var navigator = Ioc.Default.GetService<ISearchNavigator>();
             var filter = (sender as FrameworkElement).DataContext as ISearchFilter;
+            navigator.GoPage(filter);
         }
     }
 

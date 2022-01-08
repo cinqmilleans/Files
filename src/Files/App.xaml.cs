@@ -8,6 +8,7 @@ using Files.Helpers;
 using Files.Services;
 using Files.Services.Implementation;
 using Files.UserControls.MultitaskingControl;
+using Files.UserControls.Search;
 using Files.ViewModels;
 using Files.Views;
 using Microsoft.AppCenter;
@@ -107,6 +108,7 @@ namespace Files
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
                 .AddSingleton<ISearchSettings, SearchSettings>()
+                .AddSingleton<ISearchNavigator, SearchNavigator>()
 
                 // TODO: Dialogs:
 

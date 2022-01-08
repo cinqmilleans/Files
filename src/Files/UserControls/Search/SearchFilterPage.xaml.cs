@@ -1,9 +1,9 @@
 ﻿using Files.ViewModels.Search;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using System.Linq;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Files.UserControls.Search
 {
@@ -39,12 +39,8 @@ namespace Files.UserControls.Search
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
             ISettingsPageViewModel => SettingsPageTemplate,
-            ISearchPageViewModel vm => vm.Headers.Count() switch
-            {
-                0 => null,
-                1 => SinglePageTemplate,
-                _ => MultiPageTemplate,
-            },
+            IMultiSearchPageViewModel => MultiPageTemplate,
+            ISearchPageViewModel => SinglePageTemplate,
             _ => null,
         };
 
