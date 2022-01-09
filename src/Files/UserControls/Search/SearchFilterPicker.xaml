@@ -6,10 +6,13 @@
     xmlns:s="using:Files.Filesystem.Search"
     xmlns:local="using:Files.UserControls.Search"
     xmlns:helpers="using:Files.Helpers"
+    xmlns:converters="using:Files.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
     <UserControl.Resources>
+
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 
         <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
             GroupTemplate="{StaticResource GroupTemplate}"
@@ -17,7 +20,7 @@
             DateRangeTemplate="{StaticResource DateRangeTemplate}" />
 
         <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterCollection">
-            <ItemsControl ItemsSource="{x:Bind Filters}">
+            <ItemsControl ItemsSource="{Binding}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="s:ISearchFilter">
                         <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
@@ -38,15 +41,8 @@
                                     <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
                                 </Button.Content>
                             </Button>
-                            <ItemsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{x:Bind Tags}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="s:ISearchTag">
-                                        <StackPanel>
-                                            <local:TagControl SearchTag="{Binding}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <local:TagsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -61,20 +57,16 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <!--<TextBlock
-                    VerticalAlignment="Top"
-                    Text="{helpers:ResourceString Name=NoSizeRangeSelected}"
-                    Style="{StaticResource IndicatorStyle}"
-                    Visibility="{x:Bind Filter.IsEmpty, Mode=OneWay}" />-->
-                <!--<StackPanel Orientation="Vertical"
-                        Visibility="{x:Bind Filter.IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
-                    <TextBlock Text="{x:Bind Header.Description}" TextWrapping="Wrap" />
-                    <TextBlock FontSize="13" FontWeight="Bold" TextWrapping="Wrap" Text="{x:Bind Header.Label, Mode=OneWay}" />
-                </StackPanel>-->
+                <TextBlock
+                    Visibility="{x:Bind IsEmpty, Mode=OneWay}"
+                    VerticalAlignment="Top" Style="{StaticResource IndicatorStyle}"
+                    Text="{helpers:ResourceString Name=NoSizeRangeSelected}" />
+                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}" CanClose="False" />
+                <!--Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />-->
                 <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
-                <!--<TextBlock Grid.Row="2" Margin="0,8,0,-12"
+                <TextBlock Grid.Row="2" Margin="0,8,0,-12"
                     Text="{helpers:ResourceString Name=OrChooseASizeRange}"
-                    Style="{StaticResource IndicatorStyle}" />-->
+                    Style="{StaticResource IndicatorStyle}" />
                 <local:NamedSizeRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
@@ -82,6 +74,15 @@
         <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateRangeFilter">
             <Grid />
         </DataTemplate>
+
+        <Style x:Key="IndicatorStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
 
     </UserControl.Resources>
 

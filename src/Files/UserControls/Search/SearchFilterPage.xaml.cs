@@ -1,4 +1,5 @@
 ﻿using Files.ViewModels.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,8 +27,18 @@ namespace Files.UserControls.Search
             ViewModel = e.Parameter as ISearchPageViewModel;
         }
 
-        private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e) {}
-        private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.Filter.Clear();
+        private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var navigator = Ioc.Default.GetService<ISearchNavigator>();
+            navigator.Back();
+        }
+        private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var navigator = Ioc.Default.GetService<ISearchNavigator>();
+            navigator.Search();
+        }
+        private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e)
+            => ViewModel?.Filter?.Clear();
     }
 
     public class SearchFilterPageTemplateSelector : DataTemplateSelector

@@ -151,6 +151,10 @@ namespace Files.Filesystem.Search
         }
         public static SizeRange operator -(SizeRange a, SizeRange b)
         {
+            if (b.MaxValue == Size.MinValue)
+            {
+                b = new SizeRange(new Size(0), new Size(1));
+            }
             if (b.MinValue == a.MinValue && b.MaxValue < a.MaxValue)
             {
                 return new(b.MaxValue, a.MaxValue);
@@ -256,9 +260,9 @@ namespace Files.Filesystem.Search
 
                 Direction = (minName, maxName) switch
                 {
+                    _ when minName == maxName => RangeDirections.EqualTo,
                     (Names.Empty, _) => RangeDirections.LessThan,
                     (_, Names.Huge) => RangeDirections.GreaterThan,
-                    _ when minName == maxName => RangeDirections.EqualTo,
                     _ => RangeDirections.Between,
                 };
             }
@@ -324,7 +328,6 @@ namespace Files.Filesystem.Search
 
                 Direction = (hasMin, hasMax) switch
                 {
-                    (false, false) => RangeDirections.None,
                     _ when MinValue == MaxValue => RangeDirections.EqualTo,
                     (true, false) => RangeDirections.GreaterThan,
                     (false, true) => RangeDirections.LessThan,
@@ -431,7 +434,7 @@ namespace Files.Filesystem.Search
             public ISizeRangeFilter Filter { get; }
 
             public string Title => "Range_To".GetLocalized();
-            public string Parameter => Filter.Range.Label.MinValue;
+            public string Parameter => Filter.Range.Label.MaxValue;
 
             public ToTag(ISizeRangeFilter filter) => Filter = filter;
 

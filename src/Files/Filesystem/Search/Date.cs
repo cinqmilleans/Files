@@ -276,9 +276,9 @@ namespace Files.Filesystem.Search
 
             public RangeDirections Direction => (minMoment, maxMoment) switch
             {
+                _ when minMoment == maxMoment => RangeDirections.EqualTo,
                 (Moments.Older, _) => RangeDirections.LessThan,
                 (_, Moments.Today) => RangeDirections.GreaterThan,
-                _ when minMoment == maxMoment => RangeDirections.EqualTo,
                 _ => RangeDirections.Between,
             };
 
@@ -598,7 +598,7 @@ namespace Files.Filesystem.Search
             public IDateRangeFilter Filter { get; }
 
             public string Title => "Range_To".GetLocalized();
-            public string Parameter => Filter.Range.Label.MinValue;
+            public string Parameter => Filter.Range.Label.MaxValue;
 
             public ToTag(IDateRangeFilter filter) => Filter = filter;
 

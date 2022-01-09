@@ -22,7 +22,6 @@ namespace Files.Filesystem.Search
 
     public interface ISearchFilterCollection : IList<ISearchFilter>, ISearchFilter, INotifyCollectionChanged
     {
-        IEnumerable<ISearchFilter> Filters { get; }
     }
 
     [SearchHeader]
@@ -122,8 +121,6 @@ namespace Files.Filesystem.Search
         public IGroupHeader Header = new AndHeader();
 
         public bool IsEmpty => !this.Any();
-
-        public IEnumerable<ISearchFilter> Filters => this;
 
         public IEnumerable<ISearchTag> Tags => this.Any()
             ? new ISearchTag[1] { new Tag(this) }

@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Files.UserControls.Search"
     xmlns:vm="using:Files.ViewModels.Search"
-    xmlns:converters="using:Files.Converters"
     xmlns:helpers="using:Files.Helpers"
+    xmlns:converters="using:Files.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -27,8 +27,8 @@
                 </Grid.RowDefinitions>
                 <TextBlock FontSize="18" FontWeight="SemiBold" Text="{helpers:ResourceString Name=SearchOptions}" />
                 <local:SearchFilterPicker Grid.Row="1" ViewModel="{x:Bind Settings.Filter}" />
-                <CheckBox Grid.Row="2"
-                    Content="{helpers:ResourceString Name=IncludeSubfolders}" IsChecked="{x:Bind Settings.SearchInSubFolders, Mode=TwoWay}" />
+                <CheckBox Grid.Row="2" Content="{helpers:ResourceString Name=IncludeSubfolders}"
+                    IsChecked="{x:Bind Settings.SearchInSubFolders, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 
@@ -39,9 +39,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button VerticalAlignment="Bottom" Background="Transparent" BorderBrush="Transparent">
+                    <Button x:Name="BackButton" Tapped="BackButton_Tapped"
+                        VerticalAlignment="Bottom" Background="Transparent" BorderBrush="Transparent">
                         <Button.Content>
-                            <FontIcon FontSize="16" FontWeight="SemiBold" Glyph="{x:Bind Filter.Header.Glyph}" />
+                            <FontIcon FontSize="16" FontWeight="SemiBold" Glyph="&#xE76B;" />
                         </Button.Content>
                     </Button>
                     <TextBlock Grid.Column="1" Text="{x:Bind Filter.Header.Label}"
