@@ -33,7 +33,22 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SinglePageTemplate" x:DataType="vm:ISearchPageViewModel">
-            <Grid />
+            <StackPanel x:Name="RootPanel" Orientation="Vertical" VerticalAlignment="Stretch">
+                <Grid Height="34">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button VerticalAlignment="Bottom" Background="Transparent" BorderBrush="Transparent">
+                        <Button.Content>
+                            <FontIcon FontSize="16" FontWeight="SemiBold" Glyph="{x:Bind Filter.Header.Glyph}" />
+                        </Button.Content>
+                    </Button>
+                    <TextBlock Grid.Column="1" Text="{x:Bind Filter.Header.Label}"
+                        Margin="12,0,0,0" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </Grid>
+                <local:SearchFilterPicker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind Filter, Mode=OneWay}" />
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="MultiPageTemplate" x:DataType="vm:ISettingsPageViewModel">

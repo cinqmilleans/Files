@@ -54,7 +54,29 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeRangeFilter">
-            <Grid />
+            <Grid Margin="0,8,0,0" RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MinHeight="64" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--<TextBlock
+                    VerticalAlignment="Top"
+                    Text="{helpers:ResourceString Name=NoSizeRangeSelected}"
+                    Style="{StaticResource IndicatorStyle}"
+                    Visibility="{x:Bind Filter.IsEmpty, Mode=OneWay}" />-->
+                <!--<StackPanel Orientation="Vertical"
+                        Visibility="{x:Bind Filter.IsEmpty, Mode=OneWay, Converter={StaticResource VisiblityInvertConverter}}">
+                    <TextBlock Text="{x:Bind Header.Description}" TextWrapping="Wrap" />
+                    <TextBlock FontSize="13" FontWeight="Bold" TextWrapping="Wrap" Text="{x:Bind Header.Label, Mode=OneWay}" />
+                </StackPanel>-->
+                <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
+                <!--<TextBlock Grid.Row="2" Margin="0,8,0,-12"
+                    Text="{helpers:ResourceString Name=OrChooseASizeRange}"
+                    Style="{StaticResource IndicatorStyle}" />-->
+                <local:NamedSizeRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateRangeFilter">
