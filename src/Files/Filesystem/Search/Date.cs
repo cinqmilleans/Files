@@ -538,14 +538,21 @@ namespace Files.Filesystem.Search
             }
         }
 
-        public IEnumerable<ISearchTag> Tags => Range.Direction switch
+        public IEnumerable<ISearchTag> Tags
         {
-            RangeDirections.EqualTo => new EqualTag(this).CreateEnumerable(),
-            RangeDirections.GreaterThan => new FromTag(this).CreateEnumerable(),
-            RangeDirections.LessThan => new ToTag(this).CreateEnumerable(),
-            RangeDirections.Between => new List<ISearchTag> { new FromTag(this), new ToTag(this) },
-            _ => Enumerable.Empty<ISearchTag>(),
-        };
+            get
+            {
+                var label = Range.Label;
+                return label.Direction switch
+                {
+                    RangeDirections.EqualTo => new EqualTag(this, label).CreateEnumerable(),
+                    RangeDirections.GreaterThan => new FromTag(this, label).CreateEnumerable(),
+                    RangeDirections.LessThan => new ToTag(this, label).CreateEnumerable(),
+                    RangeDirections.Between => new List<ISearchTag> { new FromTag(this, label), new ToTag(this, label) },
+                    _ => Enumerable.Empty<ISearchTag>(),
+                };
+            }
+        }
 
         public DateRangeFilter() : this(DateOrigins.Modified, DateRange.Always) {}
         public DateRangeFilter(DateOrigins origin) : this(origin, DateRange.Always) {}
@@ -575,9 +582,10 @@ namespace Files.Filesystem.Search
             public IDateRangeFilter Filter { get; }
 
             public string Title => string.Empty;
-            public string Parameter => Filter.Range.Label.MinValue;
+            public string Parameter { get; }
 
-            public EqualTag(IDateRangeFilter filter) => Filter = filter;
+            public EqualTag(IDateRangeFilter filter, IRange<string> label)
+                => (Filter, Parameter) = (filter, label.MinValue);
 
             public void Delete() => Filter.Range = DateRange.Always;
         }
@@ -587,9 +595,10 @@ namespace Files.Filesystem.Search
             public IDateRangeFilter Filter { get; }
 
             public string Title => "Range_From".GetLocalized();
-            public string Parameter => Filter.Range.Label.MinValue;
+            public string Parameter { get; }
 
-            public FromTag(IDateRangeFilter filter) => Filter = filter;
+            public FromTag(IDateRangeFilter filter, IRange<string> label)
+                => (Filter, Parameter) = (filter, label.MinValue);
 
             public void Delete() => Filter.Range = new DateRange(Date.MinValue, Filter.Range.MaxValue);
         }
@@ -599,9 +608,10 @@ namespace Files.Filesystem.Search
             public IDateRangeFilter Filter { get; }
 
             public string Title => "Range_To".GetLocalized();
-            public string Parameter => Filter.Range.Label.MaxValue;
+            public string Parameter { get; }
 
-            public ToTag(IDateRangeFilter filter) => Filter = filter;
+            public ToTag(IDateRangeFilter filter, IRange<string> label)
+                => (Filter, Parameter) = (filter, label.MaxValue);
 
             public void Delete() => Filter.Range = new DateRange(Filter.Range.MinValue, Date.MaxValue);
         }
