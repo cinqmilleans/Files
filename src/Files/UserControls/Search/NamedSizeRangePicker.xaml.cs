@@ -19,7 +19,7 @@ namespace Files.UserControls.Search
             get => (SizeRange)GetValue(RangeProperty);
             set
             {
-                if (value.Equals(SizeRange.None))
+                if (value == SizeRange.None)
                 {
                     value = SizeRange.All;
                 }

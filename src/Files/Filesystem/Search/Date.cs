@@ -132,8 +132,8 @@ namespace Files.Filesystem.Search
         public override string ToString() => Label.ToString();
 
         public override int GetHashCode() => range.GetHashCode();
-        public override bool Equals(object other) => range.Equals(other);
-        public bool Equals(IRange<Date> other) => range.Equals(other);
+        public override bool Equals(object other) => other is DateRange r && range.Equals(r.range);
+        public bool Equals(IRange<Date> other) => other is DateRange r && range.Equals(r.range);
 
         public static DateRange operator +(DateRange a, DateRange b)
         {
@@ -241,7 +241,7 @@ namespace Files.Filesystem.Search
 
         private struct AlwaysRange : IRange
         {
-            public RangeDirections Direction => RangeDirections.None;
+            public RangeDirections Direction => RangeDirections.All;
 
             public Date MinValue => Date.MinValue;
             public Date MaxValue => Date.Today;

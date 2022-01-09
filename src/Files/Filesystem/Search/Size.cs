@@ -138,12 +138,9 @@ namespace Files.Filesystem.Search
 
         public override string ToString() => Label.ToString();
 
-        public override int GetHashCode()
-            => (MinValue, MaxValue).GetHashCode();
-        public override bool Equals(object other)
-            => other is SizeRange range && Equals(range);
-        public bool Equals(IRange<Size> other)
-            => other is SizeRange range && range.MinValue.Equals(MinValue) && range.MaxValue.Equals(MaxValue);
+        public override int GetHashCode() => range.GetHashCode();
+        public override bool Equals(object other) => other is SizeRange r && range.Equals(r.range);
+        public bool Equals(IRange<Size> other) => other is SizeRange r && range.Equals(r.range);
 
         public static SizeRange operator +(SizeRange a, SizeRange b)
         {
@@ -222,7 +219,7 @@ namespace Files.Filesystem.Search
 
         private struct AllRange : IRange
         {
-            public RangeDirections Direction => RangeDirections.None;
+            public RangeDirections Direction => RangeDirections.All;
 
             public Size MinValue => Size.MinValue;
             public Size MaxValue => Size.MaxValue;
@@ -248,7 +245,7 @@ namespace Files.Filesystem.Search
             public RangeDirections Direction { get; }
 
             public Size MinValue => GetMinSize(minName);
-            public Size MaxValue => GetMaxSize(minName);
+            public Size MaxValue => GetMaxSize(maxName);
 
             public IRange<string> Label => new RangeLabel(GetText(minName), GetText(maxName));
 
