@@ -64,10 +64,11 @@ namespace Files.UserControls.Search
         }
         public void GoPage(ISearchFilter filter)
         {
-            var viewModel = filter switch
+            ISearchPageViewModel viewModel = filter switch
             {
+                IDateRangeFilter f => new DateRangePageViewModel(f),
                 ISearchFilter f => new SearchPageViewModel(f),
-                _ => null,
+                _  => null,
             };
 
             if (viewModel is not null)

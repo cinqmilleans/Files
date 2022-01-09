@@ -1,5 +1,7 @@
 ﻿using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Files.ViewModels.Search
 {
@@ -7,16 +9,17 @@ namespace Files.ViewModels.Search
     {
         ISearchSettings Settings { get; }
     }
-    public interface ISearchPageViewModel
+    public interface ISearchPageViewModel : INotifyPropertyChanged
     {
         ISearchFilter Filter { get; }
     }
     public interface IMultiSearchPageViewModel : ISearchPageViewModel
     {
+        ISearchHeader SelectedHeader { get; set; }
         IEnumerable<ISearchHeader> Headers { get; }
     }
 
-    public class SearchPageViewModel : ISearchPageViewModel
+    public class SearchPageViewModel : ObservableObject, ISearchPageViewModel
     {
         public ISearchFilter Filter { get; }
 

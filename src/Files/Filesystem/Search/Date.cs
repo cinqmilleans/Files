@@ -22,6 +22,7 @@ namespace Files.Filesystem.Search
 
     public interface IDateRangeFilter : ISearchFilter
     {
+        DateOrigins Origin { get; set; }
         DateRange Range { get; set; }
     }
 
@@ -333,7 +334,7 @@ namespace Files.Filesystem.Search
             };
             private static string GetText(Moments moment) => moment switch
             {
-                Moments.Today => "ItemTimeText_Today".GetLocalized(),
+                Moments.Today => "Today".GetLocalized(),
                 Moments.Yesterday => "ItemTimeText_Yesterday".GetLocalized(),
                 Moments.ThisWeek => "ItemTimeText_ThisWeek".GetLocalized(),
                 Moments.LastWeek => "ItemTimeText_LastWeek".GetLocalized(),
@@ -427,7 +428,7 @@ namespace Files.Filesystem.Search
                 public bool CanBuild(Date? minDate, Date? maxDate)
                 {
                     bool hasMin = !minDate.HasValue || (minDate.Value.Month == 1 && minDate.Value.Day == 1);
-                    bool hasMax = !maxDate.HasValue || (maxDate.Value.Month == 12 && minDate.Value.Day == 31);
+                    bool hasMax = !maxDate.HasValue || (maxDate.Value.Month == 12 && maxDate.Value.Day == 31);
 
                     return hasMin && hasMax;
                 }

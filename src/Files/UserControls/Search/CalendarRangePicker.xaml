@@ -17,7 +17,7 @@
             Date="{x:Bind MinOffset, Mode=TwoWay}" MaxDate="{x:Bind Today}"/>
         <CalendarDatePicker Grid.Row="1"
             HorizontalAlignment="Stretch" Header="To"
-            Date="{x:Bind MaxOffset, Mode=TwoWay}" MaxDate="{x:Bind Yesterday}" />
+            Date="{x:Bind MaxOffset, Mode=TwoWay}" MaxDate="{x:Bind Today}" />
     </Grid>
 
 </UserControl>

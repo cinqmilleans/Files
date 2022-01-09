@@ -13,6 +13,7 @@
     <UserControl.Resources>
 
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:VisiblityInvertConverter x:Key="VisibilityInvertConverter" />
 
         <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
             GroupTemplate="{StaticResource GroupTemplate}"
@@ -50,29 +51,41 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeRangeFilter">
-            <Grid Margin="0,8,0,0" RowSpacing="8">
+            <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="64" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock
-                    Visibility="{x:Bind IsEmpty, Mode=OneWay}"
-                    VerticalAlignment="Top" Style="{StaticResource IndicatorStyle}"
-                    Text="{helpers:ResourceString Name=NoSizeRangeSelected}" />
-                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}" CanClose="False" />
-                <!--Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />-->
+                <TextBlock Text="{helpers:ResourceString Name=NoSizeRangeSelected}"
+                    Style="{StaticResource IndicatorStyle}" VerticalAlignment="Top" Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}"
+                    Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
                 <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
-                <TextBlock Grid.Row="2" Margin="0,8,0,-12"
-                    Text="{helpers:ResourceString Name=OrChooseASizeRange}"
-                    Style="{StaticResource IndicatorStyle}" />
+                <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseASizeRange}"
+                    Style="{StaticResource IndicatorStyle}" Margin="0,8,0,-12" />
                 <local:NamedSizeRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateRangeFilter">
-            <Grid />
+            <Grid RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MinHeight="64" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{helpers:ResourceString Name=NoDateRangeSelected}"
+                    Style="{StaticResource IndicatorStyle}" VerticalAlignment="Top" Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
+                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}"
+                    Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
+                <local:CalendarRangePicker Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseADateRange}"
+                     Style="{StaticResource IndicatorStyle}" Margin="0,8,0,-12" />
+                <local:RelativeDateRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
+            </Grid>
         </DataTemplate>
 
         <Style x:Key="IndicatorStyle" BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
@@ -86,7 +99,7 @@
 
     </UserControl.Resources>
 
-    <ContentControl HorizontalContentAlignment="Stretch"
+    <ContentControl HorizontalContentAlignment="Stretch" Margin="0,8,0,0"
         Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
 
 </UserControl>

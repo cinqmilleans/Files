@@ -38,7 +38,7 @@ namespace Files.UserControls.Search
         }
         private DateTimeOffset? MaxOffset
         {
-            get => Range.MaxValue < Date.Today ? Range.MaxValue.Offset : null;
+            get => Range.MaxValue <= Date.Today ? Range.MaxValue.Offset : null;
             set
             {
                 var maxValue = value.HasValue ? new Date(value.Value.DateTime) : Date.MaxValue;
@@ -47,7 +47,6 @@ namespace Files.UserControls.Search
         }
 
         private DateTimeOffset Today { get; } = Date.Today.Offset;
-        private DateTimeOffset Yesterday => Today.AddDays(-1);
 
         public CalendarRangePicker() => InitializeComponent();
 
