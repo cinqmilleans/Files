@@ -13,7 +13,7 @@ namespace Files.ViewModels.Search
             set
             {
                 var key = value?.Key ?? string.Empty;
-                if (key != SelectedHeader.Key)
+                if (key != string.Empty && key != SelectedHeader.Key)
                 {
                     Filter.Origin = Headers.First(header => header.Key == key).Origin;
                     OnPropertyChanged(nameof(SelectedHeader));

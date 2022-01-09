@@ -490,7 +490,7 @@ namespace Files.Filesystem.Search
 
         public string Key => "accessed";
         public string Glyph => "\uEC26";
-        public string Label => "AccessedDate".GetLocalized();
+        public string Label => "DateAccessed".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.DateAccessed";
 

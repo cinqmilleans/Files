@@ -69,7 +69,7 @@
                     </Button>
                     <ComboBox x:Name="HeaderCombo" Grid.Column="1"
                         HorizontalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent"
-                        ItemsSource="{x:Bind Headers}" SelectedValue="{x:Bind SelectedHeader, Mode=TwoWay}">
+                        ItemsSource="{x:Bind Headers}" SelectedItem="{x:Bind SelectedHeader, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="s:ISearchHeader">
                                 <StackPanel VerticalAlignment="Stretch" Orientation="Vertical">
