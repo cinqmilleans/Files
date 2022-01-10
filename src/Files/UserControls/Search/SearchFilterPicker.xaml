@@ -26,27 +26,31 @@
                 <ItemsControl ItemsSource="{Binding}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="s:ISearchFilter">
-                            <Grid Margin="0,6,0,6" Background="Transparent" ColumnSpacing="8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="18" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="18" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="&#xEC92;" />
-                                <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Vertical">
                                 <Button x:Name="OpenButton" Grid.Column="2" Tapped="OpenButton_Tapped"
-                                    Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    Margin="0,2,0,2" Padding="0" Background="Transparent" BorderBrush="Transparent">
                                     <Button.Content>
-                                        <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                        <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="18" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="18" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="{x:Bind Header.Glyph}" />
+                                            <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
+                                            <FontIcon Grid.Column="2" Width="18" FontSize="18"
+                                                Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                        </Grid>
                                     </Button.Content>
                                 </Button>
                                 <local:TagsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                    Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True" />
-                            </Grid>
+                                    Margin="22,0,0,0" Tags="{x:Bind Tags, Mode=OneWay}" CanSelect="True" CanClose="True" />
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

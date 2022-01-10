@@ -473,7 +473,7 @@ namespace Files.Filesystem.Search
         public DateOrigins Origin => DateOrigins.Created;
 
         public string Key => "created";
-        public string Glyph => "\uEC26";
+        public string Glyph => "\uEC92";
         public string Label => "DateCreated".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.ItemDate";
@@ -488,7 +488,7 @@ namespace Files.Filesystem.Search
         public DateOrigins Origin => DateOrigins.Modified;
 
         public string Key => "modified";
-        public string Glyph => "\uEC26";
+        public string Glyph => "\uEC92";
         public string Label => "DateModified".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.DateModified";
@@ -503,7 +503,7 @@ namespace Files.Filesystem.Search
         public DateOrigins Origin => DateOrigins.Accessed;
 
         public string Key => "accessed";
-        public string Glyph => "\uEC26";
+        public string Glyph => "\uEC92";
         public string Label => "DateAccessed".GetLocalized();
         public string Description => string.Empty;
         public string QueryKey => "System.DateAccessed";

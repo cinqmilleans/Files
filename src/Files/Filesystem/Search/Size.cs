@@ -251,7 +251,21 @@ namespace Files.Filesystem.Search
             public Size MinValue => GetMinSize(minName);
             public Size MaxValue => GetMaxSize(maxName);
 
-            public IRange<string> Label => new RangeLabel(GetText(minName), GetText(maxName));
+            public IRange<string> Label
+            {
+                get
+                {
+                    if (minName == maxName)
+                    {
+                        return new RangeLabel(GetText(minName));
+                    }
+
+                    string minLabel = minName != Names.Empty ? GetText(minName) : string.Empty;
+                    string maxLabel = maxName != Names.Huge ? GetText(maxName) : string.Empty;
+
+                    return new RangeLabel(minLabel, maxLabel);
+                }
+            }
 
             public NamedRange(Names name) : this(name, name) {}
             public NamedRange(Names minName, Names maxName)
@@ -303,7 +317,7 @@ namespace Files.Filesystem.Search
                 Names.Small => "ItemSizeText_Small".GetLocalized(),
                 Names.Medium => "ItemSizeText_Medium".GetLocalized(),
                 Names.Large => "ItemSizeText_Large".GetLocalized(),
-                Names.VeryLarge => "ItemSizeText_Large".GetLocalized(),
+                Names.VeryLarge => "ItemSizeText_VeryLarge".GetLocalized(),
                 Names.Huge => "ItemSizeText_Huge".GetLocalized(),
                 _ => throw new ArgumentException(),
             };

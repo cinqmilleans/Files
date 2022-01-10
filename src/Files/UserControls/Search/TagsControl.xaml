@@ -21,7 +21,8 @@
             </ResourceDictionary.ThemeDictionaries>
 
             <DataTemplate x:Key="TagButtonTemplate" x:DataType="s:ISearchTag">
-                <Button x:Name="MainButton" Padding="4" CornerRadius="4" FontSize="12" Tapped="MainButton_Tapped"
+                <Button x:Name="MainButton" Tapped="MainButton_Tapped"
+                    Margin="0,4,0,0" Padding="4" CornerRadius="4" FontSize="12"
                     PointerEntered="MainButton_PointerEntered" PointerExited="MainButton_PointerExited">
                     <Button.Content>
                         <Grid>

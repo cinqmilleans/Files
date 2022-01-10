@@ -13,6 +13,9 @@ namespace Files.UserControls.Search
         public static readonly DependencyProperty TagsProperty =
             DependencyProperty.Register(nameof(Tags), typeof(ISearchTag), typeof(TagsControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty CanSelectProperty =
+            DependencyProperty.Register(nameof(CanSelect), typeof(bool), typeof(TagsControl), new PropertyMetadata(false));
+
         public static readonly DependencyProperty CanCloseProperty =
             DependencyProperty.Register(nameof(CanClose), typeof(bool), typeof(TagsControl), new PropertyMetadata(false));
 
@@ -20,6 +23,12 @@ namespace Files.UserControls.Search
         {
             get => (IEnumerable<ISearchTag>)GetValue(TagsProperty);
             set => SetValue(TagsProperty, value);
+        }
+
+        public bool CanSelect
+        {
+            get => (bool)GetValue(CanSelectProperty);
+            set => SetValue(CanSelectProperty, value);
         }
 
         public bool CanClose
@@ -55,7 +64,7 @@ namespace Files.UserControls.Search
 
         private void MainButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is FrameworkElement element)
+            if (CanSelect && sender is FrameworkElement element)
             {
                 var navigator = Ioc.Default.GetService<ISearchNavigator>();
                 var tag = element.DataContext as ISearchTag;
@@ -64,7 +73,7 @@ namespace Files.UserControls.Search
         }
         private void CloseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is FrameworkElement element)
+            if (CanClose && sender is FrameworkElement element)
             {
                 var tag = element.DataContext as ISearchTag;
                 tag?.Delete();
