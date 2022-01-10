@@ -21,13 +21,9 @@ namespace Files.ViewModels.Search
 
     public class SearchPageViewModel : ObservableObject, ISearchPageViewModel
     {
-        public ISearchFilterCollection Collection { get; }
         public ISearchFilter Filter { get; }
 
-        public SearchPageViewModel(ISearchFilter filter)
-            => Filter = filter;
-        public SearchPageViewModel(ISearchFilterCollection collection, ISearchFilter filter)
-            : this(filter) => Collection = collection;
+        public SearchPageViewModel(ISearchFilter filter) => Filter = filter;
     }
 
     public class SettingsPageViewModel : SearchPageViewModel, ISettingsPageViewModel

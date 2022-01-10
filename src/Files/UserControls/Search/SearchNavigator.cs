@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem.Search;
 using Files.ViewModels.Search;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -12,15 +13,17 @@ namespace Files.UserControls.Search
 
         void Search();
         void Back();
+        void Save();
 
         void ClearPage();
         void GoPage(ISearchSettings settings);
         void GoPage(ISearchFilter filter);
+
     }
 
     public class SearchNavigator : ISearchNavigator
     {
-        private readonly Stack<ISearchFilter> filters = new();
+        private readonly Stack<ISearchFilter> filterStack = new();
 
         private readonly NavigationTransitionInfo emptyTransition =
             new SuppressNavigationTransitionInfo();
@@ -49,20 +52,28 @@ namespace Files.UserControls.Search
         {
             if (frame is not null && frame.CanGoBack)
             {
+                filterStack.Pop();
                 frame.GoBack(toRightTransition);
             }
+        }
+
+        public void Save()
+        {
         }
 
         public void ClearPage()
         {
             if (frame is not null)
             {
+                filterStack.Clear();
                 frame.Content = null;
             }
         }
         public void GoPage(ISearchSettings settings)
         {
             var viewModel = new SettingsPageViewModel(settings);
+            filterStack.Clear();
+            filterStack.Push(viewModel.Filter);
             frame?.Navigate(typeof(SearchFilterPage), viewModel, emptyTransition);
         }
         public void GoPage(ISearchFilter filter)
@@ -76,6 +87,7 @@ namespace Files.UserControls.Search
 
             if (viewModel is not null)
             {
+                filterStack.Push(filter);
                 frame?.Navigate(typeof(SearchFilterPage), viewModel, toRightTransition);
             }
         }
