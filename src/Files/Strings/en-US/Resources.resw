@@ -2752,6 +2752,9 @@ We use App Center to keep track of app usage, find bugs, and fix crashes. All in
   <data name="IncludeSubfolders" xml:space="preserve">
     <value>Include Subfolders</value>
   </data>
+  <data name="Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
   <data name="NoDateRangeSelected" xml:space="preserve">
     <value>No date range selected.</value>
   </data>

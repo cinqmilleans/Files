@@ -1,4 +1,5 @@
-﻿using Files.ViewModels.Search;
+﻿using Files.Filesystem.Search;
+using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.UI.Xaml;
@@ -34,11 +35,16 @@ namespace Files.UserControls.Search
         }
         private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var navigator = Ioc.Default.GetService<ISearchNavigator>();
+            var navigator = Ioc.Default.GetService<ISearchNavigator>() as SearchNavigator;
             navigator.Search();
         }
         private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e)
             => ViewModel?.Filter?.Clear();
+
+        private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
+            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).SelectedHeader;
+        private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            => (ViewModel as IMultiSearchPageViewModel).SelectedHeader = (sender as ComboBox).SelectedItem as ISearchHeader;
     }
 
     public class SearchFilterPageTemplateSelector : DataTemplateSelector

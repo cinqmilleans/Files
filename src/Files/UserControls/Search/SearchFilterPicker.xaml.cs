@@ -1,7 +1,9 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Uwp;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Files.UserControls.Search
@@ -23,6 +25,44 @@ namespace Files.UserControls.Search
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
             var filter = (sender as FrameworkElement).DataContext as ISearchFilter;
+            navigator.GoPage(filter);
+        }
+
+        private void AddFilterButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            var menu = new MenuFlyout
+            {
+                Placement = FlyoutPlacementMode.BottomEdgeAlignedRight
+            };
+
+            var file = new MenuFlyoutSubItem { Text = "File".GetLocalized() };
+            file.Items.Add(GetItem(new SizeHeader()));
+            file.Items.Add(new MenuFlyoutSeparator());
+            file.Items.Add(GetItem(new CreatedHeader()));
+            file.Items.Add(GetItem(new ModifiedHeader()));
+            file.Items.Add(GetItem(new AccessedHeader()));
+            menu.Items.Add(file);
+
+            var group = new MenuFlyoutSubItem { Text = "Group".GetLocalized() };
+            group.Items.Add(GetItem(new AndHeader()));
+            group.Items.Add(GetItem(new OrHeader()));
+            group.Items.Add(GetItem(new NotHeader()));
+            menu.Items.Add(group);
+
+            (sender as Button).Flyout = menu;
+
+            MenuFlyoutItem GetItem(ISearchHeader header) => new()
+            {
+                Tag = header,
+                Template = HeaderItemTemplate,
+            };
+        }
+
+        private void AddItemButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var navigator = Ioc.Default.GetService<ISearchNavigator>();
+            var header = (sender as Button).Content as ISearchHeader;
+            var filter = header.GetFilter();
             navigator.GoPage(filter);
         }
     }

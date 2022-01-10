@@ -14,6 +14,7 @@
 
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <converters:VisiblityInvertConverter x:Key="VisibilityInvertConverter" />
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
         <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
             GroupTemplate="{StaticResource GroupTemplate}"
@@ -21,33 +22,40 @@
             DateRangeTemplate="{StaticResource DateRangeTemplate}" />
 
         <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterCollection">
-            <ItemsControl ItemsSource="{Binding}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="s:ISearchFilter">
-                        <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="18" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="18" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="&#xEC92;" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
-                            <Button x:Name="OpenButton" Grid.Column="2" Tapped="OpenButton_Tapped"
-                                Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
-                                <Button.Content>
-                                    <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
-                                </Button.Content>
-                            </Button>
-                            <local:TagsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True" />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <StackPanel Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="s:ISearchFilter">
+                            <Grid Margin="0,6,0,6" Background="Transparent" ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="18" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="18" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="&#xEC92;" />
+                                <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
+                                <Button x:Name="OpenButton" Grid.Column="2" Tapped="OpenButton_Tapped"
+                                    Width="18" Margin="0" Padding="0" Background="Transparent" BorderBrush="Transparent">
+                                    <Button.Content>
+                                        <FontIcon Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                                    </Button.Content>
+                                </Button>
+                                <local:TagsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                    Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <CommandBar Grid.Row="3" IsOpen="False" Margin="0,0,0,8"
+                    Background="Transparent" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="False">
+                    <AppBarButton x:Name="AddFilterButton" Loaded="AddFilterButton_Loaded"
+                        Icon="Add" Label="{helpers:ResourceString Name=Add}" />
+                </CommandBar>
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeRangeFilter">
@@ -96,6 +104,34 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="Opacity" Value="0.6" />
         </Style>
+
+        <ControlTemplate x:Key="HeaderItemTemplate" x:Name="HeaderItemTemplate" TargetType="MenuFlyoutItem">
+            <Button x:Name="AddItemButton" Content="{TemplateBinding Tag}" Tapped="AddItemButton_Tapped"
+                Background="Transparent" BorderBrush="Transparent"
+                MaxWidth="240" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                 >
+                <Button.ContentTemplate>
+                    <DataTemplate x:DataType="s:ISearchHeader">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon HorizontalAlignment="Left" FontSize="18" Glyph="{x:Bind Glyph}" />
+                                <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Label}" />
+                            </Grid>
+                            <TextBlock FontSize="14" TextWrapping="Wrap" Text="{x:Bind Description}"
+                                Visibility="{x:Bind Description, Converter={StaticResource StringToVisibilityConverter}}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </ControlTemplate>
 
     </UserControl.Resources>
 

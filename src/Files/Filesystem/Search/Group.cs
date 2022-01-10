@@ -32,7 +32,7 @@ namespace Files.Filesystem.Search
         public string Key => "and";
         public string Glyph => "\uEC26";
         public string Label => "And".GetLocalized();
-        public string Description => string.Empty;
+        public string Description => "SearchAndFilterCollection_Description".GetLocalized();
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
         public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);
@@ -56,7 +56,7 @@ namespace Files.Filesystem.Search
         public string Key => "or";
         public string Glyph => "\uEC26";
         public string Label => "Or".GetLocalized();
-        public string Description => string.Empty;
+        public string Description => "SearchOrFilterCollection_Description".GetLocalized();
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
         public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);
@@ -80,7 +80,7 @@ namespace Files.Filesystem.Search
         public string Key => "not";
         public string Glyph => "\uEC26";
         public string Label => "Not".GetLocalized();
-        public string Description => string.Empty;
+        public string Description => "SearchNotFilterCollection_Description".GetLocalized();
 
         ISearchFilter ISearchHeader.GetFilter() => GetFilter();
         public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);

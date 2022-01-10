@@ -1,5 +1,6 @@
 ﻿using Files.Filesystem.Search;
 using Files.ViewModels.Search;
+using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -19,6 +20,8 @@ namespace Files.UserControls.Search
 
     public class SearchNavigator : ISearchNavigator
     {
+        private readonly Stack<ISearchFilter> filters = new();
+
         private readonly NavigationTransitionInfo emptyTransition =
             new SuppressNavigationTransitionInfo();
         private readonly NavigationTransitionInfo toRightTransition =

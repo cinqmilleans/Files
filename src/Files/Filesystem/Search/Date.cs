@@ -286,7 +286,21 @@ namespace Files.Filesystem.Search
             public Date MinValue => GetMinDate(Date.Today, minMoment);
             public Date MaxValue => GetMaxDate(Date.Today, maxMoment);
 
-            public IRange<string> Label => new RangeLabel(GetText(minMoment), GetText(maxMoment));
+            public IRange<string> Label
+            {
+                get
+                {
+                    if (minMoment == maxMoment)
+                    {
+                        return new RangeLabel(GetText(minMoment));
+                    }
+
+                    string minLabel = minMoment != Moments.Older ? GetText(minMoment) : string.Empty;
+                    string maxLabel = maxMoment != Moments.Today ? GetText(maxMoment) : string.Empty;
+
+                    return new RangeLabel(minLabel, maxLabel);
+                }
+            }
 
             public RelativeRange(Moments moment)
                 => minMoment = maxMoment = moment;
