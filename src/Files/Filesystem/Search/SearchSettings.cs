@@ -11,13 +11,13 @@ namespace Files.Filesystem.Search
     {
         bool SearchInSubFolders { get; set; }
 
+        IEnumerable<ISearchFilter> PinnedFilters { get; }
         ISearchFilterCollection Filter { get; }
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
-        private readonly IReadOnlyDictionary<string, ISearchHeader> Headers
-            = GetHeaders().ToDictionary(header => header.Key);
+        private readonly IReadOnlyDictionary<string, ISearchHeader> headers;
 
         public bool searchInSubFolders = true;
         public bool SearchInSubFolders
@@ -26,13 +26,17 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref searchInSubFolders, value);
         }
 
+        public IEnumerable<ISearchFilter> PinnedFilters { get; }
         public ISearchFilterCollection Filter { get; } = new SearchFilterCollection(GroupAggregates.And);
 
         public SearchSettings()
         {
             var pinnedKeys = new string[] { "size", "modified" };
 
-            var filters = pinnedKeys.Select(key => Headers[key].GetFilter()).ToList();
+            headers = GetHeaders().ToDictionary(header => header.Key);
+            PinnedFilters = pinnedKeys.Select(key => headers[key].GetFilter()).ToList();
+
+            var filters = pinnedKeys.Select(key => headers[key].GetFilter()).ToList();
             Filter = new SearchFilterCollection(GroupAggregates.And, filters);
         }
 

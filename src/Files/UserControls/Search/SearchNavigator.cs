@@ -1,5 +1,8 @@
-﻿using Files.Filesystem.Search;
+﻿using Files.Extensions;
+using Files.Filesystem.Search;
 using Files.ViewModels.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +26,8 @@ namespace Files.UserControls.Search
 
     public class SearchNavigator : ISearchNavigator
     {
+        private readonly ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
+
         private readonly Stack<ISearchFilter> filterStack = new();
 
         private readonly NavigationTransitionInfo emptyTransition =
@@ -59,6 +64,34 @@ namespace Files.UserControls.Search
 
         public void Save()
         {
+            var filters = filterStack.CloneStack();
+
+            filters.TryPop(out ISearchFilter filter);
+            var collection = PopCollection(filters);
+
+            while (collection is not null)
+            {
+                if (!filter.IsEmpty)
+                {
+                    if (!collection.Contains(filter))
+                    {
+                        collection.Add(filter);
+                    }
+                }
+                else if (!settings.PinnedFilters.Contains(filter))
+                {
+                    collection.Remove(filter);
+                }
+
+                filter = collection;
+                collection = PopCollection(filters);
+            }
+
+            static ISearchFilterCollection PopCollection(Stack<ISearchFilter> filters)
+            {
+                filters.TryPop(out ISearchFilter filter);
+                return filter as ISearchFilterCollection;
+            }
         }
 
         public void ClearPage()
