@@ -13,7 +13,7 @@
 
     <Page.Resources>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:VisiblityInvertConverter x:Key="VisibilityInvertConverter" />
+        <converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
 
         <local:SearchFilterPageTemplateSelector x:Key="PageTemplateSelector"
             SettingsPageTemplate="{StaticResource SettingsPageTemplate}"

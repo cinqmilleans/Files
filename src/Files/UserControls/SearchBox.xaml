@@ -340,10 +340,6 @@
     <AutoSuggestBox
         x:Name="SearchRegion"
         x:Uid="NavigationToolbarSearchRegion"
-        ItemTemplate="{StaticResource SuggestionTemplate}"
-        ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}"
-        PlaceholderText="Search"
-        QuerySubmitted="SearchRegion_QuerySubmitted"
         Text="{x:Bind SearchBoxViewModel.Query, Mode=TwoWay}"
         PlaceholderText="{helpers:ResourceString Name=Search}"
         UpdateTextOnSelect="False"
@@ -351,8 +347,7 @@
         ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}"
         ItemTemplate="{StaticResource SuggestionTemplate}"
         TextChanged="SearchRegion_TextChanged"
-        QuerySubmitted="SearchRegion_QuerySubmitted">
-        <AutoSuggestBox.QueryIcon>
+        QuerySubmitted="SearchRegion_QuerySubmitted">        <AutoSuggestBox.QueryIcon>
             <FontIcon FontSize="14" Glyph="&#xE094;" />
         </AutoSuggestBox.QueryIcon>
         <AutoSuggestBox.KeyboardAccelerators>

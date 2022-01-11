@@ -13,7 +13,7 @@
     <UserControl.Resources>
 
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:VisiblityInvertConverter x:Key="VisibilityInvertConverter" />
+        <converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
         <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
         <local:SearchFilterPickerTemplateSelector x:Key="PickerTemplateSelector"
