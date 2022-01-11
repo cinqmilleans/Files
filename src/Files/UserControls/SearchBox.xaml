@@ -339,7 +339,11 @@
 
     <AutoSuggestBox
         x:Name="SearchRegion"
-        x:Uid="NavigationToolbarSearchReigon"
+        x:Uid="NavigationToolbarSearchRegion"
+        ItemTemplate="{StaticResource SuggestionTemplate}"
+        ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}"
+        PlaceholderText="Search"
+        QuerySubmitted="SearchRegion_QuerySubmitted"
         Text="{x:Bind SearchBoxViewModel.Query, Mode=TwoWay}"
         PlaceholderText="{helpers:ResourceString Name=Search}"
         UpdateTextOnSelect="False"
