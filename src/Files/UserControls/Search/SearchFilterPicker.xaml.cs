@@ -67,7 +67,7 @@ namespace Files.UserControls.Search
         }
     }
 
-    public class SearchFilterPickerTemplateSelector : DataTemplateSelector
+    internal class SearchFilterPickerTemplateSelector : DataTemplateSelector
     {
         public DataTemplate GroupTemplate { get; set; }
         public DataTemplate SizeRangeTemplate { get; set; }
@@ -85,7 +85,7 @@ namespace Files.UserControls.Search
             => SelectTemplateCore(item);
     }
 
-    public class TagCollectionTemplateSelector : DataTemplateSelector
+    internal class TagCollectionTemplateSelector : DataTemplateSelector
     {
         public DataTemplate GroupTagCollectionTemplate { get; set; }
         public DataTemplate FilterTagCollectionTemplate { get; set; }
@@ -100,5 +100,4 @@ namespace Files.UserControls.Search
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
             => SelectTemplateCore(item);
     }
-
 }

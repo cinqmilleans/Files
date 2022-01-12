@@ -121,7 +121,9 @@
             <StackPanel Orientation="Vertical">
                 <Button x:Name="OpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
                 <local:TagsControl Margin="22,0,18,0" Tags="{x:Bind Tags, Mode=OneWay}" CanSelect="True" CanClose="True" />
-                <Rectangle Height="1" Width="240" Fill="Gray" Margin="22,4,0,4" />
+                <Rectangle Height="1" HorizontalAlignment="Stretch" Margin="22,4,0,4"
+                    Opacity="0.60" Fill="{Binding Foreground, ElementName=OpenButton}"
+                    Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
             </StackPanel>
         </DataTemplate>
 

@@ -46,7 +46,7 @@ namespace Files.UserControls.Search
             => (ViewModel as IMultiSearchPageViewModel).SelectedHeader = (sender as ComboBox).SelectedItem as ISearchHeader;
     }
 
-    public class SearchFilterPageTemplateSelector : DataTemplateSelector
+    internal class SearchFilterPageTemplateSelector : DataTemplateSelector
     {
         public DataTemplate SettingsPageTemplate { get; set; }
         public DataTemplate SinglePageTemplate { get; set; }
@@ -63,5 +63,4 @@ namespace Files.UserControls.Search
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
             => SelectTemplateCore(item);
     }
-
 }
