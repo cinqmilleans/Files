@@ -21,39 +21,13 @@
             SizeRangeTemplate="{StaticResource SizeRangeTemplate}"
             DateRangeTemplate="{StaticResource DateRangeTemplate}" />
 
+        <local:TagCollectionTemplateSelector x:Key="TagCollectionTemplateSelector"
+            GroupTagCollectionTemplate="{StaticResource GroupTagCollectionTemplate}"
+            FilterTagCollectionTemplate="{StaticResource FilterTagCollectionTemplate}" />
+
         <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterCollection">
             <StackPanel Orientation="Vertical">
-                <ItemsControl ItemsSource="{Binding}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="s:ISearchFilter">
-                            <StackPanel Orientation="Vertical">
-                                <Button x:Name="OpenButton" Grid.Column="2" Tapped="OpenButton_Tapped"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                    Margin="0,2,0,2" Padding="0" Background="Transparent" BorderBrush="Transparent">
-                                    <Button.Content>
-                                        <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="18" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="18" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="{x:Bind Header.Glyph}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
-                                            <FontIcon Grid.Column="2" Width="18" FontSize="18"
-                                                Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
-                                        </Grid>
-                                    </Button.Content>
-                                </Button>
-                                <local:TagsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                    Margin="22,0,0,0" Tags="{x:Bind Tags, Mode=OneWay}" CanSelect="True" CanClose="True" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding}" ItemTemplateSelector="{StaticResource TagCollectionTemplateSelector}" />
                 <CommandBar Grid.Row="3" IsOpen="False" Margin="0,0,0,8"
                     Background="Transparent" DefaultLabelPosition="Right" IsDynamicOverflowEnabled="False">
                     <AppBarButton x:Name="AddFilterButton" Loaded="AddFilterButton_Loaded"
@@ -112,8 +86,7 @@
         <ControlTemplate x:Key="HeaderItemTemplate" x:Name="HeaderItemTemplate" TargetType="MenuFlyoutItem">
             <Button x:Name="AddItemButton" Content="{TemplateBinding Tag}" Tapped="AddItemButton_Tapped"
                 Background="Transparent" BorderBrush="Transparent"
-                MaxWidth="240" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                 >
+                MaxWidth="240" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
                 <Button.ContentTemplate>
                     <DataTemplate x:DataType="s:ISearchHeader">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
@@ -136,6 +109,50 @@
                 </Button.ContentTemplate>
             </Button>
         </ControlTemplate>
+
+        <DataTemplate x:Key="GroupTagCollectionTemplate" x:DataType="s:ISearchFilterCollection">
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="OpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
+                <ItemsControl Margin="26,0,0,0" ItemsSource="{Binding}" ItemTemplate="{StaticResource FilterTagCollectionTemplate}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FilterTagCollectionTemplate" x:DataType="s:ISearchFilter">
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="OpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
+                <local:TagsControl Margin="22,0,18,0" Tags="{x:Bind Tags, Mode=OneWay}" CanSelect="True" CanClose="True" />
+                <Rectangle Height="1" Width="240" Fill="Gray" Margin="22,4,0,4" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style x:Key="HeaderTagCollectionStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0,2,0,2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate x:DataType="s:ISearchFilter">
+                        <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="18" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="18" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <FontIcon Width="18" VerticalAlignment="Center" FontSize="18" Glyph="{x:Bind Header.Glyph}" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind Header.Label}" FontSize="15" FontWeight="SemiBold" />
+                            <FontIcon Grid.Column="2" Width="18" FontSize="18" Opacity="0.60" HorizontalAlignment="Right" Glyph="&#xE974;" />
+                        </Grid>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </UserControl.Resources>
 

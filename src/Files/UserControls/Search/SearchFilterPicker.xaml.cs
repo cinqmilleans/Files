@@ -84,4 +84,21 @@ namespace Files.UserControls.Search
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
             => SelectTemplateCore(item);
     }
+
+    public class TagCollectionTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate GroupTagCollectionTemplate { get; set; }
+        public DataTemplate FilterTagCollectionTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
+        {
+            ISearchFilterCollection => GroupTagCollectionTemplate,
+            ISearchFilter => FilterTagCollectionTemplate,
+            _ => null,
+        };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
+    }
+
 }
