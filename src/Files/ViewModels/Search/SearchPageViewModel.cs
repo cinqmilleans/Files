@@ -1,10 +1,8 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace Files.ViewModels.Search
 {
@@ -79,14 +77,10 @@ namespace Files.ViewModels.Search
             {
                 return;
             }
-
+            var filter = pageViewModel.Filter;
 
             var settings = Ioc.Default.GetService<ISearchSettings>();
-            var filter = pageViewModel.Filter;
-            string headerKey = filter.Header.Key;
-            bool isMainCollection = pageViewModel.Parent is ISettingsPageViewModel;
-            bool isLastPinned = isMainCollection && settings.PinnedKeys.Contains(headerKey)
-                && collection.Where(item => item.Header.Key == headerKey).Count() == 1;
+            bool isPinned = pageViewModel.Parent is ISettingsPageViewModel && collection.IndexOf(filter) < settings.PinnedKeys.Count;
 
             if (!filter.IsEmpty)
             {
@@ -95,7 +89,7 @@ namespace Files.ViewModels.Search
                     collection.Add(filter);
                 }
             }
-            else if (!isLastPinned)
+            else if (!isPinned)
             {
                 collection.Remove(filter);
             }
