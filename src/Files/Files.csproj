@@ -401,6 +401,7 @@
     <Compile Include="ViewModels\Properties\CompatibilityProperties.cs" />
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
+    <Compile Include="ViewModels\Search\GroupPageViewModel.cs" />
     <Compile Include="ViewModels\Search\DateRangePageViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchPageViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />

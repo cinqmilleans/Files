@@ -62,6 +62,7 @@ namespace Files.ViewModels.Search
         public ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilter filter) => filter switch
         {
             ISearchSettings s => new SettingsPageViewModel(s),
+            ISearchFilterCollection f => new GroupPageViewModel(parent, f),
             IDateRangeFilter f => new DateRangePageViewModel(parent, f),
             ISearchFilter f => new SearchPageViewModel(parent, f),
             _ => null,

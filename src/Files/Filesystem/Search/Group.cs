@@ -22,6 +22,7 @@ namespace Files.Filesystem.Search
 
     public interface ISearchFilterCollection : IList<ISearchFilter>, ISearchFilter, INotifyCollectionChanged
     {
+        GroupAggregates Aggregate { get; set; }
     }
 
     public class AndHeader : IGroupHeader
