@@ -10,6 +10,7 @@ using Files.Services.Implementation;
 using Files.UserControls.MultitaskingControl;
 using Files.UserControls.Search;
 using Files.ViewModels;
+using Files.ViewModels.Search;
 using Files.Views;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -110,6 +111,7 @@ namespace Files
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
                 .AddSingleton<ISearchSettings, SearchSettings>()
                 .AddSingleton<ISearchNavigator, SearchNavigator>()
+                .AddSingleton<ISearchPageViewModelFactory, SearchPageViewModelFactory>()
 
                 // TODO: Dialogs:
 

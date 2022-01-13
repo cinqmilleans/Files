@@ -467,7 +467,6 @@ namespace Files.Filesystem.Search
         }
     }
 
-    [SearchHeader]
     public class CreatedHeader : IDateRangeHeader
     {
         public DateOrigins Origin => DateOrigins.Created;
@@ -482,7 +481,6 @@ namespace Files.Filesystem.Search
         public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
     }
 
-    [SearchHeader]
     public class ModifiedHeader : IDateRangeHeader
     {
         public DateOrigins Origin => DateOrigins.Modified;
@@ -497,7 +495,6 @@ namespace Files.Filesystem.Search
         public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
     }
 
-    [SearchHeader]
     public class AccessedHeader : IDateRangeHeader
     {
         public DateOrigins Origin => DateOrigins.Accessed;

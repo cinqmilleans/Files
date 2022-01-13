@@ -24,7 +24,6 @@ namespace Files.Filesystem.Search
     {
     }
 
-    [SearchHeader]
     public class AndHeader : IGroupHeader
     {
         public GroupAggregates Aggregate => GroupAggregates.And;
@@ -48,7 +47,6 @@ namespace Files.Filesystem.Search
         }
     }
 
-    [SearchHeader]
     public class OrHeader : IGroupHeader
     {
         public GroupAggregates Aggregate => GroupAggregates.Or;
@@ -72,7 +70,6 @@ namespace Files.Filesystem.Search
         }
     }
 
-    [SearchHeader]
     public class NotHeader : IGroupHeader
     {
         public GroupAggregates Aggregate => GroupAggregates.Not;

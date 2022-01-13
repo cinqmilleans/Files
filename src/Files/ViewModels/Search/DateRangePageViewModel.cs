@@ -1,11 +1,10 @@
 ﻿using Files.Filesystem.Search;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Files.ViewModels.Search
 {
-    public class DateRangePageViewModel : ObservableObject, IMultiSearchPageViewModel
+    public class DateRangePageViewModel : SearchPageViewModel, IMultiSearchPageViewModel
     {
         public ISearchHeader SelectedHeader
         {
@@ -15,7 +14,8 @@ namespace Files.ViewModels.Search
                 var key = value?.Key ?? string.Empty;
                 if (key != string.Empty && key != SelectedHeader.Key)
                 {
-                    Filter.Origin = Headers.First(header => header.Key == key).Origin;
+                    var filter = Filter as IDateRangeFilter;
+                    filter.Origin = Headers.First(header => header.Key == key).Origin;
                     OnPropertyChanged(nameof(SelectedHeader));
                 }
             }
@@ -29,9 +29,7 @@ namespace Files.ViewModels.Search
             new AccessedHeader(),
         };
 
-        ISearchFilter ISearchPageViewModel.Filter => Filter;
-        private IDateRangeFilter Filter { get; }
-
-        public DateRangePageViewModel(IDateRangeFilter filter) => Filter = filter;
+        public DateRangePageViewModel(ISearchPageViewModel parent, IDateRangeFilter filter)
+            : base(parent, filter) {}
     }
 }

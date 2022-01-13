@@ -35,7 +35,4 @@ namespace Files.Filesystem.Search
 
         void Delete();
     }
-
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class SearchHeaderAttribute : Attribute {}
 }

@@ -1,23 +1,34 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 
 namespace Files.Filesystem.Search
 {
     public interface ISearchSettings : INotifyPropertyChanged
     {
+        public IReadOnlyDictionary<string, ISearchHeader> Headers { get; }
+
         bool SearchInSubFolders { get; set; }
 
-        IEnumerable<ISearchFilter> PinnedFilters { get; }
+        IReadOnlyList<string> PinnedKeys { get; }
         ISearchFilterCollection Filter { get; }
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
-        private readonly IReadOnlyDictionary<string, ISearchHeader> headers;
+        public IReadOnlyDictionary<string, ISearchHeader> Headers { get; }
+            = new ReadOnlyDictionary<string, ISearchHeader>(new List<ISearchHeader>
+            {
+                new AndHeader(),
+                new OrHeader(),
+                new NotHeader(),
+                new SizeHeader(),
+                new CreatedHeader(),
+                new ModifiedHeader(),
+                new AccessedHeader(),
+            }.ToDictionary(header => header.Key));
 
         public bool searchInSubFolders = true;
         public bool SearchInSubFolders
@@ -26,35 +37,13 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref searchInSubFolders, value);
         }
 
-        public IEnumerable<ISearchFilter> PinnedFilters { get; }
+        public IReadOnlyList<string> PinnedKeys { get; } = new List<string>{ "size", "modified" }.AsReadOnly();
         public ISearchFilterCollection Filter { get; } = new SearchFilterCollection(GroupAggregates.And);
 
         public SearchSettings()
         {
-            var pinnedKeys = new string[] { "size", "modified" };
-
-            headers = GetHeaders().ToDictionary(header => header.Key);
-            PinnedFilters = pinnedKeys.Select(key => headers[key].GetFilter()).ToList();
-
-            var filters = pinnedKeys.Select(key => headers[key].GetFilter()).ToList();
+            var filters = PinnedKeys.Select(key => Headers[key].GetFilter()).ToList();
             Filter = new SearchFilterCollection(GroupAggregates.And, filters);
-        }
-
-        private static IEnumerable<ISearchHeader> GetHeaders()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            foreach (Type type in assembly.GetTypes())
-            {
-                var attributes = type.GetCustomAttributes(typeof(SearchHeaderAttribute), false);
-                if (attributes.Length == 1)
-                {
-                    var header = Activator.CreateInstance(type) as ISearchHeader;
-                    if (header is not null)
-                    {
-                        yield return header;
-                    }
-                }
-            }
         }
     }
 }

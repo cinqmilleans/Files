@@ -358,7 +358,6 @@ namespace Files.Filesystem.Search
         }
     }
 
-    [SearchHeader]
     public class SizeHeader : ISearchHeader
     {
         public string Key => "size";
