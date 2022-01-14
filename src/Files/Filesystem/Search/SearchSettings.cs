@@ -10,7 +10,6 @@ namespace Files.Filesystem.Search
     {
         bool SearchInSubFolders { get; set; }
 
-        IReadOnlyList<SearchKeys> PinnedKeys { get; }
         ISearchFilterCollection Filter { get; }
     }
 
@@ -23,15 +22,14 @@ namespace Files.Filesystem.Search
             set => SetProperty(ref searchInSubFolders, value);
         }
 
-        public IReadOnlyList<SearchKeys> PinnedKeys { get; }
-            = new List<SearchKeys> { SearchKeys.Size, SearchKeys.DateModified }.AsReadOnly();
-
         public ISearchFilterCollection Filter { get; }
 
         public SearchSettings()
         {
+            var pinnedKeys = new List<SearchKeys> { SearchKeys.Size, SearchKeys.DateModified };
+
             var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
-            var filters = PinnedKeys.Select(key => GetFilter(key)).ToList();
+            var filters = pinnedKeys.Select(key => GetFilter(key)).ToList();
             Filter = new SearchFilterCollection(SearchKeys.GroupAnd, filters);
 
             ISearchFilter GetFilter(SearchKeys key) => provider.GetHeader(key).CreateFilter();

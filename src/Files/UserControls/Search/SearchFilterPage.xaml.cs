@@ -1,6 +1,7 @@
 ﻿using Files.Filesystem.Search;
 using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System.ComponentModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -18,7 +19,26 @@ namespace Files.UserControls.Search
         public ISearchPageViewModel ViewModel
         {
             get => (ISearchPageViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
+            set
+            {
+                if (ViewModel is not null)
+                {
+                    ViewModel.Filter.PropertyChanged -= Filter_PropertyChanged;
+                }
+                SetValue(ViewModelProperty, value);
+                if (ViewModel is not null)
+                {
+                    ViewModel.Filter.PropertyChanged += Filter_PropertyChanged;
+                }
+            }
+        }
+
+        private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ISearchFilter.IsEmpty))
+            {
+                ViewModel.Save();
+            }
         }
 
         public SearchFilterPage() => InitializeComponent();
@@ -27,6 +47,11 @@ namespace Files.UserControls.Search
         {
             base.OnNavigatedTo(e);
             ViewModel = e.Parameter as ISearchPageViewModel;
+        }
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            ViewModel = null;
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Back();

@@ -102,8 +102,34 @@ namespace Files.Filesystem.Search
         {
             base.OnCollectionChanged(e);
 
+            if (e.Action is NotifyCollectionChangedAction.Remove)
+            {
+                foreach (ISearchFilter oldItem in e.OldItems)
+                {
+                    oldItem.PropertyChanged -= Filter_PropertyChanged;
+                }
+            }
+            if (e.Action is NotifyCollectionChangedAction.Add)
+            {
+                foreach (ISearchFilter newItem in e.NewItems)
+                {
+                    newItem.PropertyChanged += Filter_PropertyChanged;
+                }
+            }
+
             OnPropertyChanged(nameof(IsEmpty));
             OnPropertyChanged(nameof(Tags));
+        }
+
+        private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ISearchFilter.IsEmpty))
+            {
+                if (sender is ISearchFilter filter && filter.IsEmpty)
+                {
+                    Remove(filter);
+                }
+            }
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

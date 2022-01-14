@@ -37,19 +37,7 @@ namespace Files.ViewModels.Search
         public ISearchFilter Filter { get; }
 
         public SearchPageViewModel(ISearchPageViewModel parent, ISearchFilter filter)
-        {
-            (Parent, Filter) = (parent, filter);
-
-            Filter.PropertyChanged += Filter_PropertyChanged;
-        }
-
-        private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Filter.IsEmpty))
-            {
-                this.Save();
-            }
-        }
+            => (Parent, Filter) = (parent, filter);
     }
 
     public class SettingsPageViewModel : SearchPageViewModel, ISettingsPageViewModel
@@ -102,26 +90,15 @@ namespace Files.ViewModels.Search
     {
         public static void Save (this ISearchPageViewModel pageViewModel)
         {
-            var collection = pageViewModel?.Parent?.Filter as ISearchFilterCollection;
-            if (collection is null)
-            {
-                return;
-            }
             var filter = pageViewModel.Filter;
-
-            var settings = Ioc.Default.GetService<ISearchSettings>();
-            bool isPinned = pageViewModel.Parent is ISettingsPageViewModel && collection.IndexOf(filter) < settings.PinnedKeys.Count;
-
             if (!filter.IsEmpty)
             {
-                if (!collection.Contains(filter))
+                var collection = pageViewModel?.Parent?.Filter as ISearchFilterCollection;
+                if (collection is not null && !collection.Contains(filter))
                 {
                     collection.Add(filter);
+                    pageViewModel?.Parent?.Save();
                 }
-            }
-            else if (!isPinned)
-            {
-                collection.Remove(filter);
             }
         }
     }
