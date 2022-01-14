@@ -1,6 +1,7 @@
 ﻿using ByteSizeLib;
 using Files.Extensions;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
@@ -358,20 +359,23 @@ namespace Files.Filesystem.Search
         }
     }
 
+    [SearchHeader]
     public class SizeHeader : ISearchHeader
     {
-        public string Key => "size";
+        public SearchKeys Key => SearchKeys.Size;
+
         public string Glyph => "\uE2B2";
         public string Label => "Size".GetLocalized();
         public string Description => string.Empty;
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public ISizeRangeFilter GetFilter() => new SizeRangeFilter();
+        public ISearchFilter CreateFilter() => new SizeRangeFilter();
     }
 
     public class SizeRangeFilter : ObservableObject, ISizeRangeFilter
     {
-        public ISearchHeader Header { get; } = new SizeHeader();
+        public SearchKeys Key => SearchKeys.Size;
+
+        public ISearchHeader Header { get; } = Ioc.Default.GetService<ISearchHeaderProvider>().GetHeader(SearchKeys.Size);
 
         public bool IsEmpty => range == SizeRange.None || range == SizeRange.All;
 

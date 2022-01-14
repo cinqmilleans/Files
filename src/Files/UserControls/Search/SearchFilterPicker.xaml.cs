@@ -30,23 +30,25 @@ namespace Files.UserControls.Search
 
         private void AddFilterButton_Loaded(object sender, RoutedEventArgs e)
         {
+            var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
+
             var menu = new MenuFlyout
             {
                 Placement = FlyoutPlacementMode.BottomEdgeAlignedRight
             };
 
             var file = new MenuFlyoutSubItem { Text = "File".GetLocalized() };
-            file.Items.Add(GetItem(new SizeHeader()));
+            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.Size)));
             file.Items.Add(new MenuFlyoutSeparator());
-            file.Items.Add(GetItem(new CreatedHeader()));
-            file.Items.Add(GetItem(new ModifiedHeader()));
-            file.Items.Add(GetItem(new AccessedHeader()));
+            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateCreated)));
+            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateModified)));
+            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateAccessed)));
             menu.Items.Add(file);
 
             var group = new MenuFlyoutSubItem { Text = "Group".GetLocalized() };
-            group.Items.Add(GetItem(new AndHeader()));
-            group.Items.Add(GetItem(new OrHeader()));
-            group.Items.Add(GetItem(new NotHeader()));
+            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupAnd)));
+            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupOr)));
+            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupNot)));
             menu.Items.Add(group);
 
             (sender as Button).Flyout = menu;
@@ -62,7 +64,7 @@ namespace Files.UserControls.Search
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
             var header = (sender as Button).Content as ISearchHeader;
-            var filter = header.GetFilter();
+            var filter = header.CreateFilter();
             navigator.GoPage(filter);
         }
     }

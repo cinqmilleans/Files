@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp;
+﻿using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,114 +10,68 @@ using System.Runtime.CompilerServices;
 
 namespace Files.Filesystem.Search
 {
-    public enum GroupAggregates : ushort { And, Or, Not }
-
-    public interface IGroupHeader : ISearchHeader
+    public interface ISearchFilterCollection : IList<ISearchFilter>, IMultiSearchFilter, INotifyCollectionChanged
     {
-        GroupAggregates Aggregate { get; }
-
-        new ISearchFilterCollection GetFilter();
-
-        string ToAdvancedQuerySyntax(IEnumerable<ISearchFilter> filters);
     }
 
-    public interface ISearchFilterCollection : IList<ISearchFilter>, ISearchFilter, INotifyCollectionChanged
+    [SearchHeader]
+    public class GroupAndHeader : ISearchHeader
     {
-        GroupAggregates Aggregate { get; set; }
-    }
+        public SearchKeys Key => SearchKeys.GroupAnd;
 
-    public class AndHeader : IGroupHeader
-    {
-        public GroupAggregates Aggregate => GroupAggregates.And;
-
-        public string Key => "and";
         public string Glyph => "\uEC26";
         public string Label => "And".GetLocalized();
         public string Description => "SearchAndFilterCollection_Description".GetLocalized();
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);
-
-        public string ToAdvancedQuerySyntax(IEnumerable<ISearchFilter> filters)
-        {
-            var queries = filters
-                .Where(filter => filter is not null)
-                .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
-                .Where(query => !string.IsNullOrEmpty(query))
-                .Select(query => query.Contains(' ') ? $"({query})" : query);
-            return string.Join(' ', queries);
-        }
+        public ISearchFilter CreateFilter() => new SearchFilterCollection(Key);
     }
 
-    public class OrHeader : IGroupHeader
+    [SearchHeader]
+    public class GroupOrHeader : ISearchHeader
     {
-        public GroupAggregates Aggregate => GroupAggregates.Or;
+        public SearchKeys Key => SearchKeys.GroupOr;
 
-        public string Key => "or";
         public string Glyph => "\uEC26";
         public string Label => "Or".GetLocalized();
         public string Description => "SearchOrFilterCollection_Description".GetLocalized();
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);
-
-        public string ToAdvancedQuerySyntax(IEnumerable<ISearchFilter> filters)
-        {
-            var queries = filters
-                .Where(filter => filter is not null)
-                .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
-                .Where(query => !string.IsNullOrEmpty(query))
-                .Select(query => query.Contains(' ') ? $"({query})" : query);
-            return string.Join(" OR ", queries);
-        }
+        public ISearchFilter CreateFilter() => new SearchFilterCollection(Key);
     }
 
-    public class NotHeader : IGroupHeader
+    [SearchHeader]
+    public class GroupNotHeader : ISearchHeader
     {
-        public GroupAggregates Aggregate => GroupAggregates.Not;
+        public SearchKeys Key => SearchKeys.GroupNot;
 
-        public string Key => "not";
         public string Glyph => "\uEC26";
         public string Label => "Not".GetLocalized();
         public string Description => "SearchNotFilterCollection_Description".GetLocalized();
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public ISearchFilterCollection GetFilter() => new SearchFilterCollection(Aggregate);
-
-        public string ToAdvancedQuerySyntax(IEnumerable<ISearchFilter> filters)
-        {
-            var queries = filters
-                .Where(filter => filter is not null)
-                .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
-                .Where(query => !string.IsNullOrEmpty(query))
-                .Select(query => $"NOT({query})");
-            return string.Join(" ", queries);
-        }
+        public ISearchFilter CreateFilter() => new SearchFilterCollection(Key);
     }
 
     public class SearchFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
-        public GroupAggregates Aggregate
+        public SearchKeys Key
         {
-            get => Header.Aggregate;
+            get => header.Key;
             set
             {
-                if (value != Aggregate)
+
+                if (value is not SearchKeys.GroupAnd and not SearchKeys.GroupOr and not SearchKeys.GroupNot)
                 {
-                    Header = value switch
-                    {
-                        GroupAggregates.And => new AndHeader(),
-                        GroupAggregates.Or => new OrHeader(),
-                        GroupAggregates.Not => new NotHeader(),
-                        _ => throw new NotSupportedException(),
-                    };
+                    throw new ArgumentException();
+                }
+                if (header.Key != value)
+                {
+                    header = GetHeader(Key);
                     OnPropertyChanged();
                 }
             }
         }
 
-        ISearchHeader ISearchFilter.Header => Header;
-        public IGroupHeader Header = new AndHeader();
+        private ISearchHeader header;
+        public ISearchHeader Header => header;
 
         public bool IsEmpty => !this.Any();
 
@@ -124,16 +79,24 @@ namespace Files.Filesystem.Search
             ? new ISearchTag[1] { new Tag(this) }
             : Enumerable.Empty<ISearchTag>();
 
-        public SearchFilterCollection()
-            : base() {}
-        public SearchFilterCollection(GroupAggregates aggregate)
-            : base() => Aggregate = aggregate;
-        public SearchFilterCollection(IList<ISearchFilter> filters)
-            : base(filters) {}
-        public SearchFilterCollection(GroupAggregates aggregate, IList<ISearchFilter> filters)
-            : base(filters) => Aggregate = aggregate;
+        public SearchFilterCollection(SearchKeys key) => header = GetHeader(key);
+        public SearchFilterCollection(SearchKeys key, IList<ISearchFilter> filters) : base(filters) => header = GetHeader(key);
 
-        public string ToAdvancedQuerySyntax() => Header.ToAdvancedQuerySyntax(this);
+        public string ToAdvancedQuerySyntax()
+        {
+            var queries = this
+                .Where(filter => filter is not null)
+                .Select(filter => (filter.ToAdvancedQuerySyntax() ?? string.Empty).Trim())
+                .Where(query => !string.IsNullOrEmpty(query));
+
+            return Key switch
+            {
+                SearchKeys.GroupAnd => string.Join(' ', queries.Select(query => query.Contains(' ') ? $"({query})" : query)),
+                SearchKeys.GroupOr => string.Join(" OR ", queries.Select(query => query.Contains(' ') ? $"({query})" : query)),
+                SearchKeys.GroupNot => string.Join(' ', queries.Select(query => $"NOT({query})")),
+                _ => throw new InvalidOperationException(),
+            };
+        }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
@@ -145,6 +108,12 @@ namespace Files.Filesystem.Search
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+
+        private static ISearchHeader GetHeader (SearchKeys key)
+        {
+            var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
+            return provider.GetHeader(key);
+        }
 
         private class Tag : ISearchTag
         {

@@ -109,6 +109,7 @@ namespace Files
                 // Settings not related to IUserSettingsService:
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
+                .AddSingleton<ISearchHeaderProvider, SearchHeaderProvider>()
                 .AddSingleton<ISearchSettings, SearchSettings>()
                 .AddSingleton<ISearchNavigator, SearchNavigator>()
                 .AddSingleton<ISearchPageViewModelFactory, SearchPageViewModelFactory>()

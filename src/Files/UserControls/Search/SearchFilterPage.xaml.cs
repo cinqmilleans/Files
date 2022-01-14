@@ -34,9 +34,9 @@ namespace Files.UserControls.Search
         private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.Filter?.Clear();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
-            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).SelectedHeader;
+            {} //=> (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).SelectedHeader;
         private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-            => (ViewModel as IMultiSearchPageViewModel).SelectedHeader = (sender as ComboBox).SelectedItem as ISearchHeader;
+            {} //=> (ViewModel as IMultiSearchPageViewModel).SelectedHeader = (sender as ComboBox).SelectedItem as ISearchHeader;
     }
 
     internal class SearchFilterPageTemplateSelector : DataTemplateSelector

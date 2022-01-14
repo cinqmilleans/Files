@@ -50,7 +50,7 @@
                     <TextBlock Grid.Column="1" Text="{x:Bind Filter.Header.Label}"
                         Margin="12,0,0,0" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
                 </Grid>
-                <local:SearchFilterPicker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind Filter, Mode=OneWay}" />
+                <local:SearchFilterPicker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind Filter}" />
             </StackPanel>
         </DataTemplate>
 
@@ -94,7 +94,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </Grid>
-                <local:SearchFilterPicker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind Filter, Mode=OneWay}" />
+                <local:SearchFilterPicker HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ViewModel="{x:Bind Filter}" />
             </StackPanel>
         </DataTemplate>
 

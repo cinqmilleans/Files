@@ -1,5 +1,6 @@
 ﻿using Files.Extensions;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
@@ -9,20 +10,8 @@ using System.Linq;
 
 namespace Files.Filesystem.Search
 {
-    public enum DateOrigins : ushort { Created, Modified, Accessed }
-
-    public interface IDateRangeHeader : ISearchHeader
+    public interface IDateRangeFilter : IMultiSearchFilter
     {
-        DateOrigins Origin { get; }
-
-        string QueryKey { get; }
-
-        new IDateRangeFilter GetFilter();
-    }
-
-    public interface IDateRangeFilter : ISearchFilter
-    {
-        DateOrigins Origin { get; set; }
         DateRange Range { get; set; }
     }
 
@@ -467,71 +456,63 @@ namespace Files.Filesystem.Search
         }
     }
 
-    public class CreatedHeader : IDateRangeHeader
+    [SearchHeader]
+    public class DateCreatedHeader : ISearchHeader
     {
-        public DateOrigins Origin => DateOrigins.Created;
+        public SearchKeys Key => SearchKeys.DateCreated;
 
-        public string Key => "created";
         public string Glyph => "\uEC92";
         public string Label => "DateCreated".GetLocalized();
         public string Description => string.Empty;
-        public string QueryKey => "System.ItemDate";
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+        public ISearchFilter CreateFilter() => new DateRangeFilter(Key);
     }
 
-    public class ModifiedHeader : IDateRangeHeader
+    [SearchHeader]
+    public class DateModifiedHeader : ISearchHeader
     {
-        public DateOrigins Origin => DateOrigins.Modified;
+        public SearchKeys Key => SearchKeys.DateModified;
 
-        public string Key => "modified";
         public string Glyph => "\uEC92";
         public string Label => "DateModified".GetLocalized();
         public string Description => string.Empty;
-        public string QueryKey => "System.DateModified";
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+        public ISearchFilter CreateFilter() => new DateRangeFilter(Key);
     }
 
-    public class AccessedHeader : IDateRangeHeader
+    [SearchHeader]
+    public class DateAccessedHeader : ISearchHeader
     {
-        public DateOrigins Origin => DateOrigins.Accessed;
+        public SearchKeys Key => SearchKeys.DateAccessed;
 
-        public string Key => "accessed";
         public string Glyph => "\uEC92";
         public string Label => "DateAccessed".GetLocalized();
         public string Description => string.Empty;
-        public string QueryKey => "System.DateAccessed";
 
-        ISearchFilter ISearchHeader.GetFilter() => GetFilter();
-        public IDateRangeFilter GetFilter() => new DateRangeFilter(Origin);
+        public ISearchFilter CreateFilter() => new DateRangeFilter(Key);
     }
 
     public class DateRangeFilter : ObservableObject, IDateRangeFilter
     {
-        public DateOrigins Origin
+        public SearchKeys Key
         {
-            get => Header.Origin;
+            get => header.Key;
             set
             {
-                if (value != Origin)
+                if (value is not SearchKeys.DateCreated and not SearchKeys.DateModified and not SearchKeys.DateAccessed)
                 {
-                    Header = value switch
-                    {
-                        DateOrigins.Created => new CreatedHeader(),
-                        DateOrigins.Modified => new ModifiedHeader(),
-                        DateOrigins.Accessed => new AccessedHeader(),
-                        _ => throw new NotSupportedException(),
-                    };
+                    throw new ArgumentException();
+                }
+                if (header.Key != value)
+                {
+                    header = GetHeader(Key);
                     OnPropertyChanged();
                 }
             }
         }
 
-        ISearchHeader ISearchFilter.Header => Header;
-        public IDateRangeHeader Header = new ModifiedHeader();
+        private ISearchHeader header;
+        public ISearchHeader Header => header;
 
         public bool IsEmpty => range == DateRange.None || range == DateRange.Always;
 
@@ -565,26 +546,36 @@ namespace Files.Filesystem.Search
             }
         }
 
-        public DateRangeFilter() : this(DateOrigins.Modified, DateRange.Always) {}
-        public DateRangeFilter(DateOrigins origin) : this(origin, DateRange.Always) {}
-        public DateRangeFilter(DateRange range) : this(DateOrigins.Modified, range) {}
-        public DateRangeFilter(DateOrigins origin, DateRange range) => (Origin, Range) = (origin, range);
+        public DateRangeFilter(SearchKeys key) => header = GetHeader(key);
+        public DateRangeFilter(SearchKeys key, DateRange range) : this(key) => header = GetHeader(key);
 
         public void Clear() => Range = DateRange.Always;
 
         public string ToAdvancedQuerySyntax()
         {
-            string key = Header.QueryKey;
+            string queryKey = Key switch
+            {
+                SearchKeys.DateCreated => "System.ItemDate",
+                SearchKeys.DateModified => "System.DateModified",
+                SearchKeys.DateAccessed => "System.DateAccessed",
+                _ => throw new InvalidOperationException(),
+            };
             var (direction, minValue, maxValue) = Range;
 
             return direction switch
             {
-                RangeDirections.EqualTo => $"{key}:={minValue:yyyy-MM-dd}",
-                RangeDirections.LessThan => $"{key}:<={maxValue:yyyy-MM-dd}",
-                RangeDirections.GreaterThan => $"{key}:>={minValue:yyyy-MM-dd}",
-                RangeDirections.Between => $"{key}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
+                RangeDirections.EqualTo => $"{queryKey}:={minValue:yyyy-MM-dd}",
+                RangeDirections.LessThan => $"{queryKey}:<={maxValue:yyyy-MM-dd}",
+                RangeDirections.GreaterThan => $"{queryKey}:>={minValue:yyyy-MM-dd}",
+                RangeDirections.Between => $"{queryKey}:{minValue:yyyy-MM-dd}..{maxValue:yyyy-MM-dd}",
                 _ => string.Empty,
             };
+        }
+
+        private static ISearchHeader GetHeader(SearchKeys key)
+        {
+            var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
+            return provider.GetHeader(key);
         }
 
         private class EqualTag : ISearchTag

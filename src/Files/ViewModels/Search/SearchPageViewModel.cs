@@ -3,12 +3,14 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Files.ViewModels.Search
 {
     public interface ISearchPageViewModel : INotifyPropertyChanged
     {
         ISearchPageViewModel Parent { get; }
+
         ISearchFilter Filter { get; }
     }
 
@@ -19,7 +21,7 @@ namespace Files.ViewModels.Search
 
     public interface IMultiSearchPageViewModel : ISearchPageViewModel
     {
-        ISearchHeader SelectedHeader { get; set; }
+        SearchKeys Key { get; set; }
         IEnumerable<ISearchHeader> Headers { get; }
     }
 
@@ -31,6 +33,7 @@ namespace Files.ViewModels.Search
     public class SearchPageViewModel : ObservableObject, ISearchPageViewModel
     {
         public ISearchPageViewModel Parent { get; }
+
         public ISearchFilter Filter { get; }
 
         public SearchPageViewModel(ISearchPageViewModel parent, ISearchFilter filter)
@@ -55,6 +58,32 @@ namespace Files.ViewModels.Search
 
         public SettingsPageViewModel(ISearchSettings settings)
             : base(null, settings.Filter) => Settings = settings;
+    }
+
+    public abstract class MultiSearchPageViewModel : SearchPageViewModel, IMultiSearchPageViewModel
+    {
+        public SearchKeys Key
+        {
+            get => Filter.Header.Key;
+            set
+            {
+                if (Filter.Header.Key != value)
+                {
+                    (Filter as IMultiSearchFilter).Key = value;
+                    OnPropertyChanged(nameof(Key));
+                }
+            }
+        }
+
+        public IEnumerable<ISearchHeader> Headers { get; }
+
+        public MultiSearchPageViewModel(ISearchPageViewModel parent, IMultiSearchFilter filter) : base(parent, filter)
+        {
+            var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
+            Headers = GetKeys().Select(key => provider.GetHeader(key)).ToList();
+        }
+
+        protected abstract IEnumerable<SearchKeys> GetKeys();
     }
 
     public class SearchPageViewModelFactory : ISearchPageViewModelFactory
