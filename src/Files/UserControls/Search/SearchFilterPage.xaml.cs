@@ -34,9 +34,14 @@ namespace Files.UserControls.Search
         private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.Filter?.Clear();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
-            {} //=> (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).SelectedHeader;
+            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Filter.Header;
         private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-            {} //=> (ViewModel as IMultiSearchPageViewModel).SelectedHeader = (sender as ComboBox).SelectedItem as ISearchHeader;
+            => (ViewModel as IMultiSearchPageViewModel).Key = ((sender as ComboBox).SelectedValue as ISearchHeader).Key;
+        private void HeaderCombo_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            // prevent a bug of lost focus in uwp. This bug close the flyout when combobox is open.
+            SearchButton.Focus(FocusState.Programmatic);
+        }
     }
 
     internal class SearchFilterPageTemplateSelector : DataTemplateSelector

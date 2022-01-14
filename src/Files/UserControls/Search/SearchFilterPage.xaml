@@ -69,7 +69,8 @@
                     </Button>
                     <ComboBox x:Name="HeaderCombo" Grid.Column="1"
                         HorizontalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent"
-                        ItemsSource="{x:Bind Headers}" Loaded="HeaderCombo_Loaded" SelectionChanged="HeaderCombo_SelectionChanged">
+                        Loaded="HeaderCombo_Loaded" PointerEntered="HeaderCombo_PointerEntered"
+                        ItemsSource="{x:Bind Headers}" SelectionChanged="HeaderCombo_SelectionChanged">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="s:ISearchHeader">
                                 <StackPanel VerticalAlignment="Stretch" Orientation="Vertical" MaxWidth="240">

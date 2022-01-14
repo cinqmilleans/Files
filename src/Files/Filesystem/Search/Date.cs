@@ -505,7 +505,7 @@ namespace Files.Filesystem.Search
                 }
                 if (header.Key != value)
                 {
-                    header = GetHeader(Key);
+                    header = GetHeader(value);
                     OnPropertyChanged();
                 }
             }
