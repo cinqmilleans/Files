@@ -13,6 +13,7 @@ namespace Files.ViewModels.Search
     {
         ISearchPageViewModel Parent { get; }
 
+        ISearchContent Content { get; }
         ISearchFilter Filter { get; }
 
         ICommand ClearCommand { get; }
@@ -38,6 +39,7 @@ namespace Files.ViewModels.Search
     {
         public ISearchPageViewModel Parent { get; }
 
+        public ISearchContent Content => Filter;
         public ISearchFilter Filter { get; }
 
         public ICommand ClearCommand { get; }
@@ -54,6 +56,8 @@ namespace Files.ViewModels.Search
         public ISearchPageViewModel Parent => null;
 
         public ISearchSettings Settings { get; }
+
+        public ISearchContent Content => Settings;
         public ISearchFilter Filter => Settings.Filter;
 
         public ICommand ClearCommand { get; }
@@ -107,7 +111,7 @@ namespace Files.ViewModels.Search
     {
         public static void Save (this ISearchPageViewModel pageViewModel)
         {
-            var filter = pageViewModel.Filter;
+            var filter = pageViewModel?.Filter;
             if (!filter.IsEmpty)
             {
                 var collection = pageViewModel?.Parent?.Filter as ISearchFilterCollection;

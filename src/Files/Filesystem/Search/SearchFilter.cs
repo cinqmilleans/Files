@@ -30,14 +30,11 @@ namespace Files.Filesystem.Search
         ISearchFilter CreateFilter();
     }
 
-    public interface ISearchFilter : INotifyPropertyChanged
+    public interface ISearchFilter : ISearchContent
     {
         ISearchHeader Header { get; }
 
-        bool IsEmpty { get; }
         IEnumerable<ISearchTag> Tags { get; }
-
-        void Clear();
 
         string ToAdvancedQuerySyntax();
     }
@@ -55,6 +52,12 @@ namespace Files.Filesystem.Search
         string Parameter { get; }
 
         void Delete();
+    }
+
+    public interface ISearchContent : INotifyPropertyChanged
+    {
+        bool IsEmpty { get; }
+        void Clear();
     }
 
     public interface ISearchHeaderProvider

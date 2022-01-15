@@ -147,11 +147,19 @@ namespace Files.Filesystem.Search
             public ISearchFilterCollection Filter { get; }
 
             public string Title => string.Empty;
-            public string Parameter => $"{Filter.Count} items";
+            public string Parameter => GetParameter();
 
             public Tag(ISearchFilterCollection filter) => Filter = filter;
 
             public void Delete() => (Filter as ISearchFilter).Clear();
+
+            private string GetParameter()
+            {
+                int count = Filter.Count;
+                string labelKey = count <= 1 ? "GroupItemsCount_Singular" : "GroupItemsCount_Plural";
+
+                return string.Format(labelKey.GetLocalized(), count);
+            }
         }
     }
 }
