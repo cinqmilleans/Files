@@ -62,8 +62,8 @@ namespace Files.Filesystem.Search
         public bool Equals(Date other) => other.date.Equals(date);
         public int CompareTo(Date other) => other.date.CompareTo(date);
 
-        public override string ToString() => date.ToString("d");
-        public string ToString(string format) => date.ToString(format, CultureInfo.CurrentCulture);
+        public override string ToString() => ToString("d");
+        public string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
         public string ToString(string format, IFormatProvider formatProvider)
         {
             if (format is null || format == "G")
@@ -354,6 +354,9 @@ namespace Files.Filesystem.Search
             private static readonly ILabelBuilder labelBuilder = new LabelBuilderCollection
             {
                 new YearBuilder(),
+                new MonthBuilder(),
+                new DayWeekBuilder(),
+                new DayMonthBuilder(),
                 new DayBuilder(),
             };
 
@@ -435,23 +438,64 @@ namespace Files.Filesystem.Search
 
                     return hasMin && hasMax;
                 }
-                public IRange<string> Build(Date? minDate, Date? maxDate)
-                {
-                    return new RangeLabel(GetText(minDate), GetText(maxDate));
+                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("yyyy", minDate, maxDate);
+            }
 
-                    static string GetText(Date? date) => date.HasValue ? date.Value.Year.ToString() : string.Empty;
+            private class MonthBuilder : ILabelBuilder
+            {
+                public bool CanBuild(Date? minDate, Date? maxDate)
+                {
+                    bool hasMin = !minDate.HasValue || minDate.Value.Day == 1;
+                    bool hasMax = !maxDate.HasValue || maxDate.Value.AddDays(1).Day == 1;
+
+                    return hasMin && hasMax;
                 }
+                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("Y", minDate, maxDate);
+            }
+
+            private class DayWeekBuilder : ILabelBuilder
+            {
+                public bool CanBuild(Date? minDate, Date? maxDate)
+                {
+                    Date MonthAgo = Date.Today.AddMonths(-1);
+
+                    bool hasMin = !minDate.HasValue || minDate.Value > MonthAgo;
+                    bool hasMax = !maxDate.HasValue || maxDate.Value > MonthAgo;
+
+                    return hasMin && hasMax;
+                }
+                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("dddd d", minDate, maxDate);
+            }
+
+            private class DayMonthBuilder : ILabelBuilder
+            {
+                public bool CanBuild(Date? minDate, Date? maxDate)
+                {
+                    Date YearAgo = Date.Today.AddYears(-1);
+
+                    bool hasMin = !minDate.HasValue || minDate.Value > YearAgo;
+                    bool hasMax = !maxDate.HasValue || maxDate.Value > YearAgo;
+
+                    return hasMin && hasMax;
+                }
+                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("M", minDate, maxDate);
             }
 
             private class DayBuilder : ILabelBuilder
             {
                 public bool CanBuild(Date? minDate, Date? maxDate) => true;
-                public IRange<string> Build(Date? minDate, Date? maxDate)
-                {
-                    return new RangeLabel(GetText(minDate), GetText(maxDate));
+                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("G", minDate, maxDate);
+            }
 
-                    static string GetText(Date? date) => date.HasValue ? date.Value.ToString() : string.Empty;
-                }
+            private static IRange<string> GetRangeLabel(string format, Date? minDate, Date? maxDate)
+            {
+                Date yesterday = Date.Today.AddDays(-1);
+                return new RangeLabel(GetText(minDate), GetText(maxDate));
+
+                string GetText(Date? date) => date.HasValue
+                    ? GetDateText(date.Value) : string.Empty;
+                string GetDateText(Date date) => date == yesterday
+                    ? "ItemTimeText_Yesterday".GetLocalized() : date.ToString(format);
             }
         }
     }

@@ -46,7 +46,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="{helpers:ResourceString Name=NoSizeRangeSelected}"
                     Style="{StaticResource IndicatorStyle}" VerticalAlignment="Top" Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
-                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}"
+                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True"
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
                 <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseASizeRange}"
@@ -65,7 +65,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="{helpers:ResourceString Name=NoDateRangeSelected}"
                     Style="{StaticResource IndicatorStyle}" VerticalAlignment="Top" Visibility="{x:Bind IsEmpty, Mode=OneWay}" />
-                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}"
+                <local:TagsControl Tags="{x:Bind Tags, Mode=OneWay}" CanClose="True"
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
                 <local:CalendarRangePicker Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseADateRange}"
