@@ -112,15 +112,16 @@
 
         <DataTemplate x:Key="GroupTagCollectionTemplate" x:DataType="s:ISearchFilterCollection">
             <StackPanel Orientation="Vertical">
-                <Button x:Name="OpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
+                <Button x:Name="GroupOpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
                 <ItemsControl Margin="26,0,0,0" ItemsSource="{Binding}" ItemTemplate="{StaticResource FilterTagCollectionTemplate}" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="FilterTagCollectionTemplate" x:DataType="s:ISearchFilter">
             <StackPanel Orientation="Vertical">
-                <Button x:Name="OpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
-                <local:TagsControl Margin="22,0,18,0" Tags="{x:Bind Tags, Mode=OneWay}" CanSelect="True" CanClose="True" />
+                <Button x:Name="FilterOpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
+                <local:TagsControl Margin="22,0,18,0" CanSelect="True" CanClose="True"
+                    Tags="{x:Bind Tags, Mode=OneWay}" MiddleFilter="{Binding Content, ElementName=GroupOpenButton}" />
                 <Rectangle Height="1" HorizontalAlignment="Stretch" Margin="22,4,0,4"
                     Opacity="0.60" Fill="{Binding Foreground, ElementName=OpenButton}"
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />

@@ -13,6 +13,10 @@ namespace Files.UserControls.Search
         public static readonly DependencyProperty TagsProperty =
             DependencyProperty.Register(nameof(Tags), typeof(ISearchTag), typeof(TagsControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty MiddleFilterProperty =
+            DependencyProperty.Register(nameof(MiddleFilter), typeof(ISearchFilter), typeof(TagsControl), new PropertyMetadata(null));
+
+
         public static readonly DependencyProperty CanSelectProperty =
             DependencyProperty.Register(nameof(CanSelect), typeof(bool), typeof(TagsControl), new PropertyMetadata(false));
 
@@ -23,6 +27,12 @@ namespace Files.UserControls.Search
         {
             get => (IEnumerable<ISearchTag>)GetValue(TagsProperty);
             set => SetValue(TagsProperty, value);
+        }
+
+        public ISearchFilter MiddleFilter
+        {
+            get => (ISearchFilter)GetValue(MiddleFilterProperty);
+            set => SetValue(MiddleFilterProperty, value);
         }
 
         public bool CanSelect
@@ -67,6 +77,12 @@ namespace Files.UserControls.Search
             if (CanSelect && sender is FrameworkElement element)
             {
                 var navigator = Ioc.Default.GetService<ISearchNavigator>();
+
+                if (MiddleFilter is not null)
+                {
+                    navigator.GoPage(MiddleFilter);
+                }
+
                 var tag = element.DataContext as ISearchTag;
                 navigator.GoPage(tag?.Filter);
             }
