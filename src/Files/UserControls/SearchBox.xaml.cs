@@ -3,6 +3,7 @@ using Files.UserControls.Search;
 using Files.ViewModels;
 using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System.ComponentModel;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,6 +13,8 @@ namespace Files.UserControls
 {
     public sealed partial class SearchBox : UserControl
     {
+        private Button MenuButton;
+
         private readonly ISearchNavigator navigator = Ioc.Default.GetService<ISearchNavigator>();
         private readonly ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
         private readonly IBadgeViewModel badgeViewModel;
@@ -22,13 +25,39 @@ namespace Files.UserControls
         public SearchBoxViewModel SearchBoxViewModel
         {
             get => (SearchBoxViewModel)GetValue(SearchBoxViewModelProperty);
-            set => SetValue(SearchBoxViewModelProperty, value);
+            set
+            {
+                if (SearchBoxViewModel is not null)
+                {
+                    SearchBoxViewModel.PropertyChanged -= SearchBoxViewModel_PropertyChanged;
+                }
+                SetValue(SearchBoxViewModelProperty, value);
+                if (SearchBoxViewModel is not null)
+                {
+                    SearchBoxViewModel.PropertyChanged += SearchBoxViewModel_PropertyChanged;
+                }
+            }
         }
 
         public SearchBox()
         {
             InitializeComponent();
             badgeViewModel = new BadgeViewModel(settings.Filter);
+        }
+
+        private void SearchBoxViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ISearchBox.IsMenuOpen))
+            {
+                if (SearchBoxViewModel.IsMenuOpen)
+                {
+                    MenuButton?.Flyout?.Hide();
+                }
+                else
+                {
+                    MenuButton?.Flyout?.ShowAt(this);
+                }
+            }
         }
 
         private void SearchRegion_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
@@ -45,6 +74,8 @@ namespace Files.UserControls
         }
         private void MenuButton_Loaded(object sender, RoutedEventArgs e)
         {
+            MenuButton = sender as Button;
+
             bool allowFocusOnInteractionAvailable =
                 ApiInformation.IsPropertyPresent("Windows.UI.Xaml.FrameworkElement", "AllowFocusOnInteraction");
             if (allowFocusOnInteractionAvailable && sender is FrameworkElement element)

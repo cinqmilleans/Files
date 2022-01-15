@@ -19,6 +19,13 @@ namespace Files.ViewModels
             set => SetProperty(ref query, value);
         }
 
+        private bool isMenuOpen = false;
+        public bool IsMenuOpen
+        {
+            get => isMenuOpen;
+            set => SetProperty(ref isMenuOpen, value);
+        }
+
         public event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;
         public event TypedEventHandler<ISearchBox, SearchBoxQuerySubmittedEventArgs> QuerySubmitted;
         public event EventHandler<ISearchBox> Escaped;
@@ -26,6 +33,8 @@ namespace Files.ViewModels
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
         public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
+
+        public void Search() => QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(null));
 
         public void ClearSuggestions()
         {

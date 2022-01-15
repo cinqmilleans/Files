@@ -39,8 +39,8 @@ namespace Files.UserControls.Search
                 {
                     box.Query = "*";
                 }
-                //SearchBox.Search();
-                //SearchBox.IsMenuOpen = false;
+                box.Search();
+                box.IsMenuOpen = false;
             }
         }
 

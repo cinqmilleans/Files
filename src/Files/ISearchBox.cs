@@ -13,7 +13,9 @@ namespace Files
         event EventHandler<ISearchBox> Escaped;
 
         string Query { get; set; }
+        bool IsMenuOpen { get; set; }
 
+        void Search();
         void ClearSuggestions();
 
         void SetSuggestions(IEnumerable<ListedItem> suggestions);
