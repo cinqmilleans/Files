@@ -2,9 +2,12 @@
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
@@ -33,6 +36,15 @@ namespace Files.ViewModels.Search
     public interface ISearchPageViewModelFactory
     {
         ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilter filter);
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public class SearchPageViewModelAttribute : Attribute
+    {
+        public SearchKeys Key { get; set; } = SearchKeys.None;
+
+        public SearchPageViewModelAttribute() {}
+        public SearchPageViewModelAttribute(SearchKeys key) => Key = key;
     }
 
     public class SearchPageViewModel : ObservableObject, ISearchPageViewModel
@@ -97,14 +109,42 @@ namespace Files.ViewModels.Search
 
     public class SearchPageViewModelFactory : ISearchPageViewModelFactory
     {
+        private readonly IReadOnlyDictionary<SearchKeys, Factory> factories = GetFactories();
+
         public ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilter filter) => filter switch
         {
             ISearchSettings s => new SettingsPageViewModel(s),
-            ISearchFilterCollection f => new GroupPageViewModel(parent, f),
-            IDateRangeFilter f => new DateRangePageViewModel(parent, f),
+            ISearchFilter f when factories.ContainsKey(f.Header.Key) => factories[f.Header.Key].Build(parent, f),
             ISearchFilter f => new SearchPageViewModel(parent, f),
             _ => null,
         };
+
+        private static IReadOnlyDictionary<SearchKeys, Factory> GetFactories()
+        {
+            var factories = new Dictionary<SearchKeys, Factory>();
+
+            var assembly = Assembly.GetExecutingAssembly();
+            foreach (Type type in assembly.GetTypes())
+            {
+                var attributes = type.GetCustomAttributes(typeof(SearchPageViewModelAttribute), false).Cast<SearchPageViewModelAttribute>();
+                foreach (var attribute in attributes)
+                {
+                    factories[attribute.Key] = new Factory(type);
+                }
+            }
+
+            return new ReadOnlyDictionary<SearchKeys, Factory>(factories);
+        }
+
+        private class Factory
+        {
+            private readonly Type type;
+
+            public Factory(Type type) => this.type = type;
+
+            public ISearchPageViewModel Build(ISearchPageViewModel parent, ISearchFilter filter)
+                => Activator.CreateInstance(type, new object[] { parent, filter }) as ISearchPageViewModel;
+        }
     }
 
     public static class SearchPageViewModelExtensions

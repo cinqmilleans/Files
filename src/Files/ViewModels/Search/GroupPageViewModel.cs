@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Files.ViewModels.Search
 {
+    [SearchPageViewModel(SearchKeys.GroupAnd)]
+    [SearchPageViewModel(SearchKeys.GroupOr)]
+    [SearchPageViewModel(SearchKeys.GroupNot)]
     public class GroupPageViewModel : MultiSearchPageViewModel
     {
         public GroupPageViewModel(ISearchPageViewModel parent, ISearchFilterCollection filter)
