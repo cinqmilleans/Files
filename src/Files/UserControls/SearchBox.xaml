@@ -119,11 +119,11 @@
                 </Button>
                 <muxc:InfoBadge Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
                     HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Value="{Binding BadgeCount, Mode=OneWay}" Style="{StaticResource AttentionValueInfoBadgeStyle}"
-                    Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource NumberBadgeToVisibilityConverter}}" />
+                    Value="{Binding Count, FallbackValue=0, Mode=OneWay}" Style="{StaticResource AttentionValueInfoBadgeStyle}"
+                    Visibility="{Binding Count, FallbackValue=0, Mode=OneWay, Converter={StaticResource NumberBadgeToVisibilityConverter}}" />
                 <muxc:InfoBadge Grid.Row="1" Grid.Column="2" Loaded="MenuBadge_Loaded"
                     HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionIconInfoBadgeStyle}"
-                    Visibility="{Binding BadgeCount, Mode=OneWay, Converter={StaticResource StarBadgeToVisibilityConverter}}" />
+                    Visibility="{Binding Count, FallbackValue=0, Mode=OneWay, Converter={StaticResource StarBadgeToVisibilityConverter}}" />
                 <Button x:Name="QueryButton" Grid.Row="1" Grid.Column="3"
                     Width="28" FontSize="{TemplateBinding FontSize}"
                     VerticalAlignment="Stretch" BorderThickness="{TemplateBinding BorderThickness}"

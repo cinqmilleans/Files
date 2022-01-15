@@ -104,16 +104,16 @@ namespace Files.Filesystem.Search
 
             if (e.Action is NotifyCollectionChangedAction.Remove)
             {
-                foreach (ISearchFilter oldItem in e.OldItems)
+                foreach (ISearchFilter filter in e.OldItems)
                 {
-                    oldItem.PropertyChanged -= Filter_PropertyChanged;
+                    filter.PropertyChanged -= Filter_PropertyChanged;
                 }
             }
             if (e.Action is NotifyCollectionChangedAction.Add)
             {
-                foreach (ISearchFilter newItem in e.NewItems)
+                foreach (ISearchFilter filter in e.NewItems)
                 {
-                    newItem.PropertyChanged += Filter_PropertyChanged;
+                    filter.PropertyChanged += Filter_PropertyChanged;
                 }
             }
 
