@@ -56,7 +56,6 @@ namespace Files.UserControls.Search
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Back();
         private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Search();
-        private void ClearButton_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.Filter?.Clear();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
             => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Filter.Header;

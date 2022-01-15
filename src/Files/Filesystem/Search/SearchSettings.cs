@@ -1,6 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Files.Extensions;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -11,10 +11,14 @@ namespace Files.Filesystem.Search
         bool SearchInSubFolders { get; set; }
 
         ISearchFilterCollection Filter { get; }
+
+        void Clear();
     }
 
     public class SearchSettings : ObservableObject, ISearchSettings
     {
+        private readonly int pinnedCount;
+
         public bool searchInSubFolders = true;
         public bool SearchInSubFolders
         {
@@ -26,13 +30,22 @@ namespace Files.Filesystem.Search
 
         public SearchSettings()
         {
-            var pinnedKeys = new List<SearchKeys> { SearchKeys.Size, SearchKeys.DateModified };
+            var pinnedKeys = new SearchKeys[] { SearchKeys.Size, SearchKeys.DateModified };
+            pinnedCount = pinnedKeys.Length;
 
             var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
-            var filters = pinnedKeys.Select(key => GetFilter(key)).ToList();
-            Filter = new SearchFilterCollection(SearchKeys.GroupAnd, filters);
+            var pinneds = pinnedKeys.Select(key => GetFilter(key)).ToList();
+            Filter = new SearchFilterCollection(SearchKeys.GroupAnd, pinneds);
 
             ISearchFilter GetFilter(SearchKeys key) => provider.GetHeader(key).CreateFilter();
+        }
+
+        public void Clear()
+        {
+            SearchInSubFolders = true;
+
+            Filter.Take(pinnedCount).ForEach(subFilter => subFilter.Clear());
+            Filter.Skip(pinnedCount).ToList().ForEach(subFilter => Filter.Remove(subFilter));
         }
     }
 }

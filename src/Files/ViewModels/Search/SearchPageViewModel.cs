@@ -1,9 +1,11 @@
 ﻿using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
@@ -12,6 +14,8 @@ namespace Files.ViewModels.Search
         ISearchPageViewModel Parent { get; }
 
         ISearchFilter Filter { get; }
+
+        ICommand ClearCommand { get; }
     }
 
     public interface ISettingsPageViewModel : ISearchPageViewModel
@@ -36,16 +40,29 @@ namespace Files.ViewModels.Search
 
         public ISearchFilter Filter { get; }
 
+        public ICommand ClearCommand { get; }
+
         public SearchPageViewModel(ISearchPageViewModel parent, ISearchFilter filter)
-            => (Parent, Filter) = (parent, filter);
+        {
+            (Parent, Filter) = (parent, filter);
+            ClearCommand = new RelayCommand(Filter.Clear);
+        }
     }
 
-    public class SettingsPageViewModel : SearchPageViewModel, ISettingsPageViewModel
+    public class SettingsPageViewModel : ObservableObject, ISettingsPageViewModel
     {
+        public ISearchPageViewModel Parent => null;
+
         public ISearchSettings Settings { get; }
+        public ISearchFilter Filter => Settings.Filter;
+
+        public ICommand ClearCommand { get; }
 
         public SettingsPageViewModel(ISearchSettings settings)
-            : base(null, settings.Filter) => Settings = settings;
+        {
+            Settings = settings;
+            ClearCommand = new RelayCommand(Settings.Clear);
+        }
     }
 
     public abstract class MultiSearchPageViewModel : SearchPageViewModel, IMultiSearchPageViewModel

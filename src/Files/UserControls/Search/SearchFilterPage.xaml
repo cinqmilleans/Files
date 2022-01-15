@@ -111,8 +111,8 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="SearchButton"
                 HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" Tapped="SearchButton_Tapped" />
-            <Button x:Name="ClearButton" Grid.Column="1"
-                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}" Tapped="ClearButton_Tapped"
+            <Button x:Name="ClearButton" Grid.Column="1" Command="{x:Bind ViewModel.ClearCommand}"
+                HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}"
                 IsEnabled="{x:Bind ViewModel.Filter.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
         </Grid>
     </StackPanel>
