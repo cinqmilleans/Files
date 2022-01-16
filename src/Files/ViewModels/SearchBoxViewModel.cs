@@ -27,6 +27,8 @@ namespace Files.ViewModels
 
         public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
 
+        public void Search() => QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(null));
+
         public void ClearSuggestions()
         {
             Suggestions.Clear();

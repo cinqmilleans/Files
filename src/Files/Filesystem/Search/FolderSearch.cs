@@ -23,9 +23,9 @@ namespace Files.Filesystem.Search
 {
     public class FolderSearch
     {
-        private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
-
-        private IFileTagsSettingsService FileTagsSettingsService { get; } = Ioc.Default.GetService<IFileTagsSettingsService>();
+        private readonly IUserSettingsService userSettingsService = Ioc.Default.GetService<IUserSettingsService>();
+        private readonly IFileTagsSettingsService fileTagsSettingsService = Ioc.Default.GetService<IFileTagsSettingsService>();
+        private readonly ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
 
         private const uint defaultStepSize = 500;
 
@@ -40,7 +40,15 @@ namespace Files.Filesystem.Search
 
         public EventHandler SearchTick;
 
-        private bool IsAQSQuery => Query is not null && (Query.StartsWith('$') || Query.Contains(":", StringComparison.Ordinal));
+        private bool IsAQSQuery
+        {
+            get
+            {
+                bool isManualAqs = Query is not null && (Query.StartsWith("$") || Query.Contains(":", StringComparison.Ordinal));
+                bool hasSearchFilter = !string.IsNullOrEmpty(settings.Filter.ToAdvancedQuerySyntax());
+                return isManualAqs || hasSearchFilter;
+            }
+        }
 
         private string QueryWithWildcard
         {
@@ -61,18 +69,23 @@ namespace Files.Filesystem.Search
         {
             get
             {
-                // if the query starts with a $, assume the query is in aqs format, otherwise assume the user is searching for the file name
-                if (Query is not null && Query.StartsWith('$'))
+                return (GetBaseQuery() + ' ' + settings.Filter.ToAdvancedQuerySyntax()).Trim();
+
+                string GetBaseQuery()
                 {
-                    return Query.Substring(1);
-                }
-                else if (Query is not null && Query.Contains(":", StringComparison.Ordinal))
-                {
-                    return Query;
-                }
-                else
-                {
-                    return $"System.FileName:\"{QueryWithWildcard}\"";
+                    // if the query starts with a $, assume the query is in aqs format, otherwise assume the user is searching for the file name
+                    if (Query is not null && Query.StartsWith('$'))
+                    {
+                        return Query.Substring(1);
+                    }
+                    else if (Query is not null && Query.Contains(":", StringComparison.Ordinal))
+                    {
+                        return Query ?? string.Empty;
+                    }
+                    else
+                    {
+                        return $"System.FileName:\"{QueryWithWildcard}\"";
+                    }
                 }
             }
         }
@@ -187,7 +200,7 @@ namespace Files.Filesystem.Search
         {
             //var sampler = new IntervalSampler(500);
             var tagName = AQSQuery.Substring("tag:".Length);
-            var tags = FileTagsSettingsService.GetTagsByName(tagName);
+            var tags = fileTagsSettingsService.GetTagsByName(tagName);
             if (!tags.Any())
             {
                 return;
@@ -208,7 +221,8 @@ namespace Files.Filesystem.Search
                     var isSystem = ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) == FileAttributes.System;
                     var isHidden = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden;
 
-                    bool shouldBeListed = !isHidden || (UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible && (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden));
+                    bool shouldBeListed = !isHidden || (userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible
+                        && (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden));
 
                     if (shouldBeListed)
                     {
@@ -264,7 +278,7 @@ namespace Files.Filesystem.Search
                     hiddenOnlyFromWin32 = (results.Count != 0);
                 }
 
-                if (!IsAQSQuery && (!hiddenOnlyFromWin32 || UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible))
+                if (!IsAQSQuery && (!hiddenOnlyFromWin32 || userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible))
                 {
                     await SearchWithWin32Async(folder, hiddenOnlyFromWin32, UsedMaxItemCount - (uint)results.Count, results, token);
                 }
@@ -297,9 +311,10 @@ namespace Files.Filesystem.Search
 
                         var isSystem = ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) == FileAttributes.System;
                         var isHidden = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden;
-                        bool shouldBeListed = hiddenOnly ?
-                            isHidden && (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden) :
-                            !isHidden || (UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible && (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden));
+                        bool shouldBeListed = hiddenOnly
+                            ? isHidden && (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden)
+                            : !isHidden || (userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible
+                                && (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden));
 
                         if (shouldBeListed)
                         {
@@ -453,8 +468,8 @@ namespace Files.Filesystem.Search
         {
             var query = new QueryOptions
             {
-                FolderDepth = FolderDepth.Deep,
-                UserSearchFilter = AQSQuery ?? string.Empty,
+                FolderDepth = settings.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
+                UserSearchFilter = AQSQuery,
             };
 
             query.IndexerOption = SearchUnindexedItems
