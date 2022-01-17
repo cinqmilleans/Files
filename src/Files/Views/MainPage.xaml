@@ -382,15 +382,14 @@
                     HorizontalContentAlignment="Stretch"
                     Content="{x:Bind ((viewmodels:MainPageViewModel)DataContext).SelectedTabItem.Control, Mode=OneWay}" />
 
-                <controls:PreviewPane
-                    x:Name="PreviewPane"
-                    x:Uid="SelectedFilePreviewPane"
+                <controls:PaneControl x:Name="PaneControl"
                     Grid.Row="1"
                     Grid.Column="2"
                     HorizontalContentAlignment="Stretch"
                     x:Load="{x:Bind LoadPreviewPane, Mode=OneWay}"
                     AutomationProperties.Name="Selected file preview pane"
                     Loading="PreviewPane_Loading" />
+                
 
                 <Custom:GridSplitter
                     x:Name="PreviewPaneGridSplitter"
