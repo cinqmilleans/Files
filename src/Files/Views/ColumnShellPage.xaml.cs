@@ -6,6 +6,7 @@ using Files.Filesystem;
 using Files.Filesystem.FilesystemHistory;
 using Files.Filesystem.Search;
 using Files.Helpers;
+using Files.Models;
 using Files.Services;
 using Files.UserControls;
 using Files.UserControls.MultitaskingControl;
@@ -676,7 +677,7 @@ namespace Files.Views
                     break;
 
                 case (true, false, false, true, VirtualKey.P):
-                    UserSettingsService.PreviewPaneSettingsService.PreviewPaneEnabled = !UserSettingsService.PreviewPaneSettingsService.PreviewPaneEnabled;
+                    UserSettingsService.PaneSettingsService.IsPreviewContentSelected = !UserSettingsService.PaneSettingsService.IsPreviewContentSelected;
                     break;
 
                 case (true, false, false, true, VirtualKey.R): // ctrl + r, refresh

@@ -101,7 +101,7 @@ namespace Files
                 .AddSingleton<IWidgetsSettingsService, WidgetsSettingsService>((sp) => new WidgetsSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
                 .AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>((sp) => new AppearanceSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>((sp) => new PreferencesSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
-                .AddSingleton<IPreviewPaneSettingsService, PreviewPaneSettingsService>((sp) => new PreviewPaneSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
+                .AddSingleton<IPaneSettingsService, PaneSettingsService>((sp) => new PaneSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
                 .AddSingleton<ILayoutSettingsService, LayoutSettingsService>((sp) => new LayoutSettingsService(sp.GetService<IUserSettingsService>().GetSharingContext()))
                 // Settings not related to IUserSettingsService:
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()

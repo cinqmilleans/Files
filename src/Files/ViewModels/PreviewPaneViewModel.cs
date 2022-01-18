@@ -268,7 +268,7 @@ namespace Files.ViewModels
         {
             switch (e.settingName)
             {
-                case nameof(UserSettingsService.PreviewPaneSettingsService.ShowPreviewOnly):
+                case nameof(UserSettingsService.PaneSettingsService.ShowPreviewOnly):
                     // the preview will need refreshing as the file details won't be accurate
                     needsRefresh = true;
                     break;

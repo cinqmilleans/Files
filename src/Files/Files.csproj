@@ -246,6 +246,7 @@
     <Compile Include="Models\JsonSettings\Implementation\DefaultJsonSettingsSerializer.cs" />
     <Compile Include="Models\JsonSettings\Implementation\DefaultSettingsSerializer.cs" />
     <Compile Include="Models\JsonSettings\ISettingsSerializer.cs" />
+    <Compile Include="Models\PaneContents.cs" />
     <Compile Include="Services\IAppearanceSettingsService.cs" />
     <Compile Include="Services\IBaseSettingsService.cs" />
     <Compile Include="Services\IBundlesSettingsService.cs" />
@@ -257,12 +258,12 @@
     <Compile Include="Services\Implementation\LayoutSettingsService.cs" />
     <Compile Include="Services\Implementation\MultitaskingSettingsService.cs" />
     <Compile Include="Services\Implementation\PreferencesSettingsService.cs" />
-    <Compile Include="Services\Implementation\PreviewPaneSettingsService.cs" />
+    <Compile Include="Services\Implementation\PaneSettingsService.cs" />
     <Compile Include="Services\Implementation\UserSettingsService.cs" />
     <Compile Include="Services\Implementation\WidgetsSettingsService.cs" />
     <Compile Include="Services\IMultitaskingSettingsService.cs" />
     <Compile Include="Services\IPreferencesSettingsService.cs" />
-    <Compile Include="Services\IPreviewPaneSettingsService.cs" />
+    <Compile Include="Services\IPaneSettingsService.cs" />
     <Compile Include="Services\IUserSettingsService.cs" />
     <Compile Include="Services\IWidgetsSettingsService.cs" />
     <Compile Include="UserControls\ColoredIcon.xaml.cs">
