@@ -371,48 +371,48 @@ namespace Files.Views
         {
             if (!LoadPreviewPane || PreviewPane is null || PreviewPane is null)
             {
-                PreviewPaneRow.MinHeight = 0;
-                PreviewPaneRow.Height = new GridLength(0);
-                PreviewPaneColumn.MinWidth = 0;
-                PreviewPaneColumn.Width = new GridLength(0);
+                PaneRow.MinHeight = 0;
+                PaneRow.Height = new GridLength(0);
+                PaneColumn.MinWidth = 0;
+                PaneColumn.Width = new GridLength(0);
             }
             else if (RootGrid.ActualWidth > 700)
             {
                 PreviewPane.SetValue(Grid.RowProperty, 1);
                 PreviewPane.SetValue(Grid.ColumnProperty, 2);
 
-                PreviewPaneGridSplitter.SetValue(Grid.RowProperty, 1);
-                PreviewPaneGridSplitter.SetValue(Grid.ColumnProperty, 1);
-                PreviewPaneGridSplitter.Width = 2;
-                PreviewPaneGridSplitter.Height = RootGrid.ActualHeight;
+                PaneGridSplitter.SetValue(Grid.RowProperty, 1);
+                PaneGridSplitter.SetValue(Grid.ColumnProperty, 1);
+                PaneGridSplitter.Width = 2;
+                PaneGridSplitter.Height = RootGrid.ActualHeight;
 
-                PreviewPaneRow.MinHeight = 0;
-                PreviewPaneRow.Height = new GridLength(0);
-                PreviewPaneColumn.MinWidth = 150;
-                PreviewPaneColumn.Width = new GridLength(UserSettingsService.PaneSettingsService.VerticalSizePx, GridUnitType.Pixel);
+                PaneRow.MinHeight = 0;
+                PaneRow.Height = new GridLength(0);
+                PaneColumn.MinWidth = 150;
+                PaneColumn.Width = new GridLength(UserSettingsService.PaneSettingsService.VerticalSizePx, GridUnitType.Pixel);
 
                 PreviewPane.IsHorizontal = false;
             }
             else if (RootGrid.ActualWidth <= 700)
             {
-                PreviewPaneRow.MinHeight = 140;
-                PreviewPaneRow.Height = new GridLength(UserSettingsService.PaneSettingsService.HorizontalSizePx, GridUnitType.Pixel);
-                PreviewPaneColumn.MinWidth = 0;
-                PreviewPaneColumn.Width = new GridLength(0);
+                PaneRow.MinHeight = 140;
+                PaneRow.Height = new GridLength(UserSettingsService.PaneSettingsService.HorizontalSizePx, GridUnitType.Pixel);
+                PaneColumn.MinWidth = 0;
+                PaneColumn.Width = new GridLength(0);
 
                 PreviewPane.SetValue(Grid.RowProperty, 3);
                 PreviewPane.SetValue(Grid.ColumnProperty, 0);
 
-                PreviewPaneGridSplitter.SetValue(Grid.RowProperty, 2);
-                PreviewPaneGridSplitter.SetValue(Grid.ColumnProperty, 0);
-                PreviewPaneGridSplitter.Height = 2;
-                PreviewPaneGridSplitter.Width = RootGrid.Width;
+                PaneGridSplitter.SetValue(Grid.RowProperty, 2);
+                PaneGridSplitter.SetValue(Grid.ColumnProperty, 0);
+                PaneGridSplitter.Height = 2;
+                PaneGridSplitter.Width = RootGrid.Width;
 
                 PreviewPane.IsHorizontal = true;
             }
         }
 
-        private void PreviewPaneGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void PaneGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             if (PreviewPane == null)
             {
