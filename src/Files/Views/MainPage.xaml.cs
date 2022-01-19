@@ -29,6 +29,8 @@ namespace Files.Views
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        private bool isPaneHorizontal = false;
+
         public IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
 
         public MainViewModel MainViewModel => App.MainViewModel;
@@ -369,7 +371,7 @@ namespace Files.Views
         /// </summary>
         private void UpdatePositioning()
         {
-            if (!LoadPreviewPane || PreviewPane is null || PreviewPane is null)
+            if (!LoadPreviewPane || PreviewPane is null)
             {
                 PaneRow.MinHeight = 0;
                 PaneRow.Height = new GridLength(0);
@@ -391,7 +393,7 @@ namespace Files.Views
                 PaneColumn.MinWidth = 150;
                 PaneColumn.Width = new GridLength(UserSettingsService.PaneSettingsService.VerticalSizePx, GridUnitType.Pixel);
 
-                PreviewPane.IsHorizontal = false;
+                isPaneHorizontal = false;
             }
             else if (RootGrid.ActualWidth <= 700)
             {
@@ -408,18 +410,18 @@ namespace Files.Views
                 PaneGridSplitter.Height = 2;
                 PaneGridSplitter.Width = RootGrid.Width;
 
-                PreviewPane.IsHorizontal = true;
+                isPaneHorizontal = true;
             }
         }
 
         private void PaneGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            if (PreviewPane == null)
+            if (PreviewPane is null)
             {
                 return;
             }
 
-            if (PreviewPane.IsHorizontal)
+            if (isPaneHorizontal)
             {
                 UserSettingsService.PaneSettingsService.HorizontalSizePx = PreviewPane.ActualHeight;
             }
