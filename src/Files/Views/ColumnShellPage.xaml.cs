@@ -677,7 +677,8 @@ namespace Files.Views
                     break;
 
                 case (true, false, false, true, VirtualKey.P):
-                    UserSettingsService.PaneSettingsService.IsPreviewContentSelected = !UserSettingsService.PaneSettingsService.IsPreviewContentSelected;
+                    UserSettingsService.PaneSettingsService.Content
+                        = UserSettingsService.PaneSettingsService.Content is not PaneContents.Preview ? PaneContents.Preview : PaneContents.None;
                     break;
 
                 case (true, false, false, true, VirtualKey.R): // ctrl + r, refresh

@@ -10,6 +10,7 @@ using Files.Filesystem.StorageEnumerators;
 using Files.Filesystem.StorageItems;
 using Files.Helpers;
 using Files.Helpers.FileListCache;
+using Files.Models;
 using Files.Services;
 using Files.UserControls;
 using Files.ViewModels.Previews;
@@ -1200,7 +1201,7 @@ namespace Files.ViewModels
                     AdaptiveLayoutHelpers.PredictLayoutMode(folderSettings, this);
                 }
 
-                if (UserSettingsService.PaneSettingsService.IsPreviewContentSelected)
+                if (UserSettingsService.PaneSettingsService.Content is PaneContents.Preview)
                 {
                     // Find and select README file
                     foreach (var item in filesAndFolders)

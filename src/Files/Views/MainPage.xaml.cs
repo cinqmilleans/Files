@@ -2,6 +2,7 @@
 using Files.Extensions;
 using Files.Filesystem;
 using Files.Helpers;
+using Files.Models;
 using Files.Services;
 using Files.UserControls;
 using Files.UserControls.MultitaskingControl;
@@ -77,7 +78,7 @@ namespace Files.Views
         {
             switch (e.settingName)
             {
-                case nameof(UserSettingsService.PaneSettingsService.IsPreviewContentSelected):
+                case nameof(UserSettingsService.PaneSettingsService.Content):
                     LoadPreviewPaneChanged();
                     break;
 
@@ -383,10 +384,10 @@ namespace Files.Views
                 PreviewPane.SetValue(Grid.RowProperty, 1);
                 PreviewPane.SetValue(Grid.ColumnProperty, 2);
 
-                PaneGridSplitter.SetValue(Grid.RowProperty, 1);
-                PaneGridSplitter.SetValue(Grid.ColumnProperty, 1);
-                PaneGridSplitter.Width = 2;
-                PaneGridSplitter.Height = RootGrid.ActualHeight;
+                PaneSplitter.SetValue(Grid.RowProperty, 1);
+                PaneSplitter.SetValue(Grid.ColumnProperty, 1);
+                PaneSplitter.Width = 2;
+                PaneSplitter.Height = RootGrid.ActualHeight;
 
                 PaneRow.MinHeight = 0;
                 PaneRow.Height = new GridLength(0);
@@ -405,10 +406,10 @@ namespace Files.Views
                 PreviewPane.SetValue(Grid.RowProperty, 3);
                 PreviewPane.SetValue(Grid.ColumnProperty, 0);
 
-                PaneGridSplitter.SetValue(Grid.RowProperty, 2);
-                PaneGridSplitter.SetValue(Grid.ColumnProperty, 0);
-                PaneGridSplitter.Height = 2;
-                PaneGridSplitter.Width = RootGrid.Width;
+                PaneSplitter.SetValue(Grid.RowProperty, 2);
+                PaneSplitter.SetValue(Grid.ColumnProperty, 0);
+                PaneSplitter.Height = 2;
+                PaneSplitter.Width = RootGrid.Width;
 
                 isPaneHorizontal = true;
             }
@@ -431,7 +432,7 @@ namespace Files.Views
             }
         }
 
-        public bool LoadPreviewPane => UserSettingsService.PaneSettingsService.IsPreviewContentSelected && !IsPreviewPaneDisabled;
+        public bool LoadPreviewPane => UserSettingsService.PaneSettingsService.Content is PaneContents.Preview && !IsPreviewPaneDisabled;
 
         public bool IsPreviewPaneDisabled => (!(SidebarAdaptiveViewModel.PaneHolder?.ActivePane.InstanceViewModel.IsPageTypeNotHome ?? false) && !(SidebarAdaptiveViewModel.PaneHolder?.IsMultiPaneActive ?? false)) // hide the preview pane when on home page unless multi pane is in use
             || Window.Current.Bounds.Width <= 450 || Window.Current.Bounds.Height <= 400; // Disable the preview pane for small windows as it won't function properly

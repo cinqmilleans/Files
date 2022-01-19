@@ -377,7 +377,7 @@
                     Content="{x:Bind ((viewmodels:MainPageViewModel)DataContext).SelectedTabItem.Control, Mode=OneWay}" />
 
                 <custom:GridSplitter
-                    x:Name="PaneGridSplitter"
+                    x:Name="PaneSplitter"
                     Grid.Row="1"
                     Grid.Column="1"
                     x:Load="{x:Bind LoadPreviewPane, Mode=OneWay}"

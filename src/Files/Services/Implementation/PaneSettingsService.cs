@@ -11,22 +11,7 @@ namespace Files.Services.Implementation
         public PaneContents Content
         {
             get => Get(PaneContents.None, "PaneContent");
-            set
-            {
-                if (Set(value, "PaneContent"))
-                {
-                    RaiseOnSettingChangedEvent(nameof(HasSelectedContent), HasSelectedContent);
-                    RaiseOnSettingChangedEvent(nameof(IsPreviewContentSelected), IsPreviewContentSelected);
-                }
-            }
-        }
-
-        public bool HasSelectedContent => Content is not PaneContents.None;
-
-        public bool IsPreviewContentSelected
-        {
-            get => Content is PaneContents.Preview;
-            set => Content = !IsPreviewContentSelected ? PaneContents.Preview : PaneContents.None;
+            set => Set(value, "PaneContent");
         }
 
         public double HorizontalSizePx

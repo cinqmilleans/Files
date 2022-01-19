@@ -19,6 +19,8 @@ namespace Files.UserControls
 {
     public sealed partial class InnerNavigationToolbar : UserControl
     {
+        private PaneViewModel PaneViewModel { get; } = new(null);
+
         public InnerNavigationToolbar()
         {
             this.InitializeComponent();

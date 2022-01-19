@@ -25,8 +25,6 @@ namespace Files.UserControls
 
         private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
 
-        private bool IsHorizontal => RootGrid.ActualHeight >= RootGrid.ActualWidth;
-
         private ObservableContext Context { get; } = new();
 
         public PreviewPane()
