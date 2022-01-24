@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
-using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -102,6 +101,7 @@ namespace Files.ViewModels
             PostedStatusBanner postedBanner = new PostedStatusBanner(banner, this);
             StatusBannersSource.Insert(0, banner);
             ProgressBannerPosted?.Invoke(this, postedBanner);
+            UpdateBanner(banner);
             return postedBanner;
         }
 
@@ -114,6 +114,7 @@ namespace Files.ViewModels
             PostedStatusBanner postedBanner = new PostedStatusBanner(banner, this, cancellationTokenSource);
             StatusBannersSource.Insert(0, banner);
             ProgressBannerPosted?.Invoke(this, postedBanner);
+            UpdateBanner(banner);
             return postedBanner;
         }
 
@@ -123,6 +124,7 @@ namespace Files.ViewModels
             PostedStatusBanner postedBanner = new PostedStatusBanner(banner, this);
             StatusBannersSource.Insert(0, banner);
             ProgressBannerPosted?.Invoke(this, postedBanner);
+            UpdateBanner(banner);
             return postedBanner;
         }
 
@@ -477,7 +479,7 @@ namespace Files.ViewModels
             {
                 CancellationTokenSource.Cancel();
                 IsCancelled = true;
-                FullTitle = $"{Title} ({"StatusCancellingOp".GetLocalized()})";
+                FullTitle = $"{Title} ({"canceling".GetLocalized()})";
             }
         }
     }

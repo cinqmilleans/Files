@@ -4,8 +4,6 @@ using Files.Enums;
 using Files.Filesystem;
 using Files.Filesystem.StorageItems;
 using Files.Interacts;
-using Files.Services;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Concurrent;
@@ -29,7 +27,6 @@ namespace Files.Helpers
             };
             ConcurrentBag<IStorageItem> items = new ConcurrentBag<IStorageItem>();
 
-            var canFlush = true;
             if (associatedInstance.SlimContentPage.IsItemSelected)
             {
                 // First, reset DataGrid Rows that may be in "cut" command mode
@@ -48,7 +45,6 @@ namespace Files.Helpers
 
                         if (listedItem is FtpItem ftpItem)
                         {
-                            canFlush = false;
                             if (listedItem.PrimaryItemAttribute == StorageItemTypes.File)
                             {
                                 items.Add(await new FtpStorageFile(ftpItem).ToStorageFileAsync());
@@ -114,14 +110,11 @@ namespace Files.Helpers
             {
                 return;
             }
+            dataPackage.Properties.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
             dataPackage.SetStorageItems(items, false);
             try
             {
                 Clipboard.SetContent(dataPackage);
-                if (onlyStandard && canFlush)
-                {
-                    Clipboard.Flush();
-                }
             }
             catch
             {
@@ -139,7 +132,6 @@ namespace Files.Helpers
 
             string copySourcePath = associatedInstance.FilesystemViewModel.WorkingDirectory;
 
-            var canFlush = true;
             if (associatedInstance.SlimContentPage.IsItemSelected)
             {
                 try
@@ -148,7 +140,6 @@ namespace Files.Helpers
                     {
                         if (listedItem is FtpItem ftpItem)
                         {
-                            canFlush = false;
                             if (listedItem.PrimaryItemAttribute == StorageItemTypes.File)
                             {
                                 items.Add(await new FtpStorageFile(ftpItem).ToStorageFileAsync());
@@ -209,14 +200,11 @@ namespace Files.Helpers
             {
                 return;
             }
+            dataPackage.Properties.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
             dataPackage.SetStorageItems(items, false);
             try
             {
                 Clipboard.SetContent(dataPackage);
-                if (onlyStandard && canFlush)
-                {
-                    Clipboard.Flush();
-                }
             }
             catch
             {

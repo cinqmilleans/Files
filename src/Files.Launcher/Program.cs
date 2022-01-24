@@ -48,6 +48,7 @@ namespace FilesFullTrust
                 messageHandlers.Add(new ContextMenuHandler());
                 messageHandlers.Add(new QuickLookHandler());
                 messageHandlers.Add(new Win32MessageHandler());
+                messageHandlers.Add(new InstallOperationsHandler());
 
                 // Connect to app service and wait until the connection gets closed
                 appServiceExit = new ManualResetEvent(false);
@@ -245,16 +246,12 @@ namespace FilesFullTrust
                 {
                     TerminateProcess((int)localSettings.Values["pid"]);
 
-                    using Process process = new Process();
-                    process.StartInfo.UseShellExecute = true;
-                    process.StartInfo.FileName = "explorer.exe";
-                    process.StartInfo.CreateNoWindow = false;
-                    process.StartInfo.Arguments = (string)localSettings.Values["ShellCommand"];
-                    process.Start();
+                    Win32API.OpenFolderInExistingShellWindow((string)localSettings.Values["ShellCommand"]);
 
                     return true;
                 }
             }
+
             return false;
         }
 

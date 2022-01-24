@@ -85,12 +85,21 @@ namespace FilesFullTrust.Helpers
                 return null;
             }
             var link = new ShellLinkItem(baseItem);
-            link.IsFolder = !string.IsNullOrEmpty(link.TargetPath) && linkItem.Target.IsFolder;
+            link.IsFolder = !string.IsNullOrEmpty(linkItem.TargetPath) && linkItem.Target.IsFolder;
             link.RunAsAdmin = linkItem.RunAsAdministrator;
             link.Arguments = linkItem.Arguments;
             link.WorkingDirectory = linkItem.WorkingDirectory;
             link.TargetPath = linkItem.TargetPath;
             return link;
+        }
+
+        public static string GetParsingPath(this ShellItem item)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+            return item.IsFileSystem ? item.FileSystemPath : item.ParsingName;
         }
     }
 }

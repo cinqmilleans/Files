@@ -354,10 +354,10 @@ namespace FilesFullTrust
             RunPowershellCommand($"-command \"$Signature = '[DllImport(\\\"kernel32.dll\\\", SetLastError = false)]public static extern bool SetVolumeLabel(string lpRootPathName, string lpVolumeName);'; $SetVolumeLabel = Add-Type -MemberDefinition $Signature -Name \"Win32SetVolumeLabel\" -Namespace Win32Functions -PassThru; $SetVolumeLabel::SetVolumeLabel('{driveName}', '{newLabel}')\"", true);
         }
 
-        public static void MountVhdDisk(string vhdPath)
+        public static bool MountVhdDisk(string vhdPath)
         {
             // mounting requires elevation
-            RunPowershellCommand($"-command \"Mount-DiskImage -ImagePath '{vhdPath}'\"", true);
+            return RunPowershellCommand($"-command \"Mount-DiskImage -ImagePath '{vhdPath}'\"", true);
         }
 
         public static Bitmap GetBitmapFromHBitmap(HBITMAP hBitmap)
@@ -564,6 +564,75 @@ namespace FilesFullTrust
             public static Win32Window FromLong(long hwnd)
             {
                 return new Win32Window() { Handle = new IntPtr(hwnd) };
+            }
+        }
+
+        public static void OpenFolderInExistingShellWindow(string folderPath)
+        {
+            var opened = false;
+
+            if (Ole32.CoCreateInstance(typeof(Shell32.ShellWindows).GUID, null, Ole32.CLSCTX.CLSCTX_LOCAL_SERVER, typeof(Shell32.IShellWindows).GUID, out var shellWindowsUnk).Succeeded)
+            {
+                var shellWindows = (Shell32.IShellWindows)shellWindowsUnk;
+
+                using var controlPanelCategoryView = new Vanara.Windows.Shell.ShellItem("::{26EE0668-A00A-44D7-9371-BEB064C98683}");
+
+                for (int i = 0; i < shellWindows.Count; i++)
+                {
+                    var item = shellWindows.Item(i);
+                    var serv = (Shell32.IServiceProvider)item;
+                    if (serv != null)
+                    {
+                        if (serv.QueryService(Shell32.SID_STopLevelBrowser, typeof(Shell32.IShellBrowser).GUID, out var ppv).Succeeded)
+                        {
+                            var pUnk = Marshal.GetObjectForIUnknown(ppv);
+                            var shellBrowser = (Shell32.IShellBrowser)pUnk;
+                            using var targetFolder = Extensions.IgnoreExceptions(() => new Vanara.Windows.Shell.ShellItem(folderPath));
+                            if (targetFolder != null)
+                            {
+                                if (shellBrowser.QueryActiveShellView(out var shellView).Succeeded)
+                                {
+                                    var folderView = (Shell32.IFolderView)shellView;
+                                    var folder = folderView.GetFolder<Shell32.IPersistFolder2>();
+                                    var folderPidl = new Shell32.PIDL(IntPtr.Zero);
+                                    if (folder.GetCurFolder(ref folderPidl).Succeeded)
+                                    {
+                                        if (Shell32.ILIsParent(folderPidl.DangerousGetHandle(), targetFolder.PIDL.DangerousGetHandle(), true) ||
+                                            Shell32.ILIsEqual(folderPidl.DangerousGetHandle(), controlPanelCategoryView.PIDL.DangerousGetHandle()))
+                                        {
+                                            if (shellBrowser.BrowseObject(targetFolder.PIDL.DangerousGetHandle(), Shell32.SBSP.SBSP_SAMEBROWSER | Shell32.SBSP.SBSP_ABSOLUTE).Succeeded)
+                                            {
+                                                opened = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    folderPidl.Dispose();
+                                    Marshal.ReleaseComObject(folder);
+                                    Marshal.ReleaseComObject(folderView);
+                                    Marshal.ReleaseComObject(shellView);
+                                }
+                            }
+                            Marshal.ReleaseComObject(shellBrowser);
+                            Marshal.ReleaseComObject(pUnk);
+                        }
+                        Marshal.ReleaseComObject(serv);
+                    }
+                    Marshal.ReleaseComObject(item);
+                }
+
+                Marshal.ReleaseComObject(shellWindows);
+                Marshal.ReleaseComObject(shellWindowsUnk);
+            }
+
+            if (!opened)
+            {
+                Shell32.ShellExecute(HWND.NULL,
+                    "open",
+                    Environment.ExpandEnvironmentVariables("%windir%\\explorer.exe"),
+                    folderPath,
+                    null,
+                    ShowWindowCommand.SW_SHOWNORMAL);
             }
         }
 

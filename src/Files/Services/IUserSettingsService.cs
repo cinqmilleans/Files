@@ -1,10 +1,10 @@
-﻿using System;
-using Files.EventArguments;
+﻿using Files.EventArguments;
 using Files.Models.JsonSettings;
+using System;
 
 namespace Files.Services
 {
-    public interface IUserSettingsService
+    public interface IUserSettingsService : IBaseSettingsService
     {
         event EventHandler<SettingChangedEventArgs> OnSettingChangedEvent;
 

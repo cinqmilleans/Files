@@ -18,7 +18,6 @@ using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,6 +26,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Core;
@@ -79,9 +79,9 @@ namespace Files
             InitializeComponent();
             Suspending += OnSuspending;
             LeavingBackground += OnLeavingBackground;
-            
+
             AppServiceConnectionHelper.Register();
-            
+
             this.Services = ConfigureServices();
             Ioc.Default.ConfigureServices(Services);
         }
@@ -157,6 +157,8 @@ namespace Files
 
         private static async Task InitializeAppComponentsAsync()
         {
+            var userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
+
             // Start off a list of tasks we need to run before we can continue startup
             await Task.Run(async () =>
             {
@@ -176,6 +178,8 @@ namespace Files
                     ExternalResourcesHelper.LoadOtherThemesAsync(),
                     ContextFlyoutItemHelper.CachedNewContextMenuEntries
                 );
+
+                userSettingsService.ReportToAppCenter();
             });
 
             // Check for required updates
@@ -196,7 +200,7 @@ namespace Files
         {
             await logWriter.InitializeAsync("debug.log");
             Logger.Info($"App launched. Prelaunch: {e.PrelaunchActivated}");
-            
+
             //start tracking app usage
             SystemInformation.Instance.TrackAppUse(e);
 
@@ -463,6 +467,9 @@ namespace Files
                         SettingsViewModel.ReportIssueOnGitHub();
                     }
                     break;
+
+                case ActivationKind.StartupTask:
+                    break;
             }
 
             rootFrame.Navigate(typeof(MainPage), null, new SuppressNavigationTransitionInfo());
@@ -520,6 +527,20 @@ namespace Files
             }
 
             DrivesManager?.Dispose();
+
+            // Try to maintain clipboard data after app close
+            Common.Extensions.IgnoreExceptions(() =>
+            {
+                var dataPackage = Clipboard.GetContent();
+                if (dataPackage.Properties.PackageFamilyName == Package.Current.Id.FamilyName)
+                {
+                    if (dataPackage.Contains(StandardDataFormats.StorageItems))
+                    {
+                        Clipboard.Flush();
+                    }
+                }
+            }, Logger);
+
             deferral.Complete();
         }
 
@@ -542,7 +563,7 @@ namespace Files
                     }
                     else
                     {
-                        var defaultArg = new TabItemArguments() { InitialPageType = typeof(PaneHolderPage), NavigationArg = "NewTab".GetLocalized() };
+                        var defaultArg = new TabItemArguments() { InitialPageType = typeof(PaneHolderPage), NavigationArg = "Home".GetLocalized() };
                         return defaultArg.Serialize();
                     }
                 }).ToList();

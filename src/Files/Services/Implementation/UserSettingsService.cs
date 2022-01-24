@@ -96,6 +96,16 @@ namespace Files.Services.Implementation
         {
             settingsServiceMember ??= Ioc.Default.GetService<TSettingsService>();
             return settingsServiceMember;
-        } 
+        }
+
+        public void ReportToAppCenter()
+        {
+            PreferencesSettingsService?.ReportToAppCenter();
+            MultitaskingSettingsService?.ReportToAppCenter();
+            WidgetsSettingsService?.ReportToAppCenter();
+            AppearanceSettingsService?.ReportToAppCenter();
+            PreferencesSettingsService?.ReportToAppCenter();
+            LayoutSettingsService?.ReportToAppCenter();
+        }
     }
 }
