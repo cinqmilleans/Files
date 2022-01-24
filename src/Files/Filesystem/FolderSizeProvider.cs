@@ -29,6 +29,10 @@ namespace Files.Filesystem
         public async Task<long> GetSize(string path, CancellationToken cancellationToken)
         {
             var provider = GetProvider(path);
+            if (provider.size.HasValue)
+            {
+                return provider.size.Value;
+            }
             return await Update(path, cancellationToken);
         }
 
@@ -55,6 +59,8 @@ namespace Files.Filesystem
 
         private async Task<long> Update(string path, CancellationToken cancellationToken)
         {
+            var dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+
             long size = 0;
             HashSet<string> childNames = children is not null ? children.Keys.ToHashSet() : null;
 
@@ -78,7 +84,7 @@ namespace Files.Filesystem
                         {
                             childName = findData.cFileName;
                             string childPath = Path.Combine(path, childName);
-                            if (childNames.Contains(childName))
+                            if (childNames is not null && childNames.Contains(childName))
                             {
                                 childProvider = children[childName];
                                 childNames.Remove(childName);
@@ -86,8 +92,6 @@ namespace Files.Filesystem
                             else
                             {
                                 childProvider = new FolderSizeProvider();
-                                if (children is null)
-                                children.Add(childName, childProvider);
                             }
                             long? childSize = await childProvider.Update(path, cancellationToken);
                             if (childSize.HasValue)
@@ -97,7 +101,6 @@ namespace Files.Filesystem
                         }
                     }
 
-                    var dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
                     await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                     {
                         if (isNew)
@@ -123,6 +126,22 @@ namespace Files.Filesystem
                 } while (FindNextFile(hFile, out findData));
                 FindClose(hFile);
             }
+
+            if (childNames is not null)
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    foreach (string name in childNames)
+                    {
+                        children.Remove(name);
+                    }
+                    if (!children.Any())
+                    {
+                        children = null;
+                    }
+                });
+            }
+
             return size;
         }
     }
