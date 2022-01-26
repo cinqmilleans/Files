@@ -13,6 +13,8 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
+        public static event EventHandler SizeChanged;
+
         public static bool CheckFolderAccessWithWin32(string path)
         {
             FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
@@ -69,6 +71,7 @@ namespace Files.Filesystem
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
                     folder.FileSize = 0L.ToSizeString();
+                    SizeChanged?.Invoke(null, EventArgs.Empty);
                 });
 
                 _ = await Calculate(folder.ItemPath);
@@ -111,6 +114,7 @@ namespace Files.Filesystem
                             {
                                 folder.FileSizeBytes = size;
                                 folder.FileSize = size.ToSizeString();
+                                SizeChanged?.Invoke(null, EventArgs.Empty);
                             };
                         });
 

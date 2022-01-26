@@ -306,6 +306,8 @@ namespace Files
 
             dragOverTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
             tapDebounceTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+
+            FolderHelpers.SizeChanged += FolderHelpers_SizeChanged;
         }
 
         protected abstract void HookEvents();
@@ -525,6 +527,11 @@ namespace Files
             await ParentShellPageInstance.FilesystemViewModel.ReloadItemGroupHeaderImagesAsync();
         }
 
+        private void FolderHelpers_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateSelectedItemsSize();
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             base.OnNavigatingFrom(e);
@@ -622,9 +629,9 @@ namespace Files
             }
         }
 
-        private void UpdateSelectedItemsSize()
+        public void UpdateSelectedItemsSize()
         {
-            var items = selectedItems ?? GetAllItems();
+            var items = selectedItems is not null && selectedItems.Any() ? selectedItems : GetAllItems();
             if (items is not null)
             {
                 bool isSizeKnown = !items.Any(item => string.IsNullOrEmpty(item.FileSize));
