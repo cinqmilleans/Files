@@ -2,11 +2,9 @@
 using Files.Filesystem.StorageItems;
 using Microsoft.Toolkit.Uwp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -17,14 +15,12 @@ namespace Files.Filesystem
 {
     public static class FolderHelpers
     {
-        private static readonly IDictionary<string, long> cacheSizes = new SizedDictionary<string, long>(50);
+        private static readonly IDictionary<string, long> cacheSizes = new Dictionary<string, long>();
 
         public static bool CheckFolderAccessWithWin32(string path)
         {
-            FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
-            int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
-            IntPtr hFileTsk = FindFirstFileExFromApp(path + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findDataTsk, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero,
-                additionalFlags);
+            IntPtr hFileTsk = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
+                out WIN32_FIND_DATA _, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
             if (hFileTsk.ToInt64() != -1)
             {
                 FindClose(hFileTsk);
@@ -35,13 +31,14 @@ namespace Files.Filesystem
 
         public static async Task<bool> CheckBitlockerStatusAsync(BaseStorageFolder rootFolder, string path)
         {
-            if (rootFolder == null || rootFolder.Properties == null)
+            if (rootFolder?.Properties is null)
             {
                 return false;
             }
             if (Path.IsPathRooted(path) && Path.GetPathRoot(path) == path)
             {
-                IDictionary<string, object> extraProperties = await rootFolder.Properties.RetrievePropertiesAsync(new string[] { "System.Volume.BitLockerProtection" });
+                IDictionary<string, object> extraProperties =
+                    await rootFolder.Properties.RetrievePropertiesAsync(new string[] { "System.Volume.BitLockerProtection" });
                 return (int?)extraProperties["System.Volume.BitLockerProtection"] == 6; // Drive is bitlocker protected and locked
             }
             return false;
@@ -54,10 +51,8 @@ namespace Files.Filesystem
         ///
         public static bool CheckForFilesFolders(string targetPath)
         {
-            FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
-            int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
-
-            IntPtr hFile = FindFirstFileExFromApp(targetPath + "\\*.*", findInfoLevel, out WIN32_FIND_DATA _, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+            IntPtr hFile = FindFirstFileExFromApp($"{targetPath}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
+                out WIN32_FIND_DATA _, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
             FindNextFile(hFile, out _);
             var result = FindNextFile(hFile, out _);
             FindClose(hFile);
@@ -88,6 +83,7 @@ namespace Files.Filesystem
                 });
 
                 long size = await Calculate(folder.ItemPath);
+
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
                     cacheSizes[folder.ItemPath] = size;
@@ -103,51 +99,41 @@ namespace Files.Filesystem
                     return 0;
                 }
 
-                //cacheSizes.TryGetValue(folderPath, out long? cacheSize);
-                //if (cacheSize.HasValue)
-               // {
-                //    return cacheSize.Value;
-                //}
-
-                FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
-                int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
-
-                IntPtr hFile = FindFirstFileExFromApp(folderPath + "\\*.*", findInfoLevel, out WIN32_FIND_DATA findData,
-                                    FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+                IntPtr hFile = FindFirstFileExFromApp($"{folderPath}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
+                    out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
                 long size = 0;
-                string localPath = string.Empty;
                 long localSize = 0;
+                string localPath = string.Empty;
+
                 if (hFile.ToInt64() != -1)
                 {
                     do
                     {
-                        if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) != FileAttributes.Directory)
+                        bool isDirectory = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
+                        if (!isDirectory)
                         {
                             size += findData.GetSize();
                         }
-                        else if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                        else if (findData.cFileName is not "." and not "..")
                         {
-                            if (findData.cFileName is not "." and not "..")
-                            {
-                                localPath = Path.Combine(folderPath, findData.cFileName);
-                                localSize = await Calculate(localPath, 1 + level);
-                                size += localSize;
-                            }
+                            localPath = Path.Combine(folderPath, findData.cFileName);
+                            localSize = await Calculate(localPath, level + 1);
+                            size += localSize;
                         }
 
-                        if (level <= 2)
+                        if (level <= 3)
                         {
                             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                             {
                                 cacheSizes[localPath] = localSize;
-                                folder.FileSizeBytes = size;
+
+                                if (size > folder.FileSizeBytes)
+                                {
+                                    folder.FileSizeBytes = size;
+                                    folder.FileSize = size.ToSizeString();
+                                };
                             });
-                            //if (size > folder.FileSizeBytes)
-                            //{
-                            //
-                            //    //folder.FileSize = size.ToSizeString();
-                            //};
                         }
 
                         if (cancellationToken.IsCancellationRequested)
@@ -156,54 +142,24 @@ namespace Files.Filesystem
                         }
                     } while (FindNextFile(hFile, out findData));
                     FindClose(hFile);
-                    return size;
                 }
-                else
+                return size;
+            }
+        }
+
+        public static async void CleanCache()
+        {
+            var drives = DriveInfo.GetDrives().Select(drive => drive.Name).ToArray();
+
+            var dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                var oldPaths = cacheSizes.Keys.Where(path => !drives.Any(drive => path.StartsWith(drive))).ToList();
+                foreach (var oldPath in oldPaths)
                 {
-                    return 0;
+                    cacheSizes.Remove(oldPath);
                 }
-            }
-        }
-    }
-
-    public sealed class SizedDictionary<Key, Value> : Dictionary<Key, Value>
-    {
-        private readonly int maxSize;
-
-        private Queue<Key> keys = new();
-
-        public SizedDictionary(int maxSize) : base(maxSize) => this.maxSize = maxSize;
-
-        new public void Add(Key key, Value value)
-        {
-            if (key == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (keys.Count == maxSize)
-            {
-                base.Remove(keys.Dequeue());
-            }
-
-            base.Add(key, value);
-            keys.Enqueue(key);
-        }
-
-        new public bool Remove(Key key)
-        {
-            if (key == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!keys.Contains(key))
-            {
-                return false;
-            }
-
-            keys = new Queue<Key>(keys.Where(k => !k.Equals(key)));
-            return base.Remove(key);
+            });
         }
     }
 }
