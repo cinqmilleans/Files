@@ -1,10 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 
 namespace Files.Article.Helper
 {
-    public class NativeFindStorageItemHelper
+    internal class NativeFindStorageItemHelper
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct SYSTEMTIME
@@ -99,6 +100,15 @@ namespace Files.Article.Helper
                 return true;
             }
             return false;
+        }
+
+        public static bool IsDirectory(WIN32_FIND_DATA data)
+            => ((FileAttributes)data.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
+
+        public static DateTime ToDateTime(ref FILETIME time)
+        {
+            FileTimeToSystemTime(ref time, out SYSTEMTIME systemTime);
+            return systemTime.ToDateTime();
         }
     }
 }

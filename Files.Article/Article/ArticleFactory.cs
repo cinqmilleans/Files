@@ -1,6 +1,9 @@
 ﻿using Files.Article.Extension;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using Windows.UI.Xaml.Media.Imaging;
 using static Files.Article.Helper.NativeFindStorageItemHelper;
@@ -25,6 +28,7 @@ namespace Files.Article.Article
                 Path = path,
                 Name = data.cFileName,
                 ArticleType = IsDirectory(data) ? ArticleTypes.Folder : ArticleTypes.File,
+                ArticleAttribute = ToAttributes((FileAttributes)data.dwFileAttributes),
                 Size = data.GetSize(),
                 DateCreated = ToDateTime(ref data.ftCreationTime),
                 DateModified = ToDateTime(ref data.ftLastWriteTime),
@@ -41,12 +45,19 @@ namespace Files.Article.Article
             return systemTime.ToDateTime();
         }
 
+        private ArticleAttributes ToAttributes(FileAttributes fileAttributes)
+            => attributes
+                .Where(attribute => fileAttributes.HasFlag(attribute.Key))
+                .Select(attribute => attribute.Value)
+                .Aggregate((result, attribute) => result | attribute);
+
         private class Article : IArticle
         {
             public string Path { get; set; }
             public string Name { get; set; }
 
             public ArticleTypes ArticleType { get; set; } = ArticleTypes.Unknown;
+            public ArticleAttributes ArticleAttribute { get; set; } = ArticleAttributes.None;
 
             public long? Size { get; set; }
 

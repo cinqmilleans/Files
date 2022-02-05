@@ -2,7 +2,7 @@
 
 namespace Files.Article.Extension
 {
-    public static class Win32FindDataExtensions
+    internal static class Win32FindDataExtensions
     {
         private const long MAXDWORD = 4294967295;
 
