@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Files.Article.Article
 {
@@ -14,7 +11,7 @@ namespace Files.Article.Article
 
     public class ArticleProvider : IArticleProvider
     {
-        private readonly IArticleFactory factory = new ArticleFactory();
+        //private readonly IArticleFactory factory = new ArticleFactory();
 
         public string ParentPath { get; set; }
 
@@ -26,9 +23,6 @@ namespace Files.Article.Article
 
         public CancellationToken CancellationToken { get; set; }
 
-        public IEnumerable<IArticle> EnumerateArticle()
-        {
-
-        }
+        public IEnumerable<IArticle> EnumerateArticle() => Enumerable.Empty<IArticle>();
     }
 }

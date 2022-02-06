@@ -1,14 +1,10 @@
 ﻿using Files.Article.Extension;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Windows.UI.Xaml.Media.Imaging;
 using static Files.Article.Helper.NativeFindStorageItemHelper;
 
-namespace Files.Article.Article
+/*namespace Files.Article.Article
 {
     internal interface IArticleFactory
     {
@@ -35,21 +31,6 @@ namespace Files.Article.Article
                 DateAccessed = ToDateTime(ref data.ftLastAccessTime),
             };
         }
-
-        private static bool IsDirectory(WIN32_FIND_DATA data)
-            => ((FileAttributes)data.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
-
-        private static DateTime ToDateTime(ref FILETIME time)
-        {
-            FileTimeToSystemTime(ref time, out SYSTEMTIME systemTime);
-            return systemTime.ToDateTime();
-        }
-
-        private ArticleAttributes ToAttributes(FileAttributes fileAttributes)
-            => attributes
-                .Where(attribute => fileAttributes.HasFlag(attribute.Key))
-                .Select(attribute => attribute.Value)
-                .Aggregate((result, attribute) => result | attribute);
 
         private class Article : IArticle
         {
@@ -79,4 +60,4 @@ namespace Files.Article.Article
             public string WorkingDirectory { get; set; }
         }
     }
-}
+}*/

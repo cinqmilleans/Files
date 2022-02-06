@@ -13,9 +13,9 @@ namespace Files.Article.Extension
 
             return sizeLow + (sizeLow, sizeHigh) switch
             {
-                ( < 0, > 0) => (MAXDWORD + 1) * (sizeHigh + 1),
+                (< 0, > 0) => (MAXDWORD + 1) * (sizeHigh + 1),
                 (_, > 0) => (MAXDWORD + 1) * sizeHigh,
-                ( < 0, _) => MAXDWORD + 1,
+                (< 0, _) => MAXDWORD + 1,
                 _ => 0,
             };
         }
