@@ -1,0 +1,70 @@
+﻿using Files.Filesystem.Search;
+using Files.ViewModels.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
+
+namespace Files.UserControls.Search
+{
+    public interface ISearchNavigator
+    {
+        void Initialize(ISearchBox box, Frame frame);
+
+        void Search();
+        void Back();
+
+        void ClearPage();
+        void GoPage(ISearchSettings settings);
+        void GoPage(ISearchFilter filter);
+    }
+
+    public class SearchNavigator : ISearchNavigator
+    {
+        private readonly NavigationTransitionInfo emptyTransition =
+            new SuppressNavigationTransitionInfo();
+        private readonly NavigationTransitionInfo toRightTransition =
+            new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
+
+        private ISearchBox box;
+        private Frame frame;
+
+        public void Initialize(ISearchBox box, Frame frame) => (this.box, this.frame) = (box, frame);
+
+        public void Search() => box?.Search();
+
+        public void Back()
+        {
+            if (frame is not null && frame.CanGoBack)
+            {
+                frame.GoBack(toRightTransition);
+            }
+        }
+
+        public void ClearPage()
+        {
+            if (frame is not null)
+            {
+                frame.Content = null;
+            }
+        }
+        public void GoPage(ISearchSettings settings)
+        {
+            var viewModel = new SettingsPageViewModel(settings);
+            if (frame is not null && viewModel is not null)
+            {
+                frame.Navigate(typeof(SearchFilterPage), viewModel, emptyTransition);
+            }
+        }
+        public void GoPage(ISearchFilter filter)
+        {
+            var factory = Ioc.Default.GetService<ISearchPageViewModelFactory>();
+            var parentViewModel = (frame?.Content as SearchFilterPage)?.ViewModel;
+            var childViewModel = factory.GetPageViewModel(parentViewModel, filter);
+
+            if (frame is not null && childViewModel is not null)
+            {
+                frame.Navigate(typeof(SearchFilterPage), childViewModel, toRightTransition);
+            }
+        }
+    }
+}

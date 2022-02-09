@@ -23,9 +23,9 @@ namespace Files.Filesystem.Search
 {
     public class FolderSearch
     {
-        private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
-
-        private IFileTagsSettingsService FileTagsSettingsService { get; } = Ioc.Default.GetService<IFileTagsSettingsService>();
+        private readonly ISearchSettings searchSettings = Ioc.Default.GetService<ISearchSettings>();
+        private readonly IUserSettingsService userSettingsService = Ioc.Default.GetService<IUserSettingsService>();
+        private readonly IFileTagsSettingsService fileTagsSettingsService = Ioc.Default.GetService<IFileTagsSettingsService>();
 
         private const uint defaultStepSize = 500;
 
@@ -40,7 +40,15 @@ namespace Files.Filesystem.Search
 
         public EventHandler SearchTick;
 
-        private bool IsAQSQuery => Query is not null && (Query.StartsWith('$') || Query.Contains(":", StringComparison.Ordinal));
+        private bool IsAQSQuery
+        {
+            get
+            {
+                bool isManualAqs = Query is not null && (Query.StartsWith("$") || Query.Contains(":", StringComparison.Ordinal));
+                bool hasSearchFilter = !string.IsNullOrEmpty(searchSettings.Filter.ToAdvancedQuerySyntax());
+                return isManualAqs || hasSearchFilter;
+            }
+        }
 
         private string QueryWithWildcard
         {
@@ -187,7 +195,7 @@ namespace Files.Filesystem.Search
         {
             //var sampler = new IntervalSampler(500);
             var tagName = AQSQuery.Substring("tag:".Length);
-            var tags = FileTagsSettingsService.GetTagsByName(tagName);
+            var tags = fileTagsSettingsService.GetTagsByName(tagName);
             if (!tags.Any())
             {
                 return;
@@ -208,12 +216,12 @@ namespace Files.Filesystem.Search
                     var isSystem = ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) == FileAttributes.System;
                     var isHidden = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden;
                     var startWithDot = findData.cFileName.StartsWith(".");
-                    
-                    bool shouldBeListed = (!isHidden || 
-                        (UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible && 
-                        (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden))) && 
-                        (!startWithDot || UserSettingsService.PreferencesSettingsService.ShowDotFiles);
-                    
+
+                    bool shouldBeListed = (!isHidden ||
+                        (userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible &&
+                        (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden))) &&
+                        (!startWithDot || userSettingsService.PreferencesSettingsService.ShowDotFiles);
+
                     if (shouldBeListed)
                     {
                         var item = GetListedItemAsync(match.FilePath, findData);
@@ -268,7 +276,7 @@ namespace Files.Filesystem.Search
                     hiddenOnlyFromWin32 = (results.Count != 0);
                 }
 
-                if (!IsAQSQuery && (!hiddenOnlyFromWin32 || UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible))
+                if (!IsAQSQuery && (!hiddenOnlyFromWin32 || userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible))
                 {
                     await SearchWithWin32Async(folder, hiddenOnlyFromWin32, UsedMaxItemCount - (uint)results.Count, results, token);
                 }
@@ -304,10 +312,11 @@ namespace Files.Filesystem.Search
                         var startWithDot = findData.cFileName.StartsWith(".");
 
                         bool shouldBeListed = (hiddenOnly ?
-                            isHidden && (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden) :
-                            !isHidden || (UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible && (!isSystem || !UserSettingsService.PreferencesSettingsService.AreSystemItemsHidden))) &&
-                            (!startWithDot || UserSettingsService.PreferencesSettingsService.ShowDotFiles);
-                        
+                            isHidden && (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden) :
+                            !isHidden || (userSettingsService.PreferencesSettingsService.AreHiddenItemsVisible
+                            && (!isSystem || !userSettingsService.PreferencesSettingsService.AreSystemItemsHidden))) &&
+                            (!startWithDot || userSettingsService.PreferencesSettingsService.ShowDotFiles);
+
                         if (shouldBeListed)
                         {
                             var item = GetListedItemAsync(itemPath, findData);
@@ -460,8 +469,8 @@ namespace Files.Filesystem.Search
         {
             var query = new QueryOptions
             {
-                FolderDepth = FolderDepth.Deep,
-                UserSearchFilter = AQSQuery ?? string.Empty,
+                FolderDepth = searchSettings.SearchInSubFolders ? FolderDepth.Deep : FolderDepth.Shallow,
+                UserSearchFilter = AQSQuery,
             };
 
             query.IndexerOption = SearchUnindexedItems
