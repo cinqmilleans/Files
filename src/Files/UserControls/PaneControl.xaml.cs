@@ -26,10 +26,12 @@ namespace Files.UserControls
     public class PaneTemplateSelector : DataTemplateSelector
     {
         public DataTemplate PreviewTemplate { get; set; }
+        public DataTemplate SearchTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
             PaneContents.Preview => PreviewTemplate,
+            PaneContents.Search => SearchTemplate,
             _ => null,
         };
 

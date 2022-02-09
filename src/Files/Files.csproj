@@ -372,6 +372,9 @@
       <DependentUpon>SearchFilterPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Search\SearchNavigator.cs" />
+    <Compile Include="UserControls\Search\SearchPane.xaml.cs">
+      <DependentUpon>SearchPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Search\SizeRangeSlider.xaml.cs">
       <DependentUpon>SizeRangeSlider.xaml</DependentUpon>
     </Compile>
@@ -403,6 +406,7 @@
     </Compile>
     <Compile Include="ViewModels\Dialogs\DecompressArchiveDialogViewModel.cs" />
     <Compile Include="ViewModels\NavToolbarViewModel.cs" />
+    <Compile Include="ViewModels\PaneViewModel.cs" />
     <Compile Include="ViewModels\Previews\ArchivePreviewViewModel.cs" />
     <Compile Include="ViewModels\Previews\CodePreviewViewModel.cs" />
     <Compile Include="ViewModels\Properties\CompatibilityProperties.cs" />
@@ -1398,6 +1402,10 @@
     <Page Include="UserControls\Search\SearchFilterPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Search\SearchPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Search\SizeRangeSlider.xaml">
       <Generator>MSBuild:Compile</Generator>

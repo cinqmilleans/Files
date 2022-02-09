@@ -27,6 +27,8 @@ namespace Files.UserControls
         public IUserSettingsService UserSettingsService { get; } =
             Ioc.Default.GetService<IUserSettingsService>();
 
+        private IPaneViewModel PaneViewModel { get; } = new PaneViewModel();
+
         public MainViewModel MainViewModel => App.MainViewModel;
         public PreviewPaneViewModel PreviewPaneViewModel => App.PreviewPaneViewModel;
 
