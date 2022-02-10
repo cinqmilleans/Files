@@ -23,12 +23,13 @@ namespace Files.ViewModels
         public bool IsPreviewSelected
         {
             get => settings.Content is PaneContents.Preview;
-            set => settings.Content = !IsPreviewSelected ? PaneContents.Preview : PaneContents.None;
+            set => SetContent(PaneContents.Preview);
         }
+
         public bool IsSearchSelected
         {
             get => settings.Content is PaneContents.Search;
-            set => settings.Content = !IsSearchSelected ? PaneContents.Search : PaneContents.None;
+            set => SetContent(PaneContents.Search);
         }
 
         public PaneViewModel() => settings.PropertyChanged += Settings_PropertyChanged;
@@ -37,9 +38,22 @@ namespace Files.ViewModels
         {
             if (e.PropertyName is nameof(IPaneSettingsService.Content))
             {
+                OnPropertyChanged(nameof(HasContent));
                 OnPropertyChanged(nameof(IsPreviewSelected));
                 OnPropertyChanged(nameof(IsSearchSelected));
-                OnPropertyChanged(nameof(HasContent));
+            }
+        }
+
+        private void SetContent(PaneContents content)
+        {
+            var old = settings.Content;
+            if (old is PaneContents.None)
+            {
+                settings.Content = content;
+            }
+            else
+            {
+                settings.Content = PaneContents.None;
             }
         }
     }
