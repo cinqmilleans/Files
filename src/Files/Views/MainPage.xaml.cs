@@ -52,7 +52,7 @@ namespace Files.Views
         private ICommand SetCompactOverlayCommand { get; }
 
         private ICommand ToggleSidebarCollapsedStateCommand => new RelayCommand<KeyboardAcceleratorInvokedEventArgs>(x => ToggleSidebarCollapsedState(x));
-       
+
         public bool IsVerticalTabFlyoutEnabled => UserSettingsService.MultitaskingSettingsService.IsVerticalTabFlyoutEnabled;
 
         public MainPage()
@@ -434,6 +434,7 @@ namespace Files.Views
         public bool IsPaneEnabled => UserSettingsService.PaneSettingsService.Content switch
         {
             PaneContents.Preview => IsPreviewPaneEnabled,
+            PaneContents.Search => true,
             _ => false,
         };
 

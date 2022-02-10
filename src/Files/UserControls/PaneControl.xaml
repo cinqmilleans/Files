@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
 
-    <UserControl.Resources>
+    <!--<UserControl.Resources>
 
         <local:PaneTemplateSelector x:Key="PaneTemplateSelector"
             PreviewTemplate="{StaticResource PreviewTemplate}"
@@ -21,6 +21,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SearchTemplate">
+            <TextBlock Text="Coucou" />
             <search:SearchPane x:Name="SearchPane"
                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </DataTemplate>
@@ -28,6 +29,8 @@
     </UserControl.Resources>
 
     <ContentControl x:Name="Root" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-        Content="{x:Bind PaneService.Content, Mode=OneWay}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" />
+        Content="{x:Bind PaneService.Content, Mode=OneWay}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" />-->
+
+    <TextBlock Text="Coucou" />
 
 </UserControl>

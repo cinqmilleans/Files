@@ -808,7 +808,7 @@
             </AppBarButton>
             <AppBarToggleButton x:Name="SearchPane" Width="Auto" MinWidth="40"
                 AutomationProperties.Name="Toggle search pane"
-                IsChecked="{x:Bind PaneViewModel.IsSearchSelected, Mode=TwoWay}"
+                IsChecked="{x:Bind MainViewModel.PaneViewModel.IsSearchSelected, Mode=TwoWay}"
                 Label="Search Options" LabelPosition="Collapsed"
                 ToolTipService.ToolTip="Toggle the search options pane">
                 <AppBarToggleButton.Content>
@@ -822,7 +822,7 @@
                 MinWidth="40"
                 AccessKey="P"
                 AutomationProperties.Name="Toggle preview pane"
-                IsChecked="{x:Bind PreviewPaneViewModel.IsPaneSelected, Mode=TwoWay}"
+                IsChecked="{x:Bind MainViewModel.PaneViewModel.IsPreviewSelected, Mode=TwoWay}"
                 IsEnabled="{x:Bind ShowPreviewPaneButton, Mode=OneWay}"
                 Label="Preview"
                 LabelPosition="Collapsed"

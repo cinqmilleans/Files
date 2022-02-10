@@ -234,7 +234,7 @@ namespace Files
                         }
 
                         // check if the preview pane is open before updating the model
-                        if (PreviewPaneViewModel.IsPaneSelected)
+                        if (MainViewModel.PaneViewModel.IsPreviewSelected)
                         {
                             bool isPaneEnabled = ((Window.Current.Content as Frame)?.Content as MainPage)?.IsPaneEnabled ?? false;
                             if (isPaneEnabled)

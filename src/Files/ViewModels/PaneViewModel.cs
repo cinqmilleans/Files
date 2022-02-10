@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Files.ViewModels
 {
-    public interface IPaneViewModel
+    public interface IPaneViewModel : INotifyPropertyChanged
     {
         bool HasContent { get; }
 
@@ -16,7 +16,7 @@ namespace Files.ViewModels
 
     public class PaneViewModel : ObservableObject, IPaneViewModel
     {
-        private IPaneSettingsService settings = Ioc.Default.GetService<IPaneSettingsService>();
+        private readonly IPaneSettingsService settings = Ioc.Default.GetService<IPaneSettingsService>();
 
         public bool HasContent => settings.Content is not PaneContents.None;
 
@@ -28,10 +28,7 @@ namespace Files.ViewModels
         public bool IsSearchSelected
         {
             get => settings.Content is PaneContents.Search;
-            set
-            {
-                settings.Content = !IsSearchSelected ? PaneContents.Search : PaneContents.None;
-            }
+            set => settings.Content = !IsSearchSelected ? PaneContents.Search : PaneContents.None;
         }
 
         public PaneViewModel() => settings.PropertyChanged += Settings_PropertyChanged;
@@ -40,9 +37,9 @@ namespace Files.ViewModels
         {
             if (e.PropertyName is nameof(IPaneSettingsService.Content))
             {
-                OnPropertyChanged(nameof(HasContent));
                 OnPropertyChanged(nameof(IsPreviewSelected));
                 OnPropertyChanged(nameof(IsSearchSelected));
+                OnPropertyChanged(nameof(HasContent));
             }
         }
     }
