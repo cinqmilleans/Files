@@ -21,9 +21,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SearchTemplate">
-            <TextBlock Text="Coucou" />
-            <!--<search:SearchPane x:Name="SearchPane"
-                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />-->
+            <search:SearchPane x:Name="SearchPane"
+                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </DataTemplate>
 
     </UserControl.Resources>

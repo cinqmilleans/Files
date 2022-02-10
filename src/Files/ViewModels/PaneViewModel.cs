@@ -2,11 +2,12 @@
 using Files.Services;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System;
 using System.ComponentModel;
 
 namespace Files.ViewModels
 {
-    public interface IPaneViewModel : INotifyPropertyChanged
+    public interface IPaneViewModel : INotifyPropertyChanged, IDisposable
     {
         bool HasContent { get; }
 
@@ -18,40 +19,53 @@ namespace Files.ViewModels
     {
         private readonly IPaneSettingsService settings = Ioc.Default.GetService<IPaneSettingsService>();
 
-        public bool HasContent => settings.Content is not PaneContents.None;
+        private PaneContents content = PaneContents.None;
+
+        public bool HasContent => content is not PaneContents.None;
 
         public bool IsPreviewSelected
         {
-            get => settings.Content is PaneContents.Preview;
-            set => SetContent(PaneContents.Preview);
+            get => content is PaneContents.Preview;
+            set => SetState(value, PaneContents.Preview);
         }
 
         public bool IsSearchSelected
         {
-            get => settings.Content is PaneContents.Search;
-            set => SetContent(PaneContents.Search);
+            get => content is PaneContents.Search;
+            set => SetState(value, PaneContents.Search);
         }
 
-        public PaneViewModel() => settings.PropertyChanged += Settings_PropertyChanged;
+        public PaneViewModel()
+        {
+            settings.PropertyChanged += Settings_PropertyChanged;
+            content = settings.Content;
+        }
+
+        public void Dispose() => settings.PropertyChanged -= Settings_PropertyChanged;
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is nameof(IPaneSettingsService.Content))
             {
-                OnPropertyChanged(nameof(HasContent));
-                OnPropertyChanged(nameof(IsPreviewSelected));
-                OnPropertyChanged(nameof(IsSearchSelected));
+                var newContent = settings.Content;
+                if (content != newContent)
+                {
+                    content = newContent;
+
+                    OnPropertyChanged(nameof(HasContent));
+                    OnPropertyChanged(nameof(IsPreviewSelected));
+                    OnPropertyChanged(nameof(IsSearchSelected));
+                }
             }
         }
 
-        private void SetContent(PaneContents content)
+        private void SetState(bool state, PaneContents field)
         {
-            var old = settings.Content;
-            if (old is PaneContents.None)
+            if (state && content != field)
             {
-                settings.Content = content;
+                settings.Content = field;
             }
-            else
+            else if (!state && content == field)
             {
                 settings.Content = PaneContents.None;
             }
