@@ -6,12 +6,12 @@ namespace Files.UserControls.Search
 {
     public sealed partial class SearchPane : UserControl
     {
-        private readonly ISearchSettings settings = Ioc.Default.GetService<ISearchSettings>();
-        private readonly ISearchNavigator navigator = Ioc.Default.GetService<ISearchNavigator>();
-
         public SearchPane()
         {
             InitializeComponent();
+
+            var settings = Ioc.Default.GetService<ISearchSettings>();
+            var navigator = Ioc.Default.GetService<ISearchNavigator>();
 
             navigator.Initialize(null, MenuFrame);
             navigator.GoPage(settings);
