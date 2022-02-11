@@ -812,7 +812,7 @@
                 Label="Search Options" LabelPosition="Collapsed"
                 ToolTipService.ToolTip="Toggle the search options pane">
                 <AppBarToggleButton.Content>
-                    <local:ColoredIcon BaseLayerGlyph="&#xE71C;" OverlayLayerGlyph="&#xE71C;" />
+                    <FontIcon Glyph="&#xE71C;" />
                 </AppBarToggleButton.Content>
             </AppBarToggleButton>
             <AppBarToggleButton

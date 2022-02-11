@@ -13,8 +13,8 @@ namespace Files.UserControls.Search
         {
             InitializeComponent();
 
-            //navigator.Initialize(null, MenuFrame);
-            //navigator.GoPage(settings);
+            navigator.Initialize(null, MenuFrame);
+            navigator.GoPage(settings);
         }
     }
 }

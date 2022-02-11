@@ -3,11 +3,14 @@ using Files.Common;
 using Files.Controllers;
 using Files.Filesystem;
 using Files.Filesystem.FilesystemHistory;
+using Files.Filesystem.Search;
 using Files.Helpers;
 using Files.Services;
 using Files.Services.Implementation;
 using Files.UserControls.MultitaskingControl;
+using Files.UserControls.Search;
 using Files.ViewModels;
+using Files.ViewModels.Search;
 using Files.Views;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -109,6 +112,10 @@ namespace Files
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
                 .AddSingleton<IUpdateSettingsService, UpdateSettingsService>()
+                .AddSingleton<ISearchHeaderProvider, SearchHeaderProvider>()
+                .AddSingleton<ISearchSettings, SearchSettings>()
+                .AddSingleton<ISearchNavigator, SearchNavigator>()
+                .AddSingleton<ISearchPageViewModelFactory, SearchPageViewModelFactory>()
 
                 // TODO: Dialogs:
 
