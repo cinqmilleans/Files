@@ -55,17 +55,11 @@ namespace Files.UserControls.Search
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Back();
-        private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Search();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
             => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Filter.Header;
         private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
             => (ViewModel as IMultiSearchPageViewModel).Key = ((sender as ComboBox).SelectedValue as ISearchHeader).Key;
-        private void HeaderCombo_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            // prevent a bug of lost focus in uwp. This bug close the flyout when combobox is open.
-            SearchButton.Focus(FocusState.Programmatic);
-        }
     }
 
     internal class SearchFilterPageTemplateSelector : DataTemplateSelector

@@ -23,9 +23,9 @@
         <DataTemplate x:Key="SettingsPageTemplate" x:DataType="vm:ISettingsPageViewModel">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock FontSize="18" FontWeight="SemiBold" Text="{helpers:ResourceString Name=SearchOptions}" />
                 <local:SearchFilterPicker Grid.Row="1" ViewModel="{x:Bind Settings.Filter}" />
@@ -67,10 +67,9 @@
                             <FontIcon FontSize="16" FontWeight="SemiBold" Glyph="&#xE76B;" />
                         </Button.Content>
                     </Button>
-                    <ComboBox x:Name="HeaderCombo" Grid.Column="1"
+                    <ComboBox x:Name="HeaderCombo" Grid.Column="1" ItemsSource="{x:Bind Headers}"
                         HorizontalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent"
-                        Loaded="HeaderCombo_Loaded" PointerEntered="HeaderCombo_PointerEntered"
-                        ItemsSource="{x:Bind Headers}" SelectionChanged="HeaderCombo_SelectionChanged">
+                        Loaded="HeaderCombo_Loaded" SelectionChanged="HeaderCombo_SelectionChanged">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="s:ISearchHeader">
                                 <StackPanel VerticalAlignment="Stretch" Orientation="Vertical" MaxWidth="240">
@@ -101,22 +100,7 @@
 
     </Page.Resources>
 
-    <Grid x:Name="RootPanel" VerticalAlignment="Stretch" RowSpacing="24" ColumnSpacing="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <ContentControl Grid.ColumnSpan="2" HorizontalContentAlignment="Stretch"
-            Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PageTemplateSelector}" />
-        <Button x:Name="SearchButton" Grid.Row="1" Tapped="SearchButton_Tapped"
-            HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" />
-        <Button x:Name="ClearButton" Grid.Row="1" Grid.Column="1" Command="{x:Bind ViewModel.ClearCommand}"
-            HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Clear}"
-            IsEnabled="{x:Bind ViewModel.Content.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
-    </Grid>
+    <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+        Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PageTemplateSelector}" />
 
 </Page>
