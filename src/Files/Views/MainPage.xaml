@@ -393,7 +393,7 @@
                 ResizeBehavior="BasedOnAlignment"
                 Style="{StaticResource DefaultGridSplitterStyle}" />
 
-            <controls:PaneControl x:Name="Pane" Grid.Row="1" Grid.Column="2"
+            <controls:PaneControl x:Name="Pane" Grid.Row="1" Grid.Column="2" Canvas.ZIndex="-1000000"
                 x:Load="{x:Bind IsPaneEnabled, Mode=OneWay}"
                 HorizontalContentAlignment="Stretch" Visibility="{x:Bind IsPaneEnabled, Mode=OneWay}" />
 

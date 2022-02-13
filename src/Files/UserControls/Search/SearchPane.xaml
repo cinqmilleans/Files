@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Frame x:Name="MenuFrame" Grid.ColumnSpan="2" />
+        <Frame x:Name="MenuFrame" Grid.ColumnSpan="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         <Button x:Name="SearchButton" Grid.Row="1" Command="{x:Bind Navigator.SearchCommand}"
             HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" />
         <Button x:Name="ClearButton" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"

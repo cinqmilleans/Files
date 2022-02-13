@@ -27,7 +27,11 @@
 
     </UserControl.Resources>
 
-    <ContentControl x:Name="Root" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-        Content="{x:Bind PaneService.Content, Mode=OneWay}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" />
+    <ScrollViewer>
+        <Grid ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ContentControl x:Name="Root" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Content="{x:Bind PaneService.Content, Mode=OneWay}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" />
+        </Grid>
+    </ScrollViewer>
 
 </UserControl>
