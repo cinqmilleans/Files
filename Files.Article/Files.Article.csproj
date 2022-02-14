@@ -133,6 +133,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Article\Article.cs" />
+    <Compile Include="Article\DriveArticle.cs" />
     <Compile Include="Article\FtpArticle.cs" />
     <Compile Include="Library\Library.cs" />
     <Compile Include="Article\ShortcutArticle.cs" />

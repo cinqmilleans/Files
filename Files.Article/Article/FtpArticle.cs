@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Files.Article.Article
 {
-    internal class FtpArticle : IArticle
+    /*internal class FtpArticle : IArticle
     {
         public string Path { get; }
         public string Name { get; }
@@ -33,5 +33,5 @@ namespace Files.Article.Article
 
         private static DateTime Clean(DateTime date)
             => date < DateTime.FromFileTimeUtc(0) ? DateTime.MinValue : date;
-    }
+    }*/
 }

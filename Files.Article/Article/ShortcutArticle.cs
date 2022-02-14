@@ -2,7 +2,7 @@
 
 namespace Files.Article.Article
 {
-    public interface IShortcutArticle : IArticle
+    /*public interface IShortcutArticle : IArticle
     {
         ShortcutTypes ShortcutType { get; }
 
@@ -38,5 +38,5 @@ namespace Files.Article.Article
                 _ => ShortcutTypes.Unknown,
             };
         }
-    }
+    }*/
 }

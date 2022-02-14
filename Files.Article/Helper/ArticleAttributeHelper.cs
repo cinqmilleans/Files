@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Files.Article.Article
 {
-    internal static class ArticleAttributeHelper
+    /*internal static class ArticleAttributeHelper
     {
         private static readonly IReadOnlyDictionary<FileAttributes, ArticleAttributes> attributes
             = new ReadOnlyDictionary<FileAttributes, ArticleAttributes>
@@ -30,5 +30,5 @@ namespace Files.Article.Article
                 .Where(attribute => fileAttributes.HasFlag(attribute.Key))
                 .Select(attribute => attribute.Value)
                 .Aggregate((result, attribute) => result | attribute);
-    }
+    }*/
 }

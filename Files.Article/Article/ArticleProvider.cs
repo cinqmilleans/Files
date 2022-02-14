@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Files.Article.Article
 {
-    public interface IArticleProvider
+    /*public interface IArticleProvider
     {
         IEnumerable<IArticle> EnumerateArticle();
     }
@@ -24,5 +24,5 @@ namespace Files.Article.Article
         public CancellationToken CancellationToken { get; set; }
 
         public IEnumerable<IArticle> EnumerateArticle() => Enumerable.Empty<IArticle>();
-    }
+    }*/
 }

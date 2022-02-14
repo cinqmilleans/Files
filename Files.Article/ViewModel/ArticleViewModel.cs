@@ -5,7 +5,7 @@ using IO = System.IO;
 
 namespace Files.Article.ViewModel
 {
-    public interface IArticleViewModel
+    /*public interface IArticleViewModel
     {
         string Path { get; }
         string Name { get; }
@@ -184,5 +184,5 @@ namespace Files.Article.ViewModel
             Icon = new IconViewModel(library.Icon);
             Library = new LibraryViewModel(library);
         }
-    }
+    }*/
 }

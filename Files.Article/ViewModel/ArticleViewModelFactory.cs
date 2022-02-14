@@ -4,7 +4,7 @@ using System;
 
 namespace Files.Article.ViewModel
 {
-    public interface IArticleViewModelFactory
+    /*public interface IArticleViewModelFactory
     {
         IArticleViewModel Build(object article);
     }
@@ -23,5 +23,5 @@ namespace Files.Article.ViewModel
             },
             _ => throw new ArgumentException(),
         };
-    }
+    }*/
 }

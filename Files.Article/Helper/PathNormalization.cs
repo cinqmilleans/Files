@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Files.Helpers
 {
-    public static class PathNormalization
+    /*public static class PathNormalization
     {
         public static string GetPathRoot(string path)
         {
@@ -85,5 +85,5 @@ namespace Files.Helpers
             }
             return folder.Contains("/", StringComparison.Ordinal) ? Path.Combine(folder, name).Replace("\\", "/", StringComparison.Ordinal) : Path.Combine(folder, name);
         }
-    }
+    }*/
 }

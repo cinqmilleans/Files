@@ -2,7 +2,7 @@
 
 namespace Files.Article.ViewModel
 {
-    public interface IShortcutViewModel
+    /*public interface IShortcutViewModel
     {
         bool IsExecutable { get; }
         bool IsSymLink { get; }
@@ -26,5 +26,5 @@ namespace Files.Article.ViewModel
         public string WorkingDirectory => shortcut.WorkingDirectory;
 
         public ShortcutViewModel(IShortcutArticle shortcut) => this.shortcut = shortcut;
-    }
+    }*/
 }

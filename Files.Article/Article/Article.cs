@@ -7,28 +7,46 @@ using IO = System.IO;
 
 namespace Files.Article.Article
 {
-    public interface IArticle
+    /*public interface IArticle
     {
         string Path { get; }
         string Name { get; }
+    }*/
 
-        ArticleTypes ArticleType { get; }
-        ArticleAttributes ArticleAttribute { get; }
+    /*public interface IDriveArticle
+    {
+        long UsedSize { get; }
+        long TotalSize { get; }
 
+
+    }*/
+
+    /*public interface ISizedArticle : IArticle
+    {
         long Size { get; }
+    }
 
+    public interface IDatedArticle : IArticle
+    {
         DateTime DateCreated { get; }
         DateTime DateModified { get; }
         DateTime DateAccessed { get; }
-
-        BitmapImage Icon { get; }
     }
 
+    public interface IDriveArticle : IArticle
+    {
+        long TotalSize { get; }
+    }
+
+    [Flags]
     public enum ArticleTypes : ushort
     {
-        Unknown,
-        File,
-        Folder,
+        None = 0x0000,
+        Library = 0x0001,
+        Virtual = 0x00002,
+        Drive = 0x00004 + Folder,
+        Folder = 0x0010,
+        File = 0x0020,
     }
 
     [Flags]
@@ -45,6 +63,11 @@ namespace Files.Article.Article
         ReadOnly = 0x0200,
         System = 0x0400,
         Temporary = 0x1000,
+    }
+
+    public interface IDriveArticle : IArticle
+    {
+
     }
 
     internal class Article : IArticle
@@ -74,5 +97,5 @@ namespace Files.Article.Article
             DateModified = ToDateTime(ref data.ftLastWriteTime);
             DateAccessed = ToDateTime(ref data.ftLastAccessTime);
         }
-    }
+    }*/
 }
