@@ -415,6 +415,7 @@
     <Compile Include="ViewModels\Search\DateRangePageViewModel.cs" />
     <Compile Include="ViewModels\Search\GroupPageViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchTagViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="Models\JsonSettings\BaseJsonSettingsModel.cs" />
     <Compile Include="ViewModels\ColumnsViewModel.cs" />
