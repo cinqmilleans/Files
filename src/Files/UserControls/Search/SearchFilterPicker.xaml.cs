@@ -57,7 +57,7 @@ namespace Files.UserControls.Search
 
             MenuFlyoutItem GetItem(ISearchHeader header) => new()
             {
-                Tag = header,
+                Tag = new SearchHeaderViewModel(header),
                 Template = HeaderItemTemplate,
             };
         }

@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Files.UserControls.Search"
-    xmlns:s="using:Files.Filesystem.Search"
     xmlns:vm="using:Files.ViewModels.Search"
     xmlns:helpers="using:Files.Helpers"
     xmlns:converters="using:Files.Converters"
@@ -71,7 +70,7 @@
                         HorizontalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent"
                         Loaded="HeaderCombo_Loaded" SelectionChanged="HeaderCombo_SelectionChanged">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="s:ISearchHeader">
+                            <DataTemplate x:DataType="vm:ISearchHeaderViewModel">
                                 <StackPanel VerticalAlignment="Stretch" Orientation="Vertical" MaxWidth="240">
                                     <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Text="{x:Bind Label}"
                                         Visibility="{Binding IsDropDownOpen, ElementName=HeaderCombo, Converter={StaticResource VisibilityInvertConverter}}" />
