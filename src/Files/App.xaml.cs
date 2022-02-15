@@ -115,6 +115,7 @@ namespace Files
                 .AddSingleton<ISearchHeaderProvider, SearchHeaderProvider>()
                 .AddSingleton<ISearchSettings, SearchSettings>()
                 .AddSingleton<ISearchNavigator, SearchNavigator>()
+                .AddSingleton<ISearchFilterViewModelFactory, SearchFilterViewModelFactory>()
                 .AddSingleton<ISearchPageViewModelFactory, SearchPageViewModelFactory>()
 
                 // TODO: Dialogs:

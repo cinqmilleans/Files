@@ -70,7 +70,7 @@ namespace Files.UserControls.Search
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            ISettingsPageViewModel => SettingsPageTemplate,
+            ISearchSettingsPageViewModel => SettingsPageTemplate,
             IMultiSearchPageViewModel => MultiPageTemplate,
             ISearchPageViewModel => SinglePageTemplate,
             _ => null,

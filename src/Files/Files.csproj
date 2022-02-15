@@ -147,6 +147,7 @@
     <Compile Include="DataModels\NavigationControlItems\WslDistroItem.cs" />
     <Compile Include="Enums\LocalizedEnum.cs" />
     <Compile Include="Enums\PaneContents.cs" />
+    <Compile Include="Enums\SearchKeys.cs" />
     <Compile Include="Extensions\ShellNewEntryExtensions.cs" />
     <Compile Include="Dialogs\DecompressArchiveDialog.xaml.cs">
       <DependentUpon>DecompressArchiveDialog.xaml</DependentUpon>
@@ -183,12 +184,17 @@
     <Compile Include="Filesystem\Permissions\FileSystemAccessRuleForUI.cs" />
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
-    <Compile Include="Filesystem\Search\Date.cs" />
-    <Compile Include="Filesystem\Search\Group.cs" />
-    <Compile Include="Filesystem\Search\Range.cs" />
+    <Compile Include="Filesystem\Search\Key\Date.cs" />
+    <Compile Include="Filesystem\Search\Key\Group.cs" />
+    <Compile Include="Filesystem\Search\Range\Date.cs" />
+    <Compile Include="Filesystem\Search\Range\Range.cs" />
+    <Compile Include="Filesystem\Search\Range\Size.cs" />
+    <Compile Include="Filesystem\Search\SearchContent.cs" />
     <Compile Include="Filesystem\Search\SearchFilter.cs" />
+    <Compile Include="Filesystem\Search\SearchHeader.cs" />
     <Compile Include="Filesystem\Search\SearchSettings.cs" />
-    <Compile Include="Filesystem\Search\Size.cs" />
+    <Compile Include="Filesystem\Search\Key\Size.cs" />
+    <Compile Include="Filesystem\Search\SearchTag.cs" />
     <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
     <Compile Include="Filesystem\StorageItems\BaseStorageItem.cs" />
     <Compile Include="Filesystem\StorageItems\FtpStorageFile.cs" />
@@ -412,10 +418,15 @@
     <Compile Include="ViewModels\Properties\CompatibilityProperties.cs" />
     <Compile Include="ViewModels\Properties\SecurityProperties.cs" />
     <Compile Include="ViewModels\SearchBoxViewModel.cs" />
-    <Compile Include="ViewModels\Search\DateRangePageViewModel.cs" />
-    <Compile Include="ViewModels\Search\GroupPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\Key\Date.cs" />
+    <Compile Include="ViewModels\Search\Key\Group.cs" />
+    <Compile Include="ViewModels\Search\SearchContentViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchFilterViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchHeaderViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchPageViewModel.cs" />
+    <Compile Include="ViewModels\Search\SearchSettingsViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchTagViewModel.cs" />
+    <Compile Include="ViewModels\Search\Key\Size.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
     <Compile Include="Models\JsonSettings\BaseJsonSettingsModel.cs" />
     <Compile Include="ViewModels\ColumnsViewModel.cs" />

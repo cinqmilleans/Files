@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Mvvm.DependencyInjection;
+﻿using Files.Enums;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,12 @@ using System.Runtime.CompilerServices;
 
 namespace Files.Filesystem.Search
 {
-    public interface ISearchFilterCollection : IList<ISearchFilter>, IMultiSearchFilter, INotifyCollectionChanged
+    public interface ISearchFilterCollection : ICollection<ISearchFilter>, IMultiSearchFilter, INotifyCollectionChanged
     {
     }
 
     [SearchHeader]
-    public class GroupAndHeader : ISearchHeader
+    internal class GroupAndHeader : ISearchHeader
     {
         public SearchKeys Key => SearchKeys.GroupAnd;
 
@@ -27,7 +28,7 @@ namespace Files.Filesystem.Search
     }
 
     [SearchHeader]
-    public class GroupOrHeader : ISearchHeader
+    internal class GroupOrHeader : ISearchHeader
     {
         public SearchKeys Key => SearchKeys.GroupOr;
 
@@ -39,7 +40,7 @@ namespace Files.Filesystem.Search
     }
 
     [SearchHeader]
-    public class GroupNotHeader : ISearchHeader
+    internal class GroupNotHeader : ISearchHeader
     {
         public SearchKeys Key => SearchKeys.GroupNot;
 
@@ -50,7 +51,7 @@ namespace Files.Filesystem.Search
         public ISearchFilter CreateFilter() => new SearchFilterCollection(Key);
     }
 
-    public class SearchFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
+    internal class SearchFilterCollection : ObservableCollection<ISearchFilter>, ISearchFilterCollection
     {
         public SearchKeys Key
         {
@@ -66,6 +67,7 @@ namespace Files.Filesystem.Search
                 {
                     header = GetHeader(value);
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(Header));
                 }
             }
         }

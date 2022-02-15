@@ -1,4 +1,5 @@
-﻿using Files.Extensions;
+﻿using Files.Enums;
+using Files.Extensions;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System.Collections.Specialized;

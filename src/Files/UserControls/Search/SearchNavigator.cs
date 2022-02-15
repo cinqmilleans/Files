@@ -30,6 +30,9 @@ namespace Files.UserControls.Search
 
     public class SearchNavigator : ObservableObject, ISearchNavigator
     {
+        private readonly ISearchFilterViewModelFactory filterFactory =
+            Ioc.Default.GetService<ISearchFilterViewModelFactory>();
+
         private readonly ISearchPageViewModelFactory viewModelFactory =
             Ioc.Default.GetService<ISearchPageViewModelFactory>();
 
@@ -82,13 +85,14 @@ namespace Files.UserControls.Search
 
         public void GoPage(ISearchSettings settings)
         {
-            var viewModel = new SettingsPageViewModel(settings);
+            var viewModel = new SearchSettingsPageViewModel(new SearchSettingsViewModel(settings));
             GoPage(viewModel, emptyTransition);
         }
         public void GoPage(ISearchFilter filter)
         {
+            var filterViewModel = filterFactory.GetFilterViewModel(filter);
             var parentViewModel = (frame?.Content as SearchFilterPage)?.ViewModel;
-            var childViewModel = viewModelFactory.GetPageViewModel(parentViewModel, filter);
+            var childViewModel = viewModelFactory.GetPageViewModel(parentViewModel, filterViewModel);
             GoPage(childViewModel, toRightTransition);
         }
         private void GoPage(ISearchPageViewModel viewModel, NavigationTransitionInfo transition)

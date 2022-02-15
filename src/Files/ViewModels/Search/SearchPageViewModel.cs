@@ -1,41 +1,33 @@
-﻿using Files.Filesystem.Search;
+﻿using Files.Enums;
+using Files.Filesystem.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface ISearchPageViewModel : INotifyPropertyChanged
     {
         ISearchPageViewModel Parent { get; }
-
-        ISearchContent Content { get; }
-        ISearchFilter Filter { get; }
-
-        ICommand ClearCommand { get; }
-    }
-
-    public interface ISettingsPageViewModel : ISearchPageViewModel
-    {
-        ISearchSettings Settings { get; }
+        ISearchFilterViewModel Filter { get; }
     }
 
     public interface IMultiSearchPageViewModel : ISearchPageViewModel
     {
         SearchKeys Key { get; set; }
-        IEnumerable<ISearchHeader> Headers { get; }
+        IEnumerable<ISearchHeaderViewModel> Headers { get; }
+
+        new IMultiSearchFilterViewModel Filter { get; }
     }
 
     public interface ISearchPageViewModelFactory
     {
-        ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilter filter);
+        ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilterViewModel filter);
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
@@ -47,42 +39,20 @@ namespace Files.ViewModels.Search
         public SearchPageViewModelAttribute(SearchKeys key) => Key = key;
     }
 
-    public class SearchPageViewModel : ObservableObject, ISearchPageViewModel
+    internal class SearchPageViewModel : ObservableObject, ISearchPageViewModel
     {
         public ISearchPageViewModel Parent { get; }
 
-        public ISearchContent Content => Filter;
-        public ISearchFilter Filter { get; }
+        public ISearchFilterViewModel Filter { get; }
 
-        public ICommand ClearCommand { get; }
-
-        public SearchPageViewModel(ISearchPageViewModel parent, ISearchFilter filter)
-        {
-            (Parent, Filter) = (parent, filter);
-            ClearCommand = new RelayCommand(Filter.Clear);
-        }
+        public SearchPageViewModel(ISearchPageViewModel parent, ISearchFilterViewModel filter)
+            => (Parent, Filter) = (parent, filter);
     }
 
-    public class SettingsPageViewModel : ObservableObject, ISettingsPageViewModel
+    internal abstract class MultiSearchPageViewModel : ObservableObject, IMultiSearchPageViewModel
     {
-        public ISearchPageViewModel Parent => null;
+        public ISearchPageViewModel Parent { get; }
 
-        public ISearchSettings Settings { get; }
-
-        public ISearchContent Content => Settings;
-        public ISearchFilter Filter => Settings.Filter;
-
-        public ICommand ClearCommand { get; }
-
-        public SettingsPageViewModel(ISearchSettings settings)
-        {
-            Settings = settings;
-            ClearCommand = new RelayCommand(Settings.Clear);
-        }
-    }
-
-    public abstract class MultiSearchPageViewModel : SearchPageViewModel, IMultiSearchPageViewModel
-    {
         public SearchKeys Key
         {
             get => Filter.Header.Key;
@@ -96,27 +66,31 @@ namespace Files.ViewModels.Search
             }
         }
 
-        public IEnumerable<ISearchHeader> Headers { get; }
+        public IEnumerable<ISearchHeaderViewModel> Headers { get; }
 
-        public MultiSearchPageViewModel(ISearchPageViewModel parent, IMultiSearchFilter filter) : base(parent, filter)
+        ISearchFilterViewModel ISearchPageViewModel.Filter => Filter;
+        public IMultiSearchFilterViewModel Filter { get; }
+
+        public MultiSearchPageViewModel(ISearchPageViewModel parent, IMultiSearchFilterViewModel filter)
         {
+            (Parent, Filter) = (parent, filter);
+
             var provider = Ioc.Default.GetService<ISearchHeaderProvider>();
-            Headers = GetKeys().Select(key => provider.GetHeader(key)).ToList();
+            Headers = GetKeys().Select(key => new SearchHeaderViewModel(provider.GetHeader(key))).ToList();
         }
 
         protected abstract IEnumerable<SearchKeys> GetKeys();
     }
 
-    public class SearchPageViewModelFactory : ISearchPageViewModelFactory
+    internal class SearchPageViewModelFactory : ISearchPageViewModelFactory
     {
         private readonly IReadOnlyDictionary<SearchKeys, Factory> factories = GetFactories();
 
-        public ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilter filter) => filter switch
+        public ISearchPageViewModel GetPageViewModel(ISearchPageViewModel parent, ISearchFilterViewModel filter) => filter switch
         {
-            ISearchSettings s => new SettingsPageViewModel(s),
-            ISearchFilter f when factories.ContainsKey(f.Header.Key) => factories[f.Header.Key].Build(parent, f),
-            ISearchFilter f => new SearchPageViewModel(parent, f),
-            _ => null,
+            ISearchSettingsViewModel settings => new SearchSettingsPageViewModel(settings),
+            _ when factories.ContainsKey(filter.Header.Key) => factories[filter.Header.Key].Build(parent, filter),
+            _ => new SearchPageViewModel(parent, filter),
         };
 
         private static IReadOnlyDictionary<SearchKeys, Factory> GetFactories()
@@ -142,7 +116,7 @@ namespace Files.ViewModels.Search
 
             public Factory(Type type) => this.type = type;
 
-            public ISearchPageViewModel Build(ISearchPageViewModel parent, ISearchFilter filter)
+            public ISearchPageViewModel Build(ISearchPageViewModel parent, ISearchFilterViewModel filter)
                 => Activator.CreateInstance(type, new object[] { parent, filter }) as ISearchPageViewModel;
         }
     }
@@ -154,10 +128,10 @@ namespace Files.ViewModels.Search
             var filter = pageViewModel?.Filter;
             if (!filter.IsEmpty)
             {
-                var collection = pageViewModel?.Parent?.Filter as ISearchFilterCollection;
+                var collection = pageViewModel?.Parent?.Filter as ISearchFilterViewModelCollection;
                 if (collection is not null && !collection.Contains(filter))
                 {
-                    collection.Add(filter);
+                    (collection.Filter as ISearchFilterCollection).Add(filter.Filter);
                     pageViewModel?.Parent?.Save();
                 }
             }

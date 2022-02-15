@@ -2,33 +2,37 @@
 using Files.UserControls.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Files.ViewModels.Search
 {
     public interface ISearchTagViewModel
     {
-        ISearchTag Tag { get; }
+        ISearchFilterViewModel Filter { get; }
+
+        string Title { get; }
+        string Parameter { get; }
 
         ICommand OpenCommand { get; }
         ICommand DeleteCommand { get; }
     }
 
-    public class ParameterTagViewModel : ISearchTagViewModel
+    public class SearchTagViewModel : ISearchTagViewModel
     {
-        public ISearchTag Tag { get; }
+        private readonly ISearchTag tag;
+
+        public ISearchFilterViewModel Filter { get; }
+
+        public string Title => tag.Title;
+        public string Parameter => tag.Parameter;
 
         public ICommand OpenCommand { get; }
         public ICommand DeleteCommand { get; }
 
-        public ParameterTagViewModel(ISearchTag tag)
+        public SearchTagViewModel(ISearchFilterViewModel filter, ISearchTag tag)
         {
-            Tag = tag;
+            Filter = filter;
+            this.tag = tag;
 
             OpenCommand = new RelayCommand<ISearchFilter>(Open);
             DeleteCommand = new RelayCommand(tag.Delete);
@@ -43,7 +47,7 @@ namespace Files.ViewModels.Search
                 navigator.GoPage(middleFilter);
             }
 
-            navigator.GoPage(Tag.Filter);
+            navigator.GoPage(tag.Filter);
         }
     }
 }

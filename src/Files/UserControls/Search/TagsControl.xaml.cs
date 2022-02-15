@@ -1,4 +1,5 @@
 ﻿using Files.Filesystem.Search;
+using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp.UI;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace Files.UserControls.Search
     public sealed partial class TagsControl : UserControl
     {
         public static readonly DependencyProperty TagsProperty =
-            DependencyProperty.Register(nameof(Tags), typeof(ISearchTag), typeof(TagsControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Tags), typeof(ISearchTagViewModel), typeof(TagsControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty MiddleFilterProperty =
-            DependencyProperty.Register(nameof(MiddleFilter), typeof(ISearchFilter), typeof(TagsControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(MiddleFilter), typeof(ISearchFilterViewModel), typeof(TagsControl), new PropertyMetadata(null));
 
 
         public static readonly DependencyProperty CanSelectProperty =
@@ -23,15 +24,15 @@ namespace Files.UserControls.Search
         public static readonly DependencyProperty CanCloseProperty =
             DependencyProperty.Register(nameof(CanClose), typeof(bool), typeof(TagsControl), new PropertyMetadata(false));
 
-        public IEnumerable<ISearchTag> Tags
+        public IEnumerable<ISearchTagViewModel> Tags
         {
-            get => (IEnumerable<ISearchTag>)GetValue(TagsProperty);
+            get => (IEnumerable<ISearchTagViewModel>)GetValue(TagsProperty);
             set => SetValue(TagsProperty, value);
         }
 
-        public ISearchFilter MiddleFilter
+        public ISearchFilterViewModel MiddleFilter
         {
-            get => (ISearchFilter)GetValue(MiddleFilterProperty);
+            get => (ISearchFilterViewModel)GetValue(MiddleFilterProperty);
             set => SetValue(MiddleFilterProperty, value);
         }
 
@@ -80,7 +81,7 @@ namespace Files.UserControls.Search
 
                 if (MiddleFilter is not null)
                 {
-                    navigator.GoPage(MiddleFilter);
+                    navigator.GoPage(MiddleFilter.Filter);
                 }
 
                 var tag = element.DataContext as ISearchTag;

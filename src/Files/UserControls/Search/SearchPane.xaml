@@ -25,8 +25,8 @@
         <Button x:Name="SearchButton" Grid.Row="1" Command="{x:Bind Navigator.SearchCommand}"
             HorizontalAlignment="Stretch" Content="{helpers:ResourceString Name=Search}" />
         <Button x:Name="ClearButton" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
-            Content="{helpers:ResourceString Name=Clear}" Command="{x:Bind Navigator.PageViewModel.ClearCommand}"
-            IsEnabled="{x:Bind Navigator.PageViewModel.Content.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
+            Content="{helpers:ResourceString Name=Clear}" Command="{x:Bind Navigator.PageViewModel.Filter.ClearCommand}"
+            IsEnabled="{x:Bind Navigator.PageViewModel.Filter.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}" />
     </Grid>
 
 </UserControl>

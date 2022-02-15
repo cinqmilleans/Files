@@ -20,7 +20,7 @@
         IRange<string> Label { get; }
     }
 
-    public struct RangeLabel : IRange<string>
+    internal struct RangeLabel : IRange<string>
     {
         public static RangeLabel None { get; } = new(string.Empty, string.Empty);
 

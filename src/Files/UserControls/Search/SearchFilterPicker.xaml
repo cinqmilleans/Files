@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:s="using:Files.Filesystem.Search"
+    xmlns:s="using:Files.ViewModels.Search"
     xmlns:local="using:Files.UserControls.Search"
     xmlns:helpers="using:Files.Helpers"
     xmlns:converters="using:Files.Converters"
@@ -25,7 +25,7 @@
             GroupTagCollectionTemplate="{StaticResource GroupTagCollectionTemplate}"
             FilterTagCollectionTemplate="{StaticResource FilterTagCollectionTemplate}" />
 
-        <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterCollection">
+        <DataTemplate x:Key="GroupTemplate" x:DataType="s:ISearchFilterViewModelCollection">
             <StackPanel Orientation="Vertical">
                 <ItemsControl ItemsSource="{Binding}" ItemTemplateSelector="{StaticResource TagCollectionTemplateSelector}" />
                 <CommandBar Grid.Row="3" IsOpen="False" Margin="0,0,0,8"
@@ -36,7 +36,7 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeRangeFilter">
+        <DataTemplate x:Key="SizeRangeTemplate" x:DataType="s:ISizeFilterViewModel">
             <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="64" />
@@ -55,7 +55,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateRangeFilter">
+        <DataTemplate x:Key="DateRangeTemplate" x:DataType="s:IDateFilterViewModel">
             <Grid RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="64" />
@@ -88,7 +88,7 @@
                 Background="Transparent" BorderBrush="Transparent"
                 MaxWidth="240" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
                 <Button.ContentTemplate>
-                    <DataTemplate x:DataType="s:ISearchHeader">
+                    <DataTemplate x:DataType="s:ISearchHeaderViewModel">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -110,14 +110,14 @@
             </Button>
         </ControlTemplate>
 
-        <DataTemplate x:Key="GroupTagCollectionTemplate" x:DataType="s:ISearchFilterCollection">
+        <DataTemplate x:Key="GroupTagCollectionTemplate" x:DataType="s:ISearchFilterViewModelCollection">
             <StackPanel Orientation="Vertical">
                 <Button x:Name="GroupOpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
                 <ItemsControl Margin="26,0,0,0" ItemsSource="{Binding}" ItemTemplate="{StaticResource FilterTagCollectionTemplate}" />
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="FilterTagCollectionTemplate" x:DataType="s:ISearchFilter">
+        <DataTemplate x:Key="FilterTagCollectionTemplate" x:DataType="s:ISearchFilterViewModel">
             <StackPanel Orientation="Vertical">
                 <Button x:Name="FilterOpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
                 <local:TagsControl Margin="22,0,18,0" CanSelect="True" CanClose="True"
@@ -137,7 +137,7 @@
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="ContentTemplate">
                 <Setter.Value>
-                    <DataTemplate x:DataType="s:ISearchFilter">
+                    <DataTemplate x:DataType="s:ISearchFilterViewModel">
                         <Grid Margin="0,4,0,4" Background="Transparent" ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="18" />
