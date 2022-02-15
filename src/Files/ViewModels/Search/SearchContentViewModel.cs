@@ -27,7 +27,7 @@ namespace Files.ViewModels.Search
         public SearchContentViewModel(ISearchContent content)
         {
             this.content = content;
-            clearCommand = new RelayCommand(content.Clear, () => content.IsEmpty);
+            clearCommand = new RelayCommand(content.Clear, () => !content.IsEmpty);
 
             content.PropertyChanged += Content_PropertyChanged;
         }

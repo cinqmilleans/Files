@@ -46,7 +46,7 @@ namespace Files.ViewModels.Search
         {
             this.settings = settings;
             Collection = new SearchFilterViewModelCollection(settings.Filter);
-            clearCommand = new RelayCommand(settings.Clear, () => settings.IsEmpty);
+            clearCommand = new RelayCommand(settings.Clear, () => !settings.IsEmpty);
 
             settings.PropertyChanged += Settings_PropertyChanged;
             Collection.PropertyChanged += Filter_PropertyChanged;

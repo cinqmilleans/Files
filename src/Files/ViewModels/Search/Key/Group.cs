@@ -48,7 +48,7 @@ namespace Files.ViewModels.Search
         public SearchFilterViewModelCollection(ISearchFilterCollection filter)
         {
             this.filter = filter;
-            clearCommand = new RelayCommand((filter as ISearchFilter).Clear, () => filter.IsEmpty);
+            clearCommand = new RelayCommand((filter as ISearchFilter).Clear, () => !filter.IsEmpty);
 
             filter.ForEach(f => Add(factory.GetFilterViewModel(f)));
 

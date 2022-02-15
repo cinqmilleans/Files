@@ -96,8 +96,8 @@ namespace Files.UserControls.Search
 
         protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            ISearchFilterCollection => GroupTagCollectionTemplate,
-            ISearchFilter => FilterTagCollectionTemplate,
+            ISearchFilterViewModelCollection => GroupTagCollectionTemplate,
+            ISearchFilterViewModel => FilterTagCollectionTemplate,
             _ => null,
         };
 
