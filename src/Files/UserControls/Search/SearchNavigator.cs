@@ -1,5 +1,4 @@
-﻿using Files.Filesystem.Search;
-using Files.ViewModels.Search;
+﻿using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -24,15 +23,11 @@ namespace Files.UserControls.Search
         void Back();
 
         void ClearPage();
-        void GoPage(ISearchSettings settings);
-        void GoPage(ISearchFilter filter);
+        void GoPage(ISearchFilterViewModel filter);
     }
 
     public class SearchNavigator : ObservableObject, ISearchNavigator
     {
-        private readonly ISearchFilterViewModelFactory filterFactory =
-            Ioc.Default.GetService<ISearchFilterViewModelFactory>();
-
         private readonly ISearchPageViewModelFactory viewModelFactory =
             Ioc.Default.GetService<ISearchPageViewModelFactory>();
 
@@ -83,16 +78,15 @@ namespace Files.UserControls.Search
 
         public void ClearPage() => GoPage(null, emptyTransition);
 
-        public void GoPage(ISearchSettings settings)
+        public void GoPage(ISearchSettingsViewModel settings)
         {
-            var viewModel = new SearchSettingsPageViewModel(new SearchSettingsViewModel(settings));
+            var viewModel = new SearchSettingsPageViewModel(settings);
             GoPage(viewModel, emptyTransition);
         }
-        public void GoPage(ISearchFilter filter)
+        public void GoPage(ISearchFilterViewModel filter)
         {
-            var filterViewModel = filterFactory.GetFilterViewModel(filter);
             var parentViewModel = (frame?.Content as SearchFilterPage)?.ViewModel;
-            var childViewModel = viewModelFactory.GetPageViewModel(parentViewModel, filterViewModel);
+            var childViewModel = viewModelFactory.GetPageViewModel(parentViewModel, filter);
             GoPage(childViewModel, toRightTransition);
         }
         private void GoPage(ISearchPageViewModel viewModel, NavigationTransitionInfo transition)

@@ -81,11 +81,12 @@ namespace Files.UserControls.Search
 
                 if (MiddleFilter is not null)
                 {
-                    navigator.GoPage(MiddleFilter.Filter);
+                    navigator.GoPage(MiddleFilter);
                 }
-
-                var tag = element.DataContext as ISearchTag;
-                navigator.GoPage(tag?.Filter);
+                if (element.DataContext is ISearchTagViewModel tag)
+                {
+                    navigator.GoPage(tag.Filter);
+                }
             }
         }
         private void CloseButton_Tapped(object sender, TappedRoutedEventArgs e)

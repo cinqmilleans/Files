@@ -34,11 +34,11 @@ namespace Files.ViewModels.Search
             Filter = filter;
             this.tag = tag;
 
-            OpenCommand = new RelayCommand<ISearchFilter>(Open);
+            OpenCommand = new RelayCommand<ISearchFilterViewModel>(Open);
             DeleteCommand = new RelayCommand(tag.Delete);
         }
 
-        private void Open(ISearchFilter middleFilter = null)
+        private void Open(ISearchFilterViewModel middleFilter = null)
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
 
@@ -47,7 +47,7 @@ namespace Files.ViewModels.Search
                 navigator.GoPage(middleFilter);
             }
 
-            navigator.GoPage(tag.Filter);
+            navigator.GoPage(Filter);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Files.UserControls.Search
         private void OpenButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
-            var filter = (sender as FrameworkElement).DataContext as ISearchFilter;
+            var filter = (sender as FrameworkElement).DataContext as ISearchFilterViewModel;
             navigator.GoPage(filter);
         }
 
@@ -65,7 +65,7 @@ namespace Files.UserControls.Search
         private void AddItemButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
-            var header = (sender as Button).Content as ISearchHeader;
+            var header = (sender as Button).Content as ISearchHeaderViewModel;
             var filter = header.CreateFilter();
             navigator.GoPage(filter);
         }

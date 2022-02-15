@@ -1,5 +1,7 @@
 ﻿using Files.Enums;
+using Files.Extensions;
 using Files.Filesystem.Search;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +21,9 @@ namespace Files.ViewModels.Search
     [SearchFilterViewModel(SearchKeys.GroupNot)]
     internal class SearchFilterViewModelCollection : ObservableCollection<ISearchFilterViewModel>, ISearchFilterViewModelCollection
     {
+        private static readonly ISearchFilterViewModelFactory factory =
+            Ioc.Default.GetService<ISearchFilterViewModelFactory>();
+
         private readonly ISearchFilterCollection filter;
 
         public ISearchFilter Filter => filter;
@@ -45,10 +50,13 @@ namespace Files.ViewModels.Search
             this.filter = filter;
             clearCommand = new RelayCommand((filter as ISearchFilter).Clear, () => filter.IsEmpty);
 
+            filter.ForEach(f => Add(factory.GetFilterViewModel(f)));
+
             UpdateHeader();
             UpdateTags();
 
             filter.PropertyChanged += Filter_PropertyChanged;
+            filter.CollectionChanged += Filter_CollectionChanged;
         }
 
         private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -71,6 +79,9 @@ namespace Files.ViewModels.Search
                     OnPropertyChanged(nameof(Tags));
                     break;
             }
+        }
+        private void Filter_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
         }
 
         private void UpdateHeader()
