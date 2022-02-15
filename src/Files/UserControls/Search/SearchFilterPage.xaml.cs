@@ -2,6 +2,7 @@
 using Files.ViewModels.Search;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System.ComponentModel;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -35,7 +36,7 @@ namespace Files.UserControls.Search
 
         private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ISearchFilter.IsEmpty))
+            if (e.PropertyName == nameof(ISearchFilterViewModel.IsEmpty))
             {
                 ViewModel.Save();
             }
@@ -57,9 +58,9 @@ namespace Files.UserControls.Search
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Back();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
-            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Filter.Header;
+            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Headers.First();
         private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-            => (ViewModel as IMultiSearchPageViewModel).Key = ((sender as ComboBox).SelectedValue as ISearchHeader).Key;
+            => (ViewModel as IMultiSearchPageViewModel).Key = ((sender as ComboBox).SelectedValue as ISearchHeaderViewModel).Key;
     }
 
     internal class SearchFilterPageTemplateSelector : DataTemplateSelector

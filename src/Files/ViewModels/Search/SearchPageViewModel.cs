@@ -60,7 +60,7 @@ namespace Files.ViewModels.Search
             {
                 if (Filter.Header.Key != value)
                 {
-                    (Filter as IMultiSearchFilter).Key = value;
+                    (Filter as IMultiSearchFilterViewModel).Key = value;
                     OnPropertyChanged(nameof(Key));
                 }
             }

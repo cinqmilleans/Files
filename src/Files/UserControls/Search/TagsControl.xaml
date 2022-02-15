@@ -2,7 +2,7 @@
     x:Class="Files.UserControls.Search.TagsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:s="using:Files.Filesystem.Search"
+    xmlns:vm="using:Files.ViewModels.Search"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -20,7 +20,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <DataTemplate x:Key="TagButtonTemplate" x:DataType="s:ISearchTag">
+            <DataTemplate x:Key="TagButtonTemplate" x:DataType="vm:ISearchTagViewModel">
                 <Button x:Name="MainButton" Tapped="MainButton_Tapped"
                     Margin="0,4,0,0" Padding="4" CornerRadius="4" FontSize="12"
                     PointerEntered="MainButton_PointerEntered" PointerExited="MainButton_PointerExited">
