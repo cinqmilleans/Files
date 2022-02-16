@@ -128,13 +128,26 @@ namespace Files.ViewModels.Search
             var filter = pageViewModel?.Filter;
             if (!filter.IsEmpty)
             {
-                var collection = pageViewModel?.Parent?.Filter as ISearchFilterViewModelCollection;
-                if (collection is not null && !collection.Contains(filter))
+                var parent = pageViewModel?.Parent?.Filter;
+                if (parent is ISearchSettingsViewModel settings)
+                {
+                    Save(settings.Collection);
+                }
+                if (parent is ISearchFilterViewModelCollection collection)
+                {
+                    Save(collection);
+                }
+            }
+
+            void Save(ISearchFilterViewModel parent)
+            {
+                if (parent is ISearchFilterViewModelCollection collection && !collection.Contains(filter))
                 {
                     (collection.Filter as ISearchFilterCollection).Add(filter.Filter);
                     pageViewModel?.Parent?.Save();
                 }
             }
+
         }
     }
 }

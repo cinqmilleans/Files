@@ -14,6 +14,7 @@ namespace Files.ViewModels.Search
 {
     public interface ISearchFilterViewModelCollection : IReadOnlyCollection<ISearchFilterViewModel>, IMultiSearchFilterViewModel, INotifyCollectionChanged
     {
+        string Description { get; }
     }
 
     [SearchFilterViewModel(SearchKeys.GroupAnd)]
@@ -36,6 +37,8 @@ namespace Files.ViewModels.Search
 
         private ISearchHeaderViewModel header;
         public ISearchHeaderViewModel Header => header;
+
+        public virtual string Description => header.Description;
 
         public bool IsEmpty => filter.IsEmpty;
 
@@ -82,6 +85,33 @@ namespace Files.ViewModels.Search
         }
         private void Filter_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Reset:
+                    Clear();
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    var replacedItem = e.NewItems[e.OldStartingIndex] as ISearchFilter;
+                    this[e.NewStartingIndex] = factory.GetFilterViewModel(replacedItem);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var _ in e.OldItems)
+                    {
+                        RemoveAt(e.OldStartingIndex);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    var newItems = e.NewItems.Cast<ISearchFilter>().Reverse();
+                    foreach (var newItem in newItems)
+                    {
+                        var vm = factory.GetFilterViewModel(newItem);
+                        Insert(e.NewStartingIndex, vm);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    MoveItem(e.OldStartingIndex, e.NewStartingIndex);
+                    break;
+            }
         }
 
         private void UpdateHeader()

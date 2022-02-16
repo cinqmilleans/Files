@@ -58,7 +58,10 @@ namespace Files.UserControls.Search
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e) => navigator.Back();
 
         private void HeaderCombo_Loaded(object sender, RoutedEventArgs e)
-            => (sender as ComboBox).SelectedItem = (ViewModel as IMultiSearchPageViewModel).Headers.First();
+        {
+            var viewModel = ViewModel as IMultiSearchPageViewModel;
+            (sender as ComboBox).SelectedItem = viewModel.Headers.FirstOrDefault(header => header.Key == viewModel.Key);
+        }
         private void HeaderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
             => (ViewModel as IMultiSearchPageViewModel).Key = ((sender as ComboBox).SelectedValue as ISearchHeaderViewModel).Key;
     }

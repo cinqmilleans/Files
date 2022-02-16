@@ -45,7 +45,7 @@ namespace Files.ViewModels.Search
         public SearchSettingsViewModel(ISearchSettings settings)
         {
             this.settings = settings;
-            Collection = new SearchFilterViewModelCollection(settings.Filter);
+            Collection = new SettingsFilterViewModelCollection(settings.Filter);
             clearCommand = new RelayCommand(settings.Clear, () => !settings.IsEmpty);
 
             settings.PropertyChanged += Settings_PropertyChanged;
@@ -90,5 +90,12 @@ namespace Files.ViewModels.Search
         public ISearchSettingsViewModel Filter { get; }
 
         public SearchSettingsPageViewModel(ISearchSettingsViewModel settings) => Filter = settings;
+    }
+
+    internal class SettingsFilterViewModelCollection : SearchFilterViewModelCollection
+    {
+        public override string Description => null;
+
+        public SettingsFilterViewModelCollection(ISearchFilterCollection filter) : base(filter) {}
     }
 }
