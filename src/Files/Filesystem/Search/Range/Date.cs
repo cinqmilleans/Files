@@ -1,7 +1,4 @@
-﻿using Files.Extensions;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Uwp;
+﻿using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -433,7 +430,19 @@ namespace Files.Filesystem.Search
 
                     return hasMin && hasMax;
                 }
-                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("yyyy", minDate, maxDate);
+                public IRange<string> Build(Date? minDate, Date? maxDate)
+                {
+                    if (minDate.HasValue)
+                    {
+                        Date min = minDate.Value;
+                        Date today = Date.Today;
+                        if (min.Year == today.Year)
+                        {
+                            return GetRangeLabel("yyyy", today, today);
+                        }
+                    }
+                    return GetRangeLabel("yyyy", minDate, maxDate ?? Date.Today);
+                }
             }
 
             private class MonthBuilder : ILabelBuilder
@@ -445,7 +454,19 @@ namespace Files.Filesystem.Search
 
                     return hasMin && hasMax;
                 }
-                public IRange<string> Build(Date? minDate, Date? maxDate) => GetRangeLabel("Y", minDate, maxDate);
+                public IRange<string> Build(Date? minDate, Date? maxDate)
+                {
+                    if (minDate.HasValue)
+                    {
+                        Date min = minDate.Value;
+                        Date today = Date.Today;
+                        if (min.Year == today.Year && min.Month == today.Month)
+                        {
+                            return GetRangeLabel("Y", today, today);
+                        }
+                    }
+                    return GetRangeLabel("Y", minDate, maxDate);
+                }
             }
 
             private class DayWeekBuilder : ILabelBuilder

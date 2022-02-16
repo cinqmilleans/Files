@@ -40,24 +40,24 @@ namespace Files.UserControls.Search
             };
 
             var file = new MenuFlyoutSubItem { Text = "File".GetLocalized() };
-            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.Size)));
+            file.Items.Add(GetItem(SearchKeys.Size));
             file.Items.Add(new MenuFlyoutSeparator());
-            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateCreated)));
-            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateModified)));
-            file.Items.Add(GetItem(provider.GetHeader(SearchKeys.DateAccessed)));
+            file.Items.Add(GetItem(SearchKeys.DateCreated));
+            file.Items.Add(GetItem(SearchKeys.DateModified));
+            file.Items.Add(GetItem(SearchKeys.DateAccessed));
             menu.Items.Add(file);
 
             var group = new MenuFlyoutSubItem { Text = "Group".GetLocalized() };
-            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupAnd)));
-            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupOr)));
-            group.Items.Add(GetItem(provider.GetHeader(SearchKeys.GroupNot)));
+            group.Items.Add(GetItem(SearchKeys.GroupAnd));
+            group.Items.Add(GetItem(SearchKeys.GroupOr));
+            group.Items.Add(GetItem(SearchKeys.GroupNot));
             menu.Items.Add(group);
 
             (sender as Button).Flyout = menu;
 
-            MenuFlyoutItem GetItem(ISearchHeader header) => new()
+            MenuFlyoutItem GetItem(SearchKeys key) => new()
             {
-                Tag = new SearchHeaderViewModel(header),
+                Tag = new SearchHeaderViewModel(provider.GetHeader(key)),
                 Template = HeaderItemTemplate,
             };
         }
