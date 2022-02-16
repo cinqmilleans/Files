@@ -1,6 +1,4 @@
-﻿using Files.Filesystem.Search;
-using Files.ViewModels.Search;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+﻿using Files.ViewModels.Search;
 using Microsoft.Toolkit.Uwp.UI;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
@@ -12,7 +10,7 @@ namespace Files.UserControls.Search
     public sealed partial class TagsControl : UserControl
     {
         public static readonly DependencyProperty TagsProperty =
-            DependencyProperty.Register(nameof(Tags), typeof(ISearchTagViewModel), typeof(TagsControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Tags), typeof(IEnumerable<ISearchTagViewModel>), typeof(TagsControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty MiddleFilterProperty =
             DependencyProperty.Register(nameof(MiddleFilter), typeof(ISearchFilterViewModel), typeof(TagsControl), new PropertyMetadata(null));
@@ -75,26 +73,22 @@ namespace Files.UserControls.Search
 
         private void MainButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (CanSelect && sender is FrameworkElement element)
+            if (CanSelect && sender is Button button)
             {
-                var navigator = Ioc.Default.GetService<ISearchNavigator>();
-
-                if (MiddleFilter is not null)
+                if (button.DataContext is ISearchTagViewModel tag)
                 {
-                    navigator.GoPage(MiddleFilter);
-                }
-                if (element.DataContext is ISearchTagViewModel tag)
-                {
-                    navigator.GoPage(tag.Filter);
+                    tag.Select(MiddleFilter);
                 }
             }
         }
         private void CloseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (CanClose && sender is FrameworkElement element)
+            if (CanClose && sender is Button button)
             {
-                var tag = element.DataContext as ISearchTag;
-                tag?.Delete();
+                if (button.DataContext is ISearchTagViewModel tag)
+                {
+                    tag.Close();
+                }
             }
         }
     }

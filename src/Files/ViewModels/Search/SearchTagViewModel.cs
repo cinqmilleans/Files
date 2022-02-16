@@ -13,8 +13,11 @@ namespace Files.ViewModels.Search
         string Title { get; }
         string Parameter { get; }
 
-        ICommand OpenCommand { get; }
-        ICommand DeleteCommand { get; }
+        ICommand SelectCommand { get; }
+        ICommand CloseCommand { get; }
+
+        void Select(ISearchFilterViewModel middleFilter = null);
+        void Close();
     }
 
     public class SearchTagViewModel : ISearchTagViewModel
@@ -26,19 +29,19 @@ namespace Files.ViewModels.Search
         public string Title => tag.Title;
         public string Parameter => tag.Parameter;
 
-        public ICommand OpenCommand { get; }
-        public ICommand DeleteCommand { get; }
+        public ICommand SelectCommand { get; }
+        public ICommand CloseCommand { get; }
 
         public SearchTagViewModel(ISearchFilterViewModel filter, ISearchTag tag)
         {
             Filter = filter;
             this.tag = tag;
 
-            OpenCommand = new RelayCommand<ISearchFilterViewModel>(Open);
-            DeleteCommand = new RelayCommand(tag.Delete);
+            SelectCommand = new RelayCommand<ISearchFilterViewModel>(Select);
+            CloseCommand = new RelayCommand(Close);
         }
 
-        private void Open(ISearchFilterViewModel middleFilter = null)
+        public void Select(ISearchFilterViewModel middleFilter = null)
         {
             var navigator = Ioc.Default.GetService<ISearchNavigator>();
 
@@ -49,5 +52,7 @@ namespace Files.ViewModels.Search
 
             navigator.GoPage(Filter);
         }
+
+        public void Close() => tag.Delete();
     }
 }
