@@ -11,8 +11,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
         <local:SearchFilterPageTemplateSelector x:Key="PageTemplateSelector"
             SettingsPageTemplate="{StaticResource SettingsPageTemplate}"
@@ -81,19 +81,21 @@
                                 <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Text="{x:Bind Label}"
                                     Visibility="{Binding IsDropDownOpen, ElementName=HeaderCombo, Converter={StaticResource VisibilityInvertConverter}}" />
                                 <Grid Visibility="{Binding IsDropDownOpen, ElementName=HeaderCombo}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="32" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <FontIcon FontSize="18" HorizontalAlignment="Left" Glyph="{x:Bind Glyph}" />
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon HorizontalAlignment="Left" FontSize="18" Glyph="{x:Bind Glyph}" />
                                     <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Label}" />
                                 </Grid>
+                                <Grid Visibility="{x:Bind Description, Converter={StaticResource StringToVisibilityConverter}}">
                                 <TextBlock FontSize="14" TextWrapping="Wrap" Text="{x:Bind Description}"
                                     Visibility="{Binding IsDropDownOpen, ElementName=HeaderCombo}" />
+                                </Grid>
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>

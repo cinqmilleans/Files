@@ -93,14 +93,14 @@
                     <DataTemplate x:DataType="vm:ISearchHeaderViewModel">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <FontIcon HorizontalAlignment="Left" FontSize="18" Glyph="{x:Bind Glyph}" />
                                 <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Label}" />
                             </Grid>
