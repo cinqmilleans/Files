@@ -52,7 +52,7 @@
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
                 <local:SizeRangeSlider Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseASizeRange}"
-                    Style="{StaticResource IndicatorStyle}" Margin="0,8,0,-12" />
+                    Style="{StaticResource IndicatorStyle}" Margin="0,28,0,-12" />
                 <local:NamedSizeRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
@@ -71,7 +71,7 @@
                     Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
                 <local:CalendarRangePicker Grid.Row="1" Range="{x:Bind Range, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Text="{helpers:ResourceString Name=OrChooseADateRange}"
-                     Style="{StaticResource IndicatorStyle}" Margin="0,8,0,-12" />
+                     Style="{StaticResource IndicatorStyle}" Margin="0,28,0,-12" />
                 <local:RelativeDateRangePicker Grid.Row="3" Range="{x:Bind Range, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
@@ -161,7 +161,7 @@
 
     </UserControl.Resources>
 
-    <ContentControl HorizontalContentAlignment="Stretch" Margin="0,8,0,0"
+    <ContentControl Margin="0,8,0,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
         Content="{x:Bind ViewModel, Mode=OneWay}" ContentTemplateSelector="{StaticResource PickerTemplateSelector}" />
 
 </UserControl>
