@@ -31,7 +31,7 @@ namespace Files.Filesystem.Search
 
         public ISearchHeader Header { get; } = Ioc.Default.GetService<ISearchHeaderProvider>().GetHeader(SearchKeys.Size);
 
-        public bool IsEmpty => range == SizeRange.None || range == SizeRange.All;
+        public bool IsEmpty => range == SizeRange.None || range == SizeRange.Limit || range == SizeRange.All;
 
         private SizeRange range = SizeRange.All;
         public SizeRange Range

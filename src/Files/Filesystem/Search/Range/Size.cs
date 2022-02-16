@@ -102,6 +102,7 @@ namespace Files.Filesystem.Search
     public struct SizeRange : IRange<Size>, IEquatable<IRange<Size>>
     {
         public static readonly SizeRange None = new(new NoneRange());
+        public static readonly SizeRange Limit = new(new LimitRange());
         public static readonly SizeRange All = new(new AllRange());
         public static readonly SizeRange Empty = new(new NamedRange(NamedRange.Names.Empty));
         public static readonly SizeRange Tiny = new(new NamedRange(NamedRange.Names.Tiny));
@@ -176,6 +177,10 @@ namespace Files.Filesystem.Search
                 (minSize, maxSize) = (maxSize, minSize);
             }
 
+            if (minSize == Size.MaxValue && maxSize == Size.MaxValue)
+            {
+                return new LimitRange();
+            }
             if (minSize == Size.MinValue && maxSize == Size.MaxValue)
             {
                 return new AllRange();
@@ -213,6 +218,20 @@ namespace Files.Filesystem.Search
             public override int GetHashCode() => Direction.GetHashCode();
             public override bool Equals(object other) => other is NoneRange;
             public bool Equals(IRange<Size> other) => other is NoneRange;
+        }
+
+        private struct LimitRange : IRange
+        {
+            public RangeDirections Direction => RangeDirections.None;
+
+            public Size MinValue => Size.MaxValue;
+            public Size MaxValue => Size.MaxValue;
+
+            public IRange<string> Label => RangeLabel.None;
+
+            public override int GetHashCode() => Direction.GetHashCode();
+            public override bool Equals(object other) => other is LimitRange;
+            public bool Equals(IRange<Size> other) => other is LimitRange;
         }
 
         private struct AllRange : IRange
