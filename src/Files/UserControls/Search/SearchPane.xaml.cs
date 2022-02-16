@@ -19,7 +19,5 @@ namespace Files.UserControls.Search
             Navigator.Initialize(MenuFrame);
             Navigator.GoPage(new SearchSettingsViewModel(settings));
         }
-
-        private void SearchButton_Tapped(object sender, TappedRoutedEventArgs e) => Navigator.Search();
     }
 }

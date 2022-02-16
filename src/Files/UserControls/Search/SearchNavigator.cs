@@ -31,9 +31,7 @@ namespace Files.UserControls.Search
         private readonly ISearchPageViewModelFactory viewModelFactory =
             Ioc.Default.GetService<ISearchPageViewModelFactory>();
 
-        private readonly NavigationTransitionInfo emptyTransition =
-            new SuppressNavigationTransitionInfo();
-        private readonly NavigationTransitionInfo toRightTransition =
+        private readonly NavigationTransitionInfo transition =
             new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
 
         private ISearchPageViewModel pageViewModel;
@@ -41,7 +39,7 @@ namespace Files.UserControls.Search
 
         public ICommand SearchCommand { get; }
 
-        private RelayCommand backCommand;
+        private readonly RelayCommand backCommand;
         public ICommand BackCommand => backCommand;
 
         private ISearchBox box;
@@ -71,25 +69,25 @@ namespace Files.UserControls.Search
         {
             if (CanBack())
             {
-                frame.GoBack(toRightTransition);
+                frame.GoBack(transition);
             }
         }
         private bool CanBack() => frame is not null && frame.CanGoBack;
 
-        public void ClearPage() => GoPage(null, emptyTransition);
+        public void ClearPage() => GoPage((ISearchPageViewModel)null);
 
         public void GoPage(ISearchSettingsViewModel settings)
         {
             var viewModel = new SearchSettingsPageViewModel(settings);
-            GoPage(viewModel, emptyTransition);
+            GoPage(viewModel);
         }
         public void GoPage(ISearchFilterViewModel filter)
         {
             var parentViewModel = (frame?.Content as SearchFilterPage)?.ViewModel;
             var childViewModel = viewModelFactory.GetPageViewModel(parentViewModel, filter);
-            GoPage(childViewModel, toRightTransition);
+            GoPage(childViewModel);
         }
-        private void GoPage(ISearchPageViewModel viewModel, NavigationTransitionInfo transition)
+        private void GoPage(ISearchPageViewModel viewModel)
         {
             if (viewModel == pageViewModel)
             {
@@ -99,7 +97,7 @@ namespace Files.UserControls.Search
             if (frame is not null && viewModel is not null)
             {
                 pageViewModel = viewModel;
-                frame.Navigate(typeof(SearchFilterPage), pageViewModel, toRightTransition);
+                frame.Navigate(typeof(SearchFilterPage), pageViewModel, transition);
                 OnPropertyChanged(nameof(PageViewModel));
                 backCommand.NotifyCanExecuteChanged();
             }

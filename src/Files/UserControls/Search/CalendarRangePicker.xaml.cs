@@ -46,8 +46,6 @@ namespace Files.UserControls.Search
             }
         }
 
-        private DateTimeOffset Today { get; } = Date.Today.Offset;
-
         public CalendarRangePicker() => InitializeComponent();
 
         private void OnPropertyChanged(string propertyName) =>

@@ -106,7 +106,6 @@ namespace Files.Filesystem.Search
         }
 
         public DateFilter(SearchKeys key) => header = GetHeader(key);
-        public DateFilter(SearchKeys key, DateRange range) : this(key) => header = GetHeader(key);
 
         public void Clear() => Range = DateRange.Always;
 

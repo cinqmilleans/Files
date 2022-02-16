@@ -39,7 +39,7 @@ namespace Files.ViewModels.Search
 
         public bool IsEmpty => settings.IsEmpty;
 
-        private RelayCommand clearCommand;
+        private readonly RelayCommand clearCommand;
         public ICommand ClearCommand => clearCommand;
 
         public SearchSettingsViewModel(ISearchSettings settings)

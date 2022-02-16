@@ -118,7 +118,7 @@ namespace Files.Filesystem.Search
 
         public async Task<ObservableCollection<ListedItem>> SearchAsync()
         {
-            ObservableCollection<ListedItem> results = new ObservableCollection<ListedItem>();
+            var results = new ObservableCollection<ListedItem>();
             try
             {
                 var token = CancellationToken.None;
