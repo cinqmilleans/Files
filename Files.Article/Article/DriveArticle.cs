@@ -1,6 +1,6 @@
 ﻿namespace Files.Article.Article
 {
-    /*public enum DriveType : ushort
+    public enum DriveTypes : ushort
     {
         Fixed,
         Removable,
@@ -16,7 +16,9 @@
 
     public interface IDriveArticle : IArticle
     {
+        DriveTypes DriveType { get; }
+
         long UsedSpace { get; }
         long TotalSpace { get; }
-    }*/
+    }
 }

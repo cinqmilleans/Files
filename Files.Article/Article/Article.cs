@@ -7,11 +7,11 @@ using IO = System.IO;
 
 namespace Files.Article.Article
 {
-    /*public interface IArticle
+    public interface IArticle
     {
         string Path { get; }
         string Name { get; }
-    }*/
+    }
 
     /*public interface IDriveArticle
     {
