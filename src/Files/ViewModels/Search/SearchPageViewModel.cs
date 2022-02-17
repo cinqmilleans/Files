@@ -123,7 +123,7 @@ namespace Files.ViewModels.Search
 
     public static class SearchPageViewModelExtensions
     {
-        public static void Save (this ISearchPageViewModel pageViewModel)
+        public static void Save(this ISearchPageViewModel pageViewModel)
         {
             var filter = pageViewModel?.Filter;
             if (!filter.IsEmpty)
