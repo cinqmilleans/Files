@@ -92,7 +92,7 @@
                                     <FontIcon HorizontalAlignment="Left" FontSize="18" Glyph="{x:Bind Glyph}" />
                                     <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Label}" />
                                 </Grid>
-                                <Grid Visibility="{x:Bind Description, Converter={StaticResource HasStringConverter}}">
+                                <Grid x:Name="HeaderDescription" x:Load="{x:Bind Description, Converter={StaticResource HasStringConverter}}">
                                 <TextBlock FontSize="14" TextWrapping="Wrap" Text="{x:Bind Description}"
                                     Visibility="{Binding IsDropDownOpen, ElementName=HeaderCombo}" />
                                 </Grid>

@@ -104,8 +104,9 @@
                                 <FontIcon HorizontalAlignment="Left" FontSize="18" Glyph="{x:Bind Glyph}" />
                                 <TextBlock Grid.Column="1" FontSize="16" FontWeight="SemiBold" Text="{x:Bind Label}" />
                             </Grid>
-                            <TextBlock FontSize="14" TextWrapping="Wrap" Text="{x:Bind Description}"
-                                Visibility="{x:Bind Description, Converter={StaticResource HasStringConverter}}" />
+                            <TextBlock x:Name="HeaderDescription" FontSize="14" TextWrapping="Wrap" Text="{x:Bind Description}"
+                               x:Load="{x:Bind Description, Converter={StaticResource HasStringConverter}}"
+                               Visibility="{x:Bind Description, Converter={StaticResource HasStringConverter}}" />
                         </StackPanel>
                     </DataTemplate>
                 </Button.ContentTemplate>
@@ -124,9 +125,6 @@
                 <Button x:Name="FilterOpenButton" Tapped="OpenButton_Tapped" Content="{Binding}" Style="{StaticResource HeaderTagCollectionStyle}" />
                 <local:TagsControl Margin="22,0,18,0" CanSelect="True" CanClose="True"
                     Tags="{x:Bind Tags, Mode=OneWay}" MiddleFilter="{Binding Content, ElementName=GroupOpenButton}" />
-                <Rectangle Height="1" HorizontalAlignment="Stretch" Margin="22,4,0,4"
-                    Opacity="0.60" Fill="{Binding Foreground, ElementName=OpenButton}"
-                    Visibility="{x:Bind IsEmpty, Mode=OneWay, Converter={StaticResource VisibilityInvertConverter}}" />
             </StackPanel>
         </DataTemplate>
 
