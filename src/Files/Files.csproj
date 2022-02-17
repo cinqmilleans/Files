@@ -138,7 +138,7 @@
     <Compile Include="Converters\MultiBooleanConverter.cs" />
     <Compile Include="Converters\StorageDeleteOptionToBooleanConverter.cs" />
     <Compile Include="Converters\StringArrayToString.cs" />
-    <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\HasStringConverter.cs" />
     <Compile Include="Converters\WidthToRightMargin.cs" />
     <Compile Include="Converters\UInt32ToString.cs" />
     <Compile Include="Converters\VisibilityInvertConverter.cs" />
