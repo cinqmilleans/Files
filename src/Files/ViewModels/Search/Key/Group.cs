@@ -14,6 +14,8 @@ namespace Files.ViewModels.Search
 {
     public interface ISearchFilterViewModelCollection : IReadOnlyCollection<ISearchFilterViewModel>, IMultiSearchFilterViewModel, INotifyCollectionChanged
     {
+        new ISearchFilterCollection Filter { get; }
+
         string Description { get; }
     }
 
@@ -25,14 +27,13 @@ namespace Files.ViewModels.Search
         private static readonly ISearchFilterViewModelFactory factory =
             Ioc.Default.GetService<ISearchFilterViewModelFactory>();
 
-        private readonly ISearchFilterCollection filter;
-
-        public ISearchFilter Filter => filter;
+        ISearchFilter ISearchFilterViewModel.Filter => Filter;
+        public ISearchFilterCollection Filter { get; }
 
         public SearchKeys Key
         {
-            get => filter.Key;
-            set => filter.Key = value;
+            get => Filter.Key;
+            set => Filter.Key = value;
         }
 
         private ISearchHeaderViewModel header;
@@ -40,7 +41,7 @@ namespace Files.ViewModels.Search
 
         public virtual string Description => header.Description;
 
-        public bool IsEmpty => filter.IsEmpty;
+        public bool IsEmpty => Filter.IsEmpty;
 
         private IReadOnlyCollection<ISearchTagViewModel> tags;
         public IEnumerable<ISearchTagViewModel> Tags => tags;
@@ -50,10 +51,10 @@ namespace Files.ViewModels.Search
 
         public SearchFilterViewModelCollection(ISearchFilterCollection filter)
         {
-            this.filter = filter;
-            clearCommand = new RelayCommand((filter as ISearchFilter).Clear, () => !filter.IsEmpty);
+            Filter = filter;
+            clearCommand = new RelayCommand((Filter as ISearchFilter).Clear, () => !Filter.IsEmpty);
 
-            filter.ForEach(f => Add(factory.GetFilterViewModel(f)));
+            Filter.ForEach(f => Add(factory.GetFilterViewModel(f)));
 
             UpdateHeader();
             UpdateTags();
@@ -115,9 +116,9 @@ namespace Files.ViewModels.Search
         }
 
         private void UpdateHeader()
-            => header = new SearchHeaderViewModel(filter.Header);
+            => header = new SearchHeaderViewModel(Filter.Header);
         private void UpdateTags()
-            => tags = filter.Tags.Select(tag => new SearchTagViewModel(this, tag)).ToList().AsReadOnly();
+            => tags = Filter.Tags.Select(tag => new SearchTagViewModel(this, tag)).ToList().AsReadOnly();
 
         private void OnPropertyChanged(string propertyName)
             => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));

@@ -141,13 +141,12 @@ namespace Files.ViewModels.Search
 
             void Save(ISearchFilterViewModel parent)
             {
-                if (parent is ISearchFilterViewModelCollection collection && !collection.Contains(filter))
+                if (parent is ISearchFilterViewModelCollection collection && !collection.Filter.Contains(filter.Filter))
                 {
-                    (collection.Filter as ISearchFilterCollection).Add(filter.Filter);
+                    collection.Filter.Add(filter.Filter);
                     pageViewModel?.Parent?.Save();
                 }
             }
-
         }
     }
 }
