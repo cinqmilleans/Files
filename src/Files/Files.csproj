@@ -117,6 +117,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BackEnd\Article\Article.cs" />
+    <Compile Include="BackEnd\Article\Drive.cs" />
+    <Compile Include="BackEnd\Struct\ByteSize.cs" />
     <Compile Include="BaseLayout.cs" />
     <Compile Include="Behaviors\StickyHeaderBehavior.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
@@ -1631,6 +1634,7 @@
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '16.0' ">
     <VisualStudioVersion>16.0</VisualStudioVersion>
   </PropertyGroup>
