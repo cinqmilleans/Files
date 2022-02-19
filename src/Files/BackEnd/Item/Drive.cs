@@ -1,5 +1,7 @@
 ﻿using Files.Common;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -36,6 +38,18 @@ namespace Files.BackEnd
         Cloud,
     }
 
+    /*public class DriveItemProvider
+    {
+        public IEnumerable<IDriveItem> GetDrives()
+        {
+            var factory = new DriveItemFactory
+            {
+                LoadSpaces = true;
+                LoadIcons = true;
+            };
+        }
+    }*/
+
     internal class DriveItemFactory
     {
         private readonly Logger logger = App.Logger;
@@ -65,7 +79,7 @@ namespace Files.BackEnd
             {
                 Path = ToPath(root),
                 Name = root.DisplayName,
-                DriveType = driveTypeConverter.ToDriveType(root.Path),
+                //DriveType = driveTypeConverter.ToDriveType(root.Path),
             };
 
             if (LoadSpaces)
@@ -128,21 +142,40 @@ namespace Files.BackEnd
             }
         }
 
-        private class DriveItem : IDriveItem
+        private class DriveItem : ObservableObject, IDriveItem
         {
-            public event PropertyChangedEventHandler PropertyChanged;
+            public string Path { get; init; }
+            public string Name { get; init; }
 
-            public string Path { get; set; }
-            public string Name { get; set; }
+            public DriveTypes DriveType { get; init; } = DriveTypes.Unknown;
 
-            public DriveTypes DriveType { get; set; }
+            private ByteSize usedSpace = 0L;
+            public ByteSize UsedSpace
+            {
+                get => usedSpace;
+                set => SetProperty(ref usedSpace, value);
+            }
 
-            public ByteSize UsedSpace { get; set; }
-            public ByteSize FreeSpace { get; set; }
-            public ByteSize TotalSpace { get; set; }
+            private ByteSize freeSpace = 0L;
+            public ByteSize FreeSpace
+            {
+                get => freeSpace;
+                set => SetProperty(ref freeSpace, value);
+            }
+
+            private ByteSize totalSpace = 0L;
+            public ByteSize TotalSpace
+            {
+                get => totalSpace;
+                set => SetProperty(ref totalSpace, value);
+            }
 
             public Uri IconSource { get; set; }
             public byte[] IconImage { get; set; }
+
+            public DriveItem()
+            {
+            }
 
             public async Task UpdateSpaces(StorageFolder root)
             {
