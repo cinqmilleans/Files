@@ -11,7 +11,7 @@ using Windows.Storage;
 
 namespace Files.BackEnd
 {
-    public interface IDriveItem : IItem
+    public interface IDrive : IItem
     {
         DriveTypes DriveType { get; }
 
@@ -23,20 +23,66 @@ namespace Files.BackEnd
         byte[] IconImage { get; }
     }
 
-    [Flags]
-    public enum DriveTypes : ushort
+    internal class Drive : ObservableObject, IDrive
     {
-        Unknown,
-        Fixed,
-        Removable,
-        Network,
-        Ram,
-        CDRom,
-        FloppyDisk,
-        NoRootDirectory,
-        Virtual,
-        Cloud,
+        public string Path { get; init; }
+        public string Name { get; init; }
+
+        public DriveTypes DriveType { get; init; } = DriveTypes.Unknown;
+
+        private ByteSize usedSpace = 0L;
+        public ByteSize UsedSpace
+        {
+            get => usedSpace;
+            private set => SetProperty(ref usedSpace, value);
+        }
+
+        private ByteSize freeSpace = 0L;
+        public ByteSize FreeSpace
+        {
+            get => freeSpace;
+            private set => SetProperty(ref freeSpace, value);
+        }
+
+        private ByteSize totalSpace = 0L;
+        public ByteSize TotalSpace
+        {
+            get => totalSpace;
+            private set => SetProperty(ref totalSpace, value);
+        }
+
+        public Uri IconSource { get; set; }
+        public byte[] IconImage { get; set; }
+
+        public async Task UpdateSpaces(StorageFolder root)
+        {
+            try
+            {
+                var properties = await root.Properties
+                    .RetrievePropertiesAsync(new[] { "System.Capacity", "System.Capacity" })
+                    .AsTask()
+                    .WithTimeoutAsync(TimeSpan.FromSeconds(5));
+
+                if (properties is null)
+                {
+                    UsedSpace = FreeSpace = TotalSpace = 0L;
+                }
+                else
+                {
+                    TotalSpace = properties["System.Capacity"] is ulong totalSpace ? totalSpace : 0L;
+                    FreeSpace = properties["System.FreeSpace"] is ulong freeSpace ? freeSpace : 0L;
+                    UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : ByteSize.MinValue;
+                }
+            }
+            catch
+            {
+                UsedSpace = FreeSpace = TotalSpace = 0L;
+            }
+        }
     }
+
+
+
 
     /*public class DriveItemProvider
     {
@@ -50,7 +96,7 @@ namespace Files.BackEnd
         }
     }*/
 
-    internal class DriveItemFactory
+    /*internal class DriveItemFactory
     {
         private readonly Logger logger = App.Logger;
 
@@ -90,122 +136,13 @@ namespace Files.BackEnd
             return drive;
         }
 
-        private static string ToNormalizedPath(string path)
-            => Helpers.PathNormalization.NormalizePath(path);
-
         private static string ToPath(StorageFolder root)
             => string.IsNullOrEmpty(root.Path) ? $"\\\\?\\{root.Name}\\" : root.Path;
 
-        private class DriveTypeConverter
-        {
-            private readonly string driveAPath = ToNormalizedPath("A:");
-            private readonly string driveBPath = ToNormalizedPath("B:");
 
-            public DriveTypes ToDriveType(string path)
-            {
-                try
-                {
-                    var info = new DriveInfo(path);
-                    return ToDriveType(info);
-                }
-                catch (ArgumentException)
-                {
-                    return DriveTypes.Removable;
-                }
-                catch
-                {
-                    return DriveTypes.Unknown;
-                }
-            }
+    }*/
 
-            private DriveTypes ToDriveType(DriveInfo info)
-            {
-                if (info.DriveType is DriveType.Unknown)
-                {
-                    string drivePath = ToNormalizedPath(info.Name);
-                    if (drivePath == driveAPath || drivePath == driveBPath)
-                    {
-                        return DriveTypes.FloppyDisk;
-                    }
-                }
 
-                return info.DriveType switch
-                {
-                    DriveType.Fixed => DriveTypes.Fixed,
-                    DriveType.Removable => DriveTypes.Removable,
-                    DriveType.Network => DriveTypes.Network,
-                    DriveType.Ram => DriveTypes.Ram,
-                    DriveType.CDRom => DriveTypes.CDRom,
-                    DriveType.NoRootDirectory => DriveTypes.NoRootDirectory,
-                    _ => DriveTypes.Unknown,
-                };
-            }
-        }
 
-        private class DriveItem : ObservableObject, IDriveItem
-        {
-            public string Path { get; init; }
-            public string Name { get; init; }
 
-            public DriveTypes DriveType { get; init; } = DriveTypes.Unknown;
-
-            private ByteSize usedSpace = 0L;
-            public ByteSize UsedSpace
-            {
-                get => usedSpace;
-                set => SetProperty(ref usedSpace, value);
-            }
-
-            private ByteSize freeSpace = 0L;
-            public ByteSize FreeSpace
-            {
-                get => freeSpace;
-                set => SetProperty(ref freeSpace, value);
-            }
-
-            private ByteSize totalSpace = 0L;
-            public ByteSize TotalSpace
-            {
-                get => totalSpace;
-                set => SetProperty(ref totalSpace, value);
-            }
-
-            public Uri IconSource { get; set; }
-            public byte[] IconImage { get; set; }
-
-            public DriveItem()
-            {
-            }
-
-            public async Task UpdateSpaces(StorageFolder root)
-            {
-                if (root is null)
-                {
-                    return;
-                }
-                try
-                {
-                    var properties = await root.Properties
-                        .RetrievePropertiesAsync(new[] { "System.Capacity", "System.Capacity" })
-                        .AsTask()
-                        .WithTimeoutAsync(TimeSpan.FromSeconds(5));
-
-                    if (properties is null)
-                    {
-                        UsedSpace = FreeSpace = TotalSpace = 0L;
-                    }
-                    else
-                    {
-                        TotalSpace = properties["System.Capacity"] is ulong totalSpace ? totalSpace : 0L;
-                        FreeSpace = properties["System.FreeSpace"] is ulong freeSpace ? freeSpace : 0L;
-                        UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : ByteSize.MinValue;
-                    }
-                }
-                catch
-                {
-                    UsedSpace = FreeSpace = TotalSpace = 0L;
-                }
-            }
-        }
-    }
 }

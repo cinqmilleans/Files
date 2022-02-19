@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Files.BackEnd
 {
@@ -7,15 +6,5 @@ namespace Files.BackEnd
     {
         string Path { get; }
         string Name { get; }
-    }
-
-    public interface IItemProvider
-    {
-        IEnumerable<IItem> EnumerateItems();
-    }
-
-    internal interface IFactory<T>
-    {
-        T Build();
     }
 }

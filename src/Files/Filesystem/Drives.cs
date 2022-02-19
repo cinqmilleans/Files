@@ -245,7 +245,7 @@ namespace Files.Filesystem
                 {
                     return;
                 }
-            
+
                 Logger.Info($"Drive added: {driveItem.Path}, {driveItem.Type}");
 
                 drivesList.Add(driveItem);
