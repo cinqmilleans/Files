@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using Lib = ByteSizeLib;
 
-namespace Files.BackEnd.Struct
+namespace Files.BackEnd
 {
     public enum ByteSizeUnits : ushort
     {
@@ -66,10 +66,10 @@ namespace Files.BackEnd.Struct
             };
         }
 
-        public static implicit operator long(ByteSize size) => (long)size.Bytes;
-        public static implicit operator ulong(ByteSize size) => size.Bytes;
-        public static explicit operator ByteSize(long size) => new((ulong)size);
-        public static explicit operator ByteSize(ulong size) => new(size);
+        public static explicit operator long(ByteSize size) => (long)size.Bytes;
+        public static explicit operator ulong(ByteSize size) => size.Bytes;
+        public static implicit operator ByteSize(long size) => new((ulong)size);
+        public static implicit operator ByteSize(ulong size) => new(size);
 
         public static ByteSize operator +(ByteSize a, ByteSize b) => new(a.Bytes + b.Bytes);
         public static ByteSize operator -(ByteSize a, ByteSize b) => new(a.Bytes - b.Bytes);
