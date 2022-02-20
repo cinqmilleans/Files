@@ -1,12 +1,6 @@
-﻿using Files.Common;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
-using Windows.Devices.Portable;
 using Windows.Storage;
 
 namespace Files.BackEnd
@@ -25,8 +19,16 @@ namespace Files.BackEnd
 
     internal class Drive : ObservableObject, IDrive
     {
+        private readonly IStorageFolderReader storageFolderReader;
+
         public string Path { get; init; }
-        public string Name { get; init; }
+
+        private string name = string.Empty;
+        public string Name
+        {
+            get => name;
+            private set => SetProperty(ref name, value);
+        }
 
         public DriveTypes DriveType { get; init; } = DriveTypes.Unknown;
 
@@ -54,25 +56,23 @@ namespace Files.BackEnd
         public Uri IconSource { get; set; }
         public byte[] IconImage { get; set; }
 
-        public async Task UpdateSpaces(StorageFolder root)
+        public Drive(StorageFolder root)
+        {
+            storageFolderReader = new StorageFolderReader(root);
+        }
+
+        public async Task UpdateLabelAsync()
+            => Name = await storageFolderReader.GetPropertyAsync<string>("System.ItemNameDisplay") ?? string.Empty;
+
+        public async Task UpdateSpaces()
         {
             try
             {
-                var properties = await root.Properties
-                    .RetrievePropertiesAsync(new[] { "System.Capacity", "System.Capacity" })
-                    .AsTask()
-                    .WithTimeoutAsync(TimeSpan.FromSeconds(5));
+                var properties = await storageFolderReader.GetPropertiesAsync<long>("System.Capacity", "System.Capacity");
 
-                if (properties is null)
-                {
-                    UsedSpace = FreeSpace = TotalSpace = 0L;
-                }
-                else
-                {
-                    TotalSpace = properties["System.Capacity"] is ulong totalSpace ? totalSpace : 0L;
-                    FreeSpace = properties["System.FreeSpace"] is ulong freeSpace ? freeSpace : 0L;
-                    UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : ByteSize.MinValue;
-                }
+                TotalSpace = properties["System.Capacity"];
+                FreeSpace = properties["System.FreeSpace"];
+                UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : 0L;
             }
             catch
             {

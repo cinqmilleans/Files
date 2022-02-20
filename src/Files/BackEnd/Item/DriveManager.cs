@@ -32,7 +32,7 @@ namespace Files.BackEnd.Item
             watcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
         }
 
-        private async Task UpdateDrivesAsync()
+       /* private async Task UpdateDrivesAsync()
         {
             // Flag set if any drive throws UnauthorizedAccessException
             bool unauthorizedAccessDetected = false;
@@ -72,7 +72,7 @@ namespace Files.BackEnd.Item
             }
 
             return unauthorizedAccessDetected;
-        }
+        }*/
 
 
 

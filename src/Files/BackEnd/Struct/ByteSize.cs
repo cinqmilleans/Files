@@ -19,7 +19,7 @@ namespace Files.BackEnd
     {
         private readonly Lib.ByteSize size;
 
-        public static readonly ByteSize MinValue = new(0);
+        public static readonly ByteSize Zero = new(0);
         public static readonly ByteSize MaxValue = new(long.MaxValue);
 
         public ulong Bytes => (ulong)size.Bits * Lib.ByteSize.BitsInByte;

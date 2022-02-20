@@ -124,6 +124,7 @@
     <Compile Include="BackEnd\Item\Item.cs" />
     <Compile Include="BackEnd\Item\Drive.cs" />
     <Compile Include="BackEnd\Struct\ByteSize.cs" />
+    <Compile Include="BackEnd\Tools\StorageFolderReader.cs" />
     <Compile Include="BaseLayout.cs" />
     <Compile Include="Behaviors\StickyHeaderBehavior.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
