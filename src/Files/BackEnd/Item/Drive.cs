@@ -1,6 +1,7 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Storage;
 
 namespace Files.BackEnd
@@ -56,8 +57,8 @@ namespace Files.BackEnd
         public Uri IconSource { get; set; }
         public byte[] IconImage { get; set; }
 
-        public Drive(StorageFolder root)
-        {
+
+
             storageFolderReader = new StorageFolderReader(root);
         }
 
