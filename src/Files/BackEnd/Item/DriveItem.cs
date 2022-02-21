@@ -1,12 +1,11 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
 using Windows.Storage;
 
 namespace Files.BackEnd
 {
-    public interface IDrive : IItem
+    public interface IDriveItem : IItem
     {
         DriveTypes DriveType { get; }
 
@@ -18,7 +17,17 @@ namespace Files.BackEnd
         byte[] IconImage { get; }
     }
 
-    internal class Drive : ObservableObject, IDrive
+    [Flags]
+    internal enum DriveUpdateItems : ushort
+    {
+        None = 0x0000,
+        Name = 0x0001,
+        Spaces = 0x0002,
+        Icons = 0x0004,
+        All = Name + Spaces + Icons,
+    };
+
+    internal class DriveItem : ObservableObject, IDriveItem
     {
         private readonly IStorageFolderReader storageFolderReader;
 
@@ -57,15 +66,31 @@ namespace Files.BackEnd
         public Uri IconSource { get; set; }
         public byte[] IconImage { get; set; }
 
-
-
+        public DriveItem(StorageFolder root)
+        {
             storageFolderReader = new StorageFolderReader(root);
         }
 
-        public async Task UpdateLabelAsync()
+        public async Task UpdateAsync(DriveUpdateItems item)
+        {
+            if (item.HasFlag(DriveUpdateItems.Name))
+            {
+                await UpdateNameAsync();
+            }
+            if (item.HasFlag(DriveUpdateItems.Spaces))
+            {
+                await UpdateSpacesAsync();
+            }
+            if (item.HasFlag(DriveUpdateItems.Icons))
+            {
+                await UpdateIconsAsync();
+            }
+        }
+
+        private async Task UpdateNameAsync()
             => Name = await storageFolderReader.GetPropertyAsync<string>("System.ItemNameDisplay") ?? string.Empty;
 
-        public async Task UpdateSpaces()
+        public async Task UpdateSpacesAsync()
         {
             try
             {
@@ -80,70 +105,10 @@ namespace Files.BackEnd
                 UsedSpace = FreeSpace = TotalSpace = 0L;
             }
         }
+
+        public async Task UpdateIconsAsync()
+        {
+            await Task.Yield();
+        }
     }
-
-
-
-
-    /*public class DriveItemProvider
-    {
-        public IEnumerable<IDriveItem> GetDrives()
-        {
-            var factory = new DriveItemFactory
-            {
-                LoadSpaces = true;
-                LoadIcons = true;
-            };
-        }
-    }*/
-
-    /*internal class DriveItemFactory
-    {
-        private readonly Logger logger = App.Logger;
-
-        private readonly DriveTypeConverter driveTypeConverter = new();
-
-        public bool LoadSpaces { get; set; } = false;
-        public bool LoadIcons { get; set; } = false;
-
-        public async Task<IDriveItem> Build(DeviceInformation information)
-        {
-            string id = information.Id;
-
-            StorageFolder root;
-            try
-            {
-                root = StorageDevice.FromId(id);
-            }
-            catch (Exception e)
-            {
-                logger.Warn($"{e.GetType()}: Attempting to add the device, {information.Name}, "
-                    + $"failed at the StorageFolder initialization step. This device will be ignored. Device ID: {id}");
-                return null;
-            }
-
-            var drive = new DriveItem
-            {
-                Path = ToPath(root),
-                Name = root.DisplayName,
-                //DriveType = driveTypeConverter.ToDriveType(root.Path),
-            };
-
-            if (LoadSpaces)
-            {
-                await drive.UpdateSpaces(root);
-            }
-
-            return drive;
-        }
-
-        private static string ToPath(StorageFolder root)
-            => string.IsNullOrEmpty(root.Path) ? $"\\\\?\\{root.Name}\\" : root.Path;
-
-
-    }*/
-
-
-
-
 }

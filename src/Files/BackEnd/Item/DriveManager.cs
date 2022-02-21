@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 
@@ -10,8 +9,8 @@ namespace Files.BackEnd.Item
     {
         private DeviceWatcher watcher;
 
-        private readonly List<Drive> drives = new();
-        public IReadOnlyList<IDrive> Drives
+        private readonly List<DriveItem> drives = new();
+        public IReadOnlyList<IDriveItem> Drives
         {
             get
             {
@@ -32,7 +31,7 @@ namespace Files.BackEnd.Item
             watcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
         }
 
-       /* private async Task UpdateDrivesAsync()
+        /*private async Task UpdateDrivesAsync()
         {
             // Flag set if any drive throws UnauthorizedAccessException
             bool unauthorizedAccessDetected = false;
@@ -73,9 +72,6 @@ namespace Files.BackEnd.Item
 
             return unauthorizedAccessDetected;
         }*/
-
-
-
 
         private async void DeviceAdded(DeviceWatcher sender, DeviceInformation args)
         {

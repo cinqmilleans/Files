@@ -1,56 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
-using Windows.Devices.Portable;
 using Windows.Storage;
 
 namespace Files.BackEnd
 {
     internal interface IDriveProvider
     {
-        bool LoadSpaces { get; set; }
-        bool LoadIcons { get; set; }
+        DriveUpdateItems UpdateItem { get; }
+
+        Task<DriveItem> Build(DeviceInformation information);
     }
+
+    [Flags]
+    internal enum DriveProviderOptions : ushort
+    {
+        None = 0x0000,
+        LoadName = 0x0001,
+        LoadSpaces = 0x0002,
+        LoadIcons = 0x0004,
+        LoadAll = LoadName + LoadSpaces + LoadIcons,
+    };
 
     internal class DriveProvider : IDriveProvider
     {
-        public bool LoadSpaces { get; set; } = false;
-        public bool LoadIcons { get; set; } = false;
+        private readonly IStorageFolderBuilder folderBuilder = new StorageFolderBuilder();
+        private readonly IDriveTypeConverter typeConverter = new DriveTypeConverter();
 
-        public static async Task<Drive> Build(DeviceInformation information)
+        public DriveUpdateItems UpdateItem { get; } = DriveUpdateItems.Name;
+
+        public async Task<DriveItem> Build(DeviceInformation information)
         {
-            string id = information.Id;
+            var root = folderBuilder.BuildFromDeviceId(information.Id);
 
-
-            var drive = new DriveItem
+            var drive = new DriveItem(root)
             {
                 Path = ToPath(root),
-                Name = root.DisplayName,
-                //DriveType = driveTypeConverter.ToDriveType(root.Path),
+                DriveType = typeConverter.ToDriveType(root.Path),
             };
 
-            if (LoadSpaces)
-            {
-                await drive.UpdateSpaces(root);
-            }
+            await drive.UpdateAsync(UpdateItem);
 
             return drive;
         }
 
-        private static StorageFolder ToStorageFolder(DeviceInformation info)
-        {
-            try
-            {
-                return StorageDevice.FromId(info.Id);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException("The DeviceInformation can't be converted to StorageFolder", e);
-            }
-        }
+        private static string ToPath(StorageFolder root)
+            => string.IsNullOrEmpty(root.Path) ? $"\\\\?\\{root.Name}\\" : root.Path;
     }
 }
