@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Storage;
@@ -46,5 +47,13 @@ namespace Files.BackEnd
 
         private static string ToPath(StorageFolder root)
             => string.IsNullOrEmpty(root.Path) ? $"\\\\?\\{root.Name}\\" : root.Path;
+    }
+
+    internal class UnauthorizedAccessException : Exception
+    {
+        public UnauthorizedAccessException() : base() {}
+        public UnauthorizedAccessException(string message) : base(message) {}
+        public UnauthorizedAccessException(string message, Exception innerException) : base(message, innerException) {}
+        protected UnauthorizedAccessException(SerializationInfo info, StreamingContext context) : base(info, context) {}
     }
 }

@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Files.Enums;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
+using Windows.Storage;
 
 namespace Files.BackEnd.Item
 {
@@ -31,7 +36,7 @@ namespace Files.BackEnd.Item
             watcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
         }
 
-        /*private async Task UpdateDrivesAsync()
+        private async Task UpdateDrivesAsync()
         {
             // Flag set if any drive throws UnauthorizedAccessException
             bool unauthorizedAccessDetected = false;
@@ -84,6 +89,18 @@ namespace Files.BackEnd.Item
         private async void DeviceWatcher_EnumerationCompleted(DeviceWatcher sender, object args)
         {
             Debug.WriteLine("DriveWatcher_EnumerationCompleted");
+        }
+
+        public static StorageFolder BuildFromDeviceId(string deviceId)
+        {
+            try
+            {
+                return StorageDevice.FromId(deviceId);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException($"The storage folder cannot be created. Device ID: {deviceId}", e);
+            }
         }
 
     }
