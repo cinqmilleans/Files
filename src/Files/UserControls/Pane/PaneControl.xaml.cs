@@ -2,6 +2,7 @@
 using Files.Services;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
+using System.ComponentModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -9,43 +10,72 @@ namespace Files.UserControls
 {
     public sealed partial class PaneControl : UserControl, IPane
     {
-        public event EventHandler ContentUpdated;
-
-        private Control pane;
+        public event EventHandler<PaneControlUpdatedEventArgs> Updated;
 
         public PanePositions Position { get; private set; } = PanePositions.None;
 
+        public PaneContents Content { get; private set; }
+
+        public Control Pane { get; private set; }
+
         private IPaneSettingsService PaneService { get; } = Ioc.Default.GetService<IPaneSettingsService>();
 
-        public PaneControl() => InitializeComponent();
+        public PaneControl()
+        {
+            InitializeComponent();
+
+            PaneService.PropertyChanged += PaneService_PropertyChanged;
+        }
 
         public void UpdatePosition(double panelWidth, double panelHeight)
         {
-            if (pane is IPane p)
+            if (Pane is IPane p)
             {
                 p.UpdatePosition(panelWidth, panelHeight);
                 Position = p.Position;
             }
             else
             {
-                Position = pane is not null ? PanePositions.Right : PanePositions.None;
+                Position = Pane is not null ? PanePositions.Right : PanePositions.None;
             }
 
-            if (pane is not null)
+            if (Pane is not null)
             {
-                MinWidth = pane.MinWidth;
-                MaxWidth = pane.MaxWidth;
-                MinHeight = pane.MinHeight;
-                MaxHeight = pane.MaxHeight;
+                MinWidth = Pane.MinWidth;
+                MaxWidth = Pane.MaxWidth;
+                MinHeight = Pane.MinHeight;
+                MaxHeight = Pane.MaxHeight;
             }
             Position = PanePositions.Right;
         }
 
+        private void PaneService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(IPaneSettingsService.Content))
+            {
+                Content = PaneService.Content;
+                if (Content is PaneContents.None)
+                {
+                    Updated?.Invoke(this, new PaneControlUpdatedEventArgs(Content, Pane));
+                }
+            }
+        }
+
+
         private void Pane_Loading(FrameworkElement sender, object args)
         {
-            pane = sender as Control;
-            ContentUpdated?.Invoke(this, EventArgs.Empty);
+            Pane = sender as Control;
+            Updated?.Invoke(this, new PaneControlUpdatedEventArgs(Content, Pane));
         }
+    }
+
+    public class PaneControlUpdatedEventArgs : EventArgs
+    {
+        public Control Pane { get; }
+        public PaneContents Content { get; }
+
+        public PaneControlUpdatedEventArgs(PaneContents content, Control pane)
+            => (Content, Pane) = (content, pane);
     }
 
     public class PaneTemplateSelector : DataTemplateSelector

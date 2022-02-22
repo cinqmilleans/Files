@@ -21,6 +21,8 @@ namespace Files.UserControls
 
         public PreviewPane() => InitializeComponent();
 
+        public void UpdatePreview() => ViewModel.UpdateSelectedItemPreview();
+
         public void UpdatePosition(double panelWidth, double panelHeight)
         {
             if (panelWidth > 700)
@@ -38,7 +40,7 @@ namespace Files.UserControls
         private string GetLocalized(string resName) => resName.GetLocalized();
 
         private void Root_Loading(FrameworkElement sender, object args)
-            => ViewModel.UpdateSelectedItemPreview();
+            => UpdatePreview();
         private void Root_Unloaded(object sender, RoutedEventArgs e)
         {
             PreviewControlPresenter.Content = null;

@@ -528,11 +528,14 @@ namespace Files.Views
 
         private void NavToolbar_Loaded(object sender, RoutedEventArgs e) => UpdateNavToolbarProperties();
 
-        private void Pane_ContentUpdated(object sender, EventArgs e) => LoadPaneChanged();
-
-        private void Pane_Loaded(object sender, RoutedEventArgs e)
+        private void Pane_Updated(object sender, PaneControlUpdatedEventArgs e)
         {
+            LoadPaneChanged();
 
+            if (e.Pane is PreviewPane pane)
+            {
+                pane.UpdatePreview();
+            }
         }
     }
 }
