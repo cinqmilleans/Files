@@ -417,6 +417,15 @@ namespace Files.Views
                         PaneRow.MinHeight = 0;
                         PaneRow.MaxHeight = double.MaxValue;
                         PaneRow.Height = new GridLength(0);
+
+                        if (Pane.Width < Pane.MinWidth)
+                        {
+                            Pane.Width = Pane.MinWidth;
+                        }
+                        if (Pane.Width > Pane.MaxWidth)
+                        {
+                            Pane.Width = Pane.MaxWidth;
+                        }
                         break;
                     case PanePositions.Bottom:
                         Pane.SetValue(Grid.RowProperty, 3);
@@ -431,6 +440,15 @@ namespace Files.Views
                         PaneRow.MinHeight = Pane.MinHeight;
                         PaneRow.MaxHeight = Pane.MaxHeight;
                         PaneRow.Height = new GridLength(UserSettingsService.PaneSettingsService.HorizontalSizePx, GridUnitType.Pixel);
+
+                        if (Pane.Height < Pane.MinHeight)
+                        {
+                            Pane.Height = Pane.MinHeight;
+                        }
+                        if (Pane.Height > Pane.MaxHeight)
+                        {
+                            Pane.Height = Pane.MaxHeight;
+                        }
                         break;
                 }
             }
@@ -531,11 +549,6 @@ namespace Files.Views
         private void Pane_Updated(object sender, PaneControlUpdatedEventArgs e)
         {
             LoadPaneChanged();
-
-            if (e.Pane is PreviewPane pane)
-            {
-                pane.UpdatePreview();
-            }
         }
     }
 }
