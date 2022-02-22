@@ -455,6 +455,7 @@ namespace Files.Views
         public bool IsPaneEnabled => UserSettingsService.PaneSettingsService.Content switch
         {
             PaneContents.Preview => IsPreviewPaneEnabled,
+            PaneContents.Search => true,
             _ => false,
         };
 
@@ -526,5 +527,12 @@ namespace Files.Views
         }
 
         private void NavToolbar_Loaded(object sender, RoutedEventArgs e) => UpdateNavToolbarProperties();
+
+        private void Pane_ContentUpdated(object sender, EventArgs e) => LoadPaneChanged();
+
+        private void Pane_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

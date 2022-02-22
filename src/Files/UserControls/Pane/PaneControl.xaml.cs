@@ -1,27 +1,23 @@
 ﻿using Files.Enums;
 using Files.Services;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using System.ComponentModel;
+using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Files.UserControls
 {
     public sealed partial class PaneControl : UserControl, IPane
     {
+        public event EventHandler ContentUpdated;
+
+        private Control pane;
+
         public PanePositions Position { get; private set; } = PanePositions.None;
 
         private IPaneSettingsService PaneService { get; } = Ioc.Default.GetService<IPaneSettingsService>();
 
-        private PaneContents content;
-        private Control pane;
-
-        public PaneControl()
-        {
-            InitializeComponent();
-
-            PaneService.PropertyChanged += PaneService_PropertyChanged;
-            Update();
-        }
+        public PaneControl() => InitializeComponent();
 
         public void UpdatePosition(double panelWidth, double panelHeight)
         {
@@ -30,6 +26,11 @@ namespace Files.UserControls
                 p.UpdatePosition(panelWidth, panelHeight);
                 Position = p.Position;
             }
+            else
+            {
+                Position = pane is not null ? PanePositions.Right : PanePositions.None;
+            }
+
             if (pane is not null)
             {
                 MinWidth = pane.MinWidth;
@@ -37,36 +38,29 @@ namespace Files.UserControls
                 MinHeight = pane.MinHeight;
                 MaxHeight = pane.MaxHeight;
             }
+            Position = PanePositions.Right;
         }
 
-        private void PaneService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Pane_Loading(FrameworkElement sender, object args)
         {
-            if (e.PropertyName is nameof(IPaneSettingsService.Content))
-            {
-                Update();
-            }
+            pane = sender as Control;
+            ContentUpdated?.Invoke(this, EventArgs.Empty);
         }
+    }
 
-        private void Update()
+    public class PaneTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate PreviewTemplate { get; set; }
+        public DataTemplate SearchTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item) => item switch
         {
-            var newContent = PaneService.Content;
-            if (content != newContent)
-            {
-                content = newContent;
-                pane = GetPane(content);
-
-                Panel.Children.Clear();
-                if (pane is not null)
-                {
-                    Panel.Children.Add(pane);
-                }
-            }
-        }
-
-        private static Control GetPane(PaneContents content) => content switch
-        {
-            PaneContents.Preview => new PreviewPane(),
+            PaneContents.Preview => PreviewTemplate,
+            PaneContents.Search => SearchTemplate,
             _ => null,
         };
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+            => SelectTemplateCore(item);
     }
 }

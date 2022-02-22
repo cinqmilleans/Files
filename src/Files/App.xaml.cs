@@ -3,11 +3,14 @@ using Files.Common;
 using Files.Controllers;
 using Files.Filesystem;
 using Files.Filesystem.FilesystemHistory;
+using Files.Filesystem.Search;
 using Files.Helpers;
 using Files.Services;
 using Files.Services.Implementation;
 using Files.UserControls.MultitaskingControl;
+using Files.UserControls.Search;
 using Files.ViewModels;
+using Files.ViewModels.Search;
 using Files.Views;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -45,8 +48,8 @@ namespace Files
         private static bool ShowErrorNotification = false;
         private static string OutputPath = null;
 
-        public static SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
-        public static StorageHistoryWrapper HistoryWrapper = new StorageHistoryWrapper();
+        public static SemaphoreSlim SemaphoreSlim = new(1, 1);
+        public static StorageHistoryWrapper HistoryWrapper = new();
         public static SettingsViewModel AppSettings { get; private set; }
         public static MainViewModel MainViewModel { get; private set; }
         public static PaneViewModel PaneViewModel { get; private set; }
@@ -61,10 +64,10 @@ namespace Files
         public static LibraryManager LibraryManager { get; private set; }
         public static FileTagsManager FileTagsManager { get; private set; }
         public static ExternalResourcesHelper ExternalResourcesHelper { get; private set; }
-        public static OptionalPackageManager OptionalPackageManager { get; private set; } = new OptionalPackageManager();
+        public static OptionalPackageManager OptionalPackageManager { get; private set; } = new();
 
         public static Logger Logger { get; private set; }
-        private static readonly UniversalLogWriter logWriter = new UniversalLogWriter();
+        private static readonly UniversalLogWriter logWriter = new();
 
         public static OngoingTasksViewModel OngoingTasksViewModel { get; } = new OngoingTasksViewModel();
         public static SecondaryTileHelper SecondaryTileHelper { get; private set; } = new SecondaryTileHelper();
@@ -92,7 +95,7 @@ namespace Files
 
         private IServiceProvider ConfigureServices()
         {
-            ServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
 
             services
                 // TODO: Loggers:
@@ -111,6 +114,11 @@ namespace Files
                 .AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
                 .AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
                 .AddSingleton<IUpdateSettingsService, UpdateSettingsService>()
+                .AddSingleton<ISearchHeaderProvider, SearchHeaderProvider>()
+                .AddSingleton<ISearchSettings, SearchSettings>()
+                .AddSingleton<ISearchNavigator, SearchNavigator>()
+                .AddSingleton<ISearchFilterViewModelFactory, SearchFilterViewModelFactory>()
+                .AddSingleton<ISearchPageViewModelFactory, SearchPageViewModelFactory>()
 
                 // TODO: Dialogs:
 
@@ -307,11 +315,13 @@ namespace Files
         {
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (!(Window.Current.Content is Frame rootFrame))
+            if (Window.Current.Content is not Frame rootFrame)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-                rootFrame.CacheSize = 1;
+                rootFrame = new Frame
+                {
+                    CacheSize = 1
+                };
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 //if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -343,7 +353,7 @@ namespace Files
         protected override async void OnActivated(IActivatedEventArgs args)
         {
             await logWriter.InitializeAsync("debug.log");
-            Logger.Info($"App activated by {args.Kind.ToString()}");
+            Logger.Info($"App activated by {args.Kind}");
 
             await EnsureSettingsAndConfigurationAreBootstrapped();
             _ = InitializeAppComponentsAsync().ContinueWith(t => Logger.Warn(t.Exception, "Error during InitializeAppComponentsAsync()"), TaskContinuationOptions.OnlyOnFaulted);

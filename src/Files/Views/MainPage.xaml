@@ -206,7 +206,7 @@
             </i:Interaction.Behaviors>
         </KeyboardAccelerator>
         <KeyboardAccelerator
-            Key="S" 
+            Key="S"
             x:Name="ToggleSidebarVisibilityKeyboardAcceleretor"
             Modifiers="Control,Menu">
             <i:Interaction.Behaviors>
@@ -395,7 +395,7 @@
                 Style="{StaticResource DefaultGridSplitterStyle}" />
 
             <controls:PaneControl x:Name="Pane" Grid.Row="1" Grid.Column="2"
-                x:Load="{x:Bind IsPaneEnabled, Mode=OneWay}"
+                x:Load="{x:Bind IsPaneEnabled, Mode=OneWay}" ContentUpdated="Pane_ContentUpdated"
                 HorizontalContentAlignment="Stretch" Visibility="{x:Bind IsPaneEnabled, Mode=OneWay}" />
 
             <controls:StatusBarControl
