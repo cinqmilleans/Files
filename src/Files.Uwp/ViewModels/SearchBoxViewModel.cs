@@ -1,5 +1,7 @@
 ﻿using Files.Filesystem;
+using Files.UserControls.Search;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +28,14 @@ namespace Files.ViewModels
         private readonly SuggestionComparer suggestionComparer = new SuggestionComparer();
 
         public ObservableCollection<ListedItem> Suggestions { get; } = new ObservableCollection<ListedItem>();
+
+        public SearchBoxViewModel()
+        {
+            var searchNavigator = Ioc.Default.GetRequiredService<ISearchNavigator>();
+            searchNavigator.Initialize(this);
+        }
+
+        public void Search() => QuerySubmitted?.Invoke(this, new SearchBoxQuerySubmittedEventArgs(null));
 
         public void ClearSuggestions()
         {
