@@ -1,4 +1,5 @@
 ﻿using Files.Enums;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -36,7 +37,7 @@ namespace Files.BackEnd.Item
             watcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
         }
 
-        private async Task UpdateDrivesAsync()
+        /*private async Task UpdateDrivesAsync()
         {
             // Flag set if any drive throws UnauthorizedAccessException
             bool unauthorizedAccessDetected = false;
