@@ -1,4 +1,5 @@
-﻿using Files.Extensions;
+﻿using Files.Common;
+using Files.Extensions;
 using Files.Filesystem.StorageItems;
 using Files.Helpers;
 using Files.Services;
@@ -53,6 +54,10 @@ namespace Files.Filesystem.Search
         {
             get
             {
+                if (Query is "*")
+                {
+                    return "*";
+                }
                 if (!string.IsNullOrEmpty(Query) && Query.Contains('.')) // ".docx" -> "*.docx"
                 {
                     var split = Query.Split('.');
@@ -76,7 +81,7 @@ namespace Files.Filesystem.Search
                     // if the query starts with a $, assume the query is in aqs format, otherwise assume the user is searching for the file name
                     if (Query is not null && Query.StartsWith('$'))
                     {
-                        return $"{Query.Substring(1)}{filters}";
+                        return Query.Substring(1);
                     }
                     if (Query is not null && Query.Contains(":", StringComparison.Ordinal))
                     {
