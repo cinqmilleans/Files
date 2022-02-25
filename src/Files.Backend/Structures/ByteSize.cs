@@ -150,7 +150,7 @@ namespace Files.BackEnd
         /// </param>
         /// <param name="formatProvider">A format provider.</param>
         /// <returns>The formatted string.</returns>
-        public string ToString(string format, IFormatProvider formatProvider) => (format ?? "G").ToLower() switch
+        public string ToString(string format, IFormatProvider formatProvider) => format switch
         {
             "b" or "B" => Bytes.ToString(),
             "v" or "V" => $"{Value:0.##}",
