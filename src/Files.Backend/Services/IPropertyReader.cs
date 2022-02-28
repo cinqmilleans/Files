@@ -1,8 +1,9 @@
-﻿using Files.Shared.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.FileProperties;
+using Files.Shared.Extensions;
+using System.Linq;
 
 namespace Files.Backend.Services
 {
@@ -32,11 +33,12 @@ namespace Files.Backend.Services
         }
         public async Task<IDictionary<string, T>> GetPropertiesAsync<T>(params string[] keys)
         {
-            //await Task.Yield();
-            //return new Dictionary<string, T>();
-            //var results = await properties.RetrievePropertiesAsync(keys).AsTask().WithTimeoutAsync(Timeout);
-            //return default; // keys.ToDictionary(key => key, key => results?[key] is T ? (T)results[key] : default);
-            return new Dictionary<string, T>();
+            var results = await properties.RetrievePropertiesAsync(keys).AsTask().WithTimeoutAsync(Timeout);
+            if (results is null)
+            {
+                return new Dictionary<string, T>();
+            }
+            return keys.ToDictionary(key => key, key => (T)results[key]);
         }
     }
 }
