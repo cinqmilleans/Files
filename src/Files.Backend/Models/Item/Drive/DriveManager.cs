@@ -5,7 +5,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;
 
-namespace Files.Backend.Models.Item.Drive
+namespace Files.Backend.Models.Item
 {
     public class DriveManager
     {

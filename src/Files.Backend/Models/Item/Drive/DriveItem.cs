@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Files.Backend.Models.Item.Drive
+namespace Files.Backend.Models.Item
 {
     public interface IDriveItem : IItem
     {
@@ -44,21 +44,21 @@ namespace Files.Backend.Models.Item.Drive
 
         public DriveTypes DriveType { get; init; } = DriveTypes.Unknown;
 
-        private ByteSize usedSpace = 0L;
+        private ByteSize usedSpace = ByteSize.Zero;
         public ByteSize UsedSpace
         {
             get => usedSpace;
             private set => SetProperty(ref usedSpace, value);
         }
 
-        private ByteSize freeSpace = 0L;
+        private ByteSize freeSpace = ByteSize.Zero;
         public ByteSize FreeSpace
         {
             get => freeSpace;
             private set => SetProperty(ref freeSpace, value);
         }
 
-        private ByteSize totalSpace = 0L;
+        private ByteSize totalSpace = ByteSize.Zero;
         public ByteSize TotalSpace
         {
             get => totalSpace;
@@ -98,11 +98,11 @@ namespace Files.Backend.Models.Item.Drive
 
                 TotalSpace = properties["System.Capacity"];
                 FreeSpace = properties["System.FreeSpace"];
-                UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : 0L;
+                UsedSpace = FreeSpace <= TotalSpace ? TotalSpace - FreeSpace : ByteSize.Zero;
             }
             catch
             {
-                UsedSpace = FreeSpace = TotalSpace = 0L;
+                UsedSpace = FreeSpace = TotalSpace = ByteSize.Zero;
             }
         }
 
