@@ -35,6 +35,9 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Files.Interacts;
 using SortDirection = Files.Shared.Enums.SortDirection;
+using Files.Backend.Enums;
+using Files.Backend.Services;
+using Files.Backend.ViewModels.Dialogs.AddItemDialog;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -58,6 +61,8 @@ namespace Files.Views
         public MainViewModel MainViewModel => App.MainViewModel;
 
         public bool IsColumnView { get; } = true;
+
+        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
 
         private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetService<IUserSettingsService>();
 
@@ -238,8 +243,8 @@ namespace Files.Views
             NavToolbarViewModel.OpenNewPaneCommand = new RelayCommand(() => PaneHolder?.OpenPathInNewPane("Home".GetLocalized()));
             NavToolbarViewModel.ClosePaneCommand = new RelayCommand(() => PaneHolder?.CloseActivePane());
             NavToolbarViewModel.OpenDirectoryInDefaultTerminalCommand = new RelayCommand(async () => await NavigationHelpers.OpenDirectoryInTerminal(this.FilesystemViewModel.WorkingDirectory));
-            NavToolbarViewModel.CreateNewFileCommand = new RelayCommand<ShellNewEntry>(x => UIFilesystemHelpers.CreateFileFromDialogResultType(AddItemType.File, x, this));
-            NavToolbarViewModel.CreateNewFolderCommand = new RelayCommand(() => UIFilesystemHelpers.CreateFileFromDialogResultType(AddItemType.Folder, null, this));
+            NavToolbarViewModel.CreateNewFileCommand = new RelayCommand<ShellNewEntry>(x => UIFilesystemHelpers.CreateFileFromDialogResultType(AddItemDialogItemType.File, x, this));
+            NavToolbarViewModel.CreateNewFolderCommand = new RelayCommand(() => UIFilesystemHelpers.CreateFileFromDialogResultType(AddItemDialogItemType.Folder, null, this));
             NavToolbarViewModel.CopyCommand = new RelayCommand(async () => await UIFilesystemHelpers.CopyItem(this));
             NavToolbarViewModel.Rename = new RelayCommand(() => SlimContentPage?.CommandsViewModel.RenameItemCommand.Execute(null));
             NavToolbarViewModel.Share = new RelayCommand(() => SlimContentPage?.CommandsViewModel.ShareItemCommand.Execute(null));
@@ -541,7 +546,6 @@ namespace Files.Views
             FilesystemViewModel.DirectoryInfoUpdated += FilesystemViewModel_DirectoryInfoUpdated;
             FilesystemViewModel.PageTypeUpdated += FilesystemViewModel_PageTypeUpdated;
             FilesystemViewModel.OnSelectionRequestedEvent += FilesystemViewModel_OnSelectionRequestedEvent;
-            FilesystemViewModel.ListedItemAdded += FilesystemViewModel_ListedItemAdded;
             OnNavigationParamsChanged();
             this.Loaded -= Page_Loaded;
         }
@@ -553,6 +557,8 @@ namespace Files.Views
 
         private void FilesystemViewModel_OnSelectionRequestedEvent(object sender, List<ListedItem> e)
         {
+            // set focus since selection might occur before the UI finishes updating
+            ContentPage.ItemManipulationModel.FocusFileList();
             ContentPage.ItemManipulationModel.SetSelectedItems(e);
         }
 
@@ -568,18 +574,6 @@ namespace Files.Views
                 {
                     ContentPage.DirectoryPropertiesViewModel.DirectoryItemCount = $"{FilesystemViewModel.FilesAndFolders.Count} {"ItemsCount/Text".GetLocalized()}";
                 }
-            }
-        }
-
-        private void FilesystemViewModel_ListedItemAdded(object sender, ListedItemAddedEventArgs e)
-        {
-            ListedItem itemToSelect = e?.Item;
-            if (itemToSelect != null && ContentPage != null)
-            {
-                // set focus since selection might occur before the UI finishes updating
-                ContentPage.ItemManipulationModel.FocusFileList();
-                ContentPage.ItemManipulationModel.SetSelectedItem(itemToSelect);
-                ContentPage.ItemManipulationModel.ScrollIntoView(itemToSelect);
             }
         }
 
@@ -660,13 +654,13 @@ namespace Files.Views
                 case (true, true, false, true, VirtualKey.N): // ctrl + shift + n, new item
                     if (InstanceViewModel.CanCreateFileInPage)
                     {
-                        var addItemDialog = new AddItemDialog();
-                        await addItemDialog.ShowAsync();
-                        if (addItemDialog.ResultType.ItemType != AddItemType.Cancel)
+                        var addItemDialogViewModel = new AddItemDialogViewModel();
+                        await DialogService.ShowDialogAsync(addItemDialogViewModel);
+                        if (addItemDialogViewModel.ResultType.ItemType != AddItemDialogItemType.Cancel)
                         {
                             UIFilesystemHelpers.CreateFileFromDialogResultType(
-                                addItemDialog.ResultType.ItemType,
-                                addItemDialog.ResultType.ItemInfo,
+                                addItemDialogViewModel.ResultType.ItemType,
+                                addItemDialogViewModel.ResultType.ItemInfo,
                                 this);
                         }
                     }
@@ -903,7 +897,6 @@ namespace Files.Views
                 FilesystemViewModel.DirectoryInfoUpdated -= FilesystemViewModel_DirectoryInfoUpdated;
                 FilesystemViewModel.PageTypeUpdated -= FilesystemViewModel_PageTypeUpdated;
                 FilesystemViewModel.OnSelectionRequestedEvent -= FilesystemViewModel_OnSelectionRequestedEvent;
-                FilesystemViewModel.ListedItemAdded -= FilesystemViewModel_ListedItemAdded;
                 FilesystemViewModel.Dispose();
             }
 
