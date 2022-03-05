@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Windows.Devices.Enumeration;
-using Windows.Devices.Portable;
-using Windows.Storage;
-
-namespace Files.Backend.Models.Item
+﻿namespace Files.Backend.Item
 {
-    public class DriveManager
+    /*public class DriveManager
     {
         private DeviceWatcher watcher;
 
@@ -65,9 +58,9 @@ namespace Files.Backend.Models.Item
                 }
             }
             return unauthorizedAccessDetected;
-        }*/
+        }
 
-        private void DeviceAdded(DeviceWatcher sender, DeviceInformation args)
+    private void DeviceAdded(DeviceWatcher sender, DeviceInformation args)
         {
         }
 
@@ -91,5 +84,5 @@ namespace Files.Backend.Models.Item
                 throw new InvalidOperationException($"The storage folder cannot be created. Device ID: {deviceId}", e);
             }
         }
-    }
+    }*/
 }

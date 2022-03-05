@@ -1,10 +1,9 @@
-﻿using Files.Backend.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Lib = ByteSizeLib;
 
-namespace Files.Backend
+namespace Files.Shared
 {
     public struct ByteSize : IEquatable<ByteSize>, IComparable<ByteSize>
     {
@@ -12,13 +11,13 @@ namespace Files.Backend
         (
             new Dictionary<string, string>
             {
-                [Lib.ByteSize.BitSymbol] = "ByteSymbol".ToLocalized(),
-                [Lib.ByteSize.ByteSymbol] = "ByteSymbol".ToLocalized(),
-                [Lib.ByteSize.KibiByteSymbol] = "KiloByteSymbol".ToLocalized(),
-                [Lib.ByteSize.MebiByteSymbol] = "MegaByteSymbol".ToLocalized(),
-                [Lib.ByteSize.GibiByteSymbol] = "GigaByteSymbol".ToLocalized(),
-                [Lib.ByteSize.TebiByteSymbol] = "TeraByteSymbol".ToLocalized(),
-                [Lib.ByteSize.PebiByteSymbol] = "PetaByteSymbol".ToLocalized(),
+                [Lib.ByteSize.BitSymbol] = Lib.ByteSize.BitSymbol, //"ByteSymbol".ToLocalized(),
+                [Lib.ByteSize.ByteSymbol] = Lib.ByteSize.ByteSymbol, //"ByteSymbol".ToLocalized(),
+                [Lib.ByteSize.KibiByteSymbol] = Lib.ByteSize.KibiByteSymbol, //"KiloByteSymbol".ToLocalized(),
+                [Lib.ByteSize.MebiByteSymbol] = Lib.ByteSize.MebiByteSymbol, //"MegaByteSymbol".ToLocalized(),
+                [Lib.ByteSize.GibiByteSymbol] = Lib.ByteSize.GibiByteSymbol, //"GigaByteSymbol".ToLocalized(),
+                [Lib.ByteSize.TebiByteSymbol] = Lib.ByteSize.TebiByteSymbol, //"TeraByteSymbol".ToLocalized(),
+                [Lib.ByteSize.PebiByteSymbol] = Lib.ByteSize.PebiByteSymbol, //"PetaByteSymbol".ToLocalized(),
             }
         );
 

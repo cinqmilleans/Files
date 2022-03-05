@@ -1,12 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Files.BackEnd;
+﻿using Files.Shared;
 using System;
 using System.ComponentModel;
 
-namespace Files.Backend.Models.Item
+namespace Files.Backend.Item
 {
     public interface IFileItem : IItem
     {
+        FileAttributes FileAttribute { get; }
+
         ByteSize Size { get; }
 
         DateTime DateCreated { get; }
@@ -14,10 +15,18 @@ namespace Files.Backend.Models.Item
         DateTime DateAccessed { get; }
     }
 
-    public class FileItem : ObservableObject, IFileItem
+    internal class FileItem : IFileItem
     {
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add {}
+            remove {}
+        }
+
         public string Path { get; init; } = string.Empty;
         public string Name { get; init; } = string.Empty;
+
+        public FileAttributes FileAttribute { get; init; } = FileAttributes.None;
 
         public ByteSize Size { get; init; } = ByteSize.Zero;
 

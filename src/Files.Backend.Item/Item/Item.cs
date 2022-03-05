@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Files.Backend.Models.Item
+namespace Files.Backend.Item
 {
     public interface IItem : INotifyPropertyChanged
     {

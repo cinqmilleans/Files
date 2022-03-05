@@ -43,23 +43,23 @@ namespace Files.DataModels.NavigationControlItems
         public bool IsRemovable => Type == DriveType.Removable || Type == DriveType.CDRom;
         public bool IsNetwork => Type == DriveType.Network;
 
-        private ByteSize maxSpace;
-        private ByteSize freeSpace;
-        private ByteSize spaceUsed;
+        private ByteSizeLib.ByteSize maxSpace;
+        private ByteSizeLib.ByteSize freeSpace;
+        private ByteSizeLib.ByteSize spaceUsed;
 
-        public ByteSize MaxSpace
+        public ByteSizeLib.ByteSize MaxSpace
         {
             get => maxSpace;
             set => SetProperty(ref maxSpace, value);
         }
 
-        public ByteSize FreeSpace
+        public ByteSizeLib.ByteSize FreeSpace
         {
             get => freeSpace;
             set => SetProperty(ref freeSpace, value);
         }
 
-        public ByteSize SpaceUsed
+        public ByteSizeLib.ByteSize SpaceUsed
         {
             get => spaceUsed;
             set => SetProperty(ref spaceUsed, value);
@@ -182,8 +182,8 @@ namespace Files.DataModels.NavigationControlItems
 
                 if (properties != null && properties["System.Capacity"] != null && properties["System.FreeSpace"] != null)
                 {
-                    MaxSpace = ByteSize.FromBytes((ulong)properties["System.Capacity"]);
-                    FreeSpace = ByteSize.FromBytes((ulong)properties["System.FreeSpace"]);
+                    MaxSpace = ByteSizeLib.ByteSize.FromBytes((ulong)properties["System.Capacity"]);
+                    FreeSpace = ByteSizeLib.ByteSize.FromBytes((ulong)properties["System.FreeSpace"]);
                     SpaceUsed = MaxSpace - FreeSpace;
 
                     SpaceText = string.Format(
@@ -199,13 +199,13 @@ namespace Files.DataModels.NavigationControlItems
                 else
                 {
                     SpaceText = "DriveCapacityUnknown".GetLocalized();
-                    MaxSpace = SpaceUsed = FreeSpace = ByteSize.FromBytes(0);
+                    MaxSpace = SpaceUsed = FreeSpace = ByteSizeLib.ByteSize.FromBytes(0);
                 }
             }
             catch (Exception)
             {
                 SpaceText = "DriveCapacityUnknown".GetLocalized();
-                MaxSpace = SpaceUsed = FreeSpace = ByteSize.FromBytes(0);
+                MaxSpace = SpaceUsed = FreeSpace = ByteSizeLib.ByteSize.FromBytes(0);
             }
         }
 

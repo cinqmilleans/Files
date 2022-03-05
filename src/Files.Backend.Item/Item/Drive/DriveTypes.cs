@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Files.Backend.Item.Helper;
+using System;
 using System.IO;
 
-namespace Files.Backend.Models.Item
+namespace Files.Backend.Item
 {
     public enum DriveTypes : ushort
     {
@@ -17,17 +18,12 @@ namespace Files.Backend.Models.Item
         Cloud,
     }
 
-    internal interface IDriveTypeConverter
+    internal static class DriveTypeConverter
     {
-        DriveTypes ToDriveType(string path);
-    }
+        private static readonly string driveAPath = "A:".NormalizePath();
+        private static readonly string driveBPath = "B:".NormalizePath();
 
-    internal class DriveTypeConverter : IDriveTypeConverter
-    {
-        private readonly string driveAPath = ToNormalizedPath("A:");
-        private readonly string driveBPath = ToNormalizedPath("B:");
-
-        public DriveTypes ToDriveType(string path)
+        public static DriveTypes ToDriveType(string path)
         {
             try
             {
@@ -44,11 +40,11 @@ namespace Files.Backend.Models.Item
             }
         }
 
-        private DriveTypes ToDriveType(DriveInfo info)
+        private static DriveTypes ToDriveType(DriveInfo info)
         {
             if (info.DriveType is DriveType.Unknown)
             {
-                string drivePath = ToNormalizedPath(info.Name);
+                string drivePath = info.Name.NormalizePath();
                 if (drivePath == driveAPath || drivePath == driveBPath)
                 {
                     return DriveTypes.FloppyDisk;
@@ -66,8 +62,5 @@ namespace Files.Backend.Models.Item
                 _ => DriveTypes.Unknown,
             };
         }
-
-        private static string ToNormalizedPath(string path)
-            => path; // Path.nor Helpers.PathNormalization.NormalizePath(path);
     }
 }

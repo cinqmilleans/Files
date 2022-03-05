@@ -1,13 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Files.Backend.Services;
-using Files.BackEnd;
-using System;
-using System.Threading.Tasks;
-using Windows.Storage;
-
-namespace Files.Backend.Models.Item
+﻿namespace Files.Backend.Item
 {
-    public interface IDriveItem : IItem
+    /*public interface IDriveItem : IItem
     {
         DriveTypes DriveType { get; }
 
@@ -107,5 +100,5 @@ namespace Files.Backend.Models.Item
         }
 
         public async Task UpdateIconsAsync() => await Task.Yield();
-    }
+    }*/
 }
