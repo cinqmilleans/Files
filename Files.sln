@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files.UI", "Files.UI", "{A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Files.Backend", "src\Files.Backend\Files.Backend.csproj", "{4CFE0BBC-8D07-49A0-8B10-4EDD61ABCF57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Files.Backend.Item", "src\Files.Backend.Item\Files.Backend.Item.csproj", "{3FDAC7B7-FC39-4340-94BB-35047D734422}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Files.Backend.Item", "src\Files.Backend.Item\Files.Backend.Item.csproj", "{3FDAC7B7-FC39-4340-94BB-35047D734422}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -226,8 +226,8 @@ Global
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|ARM.Build.0 = Debug|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|arm64.ActiveCfg = Debug|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|arm64.Build.0 = Debug|Any CPU
-		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x64.Build.0 = Debug|Any CPU
+		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x64.ActiveCfg = Debug|x64
+		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x64.Build.0 = Debug|x64
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Debug|x86.Build.0 = Debug|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -236,8 +236,8 @@ Global
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|ARM.Build.0 = Release|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|arm64.ActiveCfg = Release|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|arm64.Build.0 = Release|Any CPU
-		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x64.ActiveCfg = Release|Any CPU
-		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x64.Build.0 = Release|Any CPU
+		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x64.ActiveCfg = Release|x64
+		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x64.Build.0 = Release|x64
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x86.ActiveCfg = Release|Any CPU
 		{3FDAC7B7-FC39-4340-94BB-35047D734422}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
