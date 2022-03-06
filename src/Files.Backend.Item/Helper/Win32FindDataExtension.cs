@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.ComTypes;
 using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Item.Helper
