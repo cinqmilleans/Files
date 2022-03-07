@@ -1,6 +1,11 @@
-﻿namespace Files.Backend.Item
+﻿using Files.Shared;
+using System;
+using System.Threading.Tasks;
+using Windows.Storage;
+
+namespace Files.Backend.Item
 {
-    /*public interface IDriveItem : IItem
+    public interface IDriveItem : IItem
     {
         DriveTypes DriveType { get; }
 
@@ -100,5 +105,5 @@
         }
 
         public async Task UpdateIconsAsync() => await Task.Yield();
-    }*/
+    }
 }

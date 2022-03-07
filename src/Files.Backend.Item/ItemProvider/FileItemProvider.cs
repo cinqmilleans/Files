@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Files.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
@@ -9,6 +10,8 @@ namespace Files.Backend.Item
 {
     public interface IFileItemProvider : IItemProvider
     {
+        FileItemProviderOptions Option { get; }
+
         new IAsyncEnumerable<IFileItem> ProvideItems();
     }
 
@@ -26,13 +29,46 @@ namespace Files.Backend.Item
         T Build();
     }
 
-    public class FileItemProviderBuilder : IBuilder<IFileItemProvider>
+    public interface IFileItemProviderBuilder : IBuilder<IFileItemProvider>
+    {
+        IFileItemProviderBuilder IncludeUnindexedItems(bool includeUnindexedItems = true);
+        IFileItemProviderBuilder IncludeSystemItems(bool includeSystemItems = true);
+        IFileItemProviderBuilder IncludeHiddenItems(bool includeHiddenItems = true);
+
+
+        IFileItemProviderBuilder WithLogger(Logger logger);
+    }
+
+    public class FileItemProviderBuilder : IFileItemProviderBuilder
     {
         private FileItemProviderOptions option = FileItemProviderOptions.None;
 
+        private Logger logger;
+
         public IFileItemProvider Build()
         {
-            return new SearchItemProvider();
+            return null;
+        }
+
+        public IFileItemProviderBuilder IncludeUnindexedItems(bool includeUnindexedItems = true)
+            => SetOption(FileItemProviderOptions.IncludeUnindexedItems, includeUnindexedItems);
+
+        public IFileItemProviderBuilder IncludeSystemItems(bool includeSystemItems = true)
+            => SetOption(FileItemProviderOptions.IncludeSystemItems, includeSystemItems);
+
+        public IFileItemProviderBuilder IncludeHiddenItems(bool includeHiddenItems = true)
+            => SetOption(FileItemProviderOptions.IncludeHiddenItems, includeHiddenItems);
+
+        public IFileItemProviderBuilder WithLogger(Logger logger)
+        {
+            this.logger = logger;
+            return this;
+        }
+
+        private FileItemProviderBuilder SetOption(FileItemProviderOptions option, bool useOption)
+        {
+            this.option &= useOption ? option : ~option;
+            return this;
         }
     }
 

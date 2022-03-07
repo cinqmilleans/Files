@@ -17,6 +17,15 @@ namespace Files.Backend.Item.ItemProvider
         public bool IncludeUnindexedItems { get; set; } = false;
         public bool IncludeUnindexedItems { get; set; } = false;
 
+        private async Task AddItemsAsyncForHome(IList<ListedItem> results, CancellationToken token)
+        {
+            foreach (var drive in App.DrivesManager.Drives.Where(x => !x.IsNetwork))
+            {
+                await AddItemsAsync(drive.Path, results, token);
+            }
+        }
+
+
         IAsyncEnumerable<IItem> IItemProvider.ProvideItems() => ProvideItems();
         public IAsyncEnumerable<IFileItem> ProvideItems()
         {
