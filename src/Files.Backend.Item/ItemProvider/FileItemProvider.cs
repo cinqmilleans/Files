@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
 using static Files.Backend.Item.Helper.Win32FindDataExtension;
@@ -10,6 +11,31 @@ namespace Files.Backend.Item
     {
         new IAsyncEnumerable<IFileItem> ProvideItems();
     }
+
+    [Flags]
+    public enum FileItemProviderOptions : ushort
+    {
+        None,
+        IncludeHiddenItems,
+        IncludeSystemItems,
+        IncludeUnindexedItems,
+    }
+
+    public interface IBuilder<T>
+    {
+        T Build();
+    }
+
+    public class FileItemProviderBuilder : IBuilder<IFileItemProvider>
+    {
+        private FileItemProviderOptions option = FileItemProviderOptions.None;
+
+        public IFileItemProvider Build()
+        {
+            return new SearchItemProvider();
+        }
+    }
+
 
     public class FileItemProvider : IFileItemProvider
     {

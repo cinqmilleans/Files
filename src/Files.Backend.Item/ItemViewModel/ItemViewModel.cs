@@ -6,6 +6,8 @@ namespace Files.Backend.Item
     {
         string Path { get; }
         string Name { get; }
+
+        
     }
 
     public interface IItemViewModelFactory
