@@ -47,7 +47,25 @@ namespace Files.Backend.Item
         public Uri? IconSource { get; set; }
         public byte[]? IconImage { get; set; }
 
-        public DriveItem(StorageFolder root) => this.root = root;
+        public DriveItem(string name)
+        {
+            var res = await FilesystemTasks.Wrap(() => StorageFolder.GetFolderFromPathAsync(name).AsTask());
+            if (res == FileSystemStatusCode.Unauthorized)
+            {
+                unauthorizedAccessDetected = true;
+                Logger.Warn($"{res.ErrorCode}: Attempting to add the device, {drive.Name}, failed at the StorageFolder initialization step. This device will be ignored.");
+                continue;
+            }
+            else if (!res)
+            {
+                Logger.Warn($"{res.ErrorCode}: Attempting to add the device, {drive.Name}, failed at the StorageFolder initialization step. This device will be ignored.");
+                continue;
+            }
+        }
+        public DriveItem(StorageFolder root)
+        {
+            this.root = root;
+        }
 
         public async Task UpdateNameAsync()
             => Name = await root.GetPropertyAsync<string>("System.ItemNameDisplay") ?? string.Empty;
