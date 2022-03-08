@@ -1,35 +1,16 @@
-﻿using Files.Shared;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Files.Backend.Item.Extension;
+using Files.Shared;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Files.Backend.Item
 {
-    public interface IDriveItem : IItem
-    {
-        DriveTypes DriveType { get; }
-
-        ByteSize UsedSpace { get; }
-        ByteSize FreeSpace { get; }
-        ByteSize TotalSpace { get; }
-
-        Uri? IconSource { get; }
-        byte[]? IconImage { get; }
-    }
-
-    [Flags]
-    internal enum DriveUpdateItems : ushort
-    {
-        None = 0x0000,
-        Name = 0x0001,
-        Spaces = 0x0002,
-        Icons = 0x0004,
-        All = Name + Spaces + Icons,
-    };
 
     internal class DriveItem : ObservableObject, IDriveItem
     {
-        private readonly IPropertyReader propertyReader;
+        private readonly StorageFolder root;
 
         public string Path { get; init; } = string.Empty;
 
@@ -66,33 +47,16 @@ namespace Files.Backend.Item
         public Uri? IconSource { get; set; }
         public byte[]? IconImage { get; set; }
 
-        public DriveItem(StorageFolder root)
-            => propertyReader = new PropertyReader(root.Properties);
+        public DriveItem(StorageFolder root) => this.root = root;
 
-        public async Task UpdateAsync(DriveUpdateItems item)
-        {
-            if (item.HasFlag(DriveUpdateItems.Name))
-            {
-                await UpdateNameAsync();
-            }
-            if (item.HasFlag(DriveUpdateItems.Spaces))
-            {
-                await UpdateSpacesAsync();
-            }
-            if (item.HasFlag(DriveUpdateItems.Icons))
-            {
-                await UpdateIconsAsync();
-            }
-        }
-
-        private async Task UpdateNameAsync()
-            => Name = await propertyReader.GetPropertyAsync<string>("System.ItemNameDisplay");
+        public async Task UpdateNameAsync()
+            => Name = await root.GetPropertyAsync<string>("System.ItemNameDisplay") ?? string.Empty;
 
         public async Task UpdateSpacesAsync()
         {
             try
             {
-                var properties = await propertyReader.GetPropertiesAsync<long>("System.Capacity", "System.Capacity");
+                var properties = await root.GetPropertiesAsync<long>("System.Capacity", "System.Capacity");
 
                 TotalSpace = properties["System.Capacity"];
                 FreeSpace = properties["System.FreeSpace"];

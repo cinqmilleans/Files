@@ -7,7 +7,7 @@ namespace Files.Backend.Item.ItemProvider
 {
 
 
-    internal class SearchItemProvider : IFileItemProvider
+    /*internal class SearchItemProvider : IFileItemProvider
     {
         public string Query { get; set; } = string.Empty;
         public string Folder { get; set; } = string.Empty;
@@ -50,5 +50,5 @@ namespace Files.Backend.Item.ItemProvider
         private static async Task<FilesystemResult<BaseStorageFile>> GetStorageFileAsync(string path)
             => await FilesystemTasks.Wrap(() => StorageFileExtensions.DangerousGetFileFromPathAsync(path));
 
-    }
+    }*/
 }

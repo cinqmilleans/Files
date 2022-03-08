@@ -6,8 +6,6 @@ namespace Files.Backend.Item
     {
         string Path { get; }
         string Name { get; }
-
-        
     }
 
     public interface IItemViewModelFactory
@@ -22,7 +20,7 @@ namespace Files.Backend.Item
 
     public static class ItemExtension
     {
-        private static IItemViewModelFactory factory = new ItemViewModelFactory();
+        private static readonly IItemViewModelFactory factory = new ItemViewModelFactory();
 
         public static IItemViewModel ToViewModel(this IItem item) => factory.BuildItemViewModel(item);
 

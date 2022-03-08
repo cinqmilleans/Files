@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace Files.Backend.Item.Helper
+namespace Files.Backend.Item.Extension
 {
-    public static class PathHelper
+    public static class PathExtension
     {
         public static string GetRootPath(this string path)
         {
@@ -28,7 +28,7 @@ namespace Files.Backend.Item.Helper
                 return root;
             }
 
-            return string.IsNullOrEmpty(root) ? Path.GetPathRoot(path) : root;
+            return string.IsNullOrEmpty(root) ? (Path.GetPathRoot(path) ?? string.Empty) : root;
         }
 
         public static string GetParentPath(this string path)
@@ -44,7 +44,7 @@ namespace Files.Backend.Item.Helper
         }
 
         public static string TrimPath(this string path)
-            => path?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            => path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         public static string NormalizePath(this string path)
         {

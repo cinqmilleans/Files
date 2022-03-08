@@ -2,13 +2,13 @@
 using System.Runtime.InteropServices.ComTypes;
 using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
 
-namespace Files.Backend.Item.Helper
+namespace Files.Backend.Item.Extension
 {
     internal static class Win32FindDataExtension
     {
         private const long MAXDWORD = 4294967295;
 
-        public static DateTime ToDateTime(ref FILETIME fileTime)
+        public static DateTime ToDateTime(this ref FILETIME fileTime)
         {
             try
             {

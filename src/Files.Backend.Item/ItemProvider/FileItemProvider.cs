@@ -1,14 +1,6 @@
-﻿using Files.Shared;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
-using static Files.Backend.Item.Helper.Win32FindDataExtension;
-using IO = System.IO;
-
-namespace Files.Backend.Item
+﻿namespace Files.Backend.Item
 {
-    public interface IFileItemProvider : IItemProvider
+    /*public interface IFileItemProvider : IItemProvider
     {
         FileItemProviderOptions Option { get; }
 
@@ -117,5 +109,5 @@ namespace Files.Backend.Item
                 DateAccessed = ToDateTime(ref data.ftLastAccessTime),
             };
         }
-    }
+    }*/
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Files.Backend.Item.Helper
+namespace Files.Backend.Item.Extension
 {
-    public static class FtpHelper
+    public static class FtpPathExtension
     {
         public static bool IsFtpPath(this string path)
         {
@@ -20,7 +20,7 @@ namespace Files.Backend.Item.Helper
             path = path.Replace("\\", "/", StringComparison.Ordinal);
             var schemaIndex = path.IndexOf("://", StringComparison.Ordinal) + 3;
             var hostIndex = path.IndexOf("/", schemaIndex, StringComparison.Ordinal);
-            return hostIndex == -1 ? "/" : path.Substring(hostIndex);
+            return hostIndex == -1 ? "/" : path[hostIndex..];
         }
 
         public static bool CheckFtpPath(string ftpPath)
