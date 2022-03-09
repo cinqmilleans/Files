@@ -1,6 +1,13 @@
-﻿namespace Files.Backend.Item
+﻿using System.Collections.Generic;
+
+namespace Files.Backend.Item
 {
-    /*public class DriveManager
+    public interface IDriveManager
+    {
+        IReadOnlyList<IDriveItem> Drives { get; }
+    }
+
+    /*public class DriveManager : IDriveManager
     {
         private DeviceWatcher watcher;
 

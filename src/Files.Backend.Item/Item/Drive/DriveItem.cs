@@ -2,13 +2,15 @@
 using Files.Backend.Item.Extension;
 using Files.Shared;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 
 namespace Files.Backend.Item
 {
 
-    internal class DriveItem : ObservableObject, IDriveItem
+    internal class DriveItem : ObservableObject//, IDriveItem
     {
         private readonly StorageFolder root;
 
@@ -44,12 +46,12 @@ namespace Files.Backend.Item
             private set => SetProperty(ref totalSpace, value);
         }
 
-        public Uri? IconSource { get; set; }
-        public byte[]? IconImage { get; set; }
+        public Uri? ImageSource { get; set; }
+        public byte[]? ImageBytes { get; set; }
 
         public DriveItem(string name)
         {
-            var res = await FilesystemTasks.Wrap(() => StorageFolder.GetFolderFromPathAsync(name).AsTask());
+            /*var res = await FilesystemTasks.Wrap(() => StorageFolder.GetFolderFromPathAsync(name).AsTask());
             if (res == FileSystemStatusCode.Unauthorized)
             {
                 unauthorizedAccessDetected = true;
@@ -60,7 +62,7 @@ namespace Files.Backend.Item
             {
                 Logger.Warn($"{res.ErrorCode}: Attempting to add the device, {drive.Name}, failed at the StorageFolder initialization step. This device will be ignored.");
                 continue;
-            }
+            }*/
         }
         public DriveItem(StorageFolder root)
         {
@@ -86,6 +88,17 @@ namespace Files.Backend.Item
             }
         }
 
-        public async Task UpdateIconsAsync() => await Task.Yield();
+        public async Task UpdateImageAsync()
+        {
+            var thumbnailStream = await root.GetThumbnailAsync(ThumbnailMode.SingleItem, 40, ThumbnailOptions.UseCurrentScale);
+            if (thumbnailStream is not null)
+            {
+
+                //using var readStream = thumbnailStream.AsStreamForRead();
+                //ImageBytes = await readStream.ToByteArrayAsync();
+
+                //ImageBytes = await stream.ToByteArrayAsync();
+            }
+        }
     }
 }
