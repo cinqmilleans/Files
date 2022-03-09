@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Files.Backend.Item.Extension
 {
-    public static class PathExtension
+    internal static class PathExtension
     {
         public static string GetRootPath(this string path)
         {

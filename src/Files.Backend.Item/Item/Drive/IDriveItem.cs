@@ -1,5 +1,6 @@
 ﻿using Files.Shared;
 using System;
+using System.Threading.Tasks;
 
 namespace Files.Backend.Item
 {
@@ -11,7 +12,7 @@ namespace Files.Backend.Item
         ByteSize FreeSpace { get; }
         ByteSize TotalSpace { get; }
 
-        Uri? IconSource { get; }
-        byte[]? IconImage { get; }
+        Uri? ImageSource { get; }
+        byte[]? ImageBytes { get; }
     }
 }

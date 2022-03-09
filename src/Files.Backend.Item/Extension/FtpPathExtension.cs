@@ -2,7 +2,7 @@
 
 namespace Files.Backend.Item.Extension
 {
-    public static class FtpPathExtension
+    internal static class FtpPathExtension
     {
         public static bool IsFtpPath(this string path)
         {
