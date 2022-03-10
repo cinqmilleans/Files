@@ -497,13 +497,6 @@ namespace Files.Filesystem
 
         public void Dispose()
         {
-            if (deviceWatcher != null)
-            {
-                if (deviceWatcher.Status == DeviceWatcherStatus.Started || deviceWatcher.Status == DeviceWatcherStatus.EnumerationCompleted)
-                {
-                    deviceWatcher.Stop();
-                }
-            }
         }
 
         public void ResumeDeviceWatcher()
