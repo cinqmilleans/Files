@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Files.Backend.Item.Extension
+namespace Files.Backend.Item.Tools
 {
     internal static class StorageFolderExtension
     {

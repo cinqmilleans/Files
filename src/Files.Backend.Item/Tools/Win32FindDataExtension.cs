@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices.ComTypes;
-using static Files.Backend.Item.Helper.NativeFindStorageItemHelper;
+using static Files.Backend.Item.Tools.NativeFindStorageItemHelper;
 
-namespace Files.Backend.Item.Extension
+namespace Files.Backend.Item.Tools
 {
     internal static class Win32FindDataExtension
     {

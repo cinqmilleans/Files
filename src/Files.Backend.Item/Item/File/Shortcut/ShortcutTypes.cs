@@ -4,7 +4,7 @@
     {
         Unknown,
         Executable,
-        SymLink,
+        SymbolicLink,
         Url,
     }
 }

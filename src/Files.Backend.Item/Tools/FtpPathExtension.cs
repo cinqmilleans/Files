@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Files.Backend.Item.Extension
+namespace Files.Backend.Item.Tools
 {
     internal static class FtpPathExtension
     {

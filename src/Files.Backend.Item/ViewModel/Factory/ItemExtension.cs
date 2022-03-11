@@ -1,28 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Files.Backend.Item
 {
-    public interface IItemViewModel
-    {
-        string Path { get; }
-        string Name { get; }
-    }
-
-    public interface IItemViewModelFactory
-    {
-        IItemViewModel BuildItemViewModel(IItem item);
-    }
-
-    public class ItemViewModelFactory : IItemViewModelFactory
-    {
-        public IItemViewModel BuildItemViewModel(IItem item) => null;
-    }
-
     public static class ItemExtension
     {
         private static readonly IItemViewModelFactory factory = new ItemViewModelFactory();
 
         public static IItemViewModel ToViewModel(this IItem item) => factory.BuildItemViewModel(item);
+
+        public static IEnumerable<IItemViewModel> ToViewModel<TItem>(this IEnumerable<IItem> items)
+            => items.Select(item => factory.BuildItemViewModel(item));
 
         public static async IAsyncEnumerable<IItemViewModel> ToViewModel<TItem>(this IAsyncEnumerable<IItem> items)
         {

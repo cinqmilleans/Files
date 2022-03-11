@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
-namespace Files.Backend.Item.Extension
+namespace Files.Backend.Item.Tools
 {
-    internal static class ImageSourceExtension
+    internal static class ImageSourceConverter
     {
         public static async Task<byte[]> ToByteArrayAsync(this IInputStream stream)
         {
