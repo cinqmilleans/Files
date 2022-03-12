@@ -329,7 +329,7 @@ namespace Files.Filesystem
         {
             get => itemDateCreatedReal;
             set
-            {                
+            {
                 ItemDateCreated = value.GetFriendlyDateFromFormat(DateReturnFormat);
                 itemDateCreatedReal = value;
                 OnPropertyChanged(nameof(ItemDateCreated));
