@@ -1,4 +1,4 @@
-﻿namespace Files.Backend.Item
+﻿namespace Files.Backend
 {
     public interface ILocalizationService
     {
