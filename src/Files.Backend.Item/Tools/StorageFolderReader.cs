@@ -7,7 +7,7 @@ using Windows.Storage;
 
 namespace Files.Backend.Item.Tools
 {
-    internal static class StorageFolderExtension
+    internal static class StorageFolderReader
     {
         private static readonly TimeSpan timeout = TimeSpan.FromSeconds(5);
 

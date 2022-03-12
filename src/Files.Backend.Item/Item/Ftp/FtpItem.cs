@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Files.Backend.Item
 {
-    internal class FtpItem : IFileItem
+    internal class FtpItem : IFtpItem
     {
         public event PropertyChangedEventHandler PropertyChanged
         {

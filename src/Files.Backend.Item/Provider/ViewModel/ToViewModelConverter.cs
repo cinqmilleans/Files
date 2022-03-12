@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Files.Backend.Item
 {
-    public static class ItemExtension
+    public static class ToViewModelConverter
     {
         private static readonly IItemViewModelFactory factory = new ItemViewModelFactory();
 
