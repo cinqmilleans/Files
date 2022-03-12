@@ -1,6 +1,4 @@
-﻿using Files.Shared;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Files.Backend.Item
 {

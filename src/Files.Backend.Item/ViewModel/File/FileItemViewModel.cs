@@ -1,5 +1,4 @@
-﻿using Files.Shared;
-using System;
+﻿using System;
 
 namespace Files.Backend.Item
 {
@@ -27,11 +26,13 @@ namespace Files.Backend.Item
         public DateTime DateModified => item.DateModified;
         public DateTime DateAccessed => item.DateAccessed;
 
-        public bool IsShortcutItem { get; } = false;
+        public bool IsShortcutItem => item is IShortcutItem;
         public bool IsExecutableShortcutItem => Shortcut?.IsExecutable ?? false;
         public bool IsSymbolicLinkShortcutItem => Shortcut?.IsSymbolicLink ?? false;
         public bool IsUrlShortcutItem => Shortcut?.IsUrl ?? false;
-        public bool IsLibraryItem { get; } = false;
+        public bool IsLibraryItem => item is ILibraryItem;
+        public bool IsFtpItem => item is IFtpItem;
+        public bool IsZipItem => item is IZipItem;
 
         public IShortcutViewModel? Shortcut { get; }
         public ILibraryViewModel? Library { get; }
@@ -42,12 +43,10 @@ namespace Files.Backend.Item
 
             if (item is IShortcutItem shortcutItem)
             {
-                IsShortcutItem = true;
                 Shortcut = new ShortcutViewModel(shortcutItem.Shortcut);
             }
             if (item is ILibraryItem libraryItem)
             {
-                IsLibraryItem = true;
                 Library = new LibraryViewModel(libraryItem.Library);
             }
         }

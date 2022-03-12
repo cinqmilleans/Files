@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Files.Backend.Item.Tools;
-using Files.Shared;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;

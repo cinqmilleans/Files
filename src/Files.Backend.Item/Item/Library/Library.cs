@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Files.Backend.Item
@@ -8,9 +8,9 @@ namespace Files.Backend.Item
     {
         public string DefaultFolderPath { get; init; } = string.Empty;
 
-        public IReadOnlyCollection<string> FolderPaths { get; }
+        public ImmutableArray<string> FolderPaths { get; }
 
-        public Library(IEnumerable<string> folderPaths) => FolderPaths = new ReadOnlyCollection<string>(folderPaths.ToList());
-
+        public Library(IEnumerable<string> folderPaths)
+            => FolderPaths = ImmutableArray.Create(folderPaths.ToArray());
     }
 }

@@ -1,5 +1,4 @@
-﻿using Files.Shared;
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace Files.Backend.Item

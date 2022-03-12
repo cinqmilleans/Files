@@ -1,10 +1,7 @@
 ﻿using Files.Backend.Item.Tools;
-using Files.Shared;
 using FluentFTP;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Files.Backend.Item
 {

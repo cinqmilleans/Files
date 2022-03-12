@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
 
 namespace Files.Backend.Item
 {
@@ -7,13 +7,8 @@ namespace Files.Backend.Item
         private readonly ILibrary library;
 
         public string DefaultFolderPath => library.DefaultFolderPath;
+        public ImmutableArray<string> FolderPaths => library.FolderPaths;
 
-        public ReadOnlyObservableCollection<string> FolderPaths { get; }
-
-        public LibraryViewModel(ILibrary library)
-        {
-            this.library = library;
-            FolderPaths = new(new());
-        }
+        public LibraryViewModel(ILibrary library) => this.library = library;
     }
 }

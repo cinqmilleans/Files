@@ -7,7 +7,7 @@ namespace Files.Backend.Item
 {
     internal static class FileAttributeConverter
     {
-        private static readonly IDictionary<IO.FileAttributes, FileAttributes> attributes
+        private static readonly IImmutableDictionary<IO.FileAttributes, FileAttributes> attributes
             = new Dictionary<IO.FileAttributes, FileAttributes>
             {
                 [IO.FileAttributes.Archive] = FileAttributes.Archive,

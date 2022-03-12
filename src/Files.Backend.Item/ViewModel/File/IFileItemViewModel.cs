@@ -1,34 +1,35 @@
-﻿using Files.Shared;
-using System;
+﻿using System;
 
 namespace Files.Backend.Item
 {
     public interface IFileItemViewModel : IItemViewModel
     {
-        bool IsArchive => false;
-        bool IsCompressed => false;
-        bool IsDevice => false;
-        bool IsDirectory => false;
-        bool IsEncrypted => false;
-        bool IsHidden => false;
-        bool IsOffline => false;
-        bool IsReadOnly => false;
-        bool IsSystem => false;
-        bool IsTemporary => false;
+        bool IsArchive { get; }
+        bool IsCompressed { get; }
+        bool IsDevice { get; }
+        bool IsDirectory { get; }
+        bool IsEncrypted { get; }
+        bool IsHidden { get; }
+        bool IsOffline { get; }
+        bool IsReadOnly { get; }
+        bool IsSystem { get; }
+        bool IsTemporary { get; }
 
-        bool IsShortcutItem => false;
-        bool IsExecutableShortcutItem => false;
-        bool IsSymbolicLinkShortcutItem => false;
-        bool IsUrlShortcutItem => false;
-        bool IsLibraryItem => false;
+        bool IsShortcutItem { get; }
+        bool IsExecutableShortcutItem { get; }
+        bool IsSymbolicLinkShortcutItem { get; }
+        bool IsUrlShortcutItem { get; }
+        bool IsLibraryItem { get; }
+        bool IsFtpItem { get; }
+        bool IsZipItem { get; }
 
-        ByteSize Size => ByteSize.Zero;
+        ByteSize Size { get; }
 
-        DateTime DateCreated => DateTime.MinValue;
-        DateTime DateModified => DateTime.MinValue;
-        DateTime DateAccessed => DateTime.MinValue;
+        DateTime DateCreated { get; }
+        DateTime DateModified { get; }
+        DateTime DateAccessed { get; }
 
-        IShortcutViewModel? Shortcut => null;
-        ILibraryViewModel? Library => null;
+        IShortcutViewModel? Shortcut { get; }
+        ILibraryViewModel? Library { get; }
     }
 }

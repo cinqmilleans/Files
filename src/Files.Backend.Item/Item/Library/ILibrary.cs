@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace Files.Backend.Item
 {
     public interface ILibrary
     {
         string DefaultFolderPath { get; }
-        IReadOnlyCollection<string> FolderPaths { get; }
+        ImmutableArray<string> FolderPaths { get; }
     }
 }
