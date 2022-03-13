@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;
@@ -100,41 +102,37 @@ namespace Files.Backend.Item
             Debug.WriteLine("DriveWatcher_EnumerationCompleted");
         }
 
-        /*private async Task UpdateDrivesAsync()
+        private async Task<bool> UpdateDrivesAsync()
         {
-            // Flag set if any drive throws UnauthorizedAccessException
             bool unauthorizedAccessDetected = false;
-            var list = DriveInfo.GetDrives().ToList();
-            foreach (var drive in list)
+            var driveInfos = DriveInfo.GetDrives();
+
+            foreach (var info in driveInfos)
             {
-                var res = await FilesystemTasks.Wrap(() => StorageFolder.GetFolderFromPathAsync(drive.Name).AsTask());
-                if (res == FileSystemStatusCode.Unauthorized)
+                try
                 {
-                    unauthorizedAccessDetected = true;
-                    Logger.Warn($"{res.ErrorCode}: Attempting to add the device, {drive.Name}, failed at the StorageFolder initialization step. This device will be ignored.");
-                    continue;
-                }
-                else if (!res)
-                {
-                    Logger.Warn($"{res.ErrorCode}: Attempting to add the device, {drive.Name}, failed at the StorageFolder initialization step. This device will be ignored.");
-                    continue;
-                }
-                using var thumbnail = (StorageItemThumbnail)await FilesystemTasks.Wrap(() => res.Result.GetThumbnailAsync(ThumbnailMode.SingleItem, 40, ThumbnailOptions.UseCurrentScale).AsTask());
-                var type = GetDriveType(drive);
-                var driveItem = await DriveItem.CreateFromPropertiesAsync(res.Result, drive.Name.TrimEnd('\\'), type, thumbnail);
-                lock (drivesList)
-                {
-                    // If drive already in list, skip.
-                    if (drivesList.Any(x => x.Path == drive.Name))
+                    var root = await StorageFolder.GetFolderFromPathAsync(info.Name);
+                    var item = new DriveItem(root, info.Name);
+
+                    lock (drives)
                     {
-                        continue;
+                        if (drives.Any(x => x.Path == info.Name))
+                        {
+                            continue;
+                        }
+                        logger?.Info($"Drive added: {item.Path}, {item.DriveType}");
+                        drives.Add(item);
                     }
-                    Logger.Info($"Drive added: {driveItem.Path}, {driveItem.Type}");
-                    drivesList.Add(driveItem);
+                }
+                catch (ItemException ex)
+                {
+                    unauthorizedAccessDetected &= ex.Error is ItemErrors.Unauthorized;
+
+                    logger?.Warn($"{ex.Error}: Attempting to add the device, {info.Name}, "
+                        + "failed at the StorageFolder initialization step. This device will be ignored.");
                 }
             }
             return unauthorizedAccessDetected;
         }
-    }*/
     }
 }
