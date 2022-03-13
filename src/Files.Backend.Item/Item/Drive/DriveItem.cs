@@ -15,7 +15,6 @@ namespace Files.Backend.Item
 
         public string DeviceID { get; }
 
-
         private string name = string.Empty;
         public string Name
         {
