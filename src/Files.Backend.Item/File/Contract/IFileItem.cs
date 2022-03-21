@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Files.Backend.Item
 {
@@ -6,10 +7,15 @@ namespace Files.Backend.Item
     {
         FileAttributes FileAttribute { get; }
 
+        string Extension { get; }
+
         ByteSize Size { get; }
 
         DateTime DateCreated { get; }
         DateTime DateModified { get; }
         DateTime DateAccessed { get; }
+
+        BitmapImage? MainImage { get; }
+        BitmapImage? OverlayImage { get; }
     }
 }

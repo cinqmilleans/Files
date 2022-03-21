@@ -4,6 +4,8 @@ namespace Files.Backend.Item
 {
     public interface IFileItemViewModel : IItemViewModel
     {
+        string Extension { get; }
+
         bool IsArchive { get; }
         bool IsCompressed { get; }
         bool IsDevice { get; }
@@ -14,12 +16,13 @@ namespace Files.Backend.Item
         bool IsReadOnly { get; }
         bool IsSystem { get; }
         bool IsTemporary { get; }
+        bool IsExecutable { get; }
 
         bool IsShortcutItem { get; }
-        bool IsExecutableShortcutItem { get; }
         bool IsSymbolicLinkShortcutItem { get; }
         bool IsUrlShortcutItem { get; }
         bool IsLibraryItem { get; }
+        bool IsRecycleBinItem { get; }
         bool IsFtpItem { get; }
         bool IsZipItem { get; }
 

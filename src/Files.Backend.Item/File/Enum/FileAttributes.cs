@@ -16,5 +16,6 @@ namespace Files.Backend.Item
         ReadOnly = 0x0200,
         System = 0x0400,
         Temporary = 0x1000,
+        Executable = 0x2000,
     }
 }

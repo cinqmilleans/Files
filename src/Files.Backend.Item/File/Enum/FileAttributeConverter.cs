@@ -22,10 +22,17 @@ namespace Files.Backend.Item
                 [IO.FileAttributes.Temporary] = FileAttributes.Temporary,
             }.ToImmutableDictionary();
 
-        public static FileAttributes ToFileAttribute(this IO.FileAttributes attribute)
-            => attributes
+        public static FileAttributes ToFileAttribute(this IO.FileAttributes attribute, bool isExecutable = false)
+        {
+            var result = attributes
                 .Where(fileAttribute => attribute.HasFlag(fileAttribute.Key))
                 .Select(fileAttribute => fileAttribute.Value)
                 .Aggregate((result, attribute) => result | attribute);
+            if (isExecutable)
+            {
+                result |= FileAttributes.Executable;
+            }
+            return result;
+        }
     }
 }
