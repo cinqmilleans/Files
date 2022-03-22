@@ -1,23 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Files.Backend.Item.Tools;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using Windows.UI.Xaml.Media.Imaging;
-using IO = System.IO;
-using static Files.Backend.Item.Tools.NativeFindStorageItemHelper;
 using System.IO;
-using Files.Backend.Item.Tools;
+using System.Linq;
+using System.Threading;
+using Windows.UI.Xaml.Media.Imaging;
+using static Files.Backend.Item.Tools.NativeFindStorageItemHelper;
+using IO = System.IO;
 
 namespace Files.Backend.Item
 {
     internal class FileItemFactory
     {
+        private readonly CancellationToken cancellationToken;
+
+        private static readonly IDisplayNameCache displayNameCache = DisplayNameCache.Instance;
+
+        public FileItemFactory(CancellationToken cancellationToken)
+            => this.cancellationToken = cancellationToken;
+
         public IFileItem Build(string path, WIN32_FIND_DATA data)
         {
             try
             {
-                return BuildFileItem(path, data);
+                return GetFile(path, data);
             }
             catch (Exception ex)
             {
@@ -25,21 +33,8 @@ namespace Files.Backend.Item
             }
         }
 
-        private IFileItem BuildFileItem(string path, WIN32_FIND_DATA data)
-        {
-            Item item = new Item
-            {
-                Path = path,
-                Name = data.cFileName,
-                FileAttribute = ((IO.FileAttributes)data.dwFileAttributes).ToFileAttribute(),
-                Size = data.GetSize(),
-                DateCreated = data.ftCreationTime.ToDateTime(),
-                DateModified = data.ftLastWriteTime.ToDateTime(),
-                DateAccessed = data.ftLastAccessTime.ToDateTime(),
-            };
-
-            return new FileItem(item);
-        }
+        private IFileItem GetFolder(string rootPath, WIN32_FIND_DATA data) => new FolderItem(rootPath, data);
+        private IFileItem GetFile(string rootPath, WIN32_FIND_DATA data) => new FileItem(rootPath, data);
 
         private static DateTime Clean(DateTime date)
             => date < DateTime.FromFileTimeUtc(0) ? DateTime.MinValue : date;
@@ -52,26 +47,32 @@ namespace Files.Backend.Item
             _ => FileItemErrors.Unknown,
         };
 
-        private class Item
+        private class FolderItem : ObservableObject, IFileItem
         {
-            public string Path = string.Empty;
-            public string Name = string.Empty;
-            public string Extension = string.Empty;
+            public string Path { get; }
+            public string Name { get; }
+            public string Extension => string.Empty;
 
-            public FileAttributes FileAttribute = FileAttributes.None;
+            public FileAttributes FileAttribute { get; }
 
-            public ByteSize Size = ByteSize.Zero;
+            public ByteSize Size => ByteSize.Zero;
 
-            public DateTime DateCreated;
-            public DateTime DateModified;
-            public DateTime DateAccessed;
-            public DateTime DateDeleted;
+            public DateTime DateCreated { get; }
+            public DateTime DateModified { get; }
+            public DateTime DateAccessed { get; }
 
-            public IShortcut? Shortcut;
-            public ILibrary? Library;
+            public BitmapImage? MainImage => null;
+            public BitmapImage? OverlayImage => null;
 
-            public BitmapImage? MainImage;
-            public BitmapImage? OverlayImage;
+            public FolderItem(string rootPath, WIN32_FIND_DATA data)
+            {
+                Path = rootPath.CombineNameToPath(data.cFileName);
+                Name = displayNameCache.ReadDisplayName(Path) ?? data.cFileName;
+                FileAttribute = ((IO.FileAttributes)data.dwFileAttributes).ToFileAttribute();
+                DateCreated = data.ftCreationTime.ToDateTime();
+                DateModified = data.ftLastWriteTime.ToDateTime();
+                DateAccessed = data.ftLastAccessTime.ToDateTime();
+            }
         }
 
         private class FileItem : ObservableObject, IFileItem
@@ -102,48 +103,43 @@ namespace Files.Backend.Item
                 internal set => SetProperty(ref overlayImage, value);
             }
 
-            public FileItem(Item item)
+            public FileItem(string rootPath, WIN32_FIND_DATA data)
             {
-                Path = item.Path;
-                Name = item.Name;
-                Extension = item.Extension;
-                FileAttribute = item.FileAttribute;
-                Size = item.Size;
-                DateCreated = item.DateCreated;
-                DateModified = item.DateModified;
-                DateAccessed = item.DateAccessed;
-                MainImage = item.MainImage;
-                OverlayImage = item.OverlayImage;
+                Path = rootPath.CombineNameToPath(data.cFileName);
+                Name = displayNameCache.ReadDisplayName(Path) ?? data.cFileName;
+                Extension = IO.Path.GetExtension(Path);
+                FileAttribute = ((IO.FileAttributes)data.dwFileAttributes).ToFileAttribute();
+                Size = data.GetSize();
+                DateCreated = data.ftCreationTime.ToDateTime();
+                DateModified = data.ftLastWriteTime.ToDateTime();
+                DateAccessed = data.ftLastAccessTime.ToDateTime();
             }
         }
 
         private class ShortcutItem : FileItem, IShortcutItem
         {
-            public IShortcut Shortcut { get; }
+            public IShortcut Shortcut { get; } = new Shortcut();
 
-            public ShortcutItem(Item item) : base(item)
-                => Shortcut = item.Shortcut ?? new Shortcut();
+            public ShortcutItem(string rootPath, WIN32_FIND_DATA data) : base(rootPath, data) {}
         }
 
         private class LibraryItem : FileItem, ILibraryItem
         {
-            public ILibrary Library { get; }
+            public ILibrary Library { get; } = new Library(Enumerable.Empty<string>());
 
-            public LibraryItem(Item item) : base(item)
-                => Library = item.Library ?? new Library(Enumerable.Empty<string>());
+            public LibraryItem(string rootPath, WIN32_FIND_DATA data) : base(rootPath, data) {}
         }
 
         private class RecycleBinItem : FileItem, IRecycleBinItem
         {
             public DateTime DateDeleted { get; }
 
-            public RecycleBinItem(Item item) : base(item)
-                => DateDeleted = item.DateDeleted
+            public RecycleBinItem(string rootPath, WIN32_FIND_DATA data) : base(rootPath, data) {}
         }
 
         private class FtpItem : FileItem, IFtpItem
         {
-            public FtpItem(Item item) : base(item) {}
+            public FtpItem(string rootPath, WIN32_FIND_DATA data) : base(rootPath, data) {}
         }
 
         private class Shortcut : IShortcut
