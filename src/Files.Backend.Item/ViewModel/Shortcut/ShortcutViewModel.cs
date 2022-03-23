@@ -4,7 +4,6 @@
     {
         private readonly IShortcut shortcut;
 
-        public bool IsExecutable => shortcut.ShortcutType is ShortcutTypes.Executable;
         public bool IsSymbolicLink => shortcut.ShortcutType is ShortcutTypes.SymbolicLink;
         public bool IsUrl => shortcut.ShortcutType is ShortcutTypes.Url;
 

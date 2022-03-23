@@ -6,7 +6,7 @@ using IO = System.IO;
 
 namespace Files.Backend.Item
 {
-    public class PathFileItemProvider : IFileItemProvider
+    /*public class PathFileItemProvider : IFileItemProvider
     {
         public string ParentPath { get; set; } = string.Empty;
 
@@ -50,6 +50,6 @@ namespace Files.Backend.Item
                 Shortcut = new Shortcut { },
             };
         }
-    }
+    }*/
 }
 

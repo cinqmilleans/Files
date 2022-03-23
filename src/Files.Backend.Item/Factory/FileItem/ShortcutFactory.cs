@@ -10,7 +10,7 @@ using Files.Backend.Item.Tools;
 
 namespace Files.Backend.Item
 {
-    internal class ShortcutFactory
+    /*internal class ShortcutFactory
     {
         public IShortcut? Build (string path, WIN32_FIND_DATA data)
         {
@@ -47,5 +47,5 @@ namespace Files.Backend.Item
             ShortcutTypes.SymbolicLink => NativeFileOperationsHelper.ParseSymLink(path),
             _ => string.Empty,
         };
-    }
+    }*/
 }

@@ -2,7 +2,6 @@
 {
     public interface IShortcutViewModel
     {
-        bool IsExecutable { get; }
         bool IsSymbolicLink { get; }
         bool IsUrl { get; }
 
