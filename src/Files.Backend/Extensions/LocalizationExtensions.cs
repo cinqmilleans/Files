@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Services;
+using System;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -18,6 +20,12 @@ namespace Files.Backend.Extensions
             }
 
             return localizationService.LocalizeFromResourceKey(resourceKey);
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+        {
+            foreach (T value in collection)
+                action(value);
         }
     }
 }
