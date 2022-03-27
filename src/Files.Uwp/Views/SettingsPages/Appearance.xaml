@@ -69,11 +69,11 @@
                     Height="32"
                     Padding="8,4,8,4"
                     VerticalAlignment="Bottom"
-                    AutomationProperties.Name="{helpers:ResourceString Name=SettingsThemesLearnMoreButton/AutomationProperties.Name}"
+                    AutomationProperties.Name="{helpers:ResourceString Name=SettingsThemesLearnMoreButton/AutomationProperties/Name}"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     Click="ThemesLearnMoreButton_Click"
-                    ToolTipService.ToolTip="{helpers:ResourceString Name=SettingsThemesLearnMoreButton/ToolTipService.ToolTip}">
+                    ToolTipService.ToolTip="{helpers:ResourceString Name=SettingsThemesLearnMoreButton/ToolTipService/ToolTip}">
                     <FontIcon FontSize="14" Glyph="&#xE946;" />
                 </Button>
             </local:SettingsBlockControl>
@@ -91,7 +91,7 @@
                                 <SymbolIcon Symbol="Favorite" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowFavoritesSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowFavoritesSectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowFavoritesSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -104,7 +104,7 @@
                                 <SymbolIcon Symbol="Pin" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsPinRecycleBinSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsPinRecycleBinSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding PinRecycleBinToSideBar, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -116,7 +116,7 @@
                                 <SymbolIcon Symbol="Library" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowLibrarySectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowLibrarySectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowLibrarySection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -128,7 +128,7 @@
                                 <FontIcon Glyph="&#xEDA2;" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowDrivesSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowDrivesSectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowDrivesSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -140,7 +140,7 @@
                                 <FontIcon Glyph="&#xE753;" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowCloudDrivesSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowCloudDrivesSectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowCloudDrivesSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -152,7 +152,7 @@
                                 <FontIcon Glyph="&#xE968;" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowNetworkDrivesSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowNetworkDrivesSectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowNetworkDrivesSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -164,7 +164,7 @@
                                 <FontIcon Glyph="&#xEC7A;" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowWslSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowWslSectionSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowWslSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -176,7 +176,7 @@
                                 <FontIcon Glyph="&#xE1CB;" />
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowFileTagsSectionSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowFileTagsSectionSwitch/AutomationProperties/Name}"
                                 IsEnabled="{Binding AreFileTagsEnabled}"
                                 IsOn="{Binding ShowFileTagsSection, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />

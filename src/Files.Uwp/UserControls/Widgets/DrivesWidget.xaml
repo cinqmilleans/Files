@@ -27,10 +27,10 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                AutomationProperties.Name="{helpers:ResourceString Name=DrivesWidgetMoreOptionsButton/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=DrivesWidgetMoreOptionsButton/AutomationProperties/Name}"
                 Background="Transparent"
                 BorderBrush="Transparent"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=DrivesWidgetMoreOptionsButton/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=DrivesWidgetMoreOptionsButton/ToolTipService/ToolTip}">
 
                 <FontIcon
                     HorizontalAlignment="Center"
@@ -203,12 +203,12 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     x:Load="{x:Bind ShowStorageSense}"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=DrivesWidgetOpenStorageSenseButton/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=DrivesWidgetOpenStorageSenseButton/AutomationProperties/Name}"
                                     Background="Transparent"
                                     BorderBrush="Transparent"
                                     Click="GoToStorageSense_Click"
                                     Tag="{x:Bind Path}"
-                                    ToolTipService.ToolTip="{helpers:ResourceString Name=DrivesWidgetOpenStorageSenseButton/ToolTipService.ToolTip}">
+                                    ToolTipService.ToolTip="{helpers:ResourceString Name=DrivesWidgetOpenStorageSenseButton/ToolTipService/ToolTip}">
                                     <FontIcon
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"

@@ -475,7 +475,7 @@
                             Grid.Column="1"
                             x:Load="{x:Bind ViewModel.IsFolder, Mode=OneWay}"
                             Command="{x:Bind ViewModel.ReplaceChildPermissionsCommand}"
-                            ToolTipService.ToolTip="{helpers:ResourceString Name=SecurityAdvancedReplaceChildPermissions2/ToolTipService.ToolTip}"
+                            ToolTipService.ToolTip="{helpers:ResourceString Name=SecurityAdvancedReplaceChildPermissions2/ToolTipService/ToolTip}"
                             Visibility="Collapsed">
                             <TextBlock
                                 Text="{helpers:ResourceString Name=SecurityAdvancedReplaceChildPermissions/Text}"

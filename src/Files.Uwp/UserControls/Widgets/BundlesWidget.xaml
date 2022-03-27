@@ -35,10 +35,10 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                AutomationProperties.Name="{helpers:ResourceString Name=BundlesWidgetMoreOptionsButton/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=BundlesWidgetMoreOptionsButton/AutomationProperties/Name}"
                 Background="Transparent"
                 BorderBrush="Transparent"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=BundlesWidgetMoreOptionsButton/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=BundlesWidgetMoreOptionsButton/ToolTipService/ToolTip}">
 
                 <FontIcon
                     HorizontalAlignment="Center"

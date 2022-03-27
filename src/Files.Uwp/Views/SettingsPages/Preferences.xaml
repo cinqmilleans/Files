@@ -40,7 +40,7 @@
                 </local:SettingsBlockControl.Icon>
                 <ComboBox
                     HorizontalAlignment="Left"
-                    AutomationProperties.Name="{helpers:ResourceString Name=SettingsPreferencesAppLanguageComboBox/AutomationProperties.Name}"
+                    AutomationProperties.Name="{helpers:ResourceString Name=SettingsPreferencesAppLanguageComboBox/AutomationProperties/Name}"
                     ItemsSource="{Binding DefaultLanguages}"
                     SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
@@ -70,7 +70,7 @@
                 </local:SettingsBlockControl.Icon>
                 <ComboBox
                     x:Name="TerminalApplicationsComboBox"
-                    AutomationProperties.Name="{helpers:ResourceString Name=TerminalApplicationsComboBox/AutomationProperties.Name}"
+                    AutomationProperties.Name="{helpers:ResourceString Name=TerminalApplicationsComboBox/AutomationProperties/Name}"
                     ItemsSource="{Binding Terminals, Mode=OneWay}"
                     SelectedItem="{Binding SelectedTerminal, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
@@ -115,7 +115,7 @@
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
                                 x:Name="ShowConfirmDeleteDialogSwitch"
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowConfirmDeleteDialogToggleSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsShowConfirmDeleteDialogToggleSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding ShowConfirmDeleteDialog, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>
@@ -128,7 +128,7 @@
                             </local:SettingsBlockControl.Icon>
                             <ToggleSwitch
                                 x:Name="OpenFoldersNewTab"
-                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsOpenFoldersNewTabToggleSwitch/AutomationProperties.Name}"
+                                AutomationProperties.Name="{helpers:ResourceString Name=SettingsOpenFoldersNewTabToggleSwitch/AutomationProperties/Name}"
                                 IsOn="{Binding OpenFoldersNewTab, Mode=TwoWay}"
                                 Style="{StaticResource RightAlignedToggleSwitchStyle}" />
                         </local:SettingsBlockControl>

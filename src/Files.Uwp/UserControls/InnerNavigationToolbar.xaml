@@ -349,7 +349,7 @@
                 AutomationProperties.Name="Manage widgets"
                 Label="{helpers:ResourceString Name=NavToolbarWidgets/Label}"
                 LabelPosition="Collapsed"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarWidgets/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarWidgets/ToolTipService/ToolTip}">
                 <AppBarButton.Icon>
                     <FontIcon FontSize="10" Glyph="&#xF246;" />
                 </AppBarButton.Icon>
@@ -381,10 +381,10 @@
                 MinWidth="40"
                 x:Load="{x:Bind ViewModel.InstanceViewModel.IsPageTypeNotHome, Mode=OneWay}"
                 AccessKey="S"
-                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSelectionOptions/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSelectionOptions/AutomationProperties/Name}"
                 Label="{helpers:ResourceString Name=NavToolbarSelectionOptions/Label}"
                 LabelPosition="Collapsed"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSelectionOptions/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSelectionOptions/ToolTipService/ToolTip}">
                 <AppBarButton.Flyout>
                     <MenuFlyout Placement="Bottom">
                         <ToggleMenuFlyoutItem
@@ -436,10 +436,10 @@
                 MinWidth="40"
                 x:Load="{x:Bind ViewModel.InstanceViewModel.IsPageTypeNotHome, Mode=OneWay}"
                 AccessKey="A"
-                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSortOptionsButton/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSortOptionsButton/AutomationProperties/Name}"
                 Label="{helpers:ResourceString Name=NavToolbarSortOptionsButton/Label}"
                 LabelPosition="Collapsed"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSortOptionsButton/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSortOptionsButton/ToolTipService/ToolTip}">
                 <AppBarButton.Content>
                     <local:ColoredIcon BaseLayerGlyph="&#xF029;" OverlayLayerGlyph="&#xF02A;" />
                 </AppBarButton.Content>
@@ -516,10 +516,10 @@
                 MinWidth="40"
                 x:Load="{x:Bind ViewModel.InstanceViewModel.IsPageTypeNotHome, Mode=OneWay}"
                 AccessKey="L"
-                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarLayoutOptionsButton/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarLayoutOptionsButton/AutomationProperties/Name}"
                 Label="{helpers:ResourceString Name=NavToolbarLayoutOptionsButton/Label}"
                 LabelPosition="Collapsed"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLayoutOptionsButton/ToolTipService.ToolTip}">
+                ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLayoutOptionsButton/ToolTipService/ToolTip}">
                 <AppBarButton.Icon>
                     <FontIcon FontSize="10" Glyph="&#xE152;" />
                 </AppBarButton.Icon>
@@ -584,7 +584,7 @@
                                     CornerRadius="{StaticResource ControlCornerRadius}"
                                     IsChecked="{x:Bind ViewModel.InstanceViewModel.FolderSettings.LayoutModeInformation, Converter={StaticResource LayoutModeConverter}, Mode=OneWay, ConverterParameter=TilesInfo}"
                                     Style="{StaticResource DefaultToggleButtonStyle}"
-                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarTiles/ToolTipService.ToolTip}">
+                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarTiles/ToolTipService/ToolTip}">
                                     <FontIcon FontSize="16" Glyph="&#xE15C;" />
                                 </RadioButton>
 
@@ -605,13 +605,13 @@
                                     Padding="0"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSmallIcons/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSmallIcons/AutomationProperties/Name}"
                                     Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewSmallCommand, Mode=OneWay}"
                                     CommandParameter="{xh:SystemTypeToXaml Bool=True}"
                                     CornerRadius="{StaticResource ControlCornerRadius}"
                                     IsChecked="{x:Bind ViewModel.InstanceViewModel.FolderSettings.LayoutModeInformation, Converter={StaticResource LayoutModeConverter}, Mode=OneWay, ConverterParameter=SmallGridInfo}"
                                     Style="{StaticResource DefaultToggleButtonStyle}"
-                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSmallIcons/ToolTipService.ToolTip}">
+                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSmallIcons/ToolTipService/ToolTip}">
                                     <FontIcon FontSize="16" Glyph="&#xE80A;" />
                                 </RadioButton>
 
@@ -641,14 +641,14 @@
                                     Padding="0"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarMediumIcons/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarMediumIcons/AutomationProperties/Name}"
                                     Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewMediumCommand, Mode=OneWay}"
                                     CommandParameter="{xh:SystemTypeToXaml Bool=True}"
                                     CornerRadius="{StaticResource ControlCornerRadius}"
                                     Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                     IsChecked="{x:Bind ViewModel.InstanceViewModel.FolderSettings.LayoutModeInformation, Converter={StaticResource LayoutModeConverter}, Mode=OneWay, ConverterParameter=MediumGridInfo}"
                                     Style="{StaticResource DefaultToggleButtonStyle}"
-                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarMediumIcons/ToolTipService.ToolTip}">
+                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarMediumIcons/ToolTipService/ToolTip}">
                                     <FontIcon FontSize="16" Glyph="&#xF0E2;" />
                                 </RadioButton>
 
@@ -669,13 +669,13 @@
                                     Padding="0"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarLargeIcons/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarLargeIcons/AutomationProperties/Name}"
                                     Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewLargeCommand, Mode=OneWay}"
                                     CommandParameter="{xh:SystemTypeToXaml Bool=True}"
                                     CornerRadius="{StaticResource ControlCornerRadius}"
                                     IsChecked="{x:Bind ViewModel.InstanceViewModel.FolderSettings.LayoutModeInformation, Converter={StaticResource LayoutModeConverter}, Mode=OneWay, ConverterParameter=LargeGridInfo}"
                                     Style="{StaticResource DefaultToggleButtonStyle}"
-                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLargeIcons/ToolTipService.ToolTip}">
+                                    ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLargeIcons/ToolTipService/ToolTip}">
                                     <FontIcon FontSize="16" Glyph="&#xE739;" />
                                 </RadioButton>
 
@@ -742,7 +742,7 @@
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarShowHiddenItems/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarShowHiddenItems/AutomationProperties/Name}"
                                     IsOn="{x:Bind UserSettingsService.PreferencesSettingsService.AreHiddenItemsVisible, Mode=TwoWay}"
                                     Style="{StaticResource RightAlignedToggleSwitchStyle}" />
 
@@ -755,7 +755,7 @@
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarShowFileExtensions/AutomationProperties.Name}"
+                                    AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarShowFileExtensions/AutomationProperties/Name}"
                                     IsOn="{x:Bind UserSettingsService.PreferencesSettingsService.ShowFileExtensions, Mode=TwoWay}"
                                     Rotation="1"
                                     Style="{StaticResource RightAlignedToggleSwitchStyle}" />
@@ -769,12 +769,12 @@
                 Width="Auto"
                 MinWidth="40"
                 AccessKey="P"
-                AutomationProperties.Name="{helpers:ResourceString Name=PreviewPaneToggle/AutomationProperties.Name}"
+                AutomationProperties.Name="{helpers:ResourceString Name=PreviewPaneToggle/AutomationProperties/Name}"
                 IsChecked="{x:Bind MainViewModel.PaneViewModel.IsPreviewSelected, Mode=TwoWay}"
                 IsEnabled="{x:Bind ShowPreviewPaneButton, Mode=OneWay}"
                 Label="{helpers:ResourceString Name=PreviewPaneToggle/Label}"
                 LabelPosition="Collapsed"
-                ToolTipService.ToolTip="{helpers:ResourceString Name=PreviewPaneToggle/AutomationProperties.Name}"
+                ToolTipService.ToolTip="{helpers:ResourceString Name=PreviewPaneToggle/AutomationProperties/Name}"
                 Visibility="{x:Bind ShowPreviewPaneButton, Mode=OneWay}">
                 <AppBarToggleButton.Content>
                     <local:ColoredIcon BaseLayerGlyph="&#xF03b;" OverlayLayerGlyph="&#xF03c;" />
