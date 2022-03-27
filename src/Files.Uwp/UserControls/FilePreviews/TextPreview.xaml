@@ -12,7 +12,7 @@
         <ScrollViewer>
             <RichTextBlock IsTextSelectionEnabled="True">
                 <Paragraph>
-                    <Run Text="{x:Bind ViewModel.TextValue, Mode=OneWay}" />
+                    <Run Text="{x:Bind ViewModel/TextValue, Mode=OneWay}" />
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>

@@ -495,9 +495,9 @@
 
             <muxc:TeachingTip
                 x:Name="FileNameTeachingTip"
-                CloseButtonContent="{helpers:ResourceString Name=FileNameTeachingTip.CloseButtonContent}"
+                CloseButtonContent="{helpers:ResourceString Name=FileNameTeachingTip/CloseButtonContent}"
                 PreferredPlacement="Auto"
-                Subtitle="{helpers:ResourceString Name=FileNameTeachingTip.Subtitle}"
+                Subtitle="{helpers:ResourceString Name=FileNameTeachingTip/Subtitle}"
                 Visibility="Collapsed" />
 
             <SemanticZoom
@@ -535,7 +535,7 @@
                                     <DataTemplate x:DataType="helpers:IGroupedCollectionHeader">
                                         <Grid
                                             Padding="0,0,0,4"
-                                            AutomationProperties.Name="{x:Bind Model.Text}"
+                                            AutomationProperties.Name="{x:Bind Model/Text}"
                                             ColumnSpacing="8"
                                             RowSpacing="8">
                                             <Grid.ColumnDefinitions>
@@ -553,7 +553,7 @@
                                                 VerticalAlignment="Center"
                                                 FontSize="16"
                                                 Style="{StaticResource SubtitleTextBlockStyle}"
-                                                Text="{x:Bind Model.Text, Mode=OneWay}" />
+                                                Text="{x:Bind Model/Text, Mode=OneWay}" />
 
                                             <TextBlock
                                                 Grid.Row="0"
@@ -607,12 +607,12 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     HorizontalTextAlignment="Center"
-                                    Text="{helpers:ResourceString Name=SearchUnindexedItemsLabel.Text}" />
+                                    Text="{helpers:ResourceString Name=SearchUnindexedItemsLabel/Text}" />
                                 <HyperlinkButton
                                     x:Name="SearchUnindexedItemsButton"
                                     HorizontalAlignment="Center"
                                     Command="{x:Bind CommandsViewModel.SearchUnindexedItems}"
-                                    Content="{helpers:ResourceString Name=SearchUnindexedItemsButton.Content}" />
+                                    Content="{helpers:ResourceString Name=SearchUnindexedItemsButton/Content}" />
                             </StackPanel>
                         </controls:AdaptiveGridView.Footer>
                         <controls:AdaptiveGridView.ItemContainerStyle>
@@ -636,7 +636,7 @@
                                 <Grid
                                     Padding="8"
                                     VerticalAlignment="Center"
-                                    AutomationProperties.Name="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model.Text, Mode=OneWay}"
+                                    AutomationProperties.Name="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model/Text, Mode=OneWay}"
                                     ColumnSpacing="12"
                                     RowSpacing="4">
                                     <Grid.ColumnDefinitions>
@@ -673,7 +673,7 @@
                                         VerticalAlignment="Center"
                                         FontSize="16"
                                         Style="{StaticResource SubtitleTextBlockStyle}"
-                                        Text="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model.Text, Mode=OneWay}" />
+                                        Text="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model/Text, Mode=OneWay}" />
 
                                     <TextBlock
                                         Grid.Row="0"

@@ -143,9 +143,9 @@
             <muxc:TeachingTip
                 x:Name="FileNameTeachingTip"
                 Grid.RowSpan="2"
-                CloseButtonContent="{helpers:ResourceString Name=FileNameTeachingTip.CloseButtonContent}"
+                CloseButtonContent="{helpers:ResourceString Name=FileNameTeachingTip/CloseButtonContent}"
                 PreferredPlacement="Auto"
-                Subtitle="{helpers:ResourceString Name=FileNameTeachingTip.Subtitle}"
+                Subtitle="{helpers:ResourceString Name=FileNameTeachingTip/Subtitle}"
                 Visibility="Collapsed" />
 
             <SemanticZoom
@@ -343,14 +343,14 @@
                                         <StackPanel
                                             Margin="0,0,0,4"
                                             VerticalAlignment="Top"
-                                            AutomationProperties.Name="{x:Bind Model.Text}"
+                                            AutomationProperties.Name="{x:Bind Model/Text}"
                                             Spacing="0">
                                             <StackPanel Orientation="Horizontal" Spacing="4">
                                                 <TextBlock
                                                     VerticalAlignment="Center"
                                                     FontSize="16"
                                                     Style="{StaticResource SubtitleTextBlockStyle}"
-                                                    Text="{x:Bind Model.Text, Mode=OneWay}" />
+                                                    Text="{x:Bind Model/Text, Mode=OneWay}" />
 
                                                 <TextBlock
                                                     Margin="4,0,0,0"
@@ -409,14 +409,14 @@
                                     <FontIcon FontSize="32" Glyph="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model.Icon, Mode=OneWay}" />
                                     <StackPanel
                                         VerticalAlignment="Center"
-                                        AutomationProperties.Name="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model.Text, Mode=OneWay}"
+                                        AutomationProperties.Name="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model/Text, Mode=OneWay}"
                                         Orientation="Vertical">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                             <TextBlock
                                                 VerticalAlignment="Center"
                                                 FontSize="16"
                                                 Style="{StaticResource SubtitleTextBlockStyle}"
-                                                Text="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model.Text, Mode=OneWay}" />
+                                                Text="{x:Bind ((helpers:IGroupedCollectionHeader)Group).Model/Text, Mode=OneWay}" />
 
                                             <TextBlock
                                                 Margin="4,0,0,0"
