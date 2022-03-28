@@ -1,6 +1,6 @@
 ﻿using Files.Helpers;
 using Files.ViewModels;
-using Microsoft.Toolkit.Uwp;
+using Files.Shared.Extensions;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;

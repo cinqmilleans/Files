@@ -240,7 +240,6 @@
     <Compile Include="Serialization\ISettingsSharingContext.cs" />
     <Compile Include="ServicesImplementation\DialogService.cs" />
     <Compile Include="ServicesImplementation\ImagingService.cs" />
-    <Compile Include="ServicesImplementation\LocalizationService.cs" />
     <Compile Include="ServicesImplementation\Settings\AppearanceSettingsService.cs" />
     <Compile Include="ServicesImplementation\Settings\BundlesSettingsService.cs" />
     <Compile Include="ServicesImplementation\Settings\FileTagsSettingsService.cs" />
@@ -1029,54 +1028,12 @@
     <Content Include="Assets\WSL\ubuntu.svg" />
     <Content Include="Assets\WSL\ubuntupng.png" />
     <Content Include="Properties\Default.rd.xml" />
-    <XliffResource Include="MultilingualResources\Files.nb-NO.xlf" />
-    <XliffResource Include="MultilingualResources\Files.sk-SK.xlf" />
     <None Include="Resources\PreviewPanePropertiesInformation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\PropertiesInformation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PRIResource Include="Strings\sk-SK\Resources.resw" />
-    <PRIResource Include="Strings\bg\Resources.resw" />
-    <PRIResource Include="Strings\nb-NO\Resources.resw" />
-    <PRIResource Include="Strings\af\Resources.resw" />
-    <PRIResource Include="Strings\hr-HR\Resources.resw" />
-    <PRIResource Include="Strings\vi\Resources.resw" />
-    <PRIResource Include="Strings\ca\Resources.resw" />
-    <PRIResource Include="Strings\en-GB\Resources.resw" />
-    <PRIResource Include="Strings\el\Resources.resw" />
-    <PRIResource Include="Strings\ka\Resources.resw" />
-    <PRIResource Include="Strings\id-ID\Resources.resw" />
-    <PRIResource Include="Strings\es-419\Resources.resw" />
-    <PRIResource Include="Strings\pt-PT\Resources.resw" />
-    <PRIResource Include="Strings\lv-LV\Resources.resw" />
-    <PRIResource Include="Strings\sv-SE\Resources.resw" />
-    <PRIResource Include="Strings\ko-KR\Resources.resw" />
-    <PRIResource Include="Strings\ar\Resources.resw" />
-    <PRIResource Include="Strings\da-DK\Resources.resw" />
-    <PRIResource Include="Strings\da\Resources.resw" />
-    <PRIResource Include="Strings\hu-HU\Resources.resw" />
-    <PRIResource Include="Strings\or-IN\Resources.resw" />
-    <PRIResource Include="Strings\hi-IN\Resources.resw" />
-    <PRIResource Include="Strings\pt-BR\Resources.resw" />
-    <PRIResource Include="Strings\he-IL\Resources.resw" />
-    <PRIResource Include="Strings\ja-JP\Resources.resw" />
-    <PRIResource Include="Strings\ta\Resources.resw" />
-    <PRIResource Include="Strings\it-IT\Resources.resw" />
-    <PRIResource Include="Strings\uk-UA\Resources.resw" />
-    <PRIResource Include="Strings\tr-TR\Resources.resw" />
-    <PRIResource Include="Strings\ru-RU\Resources.resw" />
-    <PRIResource Include="Strings\pl-PL\Resources.resw" />
-    <PRIResource Include="Strings\nl-NL\Resources.resw" />
-    <PRIResource Include="Strings\zh-Hans\Resources.resw" />
-    <PRIResource Include="Strings\zh-Hant\Resources.resw" />
-    <PRIResource Include="Strings\de-DE\Resources.resw" />
-    <PRIResource Include="Strings\es-ES\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
-    <PRIResource Include="Strings\en-US\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -1549,43 +1506,6 @@
     <AppxManifest Include="..\Files.Package\Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-  </ItemGroup>
-  <ItemGroup>
-    <XliffResource Include="MultilingualResources\Files.af.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ca.xlf" />
-    <XliffResource Include="MultilingualResources\Files.el.xlf" />
-    <XliffResource Include="MultilingualResources\Files.en-GB.xlf" />
-    <XliffResource Include="MultilingualResources\Files.hr-HR.xlf" />
-    <XliffResource Include="MultilingualResources\Files.id-ID.xlf" />
-    <XliffResource Include="MultilingualResources\Files.es-419.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ka.xlf" />
-    <XliffResource Include="MultilingualResources\Files.pt-PT.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ar.xlf" />
-    <XliffResource Include="MultilingualResources\Files.bg.xlf" />
-    <XliffResource Include="MultilingualResources\Files.da-DK.xlf" />
-    <XliffResource Include="MultilingualResources\Files.da.xlf" />
-    <XliffResource Include="MultilingualResources\Files.de-DE.xlf" />
-    <XliffResource Include="MultilingualResources\Files.es-ES.xlf" />
-    <XliffResource Include="MultilingualResources\Files.fr-FR.xlf" />
-    <XliffResource Include="MultilingualResources\Files.he-IL.xlf" />
-    <XliffResource Include="MultilingualResources\Files.hi-IN.xlf" />
-    <XliffResource Include="MultilingualResources\Files.hu-HU.xlf" />
-    <XliffResource Include="MultilingualResources\Files.it-IT.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ja-JP.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ko-KR.xlf" />
-    <XliffResource Include="MultilingualResources\Files.lv-LV.xlf" />
-    <XliffResource Include="MultilingualResources\Files.nl-NL.xlf" />
-    <XliffResource Include="MultilingualResources\Files.or-IN.xlf" />
-    <XliffResource Include="MultilingualResources\Files.pl-PL.xlf" />
-    <XliffResource Include="MultilingualResources\Files.pt-BR.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ru-RU.xlf" />
-    <XliffResource Include="MultilingualResources\Files.sv-SE.xlf" />
-    <XliffResource Include="MultilingualResources\Files.ta.xlf" />
-    <XliffResource Include="MultilingualResources\Files.tr-TR.xlf" />
-    <XliffResource Include="MultilingualResources\Files.uk-UA.xlf" />
-    <XliffResource Include="MultilingualResources\Files.vi.xlf" />
-    <XliffResource Include="MultilingualResources\Files.zh-Hans.xlf" />
-    <XliffResource Include="MultilingualResources\Files.zh-Hant.xlf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
