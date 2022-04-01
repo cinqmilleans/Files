@@ -27,7 +27,7 @@ namespace Files.Backend.Models.Storage
             });
         }
 
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync()
+        public override IAsyncOperation<IReadOnlyList<BaseStorageFolder>> GetFoldersAsync()
         {
             return AsyncInfo.Run<IReadOnlyList<BaseStorageFolder>>(async (cancellationToken) =>
             {

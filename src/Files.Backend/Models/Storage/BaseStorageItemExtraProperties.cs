@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Storage.FileProperties;
 
 namespace Files.Backend.Models.Storage

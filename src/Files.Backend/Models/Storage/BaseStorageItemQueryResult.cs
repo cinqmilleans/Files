@@ -19,7 +19,7 @@ namespace Files.Backend.Models.Storage
         public BaseStorageItemQueryResult(BaseStorageFolder folder, QueryOptions options)
             => (Folder, Options) = (folder, options);
 
-        public virtual IStorageItemQueryResult? ToStorageItemQueryResult() => null;
+        public virtual StorageItemQueryResult? ToStorageItemQueryResult() => null;
 
         public virtual IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync(uint startIndex, uint maxNumberOfItems)
         {

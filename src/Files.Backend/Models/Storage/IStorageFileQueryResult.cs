@@ -8,7 +8,7 @@ namespace Files.Backend.Models.Storage
 {
     internal interface IBaseStorageFileQueryResult : IStorageQueryResultBase
     {
-        public extern IAsyncOperation<IReadOnlyList<StorageFile>> GetFilesAsync([In] uint startIndex, [In] uint maxNumberOfItems);
+        /*public extern IAsyncOperation<IReadOnlyList<StorageFile>> GetFilesAsync([In] uint startIndex, [In] uint maxNumberOfItems);
 
         IAsyncOperation<IReadOnlyList<StorageFile>> IStorageFileQueryResult.GetFilesAsync([In] uint startIndex, [In] uint maxNumberOfItems)
         public extern IAsyncOperation<IReadOnlyList<StorageFile>> GetFilesAsync();
@@ -51,6 +51,6 @@ namespace Files.Backend.Models.Storage
         {
             //ILSpy generated this explicit interface implementation from .override directive in GetMatchingPropertiesWithRanges
             return this.GetMatchingPropertiesWithRanges(file);
-        }
+        }*/
     }
 }

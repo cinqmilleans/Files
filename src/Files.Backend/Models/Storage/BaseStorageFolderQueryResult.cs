@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Text.RegularExpressions;
+using Windows.Foundation;
+using Windows.Storage.Search;
 
 namespace Files.Backend.Models.Storage
 {
@@ -35,7 +40,7 @@ namespace Files.Backend.Models.Storage
                     var spaceSplit = Regex.Split(query, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                     foreach (var split in spaceSplit)
                     {
-                        var colonSplit = split.Split(":");
+                        var colonSplit = split.Split(':');
                         if (colonSplit.Length == 2)
                         {
                             if (colonSplit[0] == "System.FileName" || colonSplit[0] == "fileName" || colonSplit[0] == "name")

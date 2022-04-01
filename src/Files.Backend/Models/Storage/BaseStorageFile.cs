@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
+using Windows.Storage.Streams;
 
 namespace Files.Backend.Models.Storage
 {
