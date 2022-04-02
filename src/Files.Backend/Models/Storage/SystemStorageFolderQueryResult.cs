@@ -18,7 +18,7 @@ namespace Files.Backend.Models.Storage
         public override StorageFolderQueryResult ToStorageFolderQueryResult() => StorageFolderQueryResult;
 
 
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfItems)
+        public override IAsyncOperation<IReadOnlyList<BaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfItems)
         {
             return AsyncInfo.Run<IReadOnlyList<BaseStorageFolder>>(async (cancellationToken) =>
             {

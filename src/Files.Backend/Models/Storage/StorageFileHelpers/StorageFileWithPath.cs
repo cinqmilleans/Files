@@ -2,8 +2,7 @@
 
 namespace Files.Backend.Models.Storage
 {
-{
-    public class StorageFileWithPath : IStorageItemWithPath
+    internal class StorageFileWithPath : IStorageItemWithPath
     {
         public BaseStorageFile File
         {

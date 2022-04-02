@@ -9,7 +9,7 @@ using Windows.Storage.Search;
 
 namespace Files.Backend.Models.Storage
 {
-    public static class StorageFileExtensions
+    /*internal static class StorageFileExtensions
     {
         private static SettingsViewModel AppSettings => App.AppSettings;
 
@@ -367,5 +367,5 @@ namespace Files.Backend.Models.Storage
             }
             return newItems;
         }
-    }
+    }*/
 }

@@ -299,9 +299,9 @@ namespace Files.Backend.Models.Storage
                 get => (basicProps as BasicProperties)?.DateModified ?? DateTimeOffset.Now;
             }
 
-            public override DateTimeOffset ItemDate
+            public override DateTimeOffset DateCreated
             {
-                get => (basicProps as BasicProperties)?.ItemDate ?? DateTimeOffset.Now;
+                get => (basicProps as BasicProperties)?.DateCreated ?? DateTimeOffset.Now;
             }
 
             public override ulong Size

@@ -1,7 +1,6 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -375,7 +374,7 @@ namespace Files.Backend.Models.Storage
             get
             {
                 var itemType = "ItemTypeFile".GetLocalized();
-                if (Name.Contains(".", StringComparison.Ordinal))
+                if (Name.Contains("."))
                 {
                     itemType = System.IO.Path.GetExtension(Name).Trim('.') + " " + itemType;
                 }
@@ -504,7 +503,7 @@ namespace Files.Backend.Models.Storage
 
             public override DateTimeOffset DateModified => zipEntry.DateTime;
 
-            public override DateTimeOffset ItemDate => zipEntry.DateTime;
+            public override DateTimeOffset DateCreated => zipEntry.DateTime;
 
             public override ulong Size => (ulong)zipEntry.Size;
         }
