@@ -1046,7 +1046,7 @@ namespace Files.ViewModels
                         suggestions = currPath.Select(x => new ListedItem(null)
                         {
                             ItemPath = x.Path,
-                            ItemNameRaw = x.Folder.DisplayName
+                            ItemNameRaw = x.Item.DisplayName
                         }).ToList();
                     }
                     else if (currPath.Any())
@@ -1055,12 +1055,12 @@ namespace Files.ViewModels
                         suggestions = currPath.Select(x => new ListedItem(null)
                         {
                             ItemPath = x.Path,
-                            ItemNameRaw = x.Folder.DisplayName
+                            ItemNameRaw = x.Item.DisplayName
                         }).Concat(
                             subPath.Select(x => new ListedItem(null)
                             {
                                 ItemPath = x.Path,
-                                ItemNameRaw = PathNormalization.Combine(currPath.First().Folder.DisplayName, x.Folder.DisplayName)
+                                ItemNameRaw = PathNormalization.Combine(currPath.First().Item.DisplayName, x.Item.DisplayName)
                             })).ToList();
                     }
                     else

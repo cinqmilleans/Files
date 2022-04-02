@@ -1294,7 +1294,7 @@ namespace Files.ViewModels
                     case 1: // Enumerated with StorageFolder
                         PageTypeUpdated?.Invoke(this, new PageTypeUpdatedEventArgs() { IsTypeCloudDrive = false });
                         currentStorageFolder ??= await FilesystemTasks.Wrap(() => StorageFileExtensions.DangerousGetFolderWithPathFromPathAsync(path));
-                        WatchForStorageFolderChanges(currentStorageFolder?.Folder);
+                        WatchForStorageFolderChanges(currentStorageFolder?.Item);
                         break;
 
                     case 2: // Do no watch for changes in Box Drive folder to avoid constant refresh (#7428)
@@ -1508,7 +1508,7 @@ namespace Files.ViewModels
                     return -1;
                 }
                 currentStorageFolder = res.Result;
-                rootFolder = currentStorageFolder.Folder;
+                rootFolder = currentStorageFolder.Item;
                 enumFromStorageFolder = true;
             }
             else
@@ -1517,7 +1517,7 @@ namespace Files.ViewModels
                 if (res)
                 {
                     currentStorageFolder = res.Result;
-                    rootFolder = currentStorageFolder.Folder;
+                    rootFolder = currentStorageFolder.Item;
                 }
                 else if (res == FileSystemStatusCode.Unauthorized)
                 {
