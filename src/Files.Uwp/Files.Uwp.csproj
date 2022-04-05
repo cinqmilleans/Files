@@ -274,6 +274,9 @@
     <Compile Include="UserControls\PathBreadcrumb.xaml.cs">
       <DependentUpon>PathBreadcrumb.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PathControl.xaml.cs">
+      <DependentUpon>PathControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\RestartControl.xaml.cs">
       <DependentUpon>RestartControl.xaml</DependentUpon>
     </Compile>
@@ -1225,6 +1228,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\PathBreadcrumb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PathControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

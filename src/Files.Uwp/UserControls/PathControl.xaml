@@ -1,0 +1,64 @@
+﻿<UserControl
+    x:Name="RootControl"
+    x:Class="Files.UserControls.PathControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:Files.Helpers"
+    xmlns:uc="using:Files.UserControls"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI"
+    d:DesignWidth="400" d:DesignHeight="300" mc:Ignorable="d">
+
+    <Grid>
+        <AutoSuggestBox
+            x:Name="VisiblePath"
+            x:Load="{x:Bind ViewModel.ManualEntryBoxLoaded, Mode=OneWay}"
+            Loaded="VisiblePath_Loaded"
+            TextChanged="{x:Bind ViewModel.VisiblePath_TextChanged, Mode=OneWay}"
+            QuerySubmitted="{x:Bind ViewModel.VisiblePath_QuerySubmitted, Mode=OneWay}"
+            PreviewKeyDown="VisiblePath_KeyDown"
+            LostFocus="VisiblePath_LostFocus"
+            FocusDisengaged="VisiblePath_LostFocus"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            FontWeight="SemiBold"
+            Background="Transparent"
+            BorderBrush="{ThemeResource SystemBaseMediumLowColor}"
+            BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
+            CornerRadius="{StaticResource ControlCornerRadius}"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"
+            Text="{x:Bind ViewModel.PathText, Mode=OneWay}"
+            PlaceholderText="{helpers:ResourceString Name=NavigationToolbarVisiblePath/PlaceholderText}"
+            TextMemberPath="ItemPath"
+            DisplayMemberPath="ItemName"
+            ItemsSource="{x:Bind ViewModel.NavigationBarSuggestions, Mode=OneWay}"
+        />
+
+        <Grid
+            x:Name="ClickablePath"
+            x:Load="{x:Bind ViewModel.ClickablePathLoaded, Mode=OneWay}"
+            PointerPressed="ClickablePath_Click"
+            MinHeight="33"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Background="{ThemeResource TextControlBackground}"
+            BorderBrush="{ThemeResource TextControlBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="{StaticResource ControlCornerRadius}"
+            extensions:FrameworkElementExtensions.Cursor="Hand">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <uc:PathBreadcrumb
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                ViewModel="{x:Bind ViewModel, Mode=OneWay}" />
+            <FontIcon Grid.Column="1" Margin="12" FontSize="16" Glyph="&#xE09D;" />
+        </Grid>
+    </Grid>
+
+</UserControl>

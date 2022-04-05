@@ -1,10 +1,7 @@
-using Files.Helpers.XamlHelpers;
 using Files.ViewModels;
 using System.Windows.Input;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Files.UserControls
@@ -57,61 +54,6 @@ namespace Files.UserControls
             OngoingTasksViewModel.ProgressBannerPosted += OngoingTasksActions_ProgressBannerPosted;
         }
 
-        private void VisiblePath_Loaded(object sender, RoutedEventArgs e)
-        {
-            // AutoSuggestBox won't receive focus unless it's fully loaded
-            VisiblePath.Focus(FocusState.Programmatic);
-            DependencyObjectHelpers.FindChild<TextBox>(VisiblePath)?.SelectAll();
-        }
-
-        private void ManualPathEntryItem_Click(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                Windows.UI.Input.PointerPoint ptrPt = e.GetCurrentPoint(NavToolbar);
-                if (ptrPt.Properties.IsMiddleButtonPressed)
-                {
-                    return;
-                }
-            }
-            ViewModel.IsEditModeEnabled = true;
-        }
-
-        private void VisiblePath_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Escape)
-            {
-                ViewModel.IsEditModeEnabled = false;
-            }
-        }
-
-        private void VisiblePath_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (FocusManager.GetFocusedElement() is FlyoutBase ||
-                FocusManager.GetFocusedElement() is AppBarButton ||
-                FocusManager.GetFocusedElement() is Popup)
-            {
-                return;
-            }
-
-            var element = FocusManager.GetFocusedElement();
-            var elementAsControl = element as Control;
-            if (elementAsControl == null)
-            {
-                return;
-            }
-            else if (elementAsControl.FocusState != FocusState.Programmatic && elementAsControl.FocusState != FocusState.Keyboard)
-            {
-                ViewModel.IsEditModeEnabled = false;
-            }
-            else
-            {
-                if (ViewModel.IsEditModeEnabled)
-                {
-                    this.VisiblePath.Focus(FocusState.Programmatic);
-                }
-            }
-        }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e) => ViewModel.SwitchSearchBoxVisibility();
 
@@ -120,8 +62,6 @@ namespace Files.UserControls
         private void SearchRegion_OnGotFocus(object sender, RoutedEventArgs e) => ViewModel.SearchRegion_GotFocus(sender, e);
 
         private void SearchRegion_LostFocus(object sender, RoutedEventArgs e) => ViewModel.SearchRegion_LostFocus(sender, e);
-
-        private void VisiblePath_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => ViewModel.VisiblePath_QuerySubmitted(sender, args);
 
         public void SetShellCommandBarContextItems()
         {
