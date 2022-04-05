@@ -203,7 +203,7 @@ namespace Files.Filesystem
 
         public async Task<ReturnResult> RestoreItemsFromTrashAsync(IEnumerable<IStorageItem> source, IEnumerable<string> destination, bool registerHistory)
         {
-            return await RestoreItemsFromTrashAsync(source.Select((item) => item.FromStorageItem()), destination, registerHistory); 
+            return await RestoreItemsFromTrashAsync(source.Select((item) => item.FromStorageItem()), destination, registerHistory);
         }
 
         public async Task<ReturnResult> RestoreItemFromTrashAsync(IStorageItemWithPath source, string destination, bool registerHistory)
@@ -320,7 +320,7 @@ namespace Files.Filesystem
             banner.ErrorCode.ProgressChanged += (s, e) => returnStatus = e.ToStatus();
 
             var token = banner.CancellationToken;
-            
+
             var (collisions, cancelOperation) = await GetCollision(FilesystemOperationType.Copy, source, destination, showDialog);
 
             if (cancelOperation)
