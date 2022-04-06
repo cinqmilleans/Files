@@ -51,13 +51,43 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <uc:PathBreadcrumb
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
                 ViewModel="{x:Bind ViewModel, Mode=OneWay}" />
-            <FontIcon Grid.Column="1" Margin="12" FontSize="16" Glyph="&#xE09D;" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Width="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTipService.ToolTip="Copy"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <Button.Content>
+                        <uc:ColoredIcon FontSize="16" BaseLayerGlyph="&#xF02F;" OverlayLayerGlyph="&#xF030;" />
+                    </Button.Content>
+                </Button>
+                <Button Width="24" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTipService.ToolTip="Paste">
+                    <Button.Content>
+                        <FontIcon FontSize="16" Glyph="&#xE840;" />
+                    </Button.Content>
+                </Button>
+                <Button Width="24" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTipService.ToolTip="Paste">
+                    <Button.Content>
+                        <FontIcon FontSize="16" Glyph="&#xE1CE;" />
+                    </Button.Content>
+                </Button>
+                <Button Width="24" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTipService.ToolTip="Paste">
+                    <Button.Content>
+                        <FontIcon FontSize="16" Glyph="&#xE1CF;" />
+                    </Button.Content>
+                </Button>
+                <!--<Button Width="24" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTipService.ToolTip="Paste">
+                    <Button.Content>
+                        <uc:ColoredIcon FontSize="16" BaseLayerGlyph="&#xE1CF;" OverlayLayerGlyph="&#xE1CE;" />
+                    </Button.Content>
+                </Button>-->
+                <!--<FontIcon Width="24" FontSize="16" Glyph="&#xE09D;" />-->
+            </StackPanel>
+            <FontIcon Grid.Column="2" Margin="4,12,12,12" FontSize="16" Glyph="&#xE09D;" />
         </Grid>
     </Grid>
 

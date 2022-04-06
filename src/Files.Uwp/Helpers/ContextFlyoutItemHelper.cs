@@ -803,6 +803,17 @@ namespace Files.Helpers
                 },
                 new ContextMenuFlyoutItemViewModel()
                 {
+                    Text = "Paste and Go",
+                    //Command = commandsViewModel.CopyPathOfSelectedItemCommand,
+                    IsEnabled = true,
+                    ShowItem=true,
+                    SingleItemOnly = true,
+                    ShowInSearchPage = true,
+                    ShowInFtpPage = true,
+                    ShowInZipPage = true,
+                },
+                new ContextMenuFlyoutItemViewModel()
+                {
                     Text = "BaseLayoutContextFlyoutPaste/Text".GetLocalized(),
                     //Glyph = "\uF16D",
                     IsPrimary = true,
