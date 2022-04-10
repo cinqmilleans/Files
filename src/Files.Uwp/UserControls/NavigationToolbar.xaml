@@ -8,7 +8,6 @@
     xmlns:converters="using:Files.Converters"
     xmlns:helpers="using:Files.Helpers"
     xmlns:uc="using:Files.UserControls"
-    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:converters1="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:triggers="using:Microsoft.Toolkit.Uwp.UI.Triggers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -424,62 +423,9 @@
                 </Button>
             </StackPanel>
 
-            <AutoSuggestBox
-                x:Name="VisiblePath"
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                x:Load="{x:Bind ViewModel.ManualEntryBoxLoaded, Mode=OneWay}"
-                Background="Transparent"
-                BorderBrush="{ThemeResource SystemBaseMediumLowColor}"
-                BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
-                CornerRadius="{StaticResource ControlCornerRadius}"
-                DisplayMemberPath="ItemName"
-                FocusDisengaged="VisiblePath_LostFocus"
-                FontWeight="SemiBold"
-                ItemsSource="{x:Bind ViewModel.NavigationBarSuggestions, Mode=OneWay}"
-                Loaded="VisiblePath_Loaded"
-                LostFocus="VisiblePath_LostFocus"
-                PlaceholderText="{helpers:ResourceString Name=NavigationToolbarVisiblePath/PlaceholderText}"
-                PreviewKeyDown="VisiblePath_KeyDown"
-                QuerySubmitted="VisiblePath_QuerySubmitted"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                Text="{x:Bind ViewModel.PathText, Mode=OneWay}"
-                TextChanged="{x:Bind ViewModel.VisiblePath_TextChanged, Mode=OneWay}"
-                TextMemberPath="ItemPath"
+            <uc:PathControl x:Name="PathBox"
+                Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ViewModel="{x:Bind ViewModel, Mode=OneWay}"
                 Visibility="{x:Bind converters:MultiBooleanConverter.OrNotConvertToVisibility(ShowSearchBox, ViewModel.IsSearchBoxVisible), Mode=OneWay}" />
-
-            <Grid
-                x:Name="ClickablePath"
-                Grid.Column="1"
-                MinHeight="33"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                extensions:FrameworkElementExtensions.Cursor="Hand"
-                x:Load="{x:Bind ViewModel.ClickablePathLoaded, Mode=OneWay}"
-                Background="{ThemeResource TextControlBackground}"
-                BorderBrush="{ThemeResource TextControlBorderBrush}"
-                BorderThickness="1"
-                CornerRadius="{StaticResource ControlCornerRadius}"
-                PointerPressed="ManualPathEntryItem_Click"
-                Visibility="{x:Bind converters:MultiBooleanConverter.OrNotConvertToVisibility(ShowSearchBox, ViewModel.IsSearchBoxVisible), Mode=OneWay}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <uc:PathBreadcrumb
-                    Grid.Column="0"
-                    VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    ViewModel="{x:Bind ViewModel, Mode=OneWay}" />
-                <FontIcon
-                    Grid.Column="1"
-                    Margin="12"
-                    FontSize="16"
-                    Glyph="&#xE09D;" />
-            </Grid>
 
             <uc:SearchBox
                 x:Name="SearchRegion"
