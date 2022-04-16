@@ -184,6 +184,17 @@
     <Compile Include="Filesystem\StorageItems\ZipStorageFolder.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
     <Compile Include="Helpers\CommonPaths.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\AbstractDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\ApplicationDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\DateTimeFormatterFactory.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\IDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\IDateTimeFormatterFactory.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\INamedDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\ITimeSpanLabel.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\NamedDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\SystemDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\TimeSpanLabel.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\UserDateTimeFormatter.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
     <Compile Include="Helpers\LocalizedEnumHelper.cs" />
