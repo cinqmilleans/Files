@@ -1,4 +1,5 @@
 ﻿using Files.Shared.Enums;
+using Files.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Globalization;
@@ -8,6 +9,8 @@ namespace Files.Uwp.Extensions
 {
     public static class DateTimeExtensions
     {
+        private readonly IDateTimeFormatter formatter = new UserDateTimeFormatter();
+
         public static string GetFriendlyDateFromFormat(this DateTimeOffset d, bool isDetailed = false)
             => GetFriendlyDateFromFormat(d, GetDateFormat(), isDetailed);
         public static string GetFriendlyDateFromFormat(this DateTimeOffset d, string returnFormat, bool isDetailed = false)

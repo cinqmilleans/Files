@@ -8,6 +8,8 @@ namespace Files.Uwp.Helpers
     {
         private readonly Calendar calendar = new CultureInfo(CultureInfo.CurrentUICulture.Name).Calendar;
 
+        public abstract string Name { get; }
+
         public abstract string ToShortLabel(DateTimeOffset offset);
         public virtual string ToLongLabel(DateTimeOffset offset) => ToShortLabel(offset);
 

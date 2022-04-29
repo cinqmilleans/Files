@@ -5,6 +5,10 @@ namespace Files.Uwp.Helpers
 {
     internal class ApplicationDateTimeFormatter : AbstractDateTimeFormatter
     {
+        public override string Name { get; }
+
+        public ApplicationDateTimeFormatter(string name) => Name = name;
+
         public override string ToShortLabel(DateTimeOffset offset)
         {
             var elapsed = DateTimeOffset.Now - offset;
@@ -43,6 +47,7 @@ namespace Files.Uwp.Helpers
             }
             return string.Format("SecondsAgo".GetLocalized(), elapsed.Seconds);
         }
+
         public override string ToLongLabel(DateTimeOffset offset)
         {
             var elapsed = DateTimeOffset.Now - offset;

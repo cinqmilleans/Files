@@ -189,10 +189,8 @@
     <Compile Include="Helpers\DateTimeFormatter\DateTimeFormatterFactory.cs" />
     <Compile Include="Helpers\DateTimeFormatter\IDateTimeFormatter.cs" />
     <Compile Include="Helpers\DateTimeFormatter\IDateTimeFormatterFactory.cs" />
-    <Compile Include="Helpers\DateTimeFormatter\INamedDateTimeFormatter.cs" />
     <Compile Include="Helpers\DateTimeFormatter\ITimeSpanLabel.cs" />
-    <Compile Include="Helpers\DateTimeFormatter\NamedDateTimeFormatter.cs" />
-    <Compile Include="Helpers\DateTimeFormatter\SystemDateTimeFormatter.cs" />
+    <Compile Include="Helpers\DateTimeFormatter\FormatDateTimeFormatter.cs" />
     <Compile Include="Helpers\DateTimeFormatter\TimeSpanLabel.cs" />
     <Compile Include="Helpers\DateTimeFormatter\UserDateTimeFormatter.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
