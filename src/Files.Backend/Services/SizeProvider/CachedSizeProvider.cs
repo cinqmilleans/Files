@@ -22,6 +22,7 @@ namespace Files.Backend.Services.SizeProvider
 
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
+            await Task.Yield();
             if (sizes.TryGetValue(path, out ulong cachedSize))
             {
                 RaiseSizeChanged(path, cachedSize, SizeChangedValueState.Final);
@@ -69,6 +70,7 @@ namespace Files.Backend.Services.SizeProvider
 
                         if (level <= 3)
                         {
+                            await Task.Yield();
                             sizes[localPath] = localSize;
                         }
                         if (level is 0)
