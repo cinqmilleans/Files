@@ -244,47 +244,23 @@ namespace Files.Uwp.ServicesImplementation
             public async Task DeleteFolder(string path, CancellationToken cancellationToken = default)
             {
                 const string query = @"DELETE Folder WHERE Path = '$path'";
-                await ExecuteQuery(query, path, cancellationToken);
-            }
-            public async Task DeleteFoldersAndDescendants(IEnumerable<string> paths, CancellationToken cancellationToken = default)
-            {
-                const string query = @"DELETE Folder WHERE Path = '$path' OR Path LIKE '$path[\\/]%'";
-                await ExecuteQuery(query, paths, cancellationToken);
-            }
 
-
-
-            public void Dispose() => connection.Dispose();
-
-            private static int GetLevel(string path) => path.Count(c => c is '\\' or '/');
-
-            private async Task ExecuteQuery(string query, string path, CancellationToken cancellationToken = default)
-            {
                 using var command = new SqliteCommand(query, connection);
                 command.Parameters.AddWithValue("$path", path);
                 await command.ExecuteNonQueryAsync(cancellationToken);
             }
-            public async Task ExecuteQuery(string query, IEnumerable<string> paths, CancellationToken cancellationToken = default)
+            public async Task DeleteFolders(IEnumerable<string> rootPaths, CancellationToken cancellationToken = default)
             {
-                using var transaction = connection.BeginTransaction();
+                const string query = @"DELETE Folder WHERE Path = '$path' OR Path LIKE '$path[\\/]%'";
 
-                var command = new SqliteCommand(query, connection, transaction);
-                var parameter = command.Parameters.AddWithValue("$path", null);
+                var command = new SqliteCommand(query, connection);
+                command.Parameters.AddWithValue("$path", rootPaths);
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
 
-                foreach (string path in paths)
-                {
-                    parameter.Value = path;
-                    await command.ExecuteNonQueryAsync(cancellationToken);
-                }
+            public void Dispose() => connection.Dispose();
 
-                transaction.Commit();
-            }
-            private async Task ExecuteQuery(string query, Folder folder, CancellationToken cancellationToken = default)
-            {
-            }
-            private async Task ExecuteQuery(string query, IEnumerable<Folder> folders, CancellationToken cancellationToken = default)
-            {
-            }
+            private static int GetLevel(string path) => path.Count(c => c is '\\' or '/');
         }
     }
 }
