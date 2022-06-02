@@ -16,11 +16,6 @@ namespace Files.Backend.Services.SizeProvider
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public CachedSizeProvider()
-        {
-            PersistantSizeProvider.CreateDatabase();
-        }
-
         public Task CleanAsync()
         {
             sizes.Clear();

@@ -217,6 +217,8 @@ namespace Files.Uwp
             await updateService.CheckForUpdates();
             await updateService.DownloadMandatoryUpdates();
 
+
+
             static async Task OptionalTask(Task task, bool condition)
             {
                 if (condition)
@@ -296,6 +298,8 @@ namespace Files.Uwp
             }
 
             WindowDecorationsHelper.RequestWindowDecorationsAccess();
+
+            PersistentSizeProvider.CreateDatabase();
         }
 
         protected override async void OnFileActivated(FileActivatedEventArgs e)

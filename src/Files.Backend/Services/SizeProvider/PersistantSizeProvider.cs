@@ -72,17 +72,55 @@ namespace Files.Backend.Services.SizeProvider
 
         public static void CreateDatabase()
         {
-            Batteries_V2.Init();
 
-            string temp = ApplicationData.Current.LocalSettings.Values.Get("TEMP", "") ?? string.Empty;
-            string source = Path.Combine(temp, "test.sqlite");
+            //SqliteEngine.UseWinSqlite3(); //Configuring library to use SDK version of SQLite
+            using (SqliteConnection db = new SqliteConnection("Filename=sqliteSample.db"))
+            {
+                db.Open();
+                String tableCommand = "CREATE TABLE IF NOT EXISTS MyTable (Primary_Key INTEGER PRIMARY KEY AUTOINCREMENT, Text_Entry NVARCHAR(2048) NULL)";
+                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+                try
+                {
+                    createTable.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    //Do nothing
+                }
+            }
 
-            using var connection = new SqliteConnection($"Data Source='{source}'");
-            new SqliteCommand(CreateCommand, connection);
-            new SqliteCommand("INSERT INTO Folder (Path, Size) VALUES ('Alice', '7045551212') ON CONFLICT (Path) DO UPDATE SET Size = Size", connection);
+            //var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("sqliteSample.db", CreationCollisionOption.OpenIfExists);
+            //string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "sqliteSample.db");
+            //using (SqliteConnection db =
+            //   new SqliteConnection(@"Filename='C:\USB\test.sqlite'"))
+            //{
+            //    db.Open();
 
-            using var results = new SqliteCommand("SELECT Size FROM Folder WHERE Path = 'Alice'", connection);
+            //    String tableCommand = "CREATE TABLE IF NOT " +
+            //        "EXISTS MyTable (Primary_Key INTEGER PRIMARY KEY, " +
+            //        "Text_Entry NVARCHAR(2048) NULL)";
+
+            //    SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+
+            //    createTable.ExecuteReader();
+
+
+            /*Batteries_V2.Init();
+
+            //string temp = ApplicationData.Current.LocalSettings.Values.Get("TEMP", "") ?? string.Empty;
+            string source = @"C:\USB\test.sqlite";
+
+
+            using var connection = new SqliteConnection($"Data Source={source}");
+            connection.Open();
+            using (var c1 = new SqliteCommand(CreateCommand, connection))
+                c1.ExecuteNonQuery();
+            using (var c2 = new SqliteCommand("INSERT INTO Folder (Path, Size) VALUES ('Alic', '7045551212') ON CONFLICT (Path) DO UPDATE SET Size = Size", connection))
+                c2.ExecuteNonQuery();
+
+            using var results = new SqliteCommand("SELECT Size FROM Folder WHERE Path = 'Alic'", connection);
             ulong size = (ulong)(results.ExecuteScalar() ?? 0);
+            connection.Close();*/
         }
 
         private const string CreateCommand

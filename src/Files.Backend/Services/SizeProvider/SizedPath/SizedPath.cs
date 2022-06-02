@@ -1,13 +1,10 @@
 ﻿namespace Files.Backend.Services.SizeProvider
 {
-    internal class SizedPath
+    public class Folder
     {
-        public string Path { get; }
-        public int Level { get; }
-        public ulong LocalSize { get; }
-        public ulong GlobalSize { get; }
-
-        public SizedPath(string path, int level = 0, ulong localSize = 0, ulong globalSize = 0)
-            => (Path, Level, LocalSize, GlobalSize) = (path, level, localSize, globalSize);
+        public string Path { get; init; } = string.Empty;
+        public int Level { get; init; }
+        public ulong LocalSize { get; init; }
+        public ulong GlobalSize { get; init; }
     }
 }
