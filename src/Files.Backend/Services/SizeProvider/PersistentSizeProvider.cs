@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    public class PersistentSizeProvider : ISizeProvider
+    internal class PersistentSizeProvider : ISizeProvider
     {
         private const int CacheLevel = 3;
         private const int EventLevel = 2;
 
-        private readonly SqliteFolderRepository repository = new();
-        private readonly IFolderEnumerator enumerator = new FolderEnumerator();
+        private readonly IFolderRepository repository;
+        private readonly IFolderEnumerator enumerator;
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public async Task Initialize() => await repository.InitializeAsync();
+        public PersistentSizeProvider(IFolderRepository repository, IFolderEnumerator enumerator)
+            => (this.repository, this.enumerator) = (repository, enumerator);
 
         public Task CleanAsync() => Task.CompletedTask;
 
@@ -53,6 +54,7 @@ namespace Files.Backend.Services.SizeProvider
                 }
                 else if (newFolder.Level <= EventLevel)
                 {
+                    if ()
                     size += newFolder.Level is EventLevel ? newFolder.GlobalSize : newFolder.LocalSize;
                     RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
                 }
