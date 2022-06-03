@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Files.Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,12 @@ namespace Files.Backend.Services.SizeProvider
         private const int CacheLevel = 3;
         private const int EventLevel = 2;
 
-        private readonly IFolderRepository repository = new SqliteFolderRepository();
+        private readonly SqliteFolderRepository repository = new();
         private readonly IFolderEnumerator enumerator = new FolderEnumerator();
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
+
+        public async Task Initialize() => await repository.InitializeAsync();
 
         public Task CleanAsync() => Task.CompletedTask;
 
@@ -30,7 +33,7 @@ namespace Files.Backend.Services.SizeProvider
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
 
-            //var oldFolders = await repository.GetFolders(path, 3).WithCancellation(cancellationToken).ToList();
+            var oldFolders = await repository.GetFolders(path, 3).WithCancellation(cancellationToken).ToList();
             var newFolders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
 
             ulong size = 0;

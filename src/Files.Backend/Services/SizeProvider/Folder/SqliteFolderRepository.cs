@@ -15,7 +15,7 @@ namespace Files.Backend.Services.SizeProvider
         {
             await connection.OpenAsync();
 
-            const string query = @"CREATE TABLE [Folder] ("
+            const string query = @"CREATE TABLE IF NOT EXISTS [Folder] ("
                 + "[Path] TEXT NOT NULL UNIQUE CHECK ([Path] LIKE '%[\\/]'), "
                 + "[Level] INT NOT NULL DEFAULT 0 CHECK([Level] >= 0), "
                 + "[LocalSize] BIGINT NOT NULL DEFAULT 0 CHECK([LocalSize] >= 0), "

@@ -37,7 +37,7 @@ namespace Files.Backend.Services.SizeProvider
 
             ulong size = 0;
 
-            var folders = enumerator.EnumerateSizedFolders(path).WithCancellation(cancellationToken);
+            var folders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
             await foreach (var folder in folders)
             {
                 if (folder.Level <= CacheLevel)
