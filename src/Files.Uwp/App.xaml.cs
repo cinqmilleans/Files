@@ -299,7 +299,7 @@ namespace Files.Uwp
 
             WindowDecorationsHelper.RequestWindowDecorationsAccess();
 
-            PersistentSizeProvider.CreateDatabase();
+            await PersistentSizeProvider.CreateDatabase();
         }
 
         protected override async void OnFileActivated(FileActivatedEventArgs e)

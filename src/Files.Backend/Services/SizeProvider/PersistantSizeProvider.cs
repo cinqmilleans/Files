@@ -37,7 +37,7 @@ namespace Files.Backend.Services.SizeProvider
             }
 
             ulong size = 0;
-            var cache = new List<SizedPath>();
+            var cache = new List<Folder>();
 
             var folders = enumerator.EnumerateSizedFolders(path).WithCancellation(cancellationToken);
             await foreach (var folder in folders)

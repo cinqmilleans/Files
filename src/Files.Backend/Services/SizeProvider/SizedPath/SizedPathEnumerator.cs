@@ -11,7 +11,7 @@ namespace Files.Backend.Services.SizeProvider
 {
     internal class SizedPathEnumerator : ISizedPathEnumerator
     {
-        public async IAsyncEnumerable<SizedPath> EnumerateSizedFolders(string path, int level = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<Folder> EnumerateSizedFolders(string path, uint level = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
                 out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);

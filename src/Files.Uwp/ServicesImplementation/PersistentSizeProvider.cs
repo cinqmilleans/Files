@@ -1,16 +1,13 @@
 ﻿using Files.Backend.Services.SizeProvider;
-using Files.Uwp.Filesystem.StorageItems;
 using Microsoft.Data.Sqlite;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Files.Uwp.ServicesImplementation
 {
@@ -20,7 +17,22 @@ namespace Files.Uwp.ServicesImplementation
 
         //public static void CreateDatabase()
         //{
-            private readonly SqliteConnection connection;
+
+        public static async Task CreateDatabase()
+        {
+            var a = new DatabaseFolderRepository();
+            await a.InitializeAsync();
+
+            var folder = new Folder { Path = @"C:\Temp" };
+            await a.PutFolder(folder);
+
+            var b = await a.GetFolder(@"C:\Temp");
+
+            await a.DeleteFolders(b.Path);
+        }
+
+
+            //private readonly SqliteConnection connection;
 
             public Task CleanAsync()
             {
@@ -36,6 +48,8 @@ namespace Files.Uwp.ServicesImplementation
 
         public bool TryGetSize(string path, out ulong size)
         {
+            size = 0;
+            return false;
 //            String tableCommand = "SELECT [GlobalSize] FROM Folder WHERE
 
 //                command.CommandText =
@@ -56,7 +70,7 @@ namespace Files.Uwp.ServicesImplementation
 
 
 
-        public void Dispose() => connection.Dispose();
+        public void Dispose() { }  //=> connection.Dispose();
 
 
 
@@ -143,13 +157,15 @@ namespace Files.Uwp.ServicesImplementation
         {
             private readonly SqliteConnection connection = new(@"Data Source=:memory:");
 
-            public async Task Initialize(CancellationToken cancellationToken = default)
+            public async Task InitializeAsync(CancellationToken cancellationToken = default)
             {
+                await connection.OpenAsync();
+
                 const string query = @"CREATE TABLE Folder ("
-                    + "[Path] VARCHAR(MAX) NOT NULL UNIQUE CHECK ([Path] NOT LIKE '%[\\/]'), "
-                    + "[Level] SMALLINT NOT NULL UNIQUE, "
-                    + "[LocalSize] BIGINT NOT NULL DEFAULT 0 CHECK(LocalSize >= 0), "
-                    + "[GlobalSize] BIGINT NOT NULL DEFAULT 0 CHECK(GlobalSizeSize >= 0), "
+                    + "[Path] TEXT NOT NULL UNIQUE CHECK ([Path] NOT LIKE '%[\\/]'), "
+                    + "[Level] INT NOT NULL DEFAULT 0 CHECK([Level] >= 0), "
+                    + "[LocalSize] BIGINT NOT NULL DEFAULT 0 CHECK([LocalSize] >= 0), "
+                    + "[GlobalSize] BIGINT NOT NULL DEFAULT 0 CHECK([GlobalSize] >= 0), "
                     + "CHECK(GlobalSize >= LocalSize)"
                 + ");";
 
@@ -170,9 +186,9 @@ namespace Files.Uwp.ServicesImplementation
                     return new Folder
                     {
                         Path = path,
-                        Level = (int)reader["Level"],
-                        LocalSize = (ulong)reader["LocalSize"],
-                        GlobalSize = (ulong)reader["GlobalSize"],
+                        Level = (uint)reader.GetInt32(0),
+                        LocalSize = (ulong)reader.GetInt64(1),
+                        GlobalSize = (ulong)reader.GetInt64(2),
                     };
                 }
 
@@ -192,21 +208,21 @@ namespace Files.Uwp.ServicesImplementation
                 command.Parameters.AddWithValue("$level", level);
 
                 var reader = await command.ExecuteReaderAsync(cancellationToken);
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     yield return new Folder
                     {
-                        Path = (string)reader["Path"],
-                        Level = (int)reader["Level"],
-                        LocalSize = (ulong)reader["LocalSize"],
-                        GlobalSize = (ulong)reader["GlobalSize"],
+                        Path = reader.GetString(0),
+                        Level = (uint)reader.GetInt32(1),
+                        LocalSize = (ulong)reader.GetInt64(2),
+                        GlobalSize = (ulong)reader.GetInt64(3),
                     };
                 }
             }
 
             public async Task PutFolder(Folder folder, CancellationToken cancellationToken = default)
             {
-                const string query = @"INSERT INTO Folder ([Path], [Level], [LocalSize], [GlobalSize]) VALUE ('$path', $level, $localSize, '$globalSize)";
+                const string query = @"INSERT INTO Folder ([Path], [Level], [LocalSize], [GlobalSize]) VALUES ('$path', $level, $localSize, $globalSize)";
 
                 using var command = new SqliteCommand(query, connection);
                 command.Parameters.AddWithValue("$path", folder.Path);
@@ -243,22 +259,26 @@ namespace Files.Uwp.ServicesImplementation
 
             public async Task DeleteFolder(string path, CancellationToken cancellationToken = default)
             {
-                const string query = @"DELETE Folder WHERE Path = '$path'";
+                const string query = @"DELETE FROM Folder WHERE Path = '$path'";
 
                 using var command = new SqliteCommand(query, connection);
                 command.Parameters.AddWithValue("$path", path);
                 await command.ExecuteNonQueryAsync(cancellationToken);
             }
-            public async Task DeleteFolders(IEnumerable<string> rootPaths, CancellationToken cancellationToken = default)
+            public async Task DeleteFolders(string rootPath, CancellationToken cancellationToken = default)
             {
-                const string query = @"DELETE Folder WHERE Path = '$path' OR Path LIKE '$path[\\/]%'";
+                const string query = @"DELETE FROM Folder WHERE Path = '$path' OR Path LIKE '$path[\\/]%'";
 
                 var command = new SqliteCommand(query, connection);
-                command.Parameters.AddWithValue("$path", rootPaths);
+                command.Parameters.AddWithValue("$path", rootPath);
                 await command.ExecuteNonQueryAsync(cancellationToken);
             }
 
-            public void Dispose() => connection.Dispose();
+            public void Dispose()
+            {
+                connection?.Close();
+                connection?.Dispose();
+            }
 
             private static int GetLevel(string path) => path.Count(c => c is '\\' or '/');
         }
