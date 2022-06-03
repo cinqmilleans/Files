@@ -9,17 +9,16 @@ using static Files.Backend.Helpers.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    internal class SizedPathEnumerator : ISizedPathEnumerator
+    internal class FolderEnumerator : IFolderEnumerator
     {
-        public async IAsyncEnumerable<Folder> EnumerateSizedFolders(string path, uint level = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IFolder> EnumerateFolders(string path, ushort level = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
                 out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
-            ulong localSize = 0;
-            ulong globalSize = 0;
+            Folder folder = new(path, level);
 
-            if (hFile.ToInt64() != -1)
+            if (hFile.ToInt64() is not -1)
             {
                 do
                 {
@@ -27,18 +26,18 @@ namespace Files.Backend.Services.SizeProvider
                     if (!isDirectory)
                     {
 
-                        localSize += (ulong)findData.GetSize();
+                        folder.LocalSize += (ulong)findData.GetSize();
                     }
                     else if (findData.cFileName is not "." and not "..")
                     {
-                        var subFolders = EnumerateSizedFolders(Path.Combine(path, findData.cFileName), level + 1).WithCancellation(cancellationToken);
+                        var subFolders = EnumerateFolders(Path.Combine(path, findData.cFileName), (ushort)(level + 1)).WithCancellation(cancellationToken);
                         await foreach (var subFolder in subFolders)
                         {
-                            globalSize += subFolder.GlobalSize;
+                            folder.GlobalSize += subFolder.GlobalSize;
                             yield return subFolder;
                         }
                     }
-                    globalSize += localSize;
+                    folder.GlobalSize += folder.LocalSize;
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -47,7 +46,19 @@ namespace Files.Backend.Services.SizeProvider
                 } while (FindNextFile(hFile, out findData));
                 FindClose(hFile);
             }
-            yield return new(path, level, localSize, globalSize);
+            yield return folder;
+        }
+
+        public class Folder : IFolder
+        {
+            public string Path { get; }
+            public ushort Level { get; }
+
+            public ulong LocalSize { get; set; }
+            public ulong GlobalSize { get; set; }
+
+            public Folder(string path, ushort level)
+                => (Path, Level) = (path, level);
         }
     }
 }

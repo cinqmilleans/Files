@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    public class CachedSizeProvider : ISizeProvider
+    public class PersistentSizeProvider : ISizeProvider
     {
         private const int CacheLevel = 3;
         private const int EventLevel = 2;
 
-        private readonly FolderEnumerator enumerator = new();
-
-        private readonly ConcurrentDictionary<string, ulong> sizes = new();
+        private readonly IFolderRepository repository = new SqliteFolderRepository();
+        private readonly IFolderEnumerator enumerator = new FolderEnumerator();
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public Task CleanAsync()
-        {
-            sizes.Clear();
-            return Task.CompletedTask;
-        }
+        public Task CleanAsync() => Task.CompletedTask;
 
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
@@ -35,30 +30,36 @@ namespace Files.Backend.Services.SizeProvider
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
 
-            ulong size = 0;
+            //var oldFolders = await repository.GetFolders(path, 3).WithCancellation(cancellationToken).ToList();
+            var newFolders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
 
-            var folders = enumerator.EnumerateSizedFolders(path).WithCancellation(cancellationToken);
-            await foreach (var folder in folders)
+            ulong size = 0;
+            var cache = new List<IFolder>();
+
+            await foreach (var newFolder in newFolders)
             {
-                if (folder.Level <= CacheLevel)
+                if (newFolder.Level <= CacheLevel)
                 {
                     await Task.Yield();
-                    sizes[folder.Path] = folder.GlobalSize;
+                    cache.Add(newFolder);
                 }
 
-                if (folder.Level is 0)
+                if (newFolder.Level is 0)
                 {
                     RaiseSizeChanged(path, size, SizeChangedValueState.Final);
                 }
-                else if (folder.Level <= EventLevel)
+                else if (newFolder.Level <= EventLevel)
                 {
-                    size += folder.Level is EventLevel ? folder.GlobalSize : folder.LocalSize;
+                    size += newFolder.Level is EventLevel ? newFolder.GlobalSize : newFolder.LocalSize;
                     RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
                 }
             }
         }
 
-        public bool TryGetSize(string path, out ulong size) => sizes.TryGetValue(path, out size);
+        public bool TryGetSize(string path, out ulong size)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose() {}
 
