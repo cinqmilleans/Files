@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    internal interface IFolderRepository : IDisposable
+    internal interface ISizeRepository : IDisposable
     {
         Task<ulong?> GetSizeAsync(string path, CancellationToken cancellationToken = default);
         Task SetSizeAsync(string path, ulong size, CancellationToken cancellationToken = default);

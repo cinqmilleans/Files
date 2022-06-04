@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider.Folder
 {
-    internal class NoFolderRepository : IFolderRepository
+    internal class NoSizeRepository : IFolderRepository
     {
         public Task<IFolder?> GetFolderAsync(string path, CancellationToken cancellationToken = default)
             => Task.FromResult<IFolder?>(null);

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,22 +13,22 @@ namespace Files.Backend.Services.SizeProvider
     {
         private readonly SqliteConnection connection = new(@"Data Source=:memory:");
 
+        private readonly int driveID = 1;
+
+        private SqliteFolderRepository(SqliteConnection connection, int driveID) => this.driveID = driveID;
+
+        public static async Task<SqliteFolderRepository> CreateAsync(Guid driveGuid, CancellationToken cancellationToken = default)
+        {
+            var connection = new SqliteConnection(@"Data Source=:memory:");
+            await CreateTablesAsync(cancellationToken);
+            return new SqliteFolderRepository(connection, driveID);
+        }
+
         public async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
-            await connection.OpenAsync();
-
-            const string query = @"CREATE TABLE IF NOT EXISTS [Folder] ("
-                + "[Path] TEXT NOT NULL UNIQUE CHECK ([Path] LIKE '%[\\/]'), "
-                + "[Level] INT NOT NULL DEFAULT 0 CHECK([Level] >= 0), "
-                + "[LocalSize] BIGINT NOT NULL DEFAULT 0 CHECK([LocalSize] >= 0), "
-                + "[GlobalSize] BIGINT NOT NULL DEFAULT 0 CHECK([GlobalSize] >= 0), "
-                + "CHECK (GlobalSize >= LocalSize), "
-                + "INDEX [IX_Folder] UNIQUE ([Level], [Path])"
-            + ");";
-
-            using var command = new SqliteCommand(query, connection);
-            await command.ExecuteNonQueryAsync(cancellationToken);
+            await CreateTablesAsync(cancellationToken);
         }
+
 
         public async Task<IFolder?> GetFolder(string path, CancellationToken cancellationToken = default)
         {
@@ -130,10 +132,59 @@ namespace Files.Backend.Services.SizeProvider
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
+
+        public async Task<ulong?> GetSizeAsync(string path, CancellationToken cancellationToken = default)
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = @"SELECT [Size] FROM [Folder] WHERE [DriveID] = '$driveID' [Path] = '$path'";
+            command.Parameters.AddWithValue("$driveID", driveID);
+            command.Parameters.AddWithValue("$path", path);
+            var size = await command.ExecuteScalarAsync(cancellationToken);
+            return (ulong?)size;
+        }
+
+        public async Task SetSizeAsync(string path, ulong size, CancellationToken cancellationToken = default)
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = @"UPDATE [Folder] SET [Size] = '$size' WHERE [DriveID] = '$driveID' [Path] = '$path'";
+            command.Parameters.AddWithValue("$driveID", driveID);
+            command.Parameters.AddWithValue("$path", path);
+            var size = await command.ExecuteScalarAsync(cancellationToken);
+            return (ulong?)size;
+
+        }
+
+        Task ClearAsync(CancellationToken cancellationToken = default);
+        Task DeleteAsync(string path, CancellationToken cancellationToken = default);
+
+
         public void Dispose()
         {
             connection?.Close();
             connection?.Dispose();
+        }
+
+        private async Task CreateTablesAsync(CancellationToken cancellationToken = default)
+        {
+            await connection.OpenAsync();
+
+            using var command = connection.CreateCommand();
+
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS [Drive] ("
+                + "[ID] INT NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                + "[GUID] UNIQUEIDENTIFIER NOT NULL UNIQUE"
+            + ") WITHOUT ROWID;";
+            await command.ExecuteNonQueryAsync(cancellationToken);
+
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS [Folder] ("
+                + "[ID] INT NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                + "[DriveID] SMALLINT NOT NULL UNIQUE, "
+                + "[Path] TEXT NOT NULL UNIQUE CHECK ([Path] LIKE '%[\\/]'), "
+                + "[Size] BIGINT NOT NULL DEFAULT 0 CHECK([LocalSize] >= 0), "
+                + "FOREIGN KEY [FK_Folder_DriveID] REFERENCES [Drive]([ID]), "
+                + "INDEX [IX_Folder] UNIQUE ([DriveID], [Path])"
+            + ") WITHOUT ROWID;";
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
         private static ushort GetLevel(string path) => (ushort)path.Count(c => c is '\\' or '/');
