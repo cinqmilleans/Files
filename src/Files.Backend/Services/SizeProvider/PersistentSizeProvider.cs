@@ -34,7 +34,6 @@ namespace Files.Backend.Services.SizeProvider
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
 
-            var oldFolders = await repository.GetFolders(path, 3).WithCancellation(cancellationToken).ToList();
             var newFolders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
 
             ulong size = 0;
@@ -54,7 +53,6 @@ namespace Files.Backend.Services.SizeProvider
                 }
                 else if (newFolder.Level <= EventLevel)
                 {
-                    if ()
                     size += newFolder.Level is EventLevel ? newFolder.GlobalSize : newFolder.LocalSize;
                     RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
                 }

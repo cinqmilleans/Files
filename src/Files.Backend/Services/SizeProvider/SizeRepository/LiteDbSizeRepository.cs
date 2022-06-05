@@ -6,24 +6,21 @@ namespace Files.Backend.Services.SizeProvider
     {
         private readonly LiteCollection<SizedFolder> collection;
 
-        public LiteDbSizeRepository(LiteDatabase database)
-        {
-            collection = database.GetCollection<SizedFolder>("sizedFolders");
-            collection.EnsureIndex("Path", "$.Path");
-        }
+        public LiteDbSizeRepository(LiteCollection<SizedFolder> collection)
+            => this.collection = collection;
 
         public bool TryGetSize(string path, out ulong size)
         {
-            var folder = collection.FindOne(x => x.Path == path);
+            var folder = collection.FindOne(f => f.Path == path);
             size = folder?.Size ?? 0;
             return folder is not null;
         }
         public void SetSize(string path, ulong size)
         {
-            var folder = collection.FindOne(x => x.Path == path);
+            var folder = collection.FindOne(f => f.Path == path);
             if (folder is null)
             {
-                folder = new SizedFolder { Path = path, Size = size };
+                folder = new SizedFolder(path, size);
                 collection.Insert(folder);
             }
             else
@@ -35,21 +32,15 @@ namespace Files.Backend.Services.SizeProvider
 
         public void Clear()
         {
+            collection.Delete(f => true);
         }
         public void Delete(string path)
         {
-            var folder = collection.FindOne(x => x.Path == path);
+            var folder = collection.FindOne(f => f.Path == path);
             if (folder is not null)
             {
                 collection.Delete(folder.Id);
             }
-        }
-
-        public class SizedFolder
-        {
-            [BsonId] public int Id { get; set; }
-            public string Path { get; set; } = string.Empty;
-            public ulong Size { get; set; }
         }
     }
 }

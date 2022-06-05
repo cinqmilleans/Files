@@ -1,7 +1,7 @@
 ﻿using LiteDB;
 using System;
 
-namespace Files.Backend.Services.SizeProvider.SizeRepository.SizeDatabase
+namespace Files.Backend.Services.SizeProvider
 {
     internal class SizeDatabase
     {
@@ -17,7 +17,7 @@ namespace Files.Backend.Services.SizeProvider.SizeRepository.SizeDatabase
             CreateDriveCollection();
         }
 
-        LiteCollection<SizedFolder> GetCollection(Guid volumeGuid)
+        public LiteCollection<SizedFolder> GetCollection(Guid volumeGuid)
         {
             UpdateDrive(volumeGuid);
 
@@ -58,7 +58,7 @@ namespace Files.Backend.Services.SizeProvider.SizeRepository.SizeDatabase
             var drive = drives.FindOne(d => d.VolumeGuid == volumeGuid);
             if (drive is null)
             {
-                drive = new SizedDrive { VolumeGuid = volumeGuid };
+                drive = new SizedDrive(volumeGuid);
                 drives.Insert(drive);
             }
             else
@@ -73,6 +73,9 @@ namespace Files.Backend.Services.SizeProvider.SizeRepository.SizeDatabase
             [BsonId] public int Id { get; init; }
             public Guid VolumeGuid { get; init; }
             public DateTime Updated { get; set; } = DateTime.Now;
+
+            public SizedDrive() {}
+            public SizedDrive(Guid volumeGuid) => VolumeGuid = volumeGuid;
         }
     }
 }
