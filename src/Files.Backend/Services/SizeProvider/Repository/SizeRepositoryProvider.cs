@@ -12,7 +12,7 @@ namespace Files.Backend.Services.SizeProvider
 
         public async Task<ISizeRepository> GetSizeRepositoryAsync(string driveName, CancellationToken cancellationToken = default)
         {
-            var volumeInfoFactory = Ioc.Default.GetService<IVolumeInfoFactory>();
+            /*var volumeInfoFactory = Ioc.Default.GetService<IVolumeInfoFactory>();
             if (volumeInfoFactory is IVolumeInfoFactory factory)
             {
                 var info = await factory.BuildVolumeInfo(driveName);
@@ -22,7 +22,7 @@ namespace Files.Backend.Services.SizeProvider
                     var collection = database.GetCollection(info.Guid);
                     return new LiteDbSizeRepository(collection);
                 }
-            }
+            }*/
             return new DictionarySizeRepository();
         }
 

@@ -1,6 +1,7 @@
 ﻿using Files.Backend.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -13,18 +14,19 @@ namespace Files.Backend.Services.SizeProvider
     {
         public async IAsyncEnumerable<IFolder> EnumerateFolders(string path, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            await foreach (var folder in EnumerateFolders(path, 0, cancellationToken))
+            var folders = EnumerateFolders(path, 0, cancellationToken).WithCancellation(cancellationToken);
+            await foreach (var folder in folders)
             {
                 yield return folder;
             }
         }
         private async IAsyncEnumerable<IFolder> EnumerateFolders
-            (string path, ushort level, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+            (string path, uint level, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
                 out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
-            Folder folder = new(path, level);
+            var folder = new Folder(path, level);
 
             if (hFile.ToInt64() is not -1)
             {
@@ -37,14 +39,13 @@ namespace Files.Backend.Services.SizeProvider
                     }
                     else if (findData.cFileName is not "." and not "..")
                     {
-                        var subFolders = EnumerateFolders(Path.Combine(path, findData.cFileName), (ushort)(level + 1)).WithCancellation(cancellationToken);
+                        var subFolders = EnumerateFolders(Path.Combine(path, findData.cFileName), level + 1).WithCancellation(cancellationToken);
                         await foreach (var subFolder in subFolders)
                         {
-                            folder.GlobalSize += subFolder.GlobalSize;
+                            folder.GlobalSize += subFolder.LocalSize;
                             yield return subFolder;
                         }
                     }
-                    folder.GlobalSize += folder.LocalSize;
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -53,18 +54,21 @@ namespace Files.Backend.Services.SizeProvider
                 } while (FindNextFile(hFile, out findData));
                 FindClose(hFile);
             }
+
+            folder.GlobalSize += folder.LocalSize;
             yield return folder;
         }
 
-        public class Folder : IFolder
+        [DebuggerDisplay("{Path},{LocalSize},{GlobalSize}")]
+        private class Folder : IFolder
         {
             public string Path { get; }
-            public ushort Level { get; }
+            public uint Level { get; }
 
             public ulong LocalSize { get; set; }
             public ulong GlobalSize { get; set; }
 
-            public Folder(string path, ushort level) => (Path, Level) = (path, level);
+            public Folder(string path, uint level) => (Path, Level) = (path, level);
         }
     }
 }
