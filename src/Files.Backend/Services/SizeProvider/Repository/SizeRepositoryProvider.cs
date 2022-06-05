@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,9 +19,10 @@ namespace Files.Backend.Services.SizeProvider
                 var info = await factory.BuildVolumeInfo(driveName);
                 if (!info.IsEmpty)
                 {
-                    var database = GetDatabase();
-                    var collection = database.GetCollection(info.Guid);
-                    return new LiteDbSizeRepository(collection);
+                    //await Task.Yield();
+                    //var database = GetDatabase();
+                    //var collection = database.GetCollection(Guid.NewGuid());
+                    //return new LiteDbSizeRepository(collection);
                 }
             }*/
             return new DictionarySizeRepository();

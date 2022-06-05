@@ -48,10 +48,12 @@ namespace Files.Backend.Services.SizeProvider
 
         private async Task CreateProviderAsync(string driveName)
         {
-            var factory = new SizeProviderFactory();
-            var provider = await factory.CreateSizeProviderAsync(driveName);
-            provider.SizeChanged += Provider_SizeChanged;
-            providers.Add(driveName, provider);
+            var repositoryProvider = new SizeRepositoryProvider();
+            var repository = await repositoryProvider.GetSizeRepositoryAsync(driveName);
+
+            var sizeProvider = new PersistentSizeProvider(repository);
+            sizeProvider.SizeChanged += Provider_SizeChanged;
+            providers.Add(driveName, sizeProvider);
         }
 
         private void Provider_SizeChanged(object sender, SizeChangedEventArgs e)
