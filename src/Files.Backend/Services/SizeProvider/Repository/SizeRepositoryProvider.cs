@@ -10,7 +10,7 @@ namespace Files.Backend.Services.SizeProvider
     {
         private SizeDatabase? database;
 
-        public async Task<ISizeRepository> GetSizeRepository(string driveName, CancellationToken cancellationToken = default)
+        public async Task<ISizeRepository> GetSizeRepositoryAsync(string driveName, CancellationToken cancellationToken = default)
         {
             var volumeInfoFactory = Ioc.Default.GetService<IVolumeInfoFactory>();
             if (volumeInfoFactory is IVolumeInfoFactory factory)

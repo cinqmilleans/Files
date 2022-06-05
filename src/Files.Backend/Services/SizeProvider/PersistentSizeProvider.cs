@@ -1,5 +1,4 @@
-﻿using Files.Shared.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,15 +10,19 @@ namespace Files.Backend.Services.SizeProvider
         private const int CacheLevel = 3;
         private const int EventLevel = 2;
 
-        private readonly IFolderRepository repository;
+        private readonly ISizeRepository repository;
         private readonly IFolderEnumerator enumerator;
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public PersistentSizeProvider(IFolderRepository repository, IFolderEnumerator enumerator)
+        public PersistentSizeProvider(ISizeRepository repository, IFolderEnumerator enumerator)
             => (this.repository, this.enumerator) = (repository, enumerator);
 
-        public Task CleanAsync() => Task.CompletedTask;
+        public Task CleanAsync()
+        {
+            repository.Clear();
+            return Task.CompletedTask;
+        }
 
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
@@ -34,35 +37,30 @@ namespace Files.Backend.Services.SizeProvider
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
 
-            var newFolders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
-
             ulong size = 0;
-            var cache = new List<IFolder>();
+            var folders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
 
-            await foreach (var newFolder in newFolders)
+            await foreach (var folder in folders)
             {
-                if (newFolder.Level <= CacheLevel)
+                if (folder.Level <= CacheLevel)
                 {
                     await Task.Yield();
-                    cache.Add(newFolder);
+                    repository.SetSize(folder.Path, folder.GlobalSize);
                 }
 
-                if (newFolder.Level is 0)
+                if (folder.Level is 0)
                 {
-                    RaiseSizeChanged(path, size, SizeChangedValueState.Final);
+                    RaiseSizeChanged(path, folder.GlobalSize, SizeChangedValueState.Final);
                 }
-                else if (newFolder.Level <= EventLevel)
+                else if (folder.Level <= EventLevel)
                 {
-                    size += newFolder.Level is EventLevel ? newFolder.GlobalSize : newFolder.LocalSize;
+                    size += folder.Level is EventLevel ? folder.GlobalSize : folder.LocalSize;
                     RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
                 }
             }
         }
 
-        public bool TryGetSize(string path, out ulong size)
-        {
-            throw new NotImplementedException();
-        }
+        public bool TryGetSize(string path, out ulong size) => repository.TryGetSize(path, out size);
 
         public void Dispose() {}
 

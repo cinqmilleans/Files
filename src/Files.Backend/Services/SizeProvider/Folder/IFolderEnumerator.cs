@@ -5,6 +5,6 @@ namespace Files.Backend.Services.SizeProvider
 {
     internal interface IFolderEnumerator
     {
-        IAsyncEnumerable<IFolder> EnumerateFolders(string path, ushort level = 0, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<IFolder> EnumerateFolders(string path, CancellationToken cancellationToken = default);
     }
 }

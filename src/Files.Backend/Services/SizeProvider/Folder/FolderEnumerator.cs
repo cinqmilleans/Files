@@ -11,7 +11,15 @@ namespace Files.Backend.Services.SizeProvider
 {
     internal class FolderEnumerator : IFolderEnumerator
     {
-        public async IAsyncEnumerable<IFolder> EnumerateFolders(string path, ushort level = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IFolder> EnumerateFolders(string path, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var folder in EnumerateFolders(path, 0, cancellationToken))
+            {
+                yield return folder;
+            }
+        }
+        private async IAsyncEnumerable<IFolder> EnumerateFolders
+            (string path, ushort level, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
                 out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
@@ -25,7 +33,6 @@ namespace Files.Backend.Services.SizeProvider
                     bool isDirectory = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) is FileAttributes.Directory;
                     if (!isDirectory)
                     {
-
                         folder.LocalSize += (ulong)findData.GetSize();
                     }
                     else if (findData.cFileName is not "." and not "..")
@@ -57,8 +64,7 @@ namespace Files.Backend.Services.SizeProvider
             public ulong LocalSize { get; set; }
             public ulong GlobalSize { get; set; }
 
-            public Folder(string path, ushort level)
-                => (Path, Level) = (path, level);
+            public Folder(string path, ushort level) => (Path, Level) = (path, level);
         }
     }
 }

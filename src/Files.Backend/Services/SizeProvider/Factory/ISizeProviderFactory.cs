@@ -4,6 +4,6 @@ namespace Files.Backend.Services.SizeProvider
 {
     internal interface ISizeProviderFactory
     {
-        Task<ISizeProvider> CreateSizeProvider(string driveName);
+        Task<ISizeProvider> CreateSizeProviderAsync(string driveName);
     }
 }

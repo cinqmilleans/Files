@@ -5,6 +5,6 @@ namespace Files.Backend.Services.SizeProvider
 {
     internal interface ISizeRepositoryProvider
     {
-        Task<ISizeRepository> GetSizeRepository(string driveName, CancellationToken cancellationToken = default);
+        Task<ISizeRepository> GetSizeRepositoryAsync(string driveName, CancellationToken cancellationToken = default);
     }
 }

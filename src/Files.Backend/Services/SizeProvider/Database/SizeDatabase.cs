@@ -22,7 +22,7 @@ namespace Files.Backend.Services.SizeProvider
             UpdateDrive(volumeGuid);
 
             var collection = database.GetCollection<SizedFolder>($"drive_{volumeGuid}");
-            collection.EnsureIndex(nameof(SizedDrive), true);
+            collection.EnsureIndex(nameof(SizedFolder.Path), true);
             return collection;
         }
 

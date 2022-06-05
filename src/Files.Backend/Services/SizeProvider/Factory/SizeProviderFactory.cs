@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider
 {
     internal class SizeProviderFactory : ISizeProviderFactory
     {
-        public async Task<ISizeProvider> CreateSizeProvider(string driveName)
+        public async Task<ISizeProvider> CreateSizeProviderAsync(string driveName)
         {
-            return await CreateSqliteSizeProvider(driveName);
-        }
+            var provider = new SizeRepositoryProvider();
 
-        private async Task<ISizeProvider> CreateSqliteSizeProvider(string driveName)
-        {
-            var repository = new SqliteFolderRepository();
+            var repository = await provider.GetSizeRepositoryAsync(driveName);
             var enumerator = new FolderEnumerator();
 
-            await repository.InitializeAsync();
             return new PersistentSizeProvider(repository, enumerator);
         }
     }
