@@ -1,23 +1,19 @@
-﻿using Files.Shared.Extensions;
+﻿using Files.Backend.Extensions;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using static Files.Backend.Helpers.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Services.SizeProvider
 {
     internal class PersistentSizeProvider : ISizeProvider
     {
-        private const int CacheLevel = 3;
-        private const int EventLevel = 2;
-
         private readonly ISizeRepository repository;
-        private readonly IFolderEnumerator enumerator;
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public PersistentSizeProvider(ISizeRepository repository, IFolderEnumerator enumerator)
-            => (this.repository, this.enumerator) = (repository, enumerator);
+        public PersistentSizeProvider(ISizeRepository repository) => this.repository = repository;
 
         public Task CleanAsync()
         {
@@ -28,36 +24,63 @@ namespace Files.Backend.Services.SizeProvider
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
             await Task.Yield();
-
             if (TryGetSize(path, out ulong cachedSize))
             {
-                RaiseSizeChanged(path, cachedSize, SizeChangedValueState.Intermediate);
+                RaiseSizeChanged(path, cachedSize, SizeChangedValueState.Final);
             }
             else
             {
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
 
-            ulong size = 0;
-            var folders = enumerator.EnumerateFolders(path).WithCancellation(cancellationToken);
+            ulong size = await Calculate(path);
 
-            await foreach (var folder in folders)
+            repository.SetSize(path, size);
+            RaiseSizeChanged(path, size, SizeChangedValueState.Final);
+
+            async Task<ulong> Calculate(string path, int level = 0)
             {
-                if (folder.Level <= CacheLevel)
-                {
-                    await Task.Yield();
-                    repository.SetSize(folder.Path, folder.GlobalSize);
-                }
+                IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
+                    out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
-                if (folder.Level is 0)
+                ulong size = 0;
+                ulong localSize = 0;
+                string localPath = string.Empty;
+
+                if (hFile.ToInt64() is not -1)
                 {
-                    RaiseSizeChanged(path, folder.GlobalSize, SizeChangedValueState.Final);
+                    do
+                    {
+                        bool isDirectory = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) is FileAttributes.Directory;
+                        if (!isDirectory)
+                        {
+                            size += (ulong)findData.GetSize();
+                        }
+                        else if (findData.cFileName is not "." and not "..")
+                        {
+                            localPath = Path.Combine(path, findData.cFileName);
+                            localSize = await Calculate(localPath, level + 1);
+                            size += localSize;
+                        }
+
+                        if (level <= 3)
+                        {
+                            await Task.Yield();
+                            repository.SetSize(localPath, localSize);
+                        }
+                        if (level <= 2)
+                        {
+                            RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
+                        }
+
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    } while (FindNextFile(hFile, out findData));
+                    FindClose(hFile);
                 }
-                else if (folder.Level <= EventLevel)
-                {
-                    size += folder.Level is EventLevel ? folder.GlobalSize : folder.LocalSize;
-                    RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
-                }
+                return size;
             }
         }
 

@@ -10,7 +10,7 @@ using static Files.Backend.Helpers.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    internal class FolderEnumerator : IFolderEnumerator
+    /*internal class FolderEnumerator : IFolderEnumerator
     {
         public async IAsyncEnumerable<IFolder> EnumerateFolders(string path, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -70,5 +70,5 @@ namespace Files.Backend.Services.SizeProvider
 
             public Folder(string path, uint level) => (Path, Level) = (path, level);
         }
-    }
+    }*/
 }

@@ -7,11 +7,8 @@ namespace Files.Backend.Services.SizeProvider
         public async Task<ISizeProvider> CreateSizeProviderAsync(string driveName)
         {
             var provider = new SizeRepositoryProvider();
-
             var repository = await provider.GetSizeRepositoryAsync(driveName);
-            var enumerator = new FolderEnumerator();
-
-            return new PersistentSizeProvider(repository, enumerator);
+            return new PersistentSizeProvider(repository);
         }
     }
 }
