@@ -1,6 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Files.Backend.Services.SizeProvider
 {
@@ -8,29 +6,10 @@ namespace Files.Backend.Services.SizeProvider
     {
         private readonly ConcurrentDictionary<string, ulong> cache = new();
 
-        public Task<ulong?> GetSizeAsync(string path, CancellationToken _ = default)
-            => cache.TryGetValue(path, out ulong size)
-                ? Task.FromResult<ulong?>(size)
-                : Task.FromResult<ulong?>(null);
+        public bool TryGetSize(string path, out ulong size) => cache.TryGetValue(path, out size);
+        public void SetSize(string path, ulong size) => cache.[path] = size;
 
-        public Task SetSizeAsync(string path, ulong size, CancellationToken _ = default)
-        {
-            cache[path] = size;
-            return Task.CompletedTask;
-        }
-
-        public Task ClearAsync(CancellationToken _ = default)
-        {
-            cache?.Clear();
-            return Task.CompletedTask;
-        }
-
-        public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
-        {
-            cache.TryRemove(path, out ulong _);
-            return Task.CompletedTask;
-        }
-
-        public void Dispose() {}
+        public void Clear() => cache.Clear();
+        public void Delete(string path) => cache.TryRemove(path, out ulong _);
     }
 }
