@@ -1,6 +1,5 @@
 ﻿using Files.Backend.Extensions;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,24 +7,26 @@ using static Files.Backend.Helpers.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Services.SizeProvider
 {
-    public class CachedSizeProvider : ISizeProvider
+    internal class PersistentSizeProvider : ISizeProvider
     {
-        private readonly ConcurrentDictionary<string, ulong> sizes = new();
+        private readonly ISizeRepository repository;
 
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
+
+        public PersistentSizeProvider(ISizeRepository repository) => this.repository = repository;
 
         public Task CleanAsync() => Task.CompletedTask;
 
         public Task ClearAsync()
         {
-            sizes.Clear();
+            repository.Clear();
             return Task.CompletedTask;
         }
 
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
             await Task.Yield();
-            if (sizes.TryGetValue(path, out ulong cachedSize))
+            if (TryGetSize(path, out ulong cachedSize))
             {
                 RaiseSizeChanged(path, cachedSize, SizeChangedValueState.Final);
             }
@@ -36,17 +37,11 @@ namespace Files.Backend.Services.SizeProvider
 
             ulong size = await Calculate(path);
 
-            sizes[path] = size;
+            repository.SetSize(path, size);
             RaiseSizeChanged(path, size, SizeChangedValueState.Final);
 
             async Task<ulong> Calculate(string path, int level = 0)
             {
-                if (string.IsNullOrEmpty(path))
-                {
-                    return 0;
-                }
-
-
                 IntPtr hFile = FindFirstFileExFromApp($"{path}{Path.DirectorySeparatorChar}*.*", FINDEX_INFO_LEVELS.FindExInfoBasic,
                     out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
@@ -73,9 +68,9 @@ namespace Files.Backend.Services.SizeProvider
                         if (level <= 3)
                         {
                             await Task.Yield();
-                            sizes[localPath] = localSize;
+                            repository.SetSize(localPath, localSize);
                         }
-                        if (level is 0)
+                        if (level <= 2)
                         {
                             RaiseSizeChanged(path, size, SizeChangedValueState.Intermediate);
                         }
@@ -91,7 +86,7 @@ namespace Files.Backend.Services.SizeProvider
             }
         }
 
-        public bool TryGetSize(string path, out ulong size) => sizes.TryGetValue(path, out size);
+        public bool TryGetSize(string path, out ulong size) => repository.TryGetSize(path, out size);
 
         public void Dispose() {}
 

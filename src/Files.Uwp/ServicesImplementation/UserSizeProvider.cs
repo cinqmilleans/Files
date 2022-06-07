@@ -44,7 +44,7 @@ namespace Files.Uwp.ServicesImplementation
         }
 
         private ISizeProvider GetProvider()
-            => preferences.ShowFolderSize ? new DrivesSizeProvider() : new NoSizeProvider();
+            => preferences.ShowFolderSize ? SizeProviderFactory.GetSizeProvider() : new NoSizeProvider();
 
         private async void Preferences_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

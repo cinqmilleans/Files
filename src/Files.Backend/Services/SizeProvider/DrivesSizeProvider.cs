@@ -45,7 +45,7 @@ namespace Files.Backend.Services.SizeProvider
             string driveName = GetDriveName(path);
             if (!providers.ContainsKey(driveName))
             {
-                CreateProvider(driveName);
+                await CreateProviderAsync(driveName);
             }
             var provider = providers[driveName];
             await provider.UpdateAsync(path, cancellationToken);
@@ -65,11 +65,14 @@ namespace Files.Backend.Services.SizeProvider
 
         private static string GetDriveName(string path) => Directory.GetDirectoryRoot(path);
 
-        private void CreateProvider(string driveName)
+        private async Task CreateProviderAsync(string driveName)
         {
-            var provider = new CachedSizeProvider();
-            provider.SizeChanged += Provider_SizeChanged;
-            providers.Add(driveName, provider);
+            var repositoryProvider = new SizeRepositoryProvider();
+            var repository = await repositoryProvider.GetSizeRepositoryAsync(driveName);
+
+            var sizeProvider = new PersistentSizeProvider(repository);
+            sizeProvider.SizeChanged += Provider_SizeChanged;
+            providers.Add(driveName, sizeProvider);
         }
 
         private void Provider_SizeChanged(object sender, SizeChangedEventArgs e)
