@@ -20,6 +20,7 @@ using Files.Uwp.Views;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -296,6 +297,19 @@ namespace Files.Uwp
             }
 
             WindowDecorationsHelper.RequestWindowDecorationsAccess();
+
+
+            string p = @"C:\Users\Benjamin\AppData\Local\Packages\FilesDev_ykqwq8d6ps0ag\LocalState\foldersizes.sqlite";
+            using (var connection = new SqliteConnection($"Data Source=:memory:"))
+            {
+                connection.Open();
+                using (var command = new SqliteCommand("CREATE TABLE IF NOT EXISTS (Code Text NOT NULL)"))
+                {
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+
         }
 
         protected override async void OnFileActivated(FileActivatedEventArgs e)

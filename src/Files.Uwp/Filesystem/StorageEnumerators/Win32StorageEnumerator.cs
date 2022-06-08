@@ -102,7 +102,7 @@ namespace Files.Uwp.Filesystem.StorageEnumerators
                                         folder.FileSizeBytes = (long)size;
                                         folder.FileSize = size.ToSizeString();
                                     }
-                                    _ = folderSizeProvider.UpdateAsync(folder.ItemPath, cancellationToken);
+                                    await folderSizeProvider.UpdateAsync(folder.ItemPath, cancellationToken);
                                 }
                             }
                         }

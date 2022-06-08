@@ -1,4 +1,5 @@
 ﻿using Files.Backend.Extensions;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -24,7 +25,7 @@ namespace Files.Backend.Services.SizeProvider
 
         public async Task UpdateAsync(string path, CancellationToken cancellationToken)
         {
-            await Task.Yield();
+            /*await Task.Yield();
             if (sizes.TryGetValue(path, out ulong cachedSize))
             {
                 RaiseSizeChanged(path, cachedSize, SizeChangedValueState.Final);
@@ -33,13 +34,14 @@ namespace Files.Backend.Services.SizeProvider
             {
                 RaiseSizeChanged(path, 0, SizeChangedValueState.None);
             }
+            */
 
-            ulong size = await Calculate(path);
+            /*ulong size = 1; // await Calculate(path);
 
             sizes[path] = size;
             RaiseSizeChanged(path, size, SizeChangedValueState.Final);
-
-            async Task<ulong> Calculate(string path, int level = 0)
+            */
+            /*async Task<ulong> Calculate(string path, int level = 0)
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -88,7 +90,7 @@ namespace Files.Backend.Services.SizeProvider
                     FindClose(hFile);
                 }
                 return size;
-            }
+            }*/
         }
 
         public bool TryGetSize(string path, out ulong size) => sizes.TryGetValue(path, out size);

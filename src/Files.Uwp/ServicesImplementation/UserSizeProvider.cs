@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Services.Settings;
 using Files.Backend.Services.SizeProvider;
+using Microsoft.Data.Sqlite;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -25,16 +26,31 @@ namespace Files.Uwp.ServicesImplementation
             preferences.PropertyChanged += Preferences_PropertyChanged;
         }
 
-        public Task CleanAsync()
-            => provider.CleanAsync();
+        public async Task CleanAsync()
+            => await provider.CleanAsync();
 
         public async Task ClearAsync()
             => await provider.ClearAsync();
+        private static bool t = true;
+        public async Task UpdateAsync(string path, CancellationToken cancellationToken)
+        {
+            if (t)
+            {
+                t = false;
+                string p = @"C:\Users\Benjamin\AppData\Local\Packages\FilesDev_ykqwq8d6ps0ag\LocalState\foldersizes.sqlite";
+                using (var connection = new SqliteConnection($"Data Source=:memory:"))
+                {
+                    connection.Open();
+                    using var command = new SqliteCommand("CREATE TABLE IF NOT EXISTS (Code Text NOT NULL)");
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
 
-        public Task UpdateAsync(string path, CancellationToken cancellationToken)
-            => provider.UpdateAsync(path, cancellationToken);
+//=> provider.UpdateAsync(path, cancellationToken);
 
-        public bool TryGetSize(string path, out ulong size)
+public bool TryGetSize(string path, out ulong size)
             => provider.TryGetSize(path, out size);
 
         public void Dispose()
