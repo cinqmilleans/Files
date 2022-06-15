@@ -5,6 +5,7 @@ using Files.Backend.Services.Settings;
 using Files.Backend.Services.SizeProvider;
 using Files.Backend.ViewModels.Dialogs;
 using Files.Shared;
+using Files.Shared.Cloud;
 using Files.Shared.Enums;
 using Files.Shared.EventArguments;
 using Files.Shared.Extensions;

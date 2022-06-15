@@ -1,4 +1,4 @@
-﻿using Files.Shared;
+﻿using Files.Shared.Cloud;
 using System;
 using System.Collections.Generic;
 using System.IO;

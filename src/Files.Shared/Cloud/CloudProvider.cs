@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Files.Shared
+namespace Files.Shared.Cloud
 {
     public class CloudProvider : IEquatable<CloudProvider>
     {

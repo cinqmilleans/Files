@@ -1,4 +1,4 @@
-﻿using Files.Shared;
+﻿using Files.Shared.Cloud;
 using Files.Uwp.Filesystem.Cloud.Providers;
 using System.Collections.Generic;
 using System.Linq;

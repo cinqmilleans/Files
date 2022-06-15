@@ -1,4 +1,4 @@
-﻿using Files.Shared;
+﻿using Files.Shared.Cloud;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                     while (reader.Read())
                     {
                         var connection = (
-                            ConnectionType: reader["conn_type"]?.ToString(), 
+                            ConnectionType: reader["conn_type"]?.ToString(),
                             HostName: reader["host_name"]?.ToString());
 
                         connections.Add(reader["id"]?.ToString(), connection);

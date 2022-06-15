@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Files.Shared.EventArguments;
+using Files.Shared.Cloud;
 
 namespace Files.Uwp.ViewModels
 {

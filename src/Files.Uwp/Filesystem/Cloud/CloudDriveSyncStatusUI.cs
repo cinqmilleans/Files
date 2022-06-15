@@ -1,5 +1,5 @@
-﻿using Files.Shared.Enums;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Files.Shared.Cloud;
 using Microsoft.Toolkit.Uwp;
 
 namespace Files.Uwp.Filesystem.Cloud

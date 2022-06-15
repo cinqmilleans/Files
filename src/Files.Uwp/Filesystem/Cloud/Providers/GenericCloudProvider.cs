@@ -1,4 +1,4 @@
-﻿using Files.Shared;
+﻿using Files.Shared.Cloud;
 using Files.Uwp.Helpers;
 using Newtonsoft.Json;
 using System;
