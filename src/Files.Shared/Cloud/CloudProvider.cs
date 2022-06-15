@@ -2,31 +2,16 @@
 {
     public class CloudProvider : ICloudProvider
     {
-        public CloudProviders ID { get; set; }
+        public CloudProviders ID { get; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
+        public string SyncFolder { get; init; } = string.Empty;
+        public byte[] IconData { get; init; } = new byte[0];
 
-        public string SyncFolder { get; set; } = string.Empty;
+        public CloudProvider(CloudProviders id) => ID = id;
 
-        public byte[] IconData { get; set; } = new byte[0];
-
-        public override int GetHashCode()
-        {
-            return $"{ID}|{SyncFolder}".GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is ICloudProvider other)
-            {
-                return Equals(other);
-            }
-            return base.Equals(obj);
-        }
-
-        public bool Equals(ICloudProvider other)
-        {
-            return other != null && other.ID == ID && other.SyncFolder == SyncFolder;
-        }
+        public override int GetHashCode() => (ID, SyncFolder).GetHashCode();
+        public override bool Equals(object o) => o is ICloudProvider other && Equals(other);
+        public bool Equals(ICloudProvider other) => other is not null && other.ID == ID && other.SyncFolder == SyncFolder;
     }
 }

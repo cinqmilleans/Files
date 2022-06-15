@@ -29,11 +29,10 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
 
                     if (!string.IsNullOrEmpty(syncPath))
                     {
-                        return new[] { new CloudProvider()
+                        return new[] { new CloudProvider(CloudProviders.Box)
                             {
-                                ID = CloudProviders.Box,
                                 Name = "Box",
-                                SyncFolder = syncPath
+                                SyncFolder = syncPath,
                             }
                         };
                     }

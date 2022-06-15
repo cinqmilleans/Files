@@ -64,9 +64,8 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                             }
 
                             var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                            var synologyDriveCloud = new CloudProvider()
+                            var synologyDriveCloud = new CloudProvider(CloudProviders.SynologyDrive)
                             {
-                                ID = CloudProviders.SynologyDrive,
                                 SyncFolder = path,
                                 Name = $"Synology Drive - {connections[reader2["conn_id"]?.ToString()].HostName} ({folder.Name})"
                             };

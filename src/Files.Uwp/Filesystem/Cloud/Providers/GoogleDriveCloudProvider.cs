@@ -51,14 +51,12 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                         }
 
                         var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                        var googleCloud = new CloudProvider()
-                        {
-                            ID = CloudProviders.GoogleDrive,
-                            SyncFolder = path
-                        };
-
                         string title = reader["title"]?.ToString() ?? folder.Name;
-                        googleCloud.Name = $"Google Drive ({title})";
+                        var googleCloud = new CloudProvider(CloudProviders.GoogleDrive)
+                        {
+                            Name = $"Google Drive ({title})",
+                            SyncFolder = path,
+                        };
 
                         results.Add(googleCloud);
                     }
@@ -73,21 +71,15 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                         }
 
                         var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                        var googleCloud = new CloudProvider()
-                        {
-                            ID = CloudProviders.GoogleDrive,
-                            SyncFolder = path
-                        };
-
                         string title = reader["name"]?.ToString() ?? folder.Name;
-                        googleCloud.Name = title;
-
                         var iconPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "Google", "Drive File Stream", "drive_fs.ico");
                         StorageFile iconFile = await FilesystemTasks.Wrap(() => StorageFile.GetFileFromPathAsync(iconPath).AsTask());
-                        if (iconFile != null)
+                        var googleCloud = new CloudProvider(CloudProviders.GoogleDrive)
                         {
-                            googleCloud.IconData = await iconFile.ToByteArrayAsync();
-                        }
+                            Name = title,
+                            SyncFolder = path,
+                            IconData = iconFile is not null ? await iconFile.ToByteArrayAsync() : null,
+                    };
 
                         results.Add(googleCloud);
                     }

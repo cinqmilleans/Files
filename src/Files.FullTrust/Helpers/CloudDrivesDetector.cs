@@ -35,11 +35,10 @@ namespace Files.FullTrust.Helpers
             var syncedFolder = (string)yandexKey?.GetValue("RootFolder");
             if (syncedFolder != null)
             {
-                results.Add(new CloudProvider()
+                results.Add(new CloudProvider(CloudProviders.Yandex)
                 {
-                    ID = CloudProviders.Yandex,
                     Name = $"Yandex Disk",
-                    SyncFolder = syncedFolder
+                    SyncFolder = syncedFolder,
                 });
             }
             return Task.FromResult(results);
@@ -90,9 +89,8 @@ namespace Files.FullTrust.Helpers
                         continue;
                     }
 
-                    results.Add(new CloudProvider()
+                    results.Add(new CloudProvider(driveID.Value)
                     {
-                        ID = driveID.Value,
                         Name = driveID switch
                         {
                             CloudProviders.Mega => $"MEGA ({Path.GetFileName(syncedFolder.TrimEnd('\\'))})",
@@ -126,11 +124,10 @@ namespace Files.FullTrust.Helpers
                 var accountName = string.IsNullOrWhiteSpace(displayName) ? "OneDrive" : $"OneDrive - {displayName}";
                 if (!string.IsNullOrWhiteSpace(userFolder) && !oneDriveAccounts.Any(x => x.Name == accountName))
                 {
-                    oneDriveAccounts.Add(new CloudProvider()
+                    oneDriveAccounts.Add(new CloudProvider(CloudProviders.OneDrive)
                     {
-                        ID = CloudProviders.OneDrive,
                         Name = accountName,
-                        SyncFolder = userFolder
+                        SyncFolder = userFolder,
                     });
                 }
             }
@@ -181,11 +178,10 @@ namespace Files.FullTrust.Helpers
                     var parentFolder = Directory.GetParent(sharePointSyncFolder)?.FullName ?? string.Empty;
                     if (!sharepointAccounts.Any(acc => string.Equals(acc.Name, accountName, StringComparison.OrdinalIgnoreCase)) && !string.IsNullOrWhiteSpace(parentFolder))
                     {
-                        sharepointAccounts.Add(new CloudProvider()
+                        sharepointAccounts.Add(new CloudProvider(CloudProviders.OneDriveCommercial)
                         {
-                            ID = CloudProviders.OneDriveCommercial,
                             Name = accountName,
-                            SyncFolder = parentFolder
+                            SyncFolder = parentFolder,
                         });
                     }
                 }

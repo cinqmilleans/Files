@@ -23,9 +23,8 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                 if (jsonObj.ContainsKey("personal"))
                 {
                     var dropboxPath = (string)jsonObj["personal"]["path"];
-                    results.Add(new CloudProvider()
+                    results.Add(new CloudProvider(CloudProviders.DropBox)
                     {
-                        ID = CloudProviders.DropBox,
                         Name = "Dropbox",
                         SyncFolder = dropboxPath
                     });
@@ -34,9 +33,8 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                 if (jsonObj.ContainsKey("business"))
                 {
                     var dropboxPath = (string)jsonObj["business"]["path"];
-                    results.Add(new CloudProvider()
+                    results.Add(new CloudProvider(CloudProviders.DropBox)
                     {
-                        ID = CloudProviders.DropBox,
                         Name = "Dropbox Business",
                         SyncFolder = dropboxPath
                     });

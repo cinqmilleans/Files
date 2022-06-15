@@ -17,11 +17,10 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
                 var iCloudPath = "iCloudDrive";
                 var driveFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(userPath, iCloudPath));
 
-                return new[] { new CloudProvider()
+                return new[] { new CloudProvider(CloudProviders.AppleCloud)
                     {
-                        ID = CloudProviders.AppleCloud,
                         Name = "iCloud",
-                        SyncFolder = driveFolder.Path
+                        SyncFolder = driveFolder.Path,
                     }
                 };
             }
