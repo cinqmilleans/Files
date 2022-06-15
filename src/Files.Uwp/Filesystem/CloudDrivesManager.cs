@@ -34,9 +34,9 @@ namespace Files.Uwp.Filesystem
         public async Task UpdateDrivesAsync()
         {
             var cloudProviderController = new CloudProviderController();
-            var cloudProviders = await cloudProviderController.DetectInstalledCloudProvidersAsync();
+            var cloudProviders = cloudProviderController.DetectAsync();
 
-            foreach (var provider in cloudProviders)
+            await foreach (var provider in cloudProviders)
             {
                 logger.Info($"Adding cloud provider \"{provider.Name}\" mapped to {provider.SyncFolder}");
                 var cloudProviderItem = new DriveItem
@@ -69,7 +69,8 @@ namespace Files.Uwp.Filesystem
                     drives.Add(cloudProviderItem);
                 }
 
-                DataChanged?.Invoke(SectionType.CloudDrives, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, cloudProviderItem));
+                DataChanged?.Invoke(SectionType.CloudDrives,
+                    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, cloudProviderItem));
             }
         }
     }

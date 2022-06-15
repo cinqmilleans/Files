@@ -6,89 +6,42 @@ namespace Files.Uwp.Filesystem.Cloud
 {
     public class CloudDriveSyncStatusUI : ObservableObject
     {
-        private bool loadSyncStatus;
+        public CloudDriveSyncStatus SyncStatus { get; }
+        public string Glyph { get; }
 
-        public bool LoadSyncStatus
+        public bool LoadSyncStatus { get; }
+        public string SyncStatusString { get; } = "CloudDriveSyncStatus_Unknown".GetLocalized();
+
+        public CloudDriveSyncStatusUI() {}
+        private CloudDriveSyncStatusUI(CloudDriveSyncStatus syncStatus) => SyncStatus = syncStatus;
+        private CloudDriveSyncStatusUI(CloudDriveSyncStatus syncStatus, string glyph, bool loadSyncStatus, string SyncStatusStringKey)
         {
-            get => loadSyncStatus;
-            set => SetProperty(ref loadSyncStatus, value);
+            SyncStatus = syncStatus;
+            Glyph = glyph;
+            LoadSyncStatus = loadSyncStatus;
+            SyncStatusString = SyncStatusStringKey.GetLocalized();
         }
 
-        private string glyph;
-
-        public string Glyph
+        public static CloudDriveSyncStatusUI FromCloudDriveSyncStatus(CloudDriveSyncStatus syncStatus) => syncStatus switch
         {
-            get => glyph;
-            set => SetProperty(ref glyph, value);
-        }
+            // File
+            CloudDriveSyncStatus.FileOnline
+                => new CloudDriveSyncStatusUI(syncStatus, "\uE753", true, "CloudDriveSyncStatus_Online"),
+            CloudDriveSyncStatus.FileOffline or CloudDriveSyncStatus.FileOfflinePinned
+                => new CloudDriveSyncStatusUI(syncStatus, "\uE73E", true, "CloudDriveSyncStatus_Offline"),
+            CloudDriveSyncStatus.FileSync
+                => new CloudDriveSyncStatusUI(syncStatus, "\uE895", true, "CloudDriveSyncStatus_Sync"),
 
-        private string syncStatusString = "CloudDriveSyncStatus_Unknown".GetLocalized();
+            // Folder
+            CloudDriveSyncStatus.FolderOnline or CloudDriveSyncStatus.FolderOfflinePartial
+                => new CloudDriveSyncStatusUI(syncStatus, "\uE753", true, "CloudDriveSyncStatus_PartialOffline"),
+            CloudDriveSyncStatus.FolderOfflineFull or CloudDriveSyncStatus.FolderOfflinePinned or CloudDriveSyncStatus.FolderEmpty
+                => new CloudDriveSyncStatusUI(syncStatus, "\uE73E", true, "CloudDriveSyncStatus_Offline"),
+            CloudDriveSyncStatus.FolderExcluded
+                => new CloudDriveSyncStatusUI(syncStatus, "\uF140", true, "CloudDriveSyncStatus_Excluded"),
 
-        public string SyncStatusString
-        {
-            get => syncStatusString;
-            set => SetProperty(ref syncStatusString, value);
-        }
-
-        public CloudDriveSyncStatus SyncStatus { get; set; }
-
-        public static CloudDriveSyncStatusUI FromCloudDriveSyncStatus(CloudDriveSyncStatus syncStatus)
-        {
-            var statusUI = new CloudDriveSyncStatusUI();
-            statusUI.SyncStatus = syncStatus;
-            switch (syncStatus)
-            {
-                // File
-                case CloudDriveSyncStatus.FileOnline:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uE753";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_Online".GetLocalized();
-                    break;
-
-                case CloudDriveSyncStatus.FileOffline:
-                case CloudDriveSyncStatus.FileOfflinePinned:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uE73E";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_Offline".GetLocalized();
-                    break;
-
-                case CloudDriveSyncStatus.FileSync:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uE895";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_Sync".GetLocalized();
-                    break;
-
-                // Folder
-                case CloudDriveSyncStatus.FolderOnline:
-                case CloudDriveSyncStatus.FolderOfflinePartial:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uE753";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_PartialOffline".GetLocalized();
-                    break;
-
-                case CloudDriveSyncStatus.FolderOfflineFull:
-                case CloudDriveSyncStatus.FolderOfflinePinned:
-                case CloudDriveSyncStatus.FolderEmpty:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uE73E";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_Offline".GetLocalized();
-                    break;
-
-                case CloudDriveSyncStatus.FolderExcluded:
-                    statusUI.LoadSyncStatus = true;
-                    statusUI.Glyph = "\uF140";
-                    statusUI.SyncStatusString = "CloudDriveSyncStatus_Excluded".GetLocalized();
-                    break;
-
-                // Unknown
-                case CloudDriveSyncStatus.NotSynced:
-                case CloudDriveSyncStatus.Unknown:
-                default:
-                    statusUI.LoadSyncStatus = false;
-                    break;
-            }
-
-            return statusUI;
-        }
+            // Unknown
+            _ => new CloudDriveSyncStatusUI(syncStatus),
+        };
     }
 }

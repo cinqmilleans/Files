@@ -1174,7 +1174,7 @@ namespace Files.Uwp.ViewModels
                                 var fileTag = FileTagsHelper.ReadFileTag(item.ItemPath);
                                 await dispatcherQueue.EnqueueAsync(() =>
                                 {
-                                    item.SyncStatusUI = new CloudDriveSyncStatusUI() { LoadSyncStatus = false }; // Reset cloud sync status icon
+                                    item.SyncStatusUI = new CloudDriveSyncStatusUI(); // Reset cloud sync status icon
                                     item.FileTag = fileTag;
                                 }, DispatcherQueuePriority.Low);
                                 FileTagsHelper.DbInstance.SetTag(item.ItemPath, item.FileFRN, item.FileTag);

@@ -3,14 +3,13 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
     public class SynologyDriveCloudProvider : ICloudProviderDetector
     {
-        public async Task<IList<CloudProvider>> DetectAsync()
+        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
         {
             /* Synology Drive stores its information on some files, but we only need sys.sqlite, which is placed on %LocalAppData%\SynologyDrive\data\db
              * In this database we need "connection_table" and "session_table" tables:
@@ -21,66 +20,51 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
              * "remote_path", which has the server folder. Currently it's not needed, just adding in case in the future is needed.
              * "sync_folder", which has the local folder to sync.
             */
-            try
+            string appDataPath = UserDataPaths.GetDefault().LocalAppData;
+            var configFile = await StorageFile.GetFileFromPathAsync(Path.Combine(appDataPath, @"SynologyDrive\data\db\sys.sqlite"));
+            await configFile.CopyAsync(ApplicationData.Current.TemporaryFolder, "synology_drive.db", NameCollisionOption.ReplaceExisting);
+            var syncDbPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "synology_drive.db");
+
+            // Build the connection and sql command
+            SQLitePCL.Batteries_V2.Init();
+            using var database = new SqliteConnection($"Data Source='{syncDbPath}'");
+            using var cmdConnection = new SqliteCommand("SELECT * FROM connection_table", database);
+            using var cmdTable = new SqliteCommand("SELECT * FROM session_table", database);
+
+            // Open the connection and execute the command
+            database.Open();
+            var connections = new Dictionary<string, (string ConnectionType, string HostName)>();
+
+            var reader = cmdConnection.ExecuteReader();
+            while (reader.Read())
             {
-                string appDataPath = UserDataPaths.GetDefault().LocalAppData;
-                string dbPath = @"SynologyDrive\data\db\sys.sqlite";
-                var configFile = await StorageFile.GetFileFromPathAsync(Path.Combine(appDataPath, dbPath));
-                await configFile.CopyAsync(ApplicationData.Current.TemporaryFolder, "synology_drive.db", NameCollisionOption.ReplaceExisting);
-                var syncDbPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "synology_drive.db");
-
-                // Build the connection and sql command
-                SQLitePCL.Batteries_V2.Init();
-                using (var con = new SqliteConnection($"Data Source='{syncDbPath}'"))
-                using (var cmd = new SqliteCommand("select * from connection_table", con))
-                using (var cmd2 = new SqliteCommand("select * from session_table", con))
-                {
-                    // Open the connection and execute the command
-                    con.Open();
-                    var reader = cmd.ExecuteReader();
-                    var connections = new Dictionary<string, (string ConnectionType, string HostName)>();
-
-                    while (reader.Read())
-                    {
-                        var connection = (
-                            ConnectionType: reader["conn_type"]?.ToString(),
-                            HostName: reader["host_name"]?.ToString());
-
-                        connections.Add(reader["id"]?.ToString(), connection);
-                    }
-
-                    var reader2 = cmd2.ExecuteReader();
-                    var results = new List<CloudProvider>();
-
-                    while (reader2.Read())
-                    {
-                        // Extract the data from the reader
-                        if (connections[reader2["conn_id"]?.ToString()].ConnectionType == "1")
-                        {
-                            string path = reader2["sync_folder"]?.ToString();
-                            if (string.IsNullOrWhiteSpace(path))
-                            {
-                                continue;
-                            }
-
-                            var folder = await StorageFolder.GetFolderFromPathAsync(path);
-                            var synologyDriveCloud = new CloudProvider(CloudProviders.SynologyDrive)
-                            {
-                                SyncFolder = path,
-                                Name = $"Synology Drive - {connections[reader2["conn_id"]?.ToString()].HostName} ({folder.Name})"
-                            };
-
-                            results.Add(synologyDriveCloud);
-                        }
-                    }
-
-                    return results;
-                }
+                var connection =
+                (
+                    ConnectionType: reader["conn_type"]?.ToString(),
+                    HostName: reader["host_name"]?.ToString()
+                );
+                connections.Add(reader["id"]?.ToString(), connection);
             }
-            catch
+
+            reader = cmdTable.ExecuteReader();
+            while (reader.Read())
             {
-                // Not detected
-                return Array.Empty<CloudProvider>();
+                // Extract the data from the reader
+                if (connections[reader["conn_id"]?.ToString()].ConnectionType is "1")
+                {
+                    string path = reader["sync_folder"]?.ToString();
+                    if (string.IsNullOrWhiteSpace(path))
+                    {
+                        continue;
+                    }
+
+                    var folder = await StorageFolder.GetFolderFromPathAsync(path);
+                    yield return new CloudProvider(CloudProviders.SynologyDrive)
+                    {
+                        SyncFolder = path,
+                        Name = $"Synology Drive - {connections[reader["conn_id"]?.ToString()].HostName} ({folder.Name})"
+                    };
+                }
             }
         }
     }

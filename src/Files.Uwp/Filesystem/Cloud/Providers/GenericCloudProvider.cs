@@ -1,9 +1,7 @@
 ﻿using Files.Shared.Cloud;
 using Files.Uwp.Helpers;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 
@@ -11,32 +9,27 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
 {
     public class GenericCloudProvider : ICloudProviderDetector
     {
-        public async Task<IList<CloudProvider>> DetectAsync()
+        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
         {
-            try
+            var connection = await AppServiceConnectionHelper.Instance;
+            if (connection is not null)
             {
-                var connection = await AppServiceConnectionHelper.Instance;
-                if (connection != null)
+                var (status, response) = await connection.SendMessageForResponseAsync(new ValueSet
                 {
-                    var (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
+                    ["Arguments"] = "DetectCloudDrives",
+                });
+
+                if (status is AppServiceResponseStatus.Success && response.ContainsKey("Drives"))
+                {
+                    var providers = JsonConvert.DeserializeObject<List<CloudProvider>>((string)response["Drives"]);
+                    if (providers is not null)
                     {
-                        { "Arguments", "DetectCloudDrives" }
-                    });
-                    if (status == AppServiceResponseStatus.Success && response.ContainsKey("Drives"))
-                    {
-                        var results = JsonConvert.DeserializeObject<List<CloudProvider>>((string)response["Drives"]);
-                        if (results != null)
+                        foreach (var provider in providers)
                         {
-                            return results;
+                            yield return provider;
                         }
                     }
                 }
-                return Array.Empty<CloudProvider>();
-            }
-            catch
-            {
-                // Not detected
-                return Array.Empty<CloudProvider>();
             }
         }
     }
