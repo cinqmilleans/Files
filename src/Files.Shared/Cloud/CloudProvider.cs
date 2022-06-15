@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace Files.Shared.Cloud
+﻿namespace Files.Shared.Cloud
 {
-    public class CloudProvider : IEquatable<CloudProvider>
+    public class CloudProvider : ICloudProvider
     {
         public CloudProviders ID { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string SyncFolder { get; set; }
+        public string SyncFolder { get; set; } = string.Empty;
 
-        public byte[] IconData { get; set; }
+        public byte[] IconData { get; set; } = new byte[0];
 
         public override int GetHashCode()
         {
@@ -19,32 +17,16 @@ namespace Files.Shared.Cloud
 
         public override bool Equals(object obj)
         {
-            if (obj is CloudProvider other)
+            if (obj is ICloudProvider other)
             {
                 return Equals(other);
             }
             return base.Equals(obj);
         }
 
-        public bool Equals(CloudProvider other)
+        public bool Equals(ICloudProvider other)
         {
             return other != null && other.ID == ID && other.SyncFolder == SyncFolder;
         }
-    }
-
-    public enum CloudProviders
-    {
-        OneDrive,
-        OneDriveCommercial,
-        Mega,
-        GoogleDrive,
-        DropBox,
-        AppleCloud,
-        AmazonDrive,
-        Nextcloud,
-        Yandex,
-        Box,
-        Jottacloud,
-        SynologyDrive
     }
 }
