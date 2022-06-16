@@ -8,6 +8,6 @@ namespace Files.Shared.Cloud
 
         public string Name { get; }
         public string SyncFolder { get; }
-        public byte[] IconData { get; }
+        public byte[]? IconData { get; }
     }
 }

@@ -7,9 +7,9 @@ using Windows.Foundation.Collections;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class GenericCloudProvider : ICloudProviderDetector
+    public class GenericCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             var connection = await AppServiceConnectionHelper.Instance;
             if (connection is not null)

@@ -7,9 +7,9 @@ using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class DropBoxCloudProvider : ICloudProviderDetector
+    public class DropBoxCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             var jsonPath = Path.Combine(UserDataPaths.GetDefault().LocalAppData, @"Dropbox\info.json");
             var configFile = await StorageFile.GetFileFromPathAsync(jsonPath);

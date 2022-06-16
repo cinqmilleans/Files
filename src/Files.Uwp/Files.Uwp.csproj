@@ -191,7 +191,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ImageSourceExtensions.cs" />
     <Compile Include="Extensions\KeyboardAcceleratorExtensions.cs" />
-    <Compile Include="Filesystem\Cloud\Providers\TryCloudProvider.cs" />
+    <Compile Include="Filesystem\Cloud\Providers\AbstractCloudProvider.cs" />
     <Compile Include="Filesystem\Cloud\Providers\SynologyDriveCloudProvider.cs" />
     <Compile Include="Filesystem\FilesystemOperations\ShellFilesystemOperations.cs" />
     <Compile Include="Filesystem\FileTagsHelper.cs" />

@@ -7,9 +7,9 @@ using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class SynologyDriveCloudProvider : ICloudProviderDetector
+    public class SynologyDriveCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             /* Synology Drive stores its information on some files, but we only need sys.sqlite, which is placed on %LocalAppData%\SynologyDrive\data\db
              * In this database we need "connection_table" and "session_table" tables:

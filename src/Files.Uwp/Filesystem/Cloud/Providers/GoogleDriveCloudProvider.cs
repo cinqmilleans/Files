@@ -8,9 +8,9 @@ using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class GoogleDriveCloudProvider : ICloudProviderDetector
+    public class GoogleDriveCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             // Google Drive's sync database can be in a couple different locations. Go find it.
             string appDataPath = UserDataPaths.GetDefault().LocalAppData;
@@ -26,9 +26,8 @@ namespace Files.Uwp.Filesystem.Cloud.Providers
 
             // Open the connection and execute the command
             database.Open();
-            var reader = cmdRoot.ExecuteReader(); // Google synced folders
-            var results = new List<CloudProvider>();
 
+            var reader = cmdRoot.ExecuteReader(); // Google synced folders
             while (reader.Read())
             {
                 // Extract the data from the reader

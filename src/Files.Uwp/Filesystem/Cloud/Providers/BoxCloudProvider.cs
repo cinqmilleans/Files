@@ -6,9 +6,9 @@ using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class BoxCloudProvider : ICloudProviderDetector
+    public class BoxCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             string configPathBoxDrive = Path.Combine(UserDataPaths.GetDefault().LocalAppData, @"Box\Box\data\shell\sync_root_folder.txt");
             string configPathBoxSync = Path.Combine(UserDataPaths.GetDefault().LocalAppData, @"Box Sync\sync_root_folder.txt");

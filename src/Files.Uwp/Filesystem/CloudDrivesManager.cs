@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Shared;
+using Files.Shared.Extensions;
 using Files.Uwp.DataModels.NavigationControlItems;
 using Files.Uwp.Filesystem.Cloud;
 using Files.Uwp.Helpers;
@@ -34,9 +35,9 @@ namespace Files.Uwp.Filesystem
         public async Task UpdateDrivesAsync()
         {
             var cloudProviderController = new CloudProviderController();
-            var cloudProviders = cloudProviderController.DetectAsync();
+            var cloudProviders = await cloudProviderController.DetectAsync();
 
-            await foreach (var provider in cloudProviders)
+            foreach (var provider in cloudProviders)
             {
                 logger.Info($"Adding cloud provider \"{provider.Name}\" mapped to {provider.SyncFolder}");
                 var cloudProviderItem = new DriveItem

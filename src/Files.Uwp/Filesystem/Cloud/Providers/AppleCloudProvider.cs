@@ -6,9 +6,9 @@ using Windows.Storage;
 
 namespace Files.Uwp.Filesystem.Cloud.Providers
 {
-    public class AppleCloudProvider : ICloudProviderDetector
+    public class AppleCloudProvider : AbstractCloudProvider
     {
-        public async IAsyncEnumerable<ICloudProvider> DetectAsync()
+        protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {
             string userPath = UserDataPaths.GetDefault().Profile;
             string iCloudPath = Path.Combine(userPath, "iCloudDrive");
