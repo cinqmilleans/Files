@@ -12,11 +12,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 
-namespace Files.Uwp.Filesystem
+namespace Files.Uwp.Filesystem.Cloud
 {
     public class CloudDrivesManager
     {
         private readonly ILogger logger = Ioc.Default.GetService<ILogger>();
+        private readonly ICloudDetector detector = Ioc.Default.GetService<ICloudDetector>();
 
         public EventHandler<NotifyCollectionChangedEventArgs> DataChanged;
 
@@ -34,10 +35,8 @@ namespace Files.Uwp.Filesystem
 
         public async Task UpdateDrivesAsync()
         {
-            var cloudDetector = new CloudDetector();
-            var cloudProviders = await cloudDetector.DetectCloudProvidersAsync();
-
-            foreach (var provider in cloudProviders)
+            var providers = await detector.DetectCloudProvidersAsync();
+            foreach (var provider in providers)
             {
                 logger.Info($"Adding cloud provider \"{provider.Name}\" mapped to {provider.SyncFolder}");
                 var cloudProviderItem = new DriveItem

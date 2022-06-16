@@ -243,7 +243,7 @@
     <Compile Include="Filesystem\StorageEnumerators\UniversalStorageEnumerator.cs" />
     <Compile Include="Filesystem\StorageEnumerators\Win32StorageEnumerator.cs" />
     <Compile Include="EventArguments\LayoutModeEventArgs.cs" />
-    <Compile Include="Filesystem\CloudDrivesManager.cs" />
+    <Compile Include="Filesystem\Cloud\CloudDrivesManager.cs" />
     <Compile Include="Helpers\AdaptiveLayoutHelpers.cs" />
     <Compile Include="Filesystem\NetworkDrivesManager.cs" />
     <Compile Include="Helpers\AppServiceConnectionHelper.cs" />
