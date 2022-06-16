@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 
-namespace Files.Uwp.Filesystem.Cloud.Providers
+namespace Files.Uwp.Filesystem.Cloud
 {
-    public class GenericCloudProvider : AbstractCloudProvider
+    public class GenericCloudDetector : AbstractCloudDetector
     {
         protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {

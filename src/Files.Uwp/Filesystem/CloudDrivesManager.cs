@@ -34,8 +34,8 @@ namespace Files.Uwp.Filesystem
 
         public async Task UpdateDrivesAsync()
         {
-            var cloudProviderController = new CloudProviderController();
-            var cloudProviders = await cloudProviderController.DetectAsync();
+            var cloudDetector = new CloudDetector();
+            var cloudProviders = await cloudDetector.DetectCloudProvidersAsync();
 
             foreach (var provider in cloudProviders)
             {

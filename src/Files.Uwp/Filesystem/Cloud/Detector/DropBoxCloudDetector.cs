@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using Windows.Storage;
 
-namespace Files.Uwp.Filesystem.Cloud.Providers
+namespace Files.Uwp.Filesystem.Cloud
 {
-    public class DropBoxCloudProvider : AbstractCloudProvider
+    public class DropBoxCloudDetector : AbstractCloudDetector
     {
         protected override async IAsyncEnumerable<ICloudProvider> GetProviders()
         {

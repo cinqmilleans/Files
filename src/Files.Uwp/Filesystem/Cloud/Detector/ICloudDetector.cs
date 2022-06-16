@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Files.Uwp.Filesystem.Cloud
 {
-    public interface ICloudProviderDetector
+    public interface ICloudDetector
     {
-        Task<IEnumerable<ICloudProvider>> DetectAsync();
+        Task<IEnumerable<ICloudProvider>> DetectCloudProvidersAsync();
     }
 }

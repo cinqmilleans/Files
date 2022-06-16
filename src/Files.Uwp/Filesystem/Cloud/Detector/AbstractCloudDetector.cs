@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Files.Uwp.Filesystem.Cloud.Providers
+namespace Files.Uwp.Filesystem.Cloud
 {
-    public abstract class AbstractCloudProvider : ICloudProviderDetector
+    public abstract class AbstractCloudDetector : ICloudDetector
     {
-        public async Task<IEnumerable<ICloudProvider>> DetectAsync()
+        public async Task<IEnumerable<ICloudProvider>> DetectCloudProvidersAsync()
         {
             try
             {
