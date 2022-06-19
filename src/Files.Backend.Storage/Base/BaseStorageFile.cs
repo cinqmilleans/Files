@@ -7,7 +7,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Storage
 {
     public abstract class BaseStorageFile : IBaseStorageFile
     {

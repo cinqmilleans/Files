@@ -1,6 +1,7 @@
-﻿using Windows.Storage;
+﻿using Files.Backend.Storage.Enums;
+using Windows.Storage;
 
-namespace Files.Uwp.Filesystem
+namespace Files.Backend.Storage
 {
     public interface IStorageItemWithPath
     {
@@ -8,6 +9,6 @@ namespace Files.Uwp.Filesystem
         public string Path { get; }
 
         public IStorageItem Item { get; }
-        public FilesystemItemType ItemType { get; }
+        public StorageItemType ItemType { get; }
     }
 }

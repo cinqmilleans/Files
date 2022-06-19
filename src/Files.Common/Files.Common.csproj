@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EC298CB7-A6BB-42AC-957D-0A2A93CA58C2}</ProjectGuid>
+    <ProjectGuid>{7CAF743D-0AFD-4691-BD8B-92065DDDA1C2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Files.Backend.Storage</RootNamespace>
-    <AssemblyName>Files.Backend.Storage</AssemblyName>
+    <RootNamespace>Files.Common</RootNamespace>
+    <AssemblyName>Files.Common</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
@@ -107,7 +107,6 @@
     <DebugType>full</DebugType>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -124,37 +123,23 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Base\BaseBasicProperties.cs" />
-    <Compile Include="Base\BaseBasicStorageItemExtraProperties.cs" />
-    <Compile Include="Base\BaseStorageFile.cs" />
-    <Compile Include="Base\BaseStorageFolder.cs" />
-    <Compile Include="Base\BaseStorageItemExtraProperties.cs" />
-    <Compile Include="Base\IBaseBasicProperties.cs" />
-    <Compile Include="Base\IBaseStorageFile.cs" />
-    <Compile Include="Base\IBaseStorageFolder.cs" />
-    <Compile Include="Base\IBaseStorageItem.cs" />
-    <Compile Include="Enums\StorageFileItem.cs" />
-    <Compile Include="Extensions\StorageFileExtensions.cs" />
-    <Compile Include="Path\IStorageFileWithPath.cs" />
-    <Compile Include="Path\IStorageFolderWithPath.cs" />
-    <Compile Include="Path\IStorageItemWithPath.cs" />
-    <Compile Include="Path\StorageFileWithPath.cs" />
-    <Compile Include="Path\StorageFolderWithPath.cs" />
+    <Compile Include="Constants\CommonPaths.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\LocalizationExtensions.cs" />
+    <Compile Include="Extensions\PathExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Files.Backend.Storage.rd.xml" />
+    <Compile Include="Services\ILocalizationService.cs" />
+    <EmbeddedResource Include="Properties\Files.Common.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version>8.0.0-preview4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.13</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Files.Shared\Files.Shared.csproj">
-      <Project>{0533133f-2559-4b53-a0fd-0970bc0e312e}</Project>
-      <Name>Files.Shared</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

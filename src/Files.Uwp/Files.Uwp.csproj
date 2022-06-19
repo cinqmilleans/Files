@@ -214,13 +214,6 @@
     <Compile Include="Filesystem\StorageItems\VirtualStorageItem.cs" />
     <Compile Include="Filesystem\StorageItems\ZipStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\ZipStorageFolder.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseBasicProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseBasicStorageItemExtraProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageFile.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageFolder.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageItemExtraProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\IBaseStorageFile.cs" />
-    <Compile Include="Filesystem\BaseStorage\IBaseStorageFolder.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
     <Compile Include="Helpers\CommonPaths.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
@@ -463,9 +456,6 @@
     <Compile Include="Filesystem\Search\FolderSearch.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\FilesystemResult.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\StorageFileExtensions.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\IStorageItemWithPath.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\StorageFileWithPath.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\StorageFolderWithPath.cs" />
     <Compile Include="Filesystem\StorageHistory\Helpers\StorageHistoryHelpers.cs" />
     <Compile Include="Filesystem\StorageHistory\IStorageHistory.cs" />
     <Compile Include="Filesystem\StorageHistory\IStorageHistoryOperations.cs" />
@@ -1621,7 +1611,9 @@
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Filesystem\BaseStorage\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '17.0' ">
     <VisualStudioVersion>17.0</VisualStudioVersion>
   </PropertyGroup>

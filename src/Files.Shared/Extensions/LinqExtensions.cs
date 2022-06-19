@@ -21,27 +21,6 @@ namespace Files.Shared.Extensions
         /// <returns></returns>
         public static bool IsEmpty<T>(this IEnumerable<T> enumerable) => enumerable is null || !enumerable.Any();
 
-        public static TOut? Get<TOut, TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TOut? defaultValue = default)
-        {
-            if (dictionary is null || key is null)
-            {
-                return defaultValue;
-            }
-            if (!dictionary.ContainsKey(key))
-            {
-                if (defaultValue is TValue value)
-                {
-                    dictionary.Add(key, value);
-                }
-                return defaultValue;
-            }
-            if (dictionary[key] is TOut o)
-            {
-                return o;
-            }
-            return defaultValue;
-        }
-
         public static async Task<IEnumerable<T>> WhereAsync<T>(this IEnumerable<T> source, Func<T, Task<bool>> predicate)
         {
             var results = await Task.WhenAll(source.Select(async x => (x, await predicate(x))));

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Storage
 {
     public class BaseBasicProperties : BaseStorageItemExtraProperties
     {

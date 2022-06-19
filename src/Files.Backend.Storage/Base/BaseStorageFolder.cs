@@ -8,7 +8,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Search;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Storage
 {
     public abstract class BaseStorageFolder : IBaseStorageFolder
     {
