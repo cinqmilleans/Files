@@ -11,25 +11,25 @@ namespace Files.Backend.Storage
         IAsyncOperation<StorageFolder> ToStorageFolderAsync();
 
         new IAsyncOperation<IStorageItem> GetItemAsync(string name);
-        new IAsyncOperation<IEnumerable<IStorageItem>> GetItemsAsync();
+        new IAsyncOperation<IImmutableList<IStorageItem>> GetItemsAsync();
 
         new IAsyncOperation<IBaseStorageFile> GetFileAsync(string name);
-        new IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync();
-        new IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query);
-        new IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve);
+        new IAsyncOperation<IImmutableList<IBaseStorageFile>> GetFilesAsync();
+        new IAsyncOperation<IImmutableList<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query);
+        new IAsyncOperation<IImmutableList<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve);
 
         new IAsyncOperation<IBaseStorageFolder> GetFolderAsync(string name);
-        new IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync();
-        new IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query);
-        new IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve);
+        new IAsyncOperation<IImmutableList<IBaseStorageFolder>> GetFoldersAsync();
+        new IAsyncOperation<IImmutableList<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query);
+        new IAsyncOperation<IImmutableList<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve);
 
         new IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName);
         new IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName, CreationCollisionOption options);
         new IAsyncOperation<IBaseStorageFolder> CreateFolderAsync(string desiredName);
         new IAsyncOperation<IBaseStorageFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options);
 
-        new BaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions);
-        new BaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions);
-        new BaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions);
+        new IBaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions);
+        new IBaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions);
+        new IBaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions);
     }
 }

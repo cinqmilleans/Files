@@ -146,6 +146,7 @@
     <Compile Include="Base\Result\SystemStorageItemQueryResult.cs" />
     <Compile Include="Enums\StorageFileItem.cs" />
     <Compile Include="Extensions\StorageFileExtensions.cs" />
+    <Compile Include="Item\SystemStorageFolder.cs" />
     <Compile Include="Path\IStorageFileWithPath.cs" />
     <Compile Include="Path\IStorageFolderWithPath.cs" />
     <Compile Include="Path\IStorageItemWithPath.cs" />

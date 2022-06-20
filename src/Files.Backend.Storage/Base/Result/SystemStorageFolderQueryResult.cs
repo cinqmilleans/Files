@@ -20,7 +20,7 @@ namespace Files.Backend.Storage
         {
             return AsyncInfo.Run<IImmutableList<IBaseStorageFolder>>(async (cancellationToken) =>
             {
-                var Folders = await StorageFolderQueryResult.GetFoldersAsync();
+                var Folders = await base.GetFoldersAsync();
                 return Folders.Select(folder => new SystemStorageFolder(folder)).ToImmutableList();
             });
         }

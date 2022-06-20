@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -12,7 +11,7 @@ using Windows.Storage.Search;
 
 namespace Files.Backend.Storage
 {
-    public abstract class AbstractStorageItemQueryResult : IStorageItemQueryResult
+    public abstract class AbstractStorageItemQueryResult<T> : IStorageItemQueryResult where T : IStorageItem
     {
         private static readonly Regex spaceSplitRegex = new("(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
@@ -21,28 +20,12 @@ namespace Files.Backend.Storage
 
         public AbstractStorageItemQueryResult(IBaseStorageFolder folder, QueryOptions options) => (Folder, Options) = (folder, options);
 
-        protected IAsyncOperation<IImmutableList<T>> GetFilteredItems<T>(Task<IEnumerable<T>> getItemAsync) where T : IStorageItem
-        {
-            return AsyncInfo.Run(async (CancellationToken _) =>
-            {
-                var items = await getItemAsync.AsAsyncOperation();
-                return (IImmutableList<T>)FilterItems(items).ToImmutableList();
-            });
-        }
-        protected IAsyncOperation<IImmutableList<T>> GetFilteredItems<T>
-            (Task<IEnumerable<T>> getItemAsync, uint startIndex, uint maxNumberOfItems) where T : IStorageItem
-        {
-            int skip = (int)startIndex;
-            int take = (int)Math.Min(maxNumberOfItems, int.MaxValue);
+        protected IAsyncOperation<IImmutableList<T>> ToResult(Task<IEnumerable<T>> items)
+            => AsyncInfo.Run<IImmutableList<T>>(async (_) => GetSelectedItems(await items).ToImmutableList());
+        protected IAsyncOperation<IImmutableList<T>> ToResult(Task<IEnumerable<T>> items, uint startIndex, uint maxNumberOfItems)
+            => AsyncInfo.Run<IImmutableList<T>>(async (_) => GetSelectedItems(await items, startIndex, maxNumberOfItems).ToImmutableList());
 
-            return AsyncInfo.Run(async (CancellationToken _) =>
-            {
-                var items = await getItemAsync.AsAsyncOperation();
-                return (IImmutableList<T>)FilterItems(items).Skip(skip).Take(take).ToImmutableList();
-            });
-        }
-
-        private IEnumerable<T> FilterItems<T>(IEnumerable<T> items) where T : IStorageItem
+        private IEnumerable<T> GetSelectedItems(IEnumerable<T> items)
         {
             string query = string.Join(" ", Options.ApplicationSearchFilter, Options.UserSearchFilter).Trim();
             if (!string.IsNullOrEmpty(query))
@@ -67,6 +50,13 @@ namespace Files.Backend.Storage
                 }
             }
             return items;
+        }
+        private IEnumerable<T> GetSelectedItems(IEnumerable<T> items, uint startIndex, uint maxNumberOfItems)
+        {
+            int skip = (int)startIndex;
+            int take = (int)Math.Min(maxNumberOfItems, int.MaxValue);
+
+            return GetSelectedItems(items).Skip(skip).Take(take);
         }
 
         private static string CleanPattern(string pattern) => pattern
