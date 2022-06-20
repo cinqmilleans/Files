@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Windows.Storage.FileProperties;
 
 namespace Files.Backend.Storage
 {
-    public interface IBaseBasicProperties
+    public interface IBaseBasicProperties : IStorageItemExtraProperties
     {
+        ulong Size { get; }
 
+        DateTimeOffset ItemDate { get; }
+        DateTimeOffset DateModified { get; }
     }
 }

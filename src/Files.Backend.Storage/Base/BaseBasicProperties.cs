@@ -2,7 +2,7 @@
 
 namespace Files.Backend.Storage
 {
-    public class BaseBasicProperties : BaseStorageItemExtraProperties
+    public class BaseBasicProperties : BaseStorageItemExtraProperties, IBaseBasicProperties
     {
         public virtual ulong Size => 0;
 
