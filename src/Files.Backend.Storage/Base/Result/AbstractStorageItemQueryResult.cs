@@ -20,12 +20,10 @@ namespace Files.Backend.Storage
 
         public AbstractStorageItemQueryResult(IBaseStorageFolder folder, QueryOptions options) => (Folder, Options) = (folder, options);
 
-        protected IAsyncOperation<IImmutableList<T>> ToResult(Task<IEnumerable<T>> items)
-            => AsyncInfo.Run<IImmutableList<T>>(async (_) => GetSelectedItems(await items).ToImmutableList());
-        protected IAsyncOperation<IImmutableList<T>> ToResult(Task<IEnumerable<T>> items, uint startIndex, uint maxNumberOfItems)
-            => AsyncInfo.Run<IImmutableList<T>>(async (_) => GetSelectedItems(await items, startIndex, maxNumberOfItems).ToImmutableList());
+        protected static IAsyncOperation<IImmutableList<T>> ToResult(Task<IEnumerable<T>> items)
+            => AsyncInfo.Run<IImmutableList<T>>(async (_) => (await items).ToImmutableList());
 
-        private IEnumerable<T> GetSelectedItems(IEnumerable<T> items)
+        protected IEnumerable<T> Select(IEnumerable<T> items)
         {
             string query = string.Join(" ", Options.ApplicationSearchFilter, Options.UserSearchFilter).Trim();
             if (!string.IsNullOrEmpty(query))
@@ -50,17 +48,10 @@ namespace Files.Backend.Storage
                 }
             }
             return items;
-        }
-        private IEnumerable<T> GetSelectedItems(IEnumerable<T> items, uint startIndex, uint maxNumberOfItems)
-        {
-            int skip = (int)startIndex;
-            int take = (int)Math.Min(maxNumberOfItems, int.MaxValue);
 
-            return GetSelectedItems(items).Skip(skip).Take(take);
+            static string CleanPattern(string pattern) => pattern
+                .Replace("\"", string.Empty, StringComparison.Ordinal)
+                .Replace("*", "(.*?)", StringComparison.Ordinal);
         }
-
-        private static string CleanPattern(string pattern) => pattern
-            .Replace("\"", string.Empty, StringComparison.Ordinal)
-            .Replace("*", "(.*?)", StringComparison.Ordinal);
     }
 }

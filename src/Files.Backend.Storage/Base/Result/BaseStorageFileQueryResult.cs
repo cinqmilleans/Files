@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Files.Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -14,10 +15,13 @@ namespace Files.Backend.Storage
         public virtual StorageFileQueryResult ToStorageFileQueryResult() => null;
 
         public virtual IAsyncOperation<IImmutableList<IBaseStorageFile>> GetFilesAsync()
-            => GetItemsOperation();
+            => ToResult(GetSourcesAsync());
         public virtual IAsyncOperation<IImmutableList<IBaseStorageFile>> GetFilesAsync(uint startIndex, uint maxNumberOfItems)
-            => GetItemsOperation(startIndex, maxNumberOfItems);
+            => ToResult(GetSourcesAsync(startIndex, maxNumberOfItems));
 
-        protected override async Task<IEnumerable<IBaseStorageFile>> GetSourceItemsAsync() => await Folder.GetFilesAsync();
+        private async Task<IEnumerable<IBaseStorageFile>> GetSourcesAsync()
+            => await Folder.GetFilesAsync();
+        private async Task<IEnumerable<IBaseStorageFile>> GetSourcesAsync(uint startIndex, uint maxNumberOfItems)
+            => (await Folder.GetFilesAsync()).Limit(startIndex, maxNumberOfItems);
     }
 }

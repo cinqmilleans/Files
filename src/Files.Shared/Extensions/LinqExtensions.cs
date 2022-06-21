@@ -96,5 +96,13 @@ namespace Files.Shared.Extensions
             }
             return list.Take(index - 1).ToList();
         }
+
+        public static IEnumerable<T> Limit<T>(this IEnumerable<T> items, uint startIndex, uint maxNumberOfItems)
+        {
+            int skip = (int)startIndex;
+            int take = (int)Math.Min(maxNumberOfItems, int.MaxValue);
+
+            return items.Skip(skip).Take(take);
+        }
     }
 }
