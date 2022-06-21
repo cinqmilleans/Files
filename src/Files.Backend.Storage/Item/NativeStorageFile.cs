@@ -1,10 +1,12 @@
-﻿using Files.Uwp.Helpers;
+﻿using Files.Common.Extensions;
+using Files.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -13,7 +15,7 @@ using Windows.Storage.Streams;
 using IO = System.IO;
 using Storage = Windows.Storage;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Storage
 {
     /// <summary>
     /// Shortcuts and alternate data stream.
@@ -28,14 +30,14 @@ namespace Files.Uwp.Filesystem.StorageItems
         public override string FileType => IO.Path.GetExtension(Name);
         public override string FolderRelativeId => $"0\\{Name}";
 
-        public bool IsShortcut => FileType.Equals(".lnk", StringComparison.OrdinalIgnoreCase) || FileType.Equals(".url", StringComparison.OrdinalIgnoreCase);
-        public bool IsAlternateStream => System.Text.RegularExpressions.Regex.IsMatch(Path, @"\w:\w");
+        public bool IsShortcut => FileType.ToLowerInvariant() is ".lnk" or ".url";
+        public bool IsAlternateStream => Regex.IsMatch(Path, @"\w:\w");
 
         public override string DisplayType
         {
             get
             {
-                var itemType = "ItemTypeFile".GetLocalized();
+                var itemType = "ItemTypeFile".ToLocalized();
                 if (Name.Contains(".", StringComparison.Ordinal))
                 {
                     itemType = IO.Path.GetExtension(Name).Trim('.') + " " + itemType;
@@ -49,11 +51,9 @@ namespace Files.Uwp.Filesystem.StorageItems
         public override IStorageItemExtraProperties Properties => new BaseBasicStorageItemExtraProperties(this);
 
         public NativeStorageFile(string path, string name, DateTimeOffset dateCreated)
-        {
-            Path = path;
-            Name = name;
-            DateCreated = dateCreated;
-        }
+            => (Path, Name, DateCreated) = (path, name, dateCreated);
+
+        public override IAsyncOperation<StorageFile> ToStorageFileAsync() => throw new NotSupportedException();
 
         public override IAsyncAction CopyAndReplaceAsync(IStorageFile fileToReplace)
             => throw new NotSupportedException();
@@ -76,7 +76,7 @@ namespace Files.Uwp.Filesystem.StorageItems
                 var destFile = new NativeStorageFile(destination, desiredNewName, DateTime.Now);
                 if (!IsAlternateStream)
                 {
-                    if (!await Task.Run(() => NativeFileOperationsHelper.CopyFileFromApp(Path, destination, option != NameCollisionOption.ReplaceExisting)))
+                    if (!await Task.Run(() => NativeFileOperationsHelper.CopyFileFromApp(Path, destination, option is not NameCollisionOption.ReplaceExisting)))
                     {
                         throw new Win32Exception(Marshal.GetLastWin32Error());
                     }
@@ -124,23 +124,16 @@ namespace Files.Uwp.Filesystem.StorageItems
             throw new NotSupportedException();
         }
 
-        public override IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync()
-        {
-            return AsyncInfo.Run(async (cancellationToken) =>
-            {
-                return new BaseBasicProperties();
-            });
-        }
+        public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync()
+            => AsyncInfo.Run(async (cancellationToken) => { await Task.Yield(); return new BaseBasicProperties() as IBaseBasicProperties; });
 
-        public override IAsyncOperation<BaseStorageFolder> GetParentAsync()
+        public override IAsyncOperation<IBaseStorageFolder> GetParentAsync()
             => throw new NotSupportedException();
 
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode)
             => throw new NotSupportedException();
-
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize)
             => throw new NotSupportedException();
-
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
             => throw new NotSupportedException();
 
@@ -272,8 +265,5 @@ namespace Files.Uwp.Filesystem.StorageItems
                 }
             });
         }
-
-        public override IAsyncOperation<StorageFile> ToStorageFileAsync()
-            => throw new NotSupportedException();
     }
 }

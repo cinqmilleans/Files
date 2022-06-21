@@ -146,6 +146,10 @@
     <Compile Include="Base\Result\SystemStorageItemQueryResult.cs" />
     <Compile Include="Enums\StorageFileItem.cs" />
     <Compile Include="Extensions\StorageFileExtensions.cs" />
+    <Compile Include="Extensions\StorageFolderExtensions.cs" />
+    <Compile Include="Item\NativeStorageFile.cs" />
+    <Compile Include="Item\SystemFolderBasicProperties.cs" />
+    <Compile Include="Item\SystemStorageFile.cs" />
     <Compile Include="Item\SystemStorageFolder.cs" />
     <Compile Include="Path\IStorageFileWithPath.cs" />
     <Compile Include="Path\IStorageFolderWithPath.cs" />
@@ -161,6 +165,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Files.Common\Files.Common.csproj">
+      <Project>{7CAF743D-0AFD-4691-BD8B-92065DDDA1C2}</Project>
+      <Name>Files.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Files.Shared\Files.Shared.csproj">
       <Project>{0533133f-2559-4b53-a0fd-0970bc0e312e}</Project>
       <Name>Files.Shared</Name>

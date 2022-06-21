@@ -85,25 +85,6 @@ namespace Files.Uwp.Filesystem
         public static bool AreItemsAlreadyInFolder(this IEnumerable<IStorageItemWithPath> storageItems, string destinationPath)
             => storageItems.Select(x => x.Path).AreItemsAlreadyInFolder(destinationPath);
 
-        public static BaseStorageFolder AsBaseStorageFolder(this IStorageItem item)
-        {
-            if (item == null)
-            {
-                return null;
-            }
-            else if (item.IsOfType(StorageItemTypes.Folder))
-            {
-                if (item is StorageFolder folder)
-                {
-                    return (BaseStorageFolder)folder;
-                }
-                else
-                {
-                    return item as BaseStorageFolder;
-                }
-            }
-            return null;
-        }
 
         public static List<PathBoxItem> GetDirectoryPathComponents(string value)
         {
