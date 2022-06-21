@@ -183,13 +183,6 @@
             public const string PreviewPaneDetailsPropertiesJsonPath = @"ms-appx:///Resources/PreviewPanePropertiesInformation.json";
         }
 
-        public static class Filesystem
-        {
-            public const int ExtendedAsciiCodePage = 437;
-
-            public const string CachedEmptyItemName = "fileicon_cache";
-        }
-
         public static class GitHub
         {
             public const string ContributorsUrl = @"https://github.com/files-community/Files/graphs/contributors";
