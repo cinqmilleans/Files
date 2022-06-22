@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Files.Shared.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Storage;
@@ -19,7 +21,9 @@ namespace Files.Backend.Filesystem.Storage
                 propertiesToRetrieve.ForEach(x => props[x] = null);
                 // Fill common poperties
                 var ret = item.AsBaseStorageFile()?.GetBasicPropertiesAsync() ?? item.AsBaseStorageFolder()?.GetBasicPropertiesAsync();
+
                 var basicProps = ret is not null ? await ret : null;
+
                 props["System.ItemPathDisplay"] = item?.Path;
                 props["System.DateCreated"] = basicProps?.ItemDate;
                 props["System.DateModified"] = basicProps?.DateModified;

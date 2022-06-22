@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ namespace Files.Shared
 {
     public class NativeWinApiHelper
     {
+        private static readonly ILogger? logger = Ioc.Default.GetService<ILogger>();
+
         [DllImport("api-ms-win-core-processthreads-l1-1-0.dll", SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool OpenProcessToken([In] IntPtr ProcessHandle, TokenAccess DesiredAccess, out IntPtr TokenHandle);
@@ -215,7 +218,7 @@ namespace Files.Shared
                 if (isRunningOnArm == null)
                 {
                     isRunningOnArm = IsArmProcessor();
-                    App.Logger.Info("Running on ARM: {0}", isRunningOnArm);
+                    logger?.Info("Running on ARM: {0}", isRunningOnArm);
                 }
                 return isRunningOnArm ?? false;
             }
