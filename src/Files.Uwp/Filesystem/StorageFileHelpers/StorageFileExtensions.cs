@@ -16,42 +16,6 @@ namespace Files.Uwp.Filesystem
 {
     public static class StorageFileExtensions
     {
-        public static BaseStorageFile AsBaseStorageFile(this IStorageItem item)
-        {
-            if (item is null || !item.IsOfType(StorageItemTypes.File))
-            {
-                return null;
-            }
-            return item is StorageFile file ? (BaseStorageFile)file : item as BaseStorageFile;
-        }
-
-        public static async Task<List<IStorageItem>> ToStandardStorageItemsAsync(this IEnumerable<IStorageItem> items)
-        {
-            var newItems = new List<IStorageItem>();
-            foreach (var item in items)
-            {
-                try
-                {
-                    if (item is null)
-                    {
-                    }
-                    else if (item.IsOfType(StorageItemTypes.File))
-                    {
-                        newItems.Add(await item.AsBaseStorageFile().ToStorageFileAsync());
-                    }
-                    else if (item.IsOfType(StorageItemTypes.Folder))
-                    {
-                        newItems.Add(await item.AsBaseStorageFolder().ToStorageFolderAsync());
-                    }
-                }
-                catch (NotSupportedException)
-                {
-                    // Ignore items that can't be converted
-                }
-            }
-            return newItems;
-        }
-
         public static bool AreItemsInSameDrive(this IEnumerable<string> itemsPath, string destinationPath)
         {
             try
@@ -83,26 +47,6 @@ namespace Files.Uwp.Filesystem
             => storageItems.Select(x => x.Path).AreItemsAlreadyInFolder(destinationPath);
         public static bool AreItemsAlreadyInFolder(this IEnumerable<IStorageItemWithPath> storageItems, string destinationPath)
             => storageItems.Select(x => x.Path).AreItemsAlreadyInFolder(destinationPath);
-
-        public static BaseStorageFolder AsBaseStorageFolder(this IStorageItem item)
-        {
-            if (item == null)
-            {
-                return null;
-            }
-            else if (item.IsOfType(StorageItemTypes.Folder))
-            {
-                if (item is StorageFolder folder)
-                {
-                    return (BaseStorageFolder)folder;
-                }
-                else
-                {
-                    return item as BaseStorageFolder;
-                }
-            }
-            return null;
-        }
 
         public static List<PathBoxItem> GetDirectoryPathComponents(string value)
         {
@@ -218,10 +162,6 @@ namespace Files.Uwp.Filesystem
             }
             return new StorageFileWithPath(await BaseStorageFile.GetFileFromPathAsync(value));
         }
-        public async static Task<IList<StorageFileWithPath>> GetFilesWithPathAsync
-            (this StorageFolderWithPath parentFolder, uint maxNumberOfItems = uint.MaxValue)
-                => (await parentFolder.Item.GetFilesAsync(CommonFileQuery.DefaultQuery, 0, maxNumberOfItems))
-                    .Select(x => new StorageFileWithPath(x, string.IsNullOrEmpty(x.Path) ? PathNormalization.Combine(parentFolder.Path, x.Name) : x.Path)).ToList();
 
         public async static Task<BaseStorageFolder> DangerousGetFolderFromPathAsync
             (string value, StorageFolderWithPath rootFolder = null, StorageFolderWithPath parentFolder = null)

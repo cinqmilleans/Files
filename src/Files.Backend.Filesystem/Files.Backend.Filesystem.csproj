@@ -122,16 +122,49 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions\FtpExtensions.cs" />
+    <Compile Include="Extensions\PathExtensions.cs" />
     <Compile Include="Helpers\CommonPaths.cs" />
     <Compile Include="Models\ByteSize.cs" />
     <Compile Include="Models\VolumeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IVolumeInfoFactory.cs" />
+    <Compile Include="Storage\Base\BaseBasicProperties.cs" />
+    <Compile Include="Storage\Base\BaseBasicStorageItemExtraProperties.cs" />
+    <Compile Include="Storage\Base\BaseStorageFile.cs" />
+    <Compile Include="Storage\Base\BaseStorageFolder.cs" />
+    <Compile Include="Storage\Base\BaseStorageItemExtraProperties.cs" />
+    <Compile Include="Storage\Base\IBaseBasicProperties.cs" />
+    <Compile Include="Storage\Base\IBaseStorageFile.cs" />
+    <Compile Include="Storage\Base\IBaseStorageFolder.cs" />
+    <Compile Include="Storage\Base\IBaseStorageItem.cs" />
+    <Compile Include="Storage\Enums\StorageFileItem.cs" />
+    <Compile Include="Storage\Extensions\StorageFileExtensions.cs" />
+    <Compile Include="Storage\Extensions\StorageFolderExtensions.cs" />
+    <Compile Include="Storage\Path\IStorageFileWithPath.cs" />
+    <Compile Include="Storage\Path\IStorageFolderWithPath.cs" />
+    <Compile Include="Storage\Path\IStorageItemWithPath.cs" />
+    <Compile Include="Storage\Path\StorageFileWithPath.cs" />
+    <Compile Include="Storage\Path\StorageFolderWithPath.cs" />
+    <Compile Include="Storage\QueryResult\AbstractStorageItemQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\BaseStorageFileQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\BaseStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\BaseStorageItemQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\IBaseStorageFileQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\IBaseStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\IBaseStorageItemQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\IStorageItemQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\SystemStorageFileQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\SystemStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\QueryResult\SystemStorageItemQueryResult.cs" />
     <EmbeddedResource Include="Properties\Files.Backend.Filesystem.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ByteSize">
       <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="FluentFTP">
+      <Version>37.0.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.13</Version>
@@ -143,6 +176,7 @@
       <Name>Files.Shared</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

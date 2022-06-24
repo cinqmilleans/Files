@@ -7,7 +7,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Filesystem.Storage
 {
     public abstract class BaseStorageFile : IBaseStorageFile
     {
@@ -37,11 +37,11 @@ namespace Files.Uwp.Filesystem.StorageItems
         public abstract bool IsEqual(IStorageItem item);
         public abstract bool IsOfType(StorageItemTypes type);
 
-        public abstract IAsyncOperation<BaseStorageFolder> GetParentAsync();
+        public abstract IAsyncOperation<IBaseStorageFolder> GetParentAsync();
         IAsyncOperation<StorageFolder> IStorageItem2.GetParentAsync()
             => AsyncInfo.Run(async (cancellationToken) => await (await GetParentAsync()).ToStorageFolderAsync());
 
-        public abstract IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync();
+        public abstract IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync();
         IAsyncOperation<BasicProperties> IStorageItem.GetBasicPropertiesAsync()
             => AsyncInfo.Run(async (cancellationToken) => await (await ToStorageFileAsync()).GetBasicPropertiesAsync());
 
@@ -52,15 +52,15 @@ namespace Files.Uwp.Filesystem.StorageItems
         public abstract IAsyncOperation<StorageStreamTransaction> OpenTransactedWriteAsync();
         public abstract IAsyncOperation<StorageStreamTransaction> OpenTransactedWriteAsync(StorageOpenOptions options);
 
-        public abstract IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder);
+        public abstract IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder);
         IAsyncOperation<StorageFile> IStorageFile.CopyAsync(IStorageFolder destinationFolder)
             => AsyncInfo.Run(async (cancellationToken) => await (await CopyAsync(destinationFolder)).ToStorageFileAsync());
 
-        public abstract IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName);
+        public abstract IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName);
         IAsyncOperation<StorageFile> IStorageFile.CopyAsync(IStorageFolder destinationFolder, string desiredNewName)
             => AsyncInfo.Run(async (cancellationToken) => await (await CopyAsync(destinationFolder, desiredNewName)).ToStorageFileAsync());
 
-        public abstract IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option);
+        public abstract IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option);
         IAsyncOperation<StorageFile> IStorageFile.CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option)
             => AsyncInfo.Run(async (cancellationToken) => await (await CopyAsync(destinationFolder, desiredNewName, option)).ToStorageFileAsync());
 
@@ -88,9 +88,12 @@ namespace Files.Uwp.Filesystem.StorageItems
         public IAsyncOperation<StorageItemThumbnail> GetScaledImageAsThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
             => Task.FromResult<StorageItemThumbnail>(null).AsAsyncOperation();
 
-        public static IAsyncOperation<BaseStorageFile> GetFileFromPathAsync(string path)
+        public static IAsyncOperation<IBaseStorageFile> GetFileFromPathAsync(string path)
             => AsyncInfo.Run(async (cancellationToken)
-                => await ZipStorageFile.FromPathAsync(path) ?? await FtpStorageFile.FromPathAsync(path) ?? await ShellStorageFile.FromPathAsync(path) ?? await NativeStorageFile.FromPathAsync(path) ?? await SystemStorageFile.FromPathAsync(path)
+                => await ZipStorageFile.FromPathAsync(path)
+                ?? await FtpStorageFile.FromPathAsync(path)
+                ?? await ShellStorageFile.FromPathAsync(path)
+                ?? await SystemStorageFile.FromPathAsync(path)
             );
 
         public async Task<string> ReadTextAsync(int maxLength = -1)

@@ -213,7 +213,6 @@
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\FilesystemTasks.cs" />
-    <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
     <Compile Include="Filesystem\StorageItems\FtpStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\FtpStorageFolder.cs" />
     <Compile Include="Filesystem\StorageItems\NativeStorageFile.cs" />
@@ -225,20 +224,12 @@
     <Compile Include="Filesystem\StorageItems\VirtualStorageItem.cs" />
     <Compile Include="Filesystem\StorageItems\ZipStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\ZipStorageFolder.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseBasicProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseBasicStorageItemExtraProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageFile.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageFolder.cs" />
-    <Compile Include="Filesystem\BaseStorage\BaseStorageItemExtraProperties.cs" />
-    <Compile Include="Filesystem\BaseStorage\IBaseStorageFile.cs" />
-    <Compile Include="Filesystem\BaseStorage\IBaseStorageFolder.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
     <Compile Include="Helpers\KnownTypesBinder.cs" />
     <Compile Include="Helpers\LocalizedEnumHelper.cs" />
     <Compile Include="Helpers\ResourceHelpers.cs" />
-    <Compile Include="Helpers\FtpHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupedCollection.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\GroupingHelper.cs" />
     <Compile Include="Helpers\StorageItemIconHelpers.cs" />
@@ -486,7 +477,6 @@
     <Compile Include="Helpers\NativeWinApiHelper.cs" />
     <Compile Include="Helpers\NaturalStringComparer.cs" />
     <Compile Include="Helpers\PackageHelper.cs" />
-    <Compile Include="Helpers\PathNormalization.cs" />
     <Compile Include="Helpers\PostBannerHelpers.cs" />
     <Compile Include="Helpers\RecycleBinHelpers.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

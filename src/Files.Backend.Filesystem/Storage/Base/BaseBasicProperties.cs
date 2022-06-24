@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Filesystem.Storage
 {
-    public class BaseBasicProperties : BaseStorageItemExtraProperties
+    public class BaseBasicProperties : BaseStorageItemExtraProperties, IBaseBasicProperties
     {
         public virtual ulong Size => 0;
 
