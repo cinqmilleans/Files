@@ -1,14 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.Backend.Filesystem.Helpers;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
-using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
-using Files.Uwp.Helpers;
 using Files.Shared.Enums;
 using Files.Shared.EventArguments;
 using Files.Shared.Extensions;
+using Files.Uwp.Filesystem;
+using Files.Uwp.Filesystem.StorageItems;
+using Files.Uwp.Helpers;
 using Files.Uwp.UserControls;
 using Files.Uwp.Views;
 using Microsoft.Toolkit.Uwp;
@@ -228,15 +229,15 @@ namespace Files.Uwp.ViewModels
             => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.TilesView && !IsLayoutAdaptive;
 
         public bool IsLayoutGridViewSmall
-            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView 
+            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView
             && InstanceViewModel.FolderSettings.GridViewSizeKind == GridViewSizeKind.Small && !IsLayoutAdaptive;
 
         public bool IsLayoutGridViewMedium
-            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView 
+            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView
             && InstanceViewModel.FolderSettings.GridViewSizeKind == GridViewSizeKind.Medium && !IsLayoutAdaptive;
 
         public bool IsLayoutGridViewLarge
-            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView 
+            => InstanceViewModel.FolderSettings.LayoutMode == FolderLayoutModes.GridView
             && InstanceViewModel.FolderSettings.GridViewSizeKind == GridViewSizeKind.Large && !IsLayoutAdaptive;
 
         public bool IsLayoutColumnsView

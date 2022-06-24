@@ -1,9 +1,8 @@
-﻿using Files.Shared.Extensions;
-using Files.Uwp.DataModels.NavigationControlItems;
+﻿using Files.Backend.Filesystem.Helpers;
+using Files.Shared.Extensions;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
-using Files.Uwp.UserControls;
 using Files.Uwp.Views;
 using System;
 using System.Collections.Generic;

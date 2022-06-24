@@ -1,11 +1,12 @@
-﻿using Files.Shared.Enums;
-using Files.Uwp.EventArguments;
-using Files.Uwp.Helpers;
-using Files.Backend.Services.Settings;
-using Files.Uwp.Views.LayoutModes;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Services.Settings;
+using Files.Shared.Enums;
+using Files.Uwp.EventArguments;
+using Files.Uwp.Helpers;
+using Files.Uwp.Views.LayoutModes;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace Files.Uwp.ViewModels
 
             ChangeGroupOptionCommand = new RelayCommand<GroupOption>(ChangeGroupOption);
         }
-        public FolderSettingsViewModel(FolderLayoutModes modeOverride) : this() 
+        public FolderSettingsViewModel(FolderLayoutModes modeOverride) : this()
             => (rootLayoutMode, LayoutPreference.IsAdaptiveLayoutOverridden) = (modeOverride, true);
 
         private readonly FolderLayoutModes? rootLayoutMode;

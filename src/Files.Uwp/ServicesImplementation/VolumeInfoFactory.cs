@@ -1,5 +1,5 @@
-﻿using Files.Backend.Models;
-using Files.Backend.Services;
+﻿using Files.Backend.Filesystem.Models;
+using Files.Backend.Filesystem.Services;
 using Files.Shared.Extensions;
 using Files.Uwp.Helpers;
 using System.Threading.Tasks;

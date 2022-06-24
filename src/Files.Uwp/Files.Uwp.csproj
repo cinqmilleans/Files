@@ -233,7 +233,6 @@
     <Compile Include="Filesystem\BaseStorage\IBaseStorageFile.cs" />
     <Compile Include="Filesystem\BaseStorage\IBaseStorageFolder.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
-    <Compile Include="Helpers\CommonPaths.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
     <Compile Include="Helpers\KnownTypesBinder.cs" />
@@ -1608,6 +1607,10 @@
     <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
       <Project>{3d19293f-0e3a-4946-ade3-680a1e9123ec}</Project>
       <Name>BackgroundTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Files.Backend.Filesystem\Files.Backend.Filesystem.csproj">
+      <Project>{0302ccc8-652c-499d-9706-4c574141c4fb}</Project>
+      <Name>Files.Backend.Filesystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Files.Shared\Files.Shared.csproj">
       <Project>{0533133f-2559-4b53-a0fd-0970bc0e312e}</Project>
