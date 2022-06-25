@@ -2,7 +2,7 @@
 using System.IO;
 using Files.Shared.Extensions;
 
-using static Files.Uwp.Helpers.NativeFileOperationsHelper;
+using static Files.Backend.Filesystem.Storage.NativeFileOperationsHelper;
 
 #nullable enable
 

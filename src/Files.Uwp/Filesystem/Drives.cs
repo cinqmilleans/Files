@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.Backend.Services.SizeProvider;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Services.SizeProvider;
+using Files.Backend.Filesystem.Storage;
 using Files.Shared;
 using Files.Shared.Enums;
 using Files.Uwp.DataModels.NavigationControlItems;
@@ -64,12 +66,12 @@ namespace Files.Uwp.Filesystem
             {
                 // Check among already discovered drives
                 StorageFolder matchingDrive = App.DrivesManager.Drives.FirstOrDefault(x =>
-                    Helpers.PathNormalization.NormalizePath(x.Path) == Helpers.PathNormalization.NormalizePath(rootPath))?.Root;
+                    x.NormalizePath() == PathExtensions.NormalizePath(rootPath))?.Root;
                 if (matchingDrive is null)
                 {
                     // Check on all removable drives
                     var remDevices = await DeviceInformation.FindAllAsync(StorageDevice.GetDeviceSelector());
-                    string normalizedRootPath = Helpers.PathNormalization.NormalizePath(rootPath).Replace(@"\\?\", string.Empty, StringComparison.Ordinal);
+                    string normalizedRootPath = PathExtensions.NormalizePath(rootPath).Replace(@"\\?\", string.Empty, StringComparison.Ordinal);
                     foreach (var item in remDevices)
                     {
                         try

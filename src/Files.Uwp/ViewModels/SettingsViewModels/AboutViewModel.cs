@@ -1,11 +1,11 @@
-﻿using Files.Backend.Services.Settings;
-using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
-using Files.Uwp.Helpers;
-using Files.Shared.Extensions;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.Backend.Filesystem.Storage;
+using Files.Backend.Services.Settings;
+using Files.Shared.Extensions;
+using Files.Uwp.Filesystem;
+using Files.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;

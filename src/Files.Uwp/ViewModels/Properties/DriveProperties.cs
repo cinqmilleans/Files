@@ -1,6 +1,6 @@
-﻿using Files.Uwp.DataModels.NavigationControlItems;
+﻿using Files.Backend.Filesystem.Storage;
+using Files.Uwp.DataModels.NavigationControlItems;
 using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp;
 using System;

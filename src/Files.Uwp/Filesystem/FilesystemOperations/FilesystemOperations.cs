@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Backend.Services;
 using Files.Shared;
 using Files.Shared.Enums;
 using Files.Shared.Extensions;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.FilesystemHistory;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp;
 using System;
@@ -56,7 +56,7 @@ namespace Files.Uwp.Filesystem
             {
                 switch (source.ItemType)
                 {
-                    case FilesystemItemType.File:
+                    case StorageItemType.File:
                         {
                             var newEntryInfo = await ShellNewEntryExtensions.GetNewContextMenuEntryForType(Path.GetExtension(source.Path));
                             if (newEntryInfo == null)
@@ -91,7 +91,7 @@ namespace Files.Uwp.Filesystem
                             break;
                         }
 
-                    case FilesystemItemType.Directory:
+                    case StorageItemType.Directory:
                         {
                             var fsFolderResult = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(PathNormalization.GetParentDir(source.Path));
                             fsResult = fsFolderResult;
@@ -164,10 +164,10 @@ namespace Files.Uwp.Filesystem
             IStorageItem copiedItem = null;
             //long itemSize = await FilesystemHelpers.GetItemSize(await source.ToStorageItem(associatedInstance));
 
-            if (source.ItemType == FilesystemItemType.Directory)
+            if (source.ItemType == StorageItemType.Directory)
             {
                 if (!string.IsNullOrWhiteSpace(source.Path) &&
-                    PathNormalization.GetParentDir(destination).IsSubPathOf(source.Path)) // We check if user tried to copy anything above the source.ItemPath
+                    PathExtensions.GetParentDir(destination).IsSubPathOf(source.Path)) // We check if user tried to copy anything above the source.ItemPath
                 {
                     var destinationName = destination.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
                     var sourceName = source.Path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
@@ -233,7 +233,7 @@ namespace Files.Uwp.Filesystem
                     }
                 }
             }
-            else if (source.ItemType == FilesystemItemType.File)
+            else if (source.ItemType == StorageItemType.File)
             {
                 var fsResult = (FilesystemResult)await Task.Run(() => NativeFileOperationsHelper.CopyFileFromApp(source.Path, destination, true));
 
@@ -241,7 +241,7 @@ namespace Files.Uwp.Filesystem
                 {
                     Debug.WriteLine(System.Runtime.InteropServices.Marshal.GetLastWin32Error());
 
-                    FilesystemResult<BaseStorageFolder> destinationResult = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(PathNormalization.GetParentDir(destination));
+                    FilesystemResult<BaseStorageFolder> destinationResult = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(PathExtensions.GetParentDir(destination));
                     var sourceResult = await source.ToStorageItemResult();
                     fsResult = sourceResult.ErrorCode | destinationResult.ErrorCode;
 
