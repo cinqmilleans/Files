@@ -1,16 +1,14 @@
-﻿using Files.Uwp.Helpers;
+﻿using Files.Backend.Filesystem.Helpers;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
-using S = Windows.Storage;
 using IO = System.IO;
+using S = Windows.Storage;
 
 namespace Files.Backend.Filesystem.Storage
 {
@@ -48,7 +46,7 @@ namespace Files.Backend.Filesystem.Storage
 
         public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync()
             => AsyncInfo.Run<IBaseBasicProperties>(async (cancellationToken)
-                => new SystemFileBasicProperties(await File.GetBasicPropertiesAsync()));
+                => new SystemBasicProperties(await File.GetBasicPropertiesAsync()));
 
         public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder)
             => CopyAsync(destinationFolder, Name, NameCollisionOption.FailIfExists);
@@ -64,7 +62,7 @@ namespace Files.Backend.Filesystem.Storage
                     if (destFolder is SystemStorageFolder sysFolder)
                     {
                         // File created by CreateFileAsync will get immediately deleted on MTP?! (#7206)
-                        return await File.CopyAsync(sysFolder.Folder, desiredNewName, option);
+                        return (BaseStorageFile)await File.CopyAsync(sysFolder.Folder, desiredNewName, option);
                     }
                     var destFile = await destFolder.CreateFileAsync(desiredNewName, option.Convert());
                     using (var inStream = await this.OpenStreamForReadAsync())
@@ -167,25 +165,5 @@ namespace Files.Backend.Filesystem.Storage
             => File.GetThumbnailAsync(mode, requestedSize);
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
             => File.GetThumbnailAsync(mode, requestedSize, options);
-
-        private class SystemFileBasicProperties : BaseBasicProperties
-        {
-            private readonly IStorageItemExtraProperties basicProps;
-
-            public override ulong Size => (basicProps as BasicProperties)?.Size ?? 0;
-
-            public override DateTimeOffset ItemDate => (basicProps as BasicProperties)?.ItemDate ?? DateTimeOffset.Now;
-            public override DateTimeOffset DateModified => (basicProps as BasicProperties)?.DateModified ?? DateTimeOffset.Now;
-
-            public SystemFileBasicProperties(IStorageItemExtraProperties basicProps) => this.basicProps = basicProps;
-
-            public override IAsyncOperation<IDictionary<string, object>> RetrievePropertiesAsync(IEnumerable<string> propertiesToRetrieve)
-                => basicProps.RetrievePropertiesAsync(propertiesToRetrieve);
-
-            public override IAsyncAction SavePropertiesAsync()
-                => basicProps.SavePropertiesAsync();
-            public override IAsyncAction SavePropertiesAsync([HasVariant] IEnumerable<KeyValuePair<string, object>> propertiesToSave)
-                => basicProps.SavePropertiesAsync(propertiesToSave);
-        }
     }
 }

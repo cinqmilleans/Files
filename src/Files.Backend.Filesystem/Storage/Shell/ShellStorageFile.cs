@@ -1,51 +1,24 @@
-﻿using Files.Shared;
-using Files.Shared.Extensions;
-using Files.Uwp.Helpers;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared;
+using Files.Shared.Services;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.AppService;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using IO = System.IO;
-using Storage = Windows.Storage;
+using S = Windows.Storage;
 
 namespace Files.Backend.Filesystem.Storage
 {
-    public class ShortcutStorageFile : ShellStorageFile, IShortcutStorageItem
-    {
-        public string TargetPath { get; }
-        public string Arguments { get; }
-        public string WorkingDirectory { get; }
-        public bool RunAsAdmin { get; }
-
-        public ShortcutStorageFile(ShellLinkItem item) : base(item)
-        {
-            TargetPath = item.TargetPath;
-            Arguments = item.Arguments;
-            WorkingDirectory = item.WorkingDirectory;
-            RunAsAdmin = item.RunAsAdmin;
-        }
-    }
-
-    public class BinStorageFile : ShellStorageFile, IBinStorageItem
-    {
-        public string OriginalPath { get; }
-        public DateTimeOffset DateDeleted { get; }
-
-        public BinStorageFile(ShellFileItem item) : base(item)
-        {
-            OriginalPath = item.FilePath;
-            DateDeleted = item.RecycleDate;
-        }
-    }
-
     public class ShellStorageFile : BaseStorageFile
     {
+        private static readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
+
         public override string Path { get; }
         public override string Name { get; }
         public override string DisplayName => Name;
@@ -57,7 +30,7 @@ namespace Files.Backend.Filesystem.Storage
 
         public override DateTimeOffset DateCreated { get; }
 
-        public override Storage.FileAttributes Attributes => Storage.FileAttributes.Normal | Storage.FileAttributes.ReadOnly;
+        public override S.FileAttributes Attributes => S.FileAttributes.Normal | S.FileAttributes.ReadOnly;
 
         private IStorageItemExtraProperties properties;
         public override IStorageItemExtraProperties Properties => properties ??= new BaseBasicStorageItemExtraProperties(this);
@@ -105,19 +78,19 @@ namespace Files.Backend.Filesystem.Storage
 
         private static async Task<ShellFileItem> GetFile(string path)
         {
-            if (await AppServiceConnectionHelper.Instance is NamedPipeAsAppServiceConnection connection)
+            if (asker is not null)
             {
-                ValueSet value = new ValueSet()
+                var parameter = new ValueSet
                 {
-                    { "Arguments", "ShellItem" },
-                    { "action", "Query" },
-                    { "item", path }
+                    ["Arguments"] = "ShellItem",
+                    ["action"] = "Query",
+                    ["item"] = path,
                 };
-                var (status, response) = await connection.SendMessageForResponseAsync(value);
 
-                if (status == AppServiceResponseStatus.Success)
+                var response = await asker.GetResponseAsync(parameter);
+                if (response.IsSuccess)
                 {
-                    return JsonConvert.DeserializeObject<ShellFileItem>(response.Get("Item", ""));
+                    return JsonConvert.DeserializeObject<ShellFileItem>(response.Get("Item", string.Empty));
                 }
             }
             return null;
@@ -126,13 +99,13 @@ namespace Files.Backend.Filesystem.Storage
         public override bool IsEqual(IStorageItem item) => item?.Path == Path;
         public override bool IsOfType(StorageItemTypes type) => type is StorageItemTypes.File;
 
-        public override IAsyncOperation<BaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
-        public override IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync() => GetBasicProperties().AsAsyncOperation();
+        public override IAsyncOperation<IBaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync() => GetBasicProperties().AsAsyncOperation();
 
         public override IAsyncAction CopyAndReplaceAsync(IStorageFile fileToReplace) => throw new NotSupportedException();
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder) => throw new NotSupportedException();
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName) => throw new NotSupportedException();
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option) => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder) => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName) => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option) => throw new NotSupportedException();
 
         public override IAsyncAction DeleteAsync() => throw new NotSupportedException();
         public override IAsyncAction DeleteAsync(StorageDeleteOption option) => throw new NotSupportedException();
@@ -190,25 +163,13 @@ namespace Files.Backend.Filesystem.Storage
         public override IAsyncAction RenameAsync(string desiredName) => throw new NotSupportedException();
         public override IAsyncAction RenameAsync(string desiredName, NameCollisionOption option) => throw new NotSupportedException();
 
-        private async Task<BaseBasicProperties> GetBasicProperties()
+        private async Task<IBaseBasicProperties> GetBasicProperties()
         {
             if (await GetFile(Path) is ShellFileItem file)
             {
-                return new ShellFileBasicProperties(file);
+                return new ShellBasicProperties(file);
             }
             return new BaseBasicProperties();
-        }
-
-        private class ShellFileBasicProperties : BaseBasicProperties
-        {
-            private readonly ShellFileItem file;
-
-            public ShellFileBasicProperties(ShellFileItem folder) => this.file = folder;
-
-            public override ulong Size => file.FileSizeBytes;
-
-            public override DateTimeOffset ItemDate => file.ModifiedDate;
-            public override DateTimeOffset DateModified => file.ModifiedDate;
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Search;
@@ -53,29 +52,29 @@ namespace Files.Backend.Filesystem.Storage
 
         public override IAsyncOperation<IBaseStorageFile> GetFileAsync(string name)
             => AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) => new SystemStorageFile(await Folder.GetFileAsync(name)));
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync()
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFile>>(async (cancellationToken)
-                => (await Folder.GetFilesAsync()).Select(item => new SystemStorageFile(item)).ToList()
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync()
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken)
+                => (await Folder.GetFilesAsync()).Select(item => new SystemStorageFile(item))
             );
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query)
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFile>>(async (cancellationToken)
-                => (await Folder.GetFilesAsync(query)).Select(x => new SystemStorageFile(x)).ToList());
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve)
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFile>>(async (cancellationToken)
-                => (await Folder.GetFilesAsync(query, startIndex, maxItemsToRetrieve)).Select(x => new SystemStorageFile(x)).ToList());
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query)
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken)
+                => (await Folder.GetFilesAsync(query)).Select(x => new SystemStorageFile(x)));
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve)
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken)
+                => (await Folder.GetFilesAsync(query, startIndex, maxItemsToRetrieve)).Select(x => new SystemStorageFile(x)));
 
         public override IAsyncOperation<IBaseStorageFolder> GetFolderAsync(string name)
             => AsyncInfo.Run<IBaseStorageFolder>(async (cancellationToken) => new SystemStorageFolder(await Folder.GetFolderAsync(name)));
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync()
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFolder>>(async (cancellationToken)
-                => (await Folder.GetFoldersAsync()).Select(item => new SystemStorageFolder(item)).ToList()
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync()
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFolder>>(async (cancellationToken)
+                => (await Folder.GetFoldersAsync()).Select(item => new SystemStorageFolder(item))
             );
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query)
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFolder>>(async (cancellationToken)
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query)
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFolder>>(async (cancellationToken)
                 => (await Folder.GetFoldersAsync(query)).Select(x => new SystemStorageFolder(x)).ToList());
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve)
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFolder>>(async (cancellationToken)
-                => (await Folder.GetFoldersAsync(query, startIndex, maxItemsToRetrieve)).Select(x => new SystemStorageFolder(x)).ToList());
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve)
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFolder>>(async (cancellationToken)
+                => (await Folder.GetFoldersAsync(query, startIndex, maxItemsToRetrieve)).Select(x => new SystemStorageFolder(x)));
 
         public override IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName)
             => AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) => new SystemStorageFile(await Folder.CreateFileAsync(desiredName)));

@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace Files.Backend.Helpers
+namespace Files.Backend.Filesystem.Storage
 {
     public class NativeFindStorageItemHelper
     {

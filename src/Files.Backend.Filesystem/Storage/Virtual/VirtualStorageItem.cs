@@ -1,12 +1,11 @@
-﻿using Files.Uwp.Helpers;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using static Files.Backend.Helpers.NativeFindStorageItemHelper;
+using static Files.Backend.Filesystem.Storage.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Filesystem.Storage
 {
@@ -29,7 +28,7 @@ namespace Files.Backend.Filesystem.Storage
 
         private VirtualStorageItem() { }
 
-        public static VirtualStorageItem FromListedItem(ListedItem item)
+        /*public static VirtualStorageItem FromListedItem(ListedItem item)
         {
             return new VirtualStorageItem()
             {
@@ -38,7 +37,7 @@ namespace Files.Backend.Filesystem.Storage
                 DateCreated = item.ItemDateCreatedReal,
                 Attributes = item.IsZipItem || item.PrimaryItemAttribute == StorageItemTypes.File ? Windows.Storage.FileAttributes.Normal : Windows.Storage.FileAttributes.Directory
             };
-        }
+        }*/
 
         public static VirtualStorageItem FromPath(string path)
         {

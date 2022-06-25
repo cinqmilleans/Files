@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared;
 using Files.Shared.Services;
 using System;
 using System.Runtime.InteropServices;
@@ -10,6 +11,7 @@ namespace Files.Backend.Filesystem.Storage
 {
     public static class NativeWinApiHelper
     {
+        private static readonly ILogger logger = Ioc.Default.GetService<ILogger>();
         private static readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
 
         [DllImport("api-ms-win-core-processthreads-l1-1-0.dll", SetLastError = true, ExactSpelling = true)]
@@ -220,7 +222,7 @@ namespace Files.Backend.Filesystem.Storage
                 if (isRunningOnArm == null)
                 {
                     isRunningOnArm = IsArmProcessor();
-                    App.Logger.Info("Running on ARM: {0}", isRunningOnArm);
+                    logger?.Info("Running on ARM: {0}", isRunningOnArm);
                 }
                 return isRunningOnArm ?? false;
             }

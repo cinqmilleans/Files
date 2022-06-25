@@ -1,5 +1,4 @@
-﻿using Files.Uwp.Helpers;
-using Microsoft.Toolkit.Uwp;
+﻿using Files.Shared.Extensions;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -11,7 +10,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using IO = System.IO;
-using Storage = Windows.Storage;
+using S = Windows.Storage;
 
 namespace Files.Backend.Filesystem.Storage
 {
@@ -35,7 +34,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             get
             {
-                var itemType = "ItemTypeFile".GetLocalized();
+                var itemType = "ItemTypeFile".ToLocalized();
                 if (Name.Contains(".", StringComparison.Ordinal))
                 {
                     itemType = IO.Path.GetExtension(Name).Trim('.') + " " + itemType;
@@ -45,7 +44,7 @@ namespace Files.Backend.Filesystem.Storage
         }
 
         public override DateTimeOffset DateCreated { get; }
-        public override Storage.FileAttributes Attributes { get; } = Storage.FileAttributes.Normal;
+        public override S.FileAttributes Attributes => S.FileAttributes.Normal;
         public override IStorageItemExtraProperties Properties => new BaseBasicStorageItemExtraProperties(this);
 
         public NativeStorageFile(string path, string name, DateTimeOffset dateCreated)
@@ -58,15 +57,15 @@ namespace Files.Backend.Filesystem.Storage
         public override IAsyncAction CopyAndReplaceAsync(IStorageFile fileToReplace)
             => throw new NotSupportedException();
 
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder)
             => CopyAsync(destinationFolder, Name, NameCollisionOption.FailIfExists);
 
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName)
             => CopyAsync(destinationFolder, desiredNewName, NameCollisionOption.FailIfExists);
 
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option)
         {
-            return AsyncInfo.Run<BaseStorageFile>(async (cancellationToken) =>
+            return AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) =>
             {
                 if (string.IsNullOrEmpty(destinationFolder.Path))
                 {
@@ -124,15 +123,16 @@ namespace Files.Backend.Filesystem.Storage
             throw new NotSupportedException();
         }
 
-        public override IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync()
+        public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync()
         {
-            return AsyncInfo.Run(async (cancellationToken) =>
+            return AsyncInfo.Run<IBaseBasicProperties>(async (cancellationToken) =>
             {
+                await Task.Yield();
                 return new BaseBasicProperties();
             });
         }
 
-        public override IAsyncOperation<BaseStorageFolder> GetParentAsync()
+        public override IAsyncOperation<IBaseStorageFolder> GetParentAsync()
             => throw new NotSupportedException();
 
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode)
@@ -144,11 +144,12 @@ namespace Files.Backend.Filesystem.Storage
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
             => throw new NotSupportedException();
 
-        public static IAsyncOperation<BaseStorageFile> FromPathAsync(string path)
+        public static IAsyncOperation<IBaseStorageFile> FromPathAsync(string path)
         {
-            return AsyncInfo.Run<BaseStorageFile>(async (cancellationToken) =>
+            return AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) =>
             {
-                if (NativeStorageFile.IsNativePath(path))
+                await Task.Yield();
+                if (IsNativePath(path))
                 {
                     if (CheckAccess(path))
                     {
@@ -211,8 +212,9 @@ namespace Files.Backend.Filesystem.Storage
 
         public override IAsyncOperation<IRandomAccessStream> OpenAsync(FileAccessMode accessMode)
         {
-            return AsyncInfo.Run<IRandomAccessStream>(async (cancellationToken) =>
+            return AsyncInfo.Run(async (cancellationToken) =>
             {
+                await Task.Yield();
                 var hFile = NativeFileOperationsHelper.OpenFileForRead(Path, accessMode == FileAccessMode.ReadWrite);
                 return new FileStream(hFile, accessMode == FileAccessMode.ReadWrite ? FileAccess.ReadWrite : FileAccess.Read).AsRandomAccessStream();
             });
@@ -224,6 +226,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             return AsyncInfo.Run<IRandomAccessStreamWithContentType>(async (cancellationToken) =>
             {
+                await Task.Yield();
                 return new StreamWithContentType(await OpenAsync(FileAccessMode.Read));
             });
         }
@@ -232,6 +235,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             return AsyncInfo.Run(async (cancellationToken) =>
             {
+                await Task.Yield();
                 var hFile = NativeFileOperationsHelper.OpenFileForRead(Path);
                 return new FileStream(hFile, FileAccess.Read).AsInputStream();
             });

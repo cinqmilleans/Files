@@ -398,15 +398,15 @@ namespace Files.Backend.Filesystem.Storage
         public override bool IsCommonFolderQuerySupported(CommonFolderQuery query) => false;
 
         public override StorageItemQueryResult CreateItemQuery() => throw new NotSupportedException();
-        public override IBaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions) => new BaseStorageItemQueryResult(this, queryOptions);
 
         public override StorageFileQueryResult CreateFileQuery() => throw new NotSupportedException();
         public override StorageFileQueryResult CreateFileQuery(CommonFileQuery query) => throw new NotSupportedException();
-        public override IBaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions) => new BaseStorageFileQueryResult(this, queryOptions);
 
         public override StorageFolderQueryResult CreateFolderQuery() => throw new NotSupportedException();
         public override StorageFolderQueryResult CreateFolderQuery(CommonFolderQuery query) => throw new NotSupportedException();
-        public override IBaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions) => new BaseStorageFolderQueryResult(this, queryOptions);
 
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode)
         {
