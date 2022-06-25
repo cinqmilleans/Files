@@ -155,8 +155,15 @@
     <Compile Include="Enums\FileNameConflictResolveOptionType.cs" />
     <Compile Include="Helpers\ConflitExtensions.cs" />
     <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Helpers\Win32FindDataExtensions.cs" />
     <Compile Include="IsExternalInit.cs" />
     <Compile Include="Models\VolumeInfo\VolumeInfoFactory.cs" />
+    <Compile Include="Services\SizeProvider\CachedSizeProvider.cs" />
+    <Compile Include="Services\SizeProvider\DrivesSizeProvider.cs" />
+    <Compile Include="Services\SizeProvider\ISizeProvider.cs" />
+    <Compile Include="Services\SizeProvider\NoSizeProvider.cs" />
+    <Compile Include="Services\SizeProvider\SizeChangedEventArgs.cs" />
+    <Compile Include="Services\SizeProvider\SizeChangedValueState.cs" />
     <Compile Include="Storage\Ftp\FtpExtensions.cs" />
     <Compile Include="Helpers\PathExtensions.cs" />
     <Compile Include="Helpers\CommonPaths.cs" />

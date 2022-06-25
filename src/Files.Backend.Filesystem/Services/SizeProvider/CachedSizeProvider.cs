@@ -1,12 +1,12 @@
-﻿using Files.Backend.Extensions;
+﻿using Files.Backend.Filesystem.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using static Files.Backend.Helpers.NativeFindStorageItemHelper;
+using static Files.Backend.Filesystem.Storage.NativeFindStorageItemHelper;
 
-namespace Files.Backend.Services.SizeProvider
+namespace Files.Backend.Filesystem.Services.SizeProvider
 {
     public class CachedSizeProvider : ISizeProvider
     {

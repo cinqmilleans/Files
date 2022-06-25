@@ -1,4 +1,4 @@
-﻿namespace Files.Backend.Services.SizeProvider
+﻿namespace Files.Backend.Filesystem.Services.SizeProvider
 {
     public enum SizeChangedValueState : ushort
     {

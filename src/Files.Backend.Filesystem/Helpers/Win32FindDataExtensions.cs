@@ -1,6 +1,6 @@
-﻿using static Files.Backend.Helpers.NativeFindStorageItemHelper;
+﻿using static Files.Backend.Filesystem.Storage.NativeFindStorageItemHelper;
 
-namespace Files.Backend.Extensions
+namespace Files.Backend.Filesystem.Extensions
 {
     public static class Win32FindDataExtensions
     {

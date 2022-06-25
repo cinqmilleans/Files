@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Files.Backend.Services.SizeProvider
+namespace Files.Backend.Filesystem.Services.SizeProvider
 {
     public interface ISizeProvider : IDisposable
     {
