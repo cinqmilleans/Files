@@ -204,7 +204,6 @@
     <Compile Include="Filesystem\FilesystemOperations\ShellFilesystemOperations.cs" />
     <Compile Include="Filesystem\FileTagsHelper.cs" />
     <Compile Include="Filesystem\FileTagsManager.cs" />
-    <Compile Include="Filesystem\FtpManager.cs" />
     <Compile Include="Filesystem\RecentItem.cs" />
     <Compile Include="Filesystem\RecentItemsManager.cs" />
     <Compile Include="Filesystem\Permissions\FilePermissionsManager.cs" />
@@ -213,17 +212,7 @@
     <Compile Include="Filesystem\Permissions\RulesForUser.cs" />
     <Compile Include="Filesystem\Permissions\UserGroup.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\FilesystemTasks.cs" />
-    <Compile Include="Filesystem\StorageItems\FtpStorageFile.cs" />
-    <Compile Include="Filesystem\StorageItems\FtpStorageFolder.cs" />
-    <Compile Include="Filesystem\StorageItems\NativeStorageFile.cs" />
-    <Compile Include="Filesystem\StorageItems\ShellStorageFile.cs" />
-    <Compile Include="Filesystem\StorageItems\ShellStorageFolder.cs" />
     <Compile Include="Filesystem\StorageItems\StreamWithContentType.cs" />
-    <Compile Include="Filesystem\StorageItems\SystemStorageFile.cs" />
-    <Compile Include="Filesystem\StorageItems\SystemStorageFolder.cs" />
-    <Compile Include="Filesystem\StorageItems\VirtualStorageItem.cs" />
-    <Compile Include="Filesystem\StorageItems\ZipStorageFile.cs" />
-    <Compile Include="Filesystem\StorageItems\ZipStorageFolder.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
