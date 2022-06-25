@@ -1,15 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Storage;
 using Files.Shared;
 using Files.Shared.Extensions;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace Files.Backend.Filesystem.Extensions
+namespace Files.Backend.Filesystem.Helpers
 {
     public static class PathExtensions
     {
         private static readonly ILogger logger = Ioc.Default.GetService<ILogger>();
+
+        /// <summary>
+        /// Returns true if <paramref name="path"/> starts with the path <paramref name="baseDirPath"/>.
+        /// The comparison is case-insensitive, handles / and \ slashes as folder separators and
+        /// only matches if the base dir folder name is matched exactly ("c:\foobar\file.txt" is not a sub path of "c:\foo").
+        /// </summary>
+        public static bool IsSubPathOf(this string path, string baseDirPath)
+        {
+            string normalizedPath = Path.GetFullPath(path.Replace('/', '\\').WithEnding("\\"));
+            string normalizedBaseDirPath = Path.GetFullPath(baseDirPath.Replace('/', '\\').WithEnding("\\"));
+
+            return normalizedPath.StartsWith(normalizedBaseDirPath, StringComparison.OrdinalIgnoreCase);
+        }
 
         public static string GetPathRoot(this string path)
         {
@@ -69,7 +83,7 @@ namespace Files.Backend.Filesystem.Extensions
             {
                 return path;
             }
-            if (path.StartsWith("\\\\") || path.StartsWith("//") || FtpHelpers.IsFtpPath(path))
+            if (path.StartsWith("\\\\") || path.StartsWith("//") || path.IsFtpPath())
             {
                 return path.TrimEnd('\\', '/').ToUpperInvariant();
             }

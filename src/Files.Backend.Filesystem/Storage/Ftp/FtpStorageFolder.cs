@@ -1,9 +1,8 @@
-﻿using Files.Backend.Filesystem.Extensions;
+﻿using Files.Backend.Filesystem.Helpers;
 using Files.Shared.Extensions;
 using FluentFTP;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -41,14 +40,14 @@ namespace Files.Backend.Filesystem.Storage
         {
             Path = folder.CombinePath(ftpItem.Name);
             Name = ftpItem.Name;
-            FtpPath = FtpHelpers.GetFtpPath(Path);
+            FtpPath = Path.GetFtpPath();
             DateCreated = ftpItem.RawCreated < DateTime.FromFileTimeUtc(0) ? DateTimeOffset.MinValue : ftpItem.RawCreated;
         }
         public FtpStorageFolder(IStorageItemWithPath item) : this()
         {
             Path = item.Path;
             Name = IO.Path.GetFileName(item.Path);
-            FtpPath = FtpHelpers.GetFtpPath(item.Path);
+            FtpPath = item.Path.GetFtpPath();
         }
         private FtpStorageFolder() => Properties = new BaseBasicStorageItemExtraProperties(this);
 
@@ -156,24 +155,24 @@ namespace Files.Backend.Filesystem.Storage
             => AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) => await GetItemAsync(name) as BaseStorageFile);
         public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync()
             => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken)
-                => (await GetItemsAsync())?.OfType<FtpStorageFile>().ToList().ToImmutableList<IBaseStorageFile>());
+                => (await GetItemsAsync())?.OfType<FtpStorageFile>());
         public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query)
             => AsyncInfo.Run(async (cancellationToken) => await GetFilesAsync());
         public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve)
-            => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken)
-                => (await GetFilesAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve).ToList().ToImmutableList());
+            => AsyncInfo.Run(async (cancellationToken)
+                => (await GetFilesAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve));
 
         public override IAsyncOperation<IBaseStorageFolder> GetFolderAsync(string name)
             => AsyncInfo.Run(async (cancellationToken) => await GetItemAsync(name) as IBaseStorageFolder);
         public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync()
             => AsyncInfo.Run<IEnumerable<IBaseStorageFolder>>(async (cancellationToken)
-                => (await GetItemsAsync())?.OfType<FtpStorageFolder>().ToList().ToImmutableList<IBaseStorageFolder>());
+                => (await GetItemsAsync())?.OfType<FtpStorageFolder>());
         public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query)
             => AsyncInfo.Run(async (cancellationToken) => await GetFoldersAsync());
         public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync
                 (CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve)
-            => AsyncInfo.Run<IReadOnlyList<IBaseStorageFolder>>(async (cancellationToken)
-                => (await GetFoldersAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve).ToList().ToImmutableList());
+            => AsyncInfo.Run(async (cancellationToken)
+                => (await GetFoldersAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve));
 
         public override IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName)
             => CreateFileAsync(desiredName, CreationCollisionOption.FailIfExists);

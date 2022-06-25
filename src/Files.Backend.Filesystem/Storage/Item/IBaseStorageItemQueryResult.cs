@@ -9,7 +9,7 @@ namespace Files.Backend.Filesystem.Storage
     {
         StorageItemQueryResult ToStorageItemQueryResult();
 
-        IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync();
-        IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync(uint startIndex, uint maxNumberOfItems);
+        IAsyncOperation<IEnumerable<IStorageItem>> GetItemsAsync();
+        IAsyncOperation<IEnumerable<IStorageItem>> GetItemsAsync(uint startIndex, uint maxNumberOfItems);
     }
 }

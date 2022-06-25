@@ -14,9 +14,9 @@ namespace Files.Backend.Filesystem.Storage
 
         public virtual StorageItemQueryResult ToStorageItemQueryResult() => null;
 
-        public virtual IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync()
+        public virtual IAsyncOperation<IEnumerable<IStorageItem>> GetItemsAsync()
             => ToResult(GetSourcesAsync());
-        public virtual IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync(uint startIndex, uint maxNumberOfItems)
+        public virtual IAsyncOperation<IEnumerable<IStorageItem>> GetItemsAsync(uint startIndex, uint maxNumberOfItems)
             => ToResult(GetSourcesAsync(startIndex, maxNumberOfItems));
 
         private async Task<IEnumerable<IStorageItem>> GetSourcesAsync()

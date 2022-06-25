@@ -130,6 +130,7 @@ namespace Files.Uwp
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<ICloudDetector, CloudDetector>()
+                .AddSingleton<IFullTrustAsker, FullTrustAsker>()
 #if SIDELOAD
                 .AddSingleton<IUpdateService, SideloadUpdateService>()
 #else

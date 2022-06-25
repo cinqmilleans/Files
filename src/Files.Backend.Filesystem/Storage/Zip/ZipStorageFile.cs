@@ -1,6 +1,6 @@
-﻿using Files.Uwp.Helpers;
+﻿using Files.Backend.Filesystem.Helpers;
+using Files.Shared.Extensions;
 using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Toolkit.Uwp;
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -10,7 +10,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using IO = System.IO;
-using Storage = Windows.Storage;
+using S = Windows.Storage;
 
 namespace Files.Backend.Filesystem.Storage
 {
@@ -30,7 +30,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             get
             {
-                var itemType = "ItemTypeFile".GetLocalized();
+                var itemType = "ItemTypeFile".ToLocalized();
                 if (Name.Contains(".", StringComparison.Ordinal))
                 {
                     itemType = FileType.Trim('.') + " " + itemType;
@@ -40,7 +40,7 @@ namespace Files.Backend.Filesystem.Storage
         }
 
         public override DateTimeOffset DateCreated { get; }
-        public override Storage.FileAttributes Attributes => Storage.FileAttributes.Normal | Storage.FileAttributes.ReadOnly;
+        public override S.FileAttributes Attributes => S.FileAttributes.Normal | S.FileAttributes.ReadOnly;
 
         private IStorageItemExtraProperties properties;
         public override IStorageItemExtraProperties Properties => properties ??= new BaseBasicStorageItemExtraProperties(this);
@@ -50,6 +50,8 @@ namespace Files.Backend.Filesystem.Storage
             Name = IO.Path.GetFileName(path.TrimEnd('\\', '/'));
             Path = path;
             this.containerPath = containerPath;
+
+            properties = new BaseBasicStorageItemExtraProperties(this);
         }
         public ZipStorageFile(string path, string containerPath, BaseStorageFile backingFile) : this(path, containerPath)
             => this.backingFile = backingFile;
@@ -85,8 +87,8 @@ namespace Files.Backend.Filesystem.Storage
         public override bool IsEqual(IStorageItem item) => item?.Path == Path;
         public override bool IsOfType(StorageItemTypes type) => type is StorageItemTypes.File;
 
-        public override IAsyncOperation<BaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
-        public override IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync() => GetBasicProperties().AsAsyncOperation();
+        public override IAsyncOperation<IBaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync() => GetBasicProperties().AsAsyncOperation();
 
         public override IAsyncOperation<IRandomAccessStream> OpenAsync(FileAccessMode accessMode)
         {
@@ -251,11 +253,11 @@ namespace Files.Backend.Filesystem.Storage
         public override IAsyncOperation<StorageStreamTransaction> OpenTransactedWriteAsync(StorageOpenOptions options)
             => throw new NotSupportedException();
 
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder)
             => CopyAsync(destinationFolder, Name, NameCollisionOption.FailIfExists);
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName)
             => CopyAsync(destinationFolder, desiredNewName, NameCollisionOption.FailIfExists);
-        public override IAsyncOperation<BaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option)
+        public override IAsyncOperation<IBaseStorageFile> CopyAsync(IStorageFolder destinationFolder, string desiredNewName, NameCollisionOption option)
         {
             return AsyncInfo.Run(async (cancellationToken) =>
             {
@@ -359,7 +361,7 @@ namespace Files.Backend.Filesystem.Storage
             }
         }
 
-        private async Task<BaseBasicProperties> GetBasicProperties()
+        private async Task<IBaseBasicProperties> GetBasicProperties()
         {
             using ZipFile zipFile = await OpenZipFileAsync(FileAccessMode.Read);
             if (zipFile is null)
@@ -373,7 +375,7 @@ namespace Files.Backend.Filesystem.Storage
 
             return entry is null
                 ? new BaseBasicProperties()
-                : new ZipFileBasicProperties(entry);
+                : new ZipBasicProperties(entry);
         }
 
         private IAsyncOperation<ZipFile> OpenZipFileAsync(FileAccessMode accessMode, bool openProtected = false)
@@ -436,18 +438,6 @@ namespace Files.Backend.Filesystem.Storage
                     request.FailAndClose(StreamedFileFailureMode.Failed);
                 }
             };
-        }
-
-        private class ZipFileBasicProperties : BaseBasicProperties
-        {
-            private readonly ZipEntry entry;
-
-            public ZipFileBasicProperties(ZipEntry entry) => this.entry = entry;
-
-            public override ulong Size => (ulong)entry.Size;
-
-            public override DateTimeOffset ItemDate => entry.DateTime;
-            public override DateTimeOffset DateModified => entry.DateTime;
         }
     }
 }

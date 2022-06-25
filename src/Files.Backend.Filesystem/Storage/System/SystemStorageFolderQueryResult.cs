@@ -11,14 +11,14 @@ namespace Files.Backend.Filesystem.Storage
     {
         private StorageFolderQueryResult StorageFolderQueryResult { get; }
 
-        public SystemStorageFolderQueryResult(StorageFolderQueryResult result) : base(result.Folder, result.GetCurrentQueryOptions())
+        public SystemStorageFolderQueryResult(StorageFolderQueryResult result) : base((BaseStorageFolder)result.Folder, result.GetCurrentQueryOptions())
             => StorageFolderQueryResult = result;
 
         public override StorageFolderQueryResult ToStorageFolderQueryResult() => StorageFolderQueryResult;
 
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync()
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync()
             => ToResult(GetSourcesAsync());
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfFolders)
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfFolders)
             => ToResult(GetSourcesAsync(startIndex, maxNumberOfFolders));
 
         private async Task<IEnumerable<IBaseStorageFolder>> GetSourcesAsync()

@@ -1,9 +1,10 @@
-﻿using Files.Backend.Filesystem.Extensions;
+﻿using Files.Backend.Filesystem.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.Search;
 
 namespace Files.Backend.Filesystem.Storage
 {

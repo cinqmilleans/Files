@@ -12,7 +12,7 @@ namespace Files.Backend.Filesystem.Storage
 {
     /// <summary>
     /// Implements IStorageItem, allowing us to get an instance of IStorageItem for a ListedItem
-    /// representing a standard filesystem item. As such, VirtualStorageItem does not support hidden, 
+    /// representing a standard filesystem item. As such, VirtualStorageItem does not support hidden,
     /// shortcut, or link items.
     /// </summary>
     public class VirtualStorageItem : IStorageItem
@@ -121,7 +121,7 @@ namespace Files.Backend.Filesystem.Storage
 
         public IAsyncOperation<BasicProperties> GetBasicPropertiesAsync()
         {
-            return AsyncInfo.Run(async (cancellationToken) => 
+            return AsyncInfo.Run(async (cancellationToken) =>
             {
                 async Task<BasicProperties> GetFakeBasicProperties()
                 {

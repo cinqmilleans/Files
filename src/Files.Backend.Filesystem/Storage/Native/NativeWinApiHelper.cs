@@ -1,13 +1,17 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared.Services;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 
-namespace Files.Uwp.Helpers
+namespace Files.Backend.Filesystem.Storage
 {
-    public class NativeWinApiHelper
+    public static class NativeWinApiHelper
     {
+        private static readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
+
         [DllImport("api-ms-win-core-processthreads-l1-1-0.dll", SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool OpenProcessToken([In] IntPtr ProcessHandle, TokenAccess DesiredAccess, out IntPtr TokenHandle);
@@ -263,19 +267,21 @@ namespace Files.Uwp.Helpers
 
         public static async Task<string> GetFileAssociationAsync(string filePath)
         {
-            var connection = await AppServiceConnectionHelper.Instance;
-            if (connection != null)
+            if (asker is not null)
             {
-                var (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
+                var parameter = new ValueSet
                 {
-                    { "Arguments", "GetFileAssociation" },
-                    { "filepath", filePath }
-                });
-                if (status == Windows.ApplicationModel.AppService.AppServiceResponseStatus.Success && response.ContainsKey("FileAssociation"))
+                    ["Arguments"] = "GetFileAssociation",
+                    ["filepath"] = filePath,
+                };
+
+                var response = await asker.GetResponseAsync(parameter);
+                if (response.IsSuccess && response.ContainsKey("FileAssociation"))
                 {
-                    return (string)response["FileAssociation"];
+                    return response.Get<string>("FileAssociation");
                 }
             }
+
             return null;
         }
     }

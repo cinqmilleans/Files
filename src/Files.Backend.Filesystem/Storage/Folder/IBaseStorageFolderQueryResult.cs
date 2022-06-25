@@ -8,7 +8,7 @@ namespace Files.Backend.Filesystem.Storage
     {
         StorageFolderQueryResult ToStorageFolderQueryResult();
 
-        IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync();
-        IAsyncOperation<IReadOnlyList<IBaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfItems);
+        IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync();
+        IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(uint startIndex, uint maxNumberOfItems);
     }
 }

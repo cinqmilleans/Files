@@ -1,9 +1,10 @@
-﻿using Files.Shared.Extensions;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared.Extensions;
+using Files.Shared.Services;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -11,10 +12,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 
-namespace Files.Uwp.Helpers
+namespace Files.Backend.Filesystem.Storage
 {
-    public class NativeFileOperationsHelper
+    public static class NativeFileOperationsHelper
     {
+        private static readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
+
         public enum File_Attributes : uint
         {
             Readonly = 0x00000001,
@@ -116,7 +119,7 @@ namespace Files.Uwp.Helpers
             uint dwIoControlCode,
             IntPtr lpInBuffer,
             uint nInBufferSize,
-            //IntPtr lpOutBuffer, 
+            //IntPtr lpOutBuffer,
             out REPARSE_DATA_BUFFER outBuffer,
             uint nOutBufferSize,
             out uint lpBytesReturned,
@@ -425,21 +428,21 @@ namespace Files.Uwp.Helpers
 
         public static async Task<SafeFileHandle> OpenProtectedFileForRead(string filePath, bool readWrite = false)
         {
-            var connection = await AppServiceConnectionHelper.Instance;
-            if (connection != null)
+            if (asker is not null)
             {
-                var (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
+                var parameter = new ValueSet
                 {
-                    { "Arguments", "FileOperation" },
-                    { "fileop", "GetFileHandle" },
-                    { "filepath", filePath },
-                    { "readwrite", readWrite },
-                    { "processid", System.Diagnostics.Process.GetCurrentProcess().Id },
-                });
+                    ["Arguments"] = "FileOperation",
+                    ["fileop"] = "GetFileHandle",
+                    ["filepath"] = filePath,
+                    ["readwrite"] = readWrite,
+                    ["processid"] = System.Diagnostics.Process.GetCurrentProcess().Id,
+                };
 
-                if (status == Windows.ApplicationModel.AppService.AppServiceResponseStatus.Success && response.Get("Success", false))
+                var response = await asker.GetResponseAsync(parameter);
+                if (response.IsSuccess && response.Get("Success", false))
                 {
-                    return new SafeFileHandle(new IntPtr((long)response["Handle"]), true);
+                    return new SafeFileHandle(new IntPtr(response.Get<long>("Handle")), true);
                 }
             }
             return new SafeFileHandle(new IntPtr(-1), true);
@@ -498,7 +501,7 @@ namespace Files.Uwp.Helpers
                             yield return (name, fileStruct.StreamSize);
                         }
                         offset += fileStruct.NextEntryOffset;
-                    } while (fileStruct.NextEntryOffset != 0);
+                    } while (fileStruct.NextEntryOffset is not 0);
                 }
                 Marshal.FreeHGlobal(mem);
             }

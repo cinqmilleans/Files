@@ -6,6 +6,5 @@ namespace Files.Backend.Filesystem.Storage
     {
         IBaseStorageFolder Folder { get; }
         QueryOptions Options { get; }
-
     }
 }

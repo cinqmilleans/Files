@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage.Search;
@@ -13,14 +11,14 @@ namespace Files.Backend.Filesystem.Storage
     {
         private StorageFileQueryResult StorageFileQueryResult { get; }
 
-        public SystemStorageFileQueryResult(StorageFileQueryResult result) : base(result.Folder, result.GetCurrentQueryOptions())
+        public SystemStorageFileQueryResult(StorageFileQueryResult result) : base((BaseStorageFolder)result.Folder, result.GetCurrentQueryOptions())
             => StorageFileQueryResult = result;
 
         public override StorageFileQueryResult ToStorageFileQueryResult() => StorageFileQueryResult;
 
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync()
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync()
             => ToResult(GetSourcesAsync());
-        public override IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync(uint startIndex, uint maxNumberOfFiles)
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(uint startIndex, uint maxNumberOfFiles)
             => ToResult(GetSourcesAsync(startIndex, maxNumberOfFiles));
 
         public async Task<IEnumerable<IBaseStorageFile>> GetSourcesAsync()

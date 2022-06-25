@@ -45,5 +45,34 @@ namespace Files.Shared.Extensions
             }
             return value.Substring(value.Length - length);
         }
+
+        /// <summary>
+        /// Returns <paramref name="str"/> with the minimal concatenation of <paramref name="ending"/> (starting from end) that
+        /// results in satisfying .EndsWith(ending).
+        /// </summary>
+        /// <example>"hel".WithEnding("llo") returns "hello", which is the result of "hel" + "lo".</example>
+        public static string WithEnding(this string str, string ending)
+        {
+            if (str is null)
+            {
+                return ending;
+            }
+
+            string result = str;
+
+            // Right() is 1-indexed, so include these cases
+            // * Append no characters
+            // * Append up to N characters, where N is ending length
+            for (int i = 0; i <= ending.Length; i++)
+            {
+                string tmp = result + ending.Right(i);
+                if (tmp.EndsWith(ending, StringComparison.Ordinal))
+                {
+                    return tmp;
+                }
+            }
+
+            return result;
+        }
     }
 }

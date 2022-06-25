@@ -19,8 +19,7 @@ namespace Files.Backend.Filesystem.Storage
 
         public AbstractStorageItemQueryResult(IBaseStorageFolder folder, QueryOptions options) => (Folder, Options) = (folder, options);
 
-        protected static IAsyncOperation<IReadOnlyList<T>> ToResult(Task<IEnumerable<T>> items)
-            => AsyncInfo.Run<IReadOnlyList<T>>(async (_) => (await items).ToList());
+        protected static IAsyncOperation<IEnumerable<T>> ToResult(Task<IEnumerable<T>> items) => AsyncInfo.Run(async (_) => await items);
 
         protected IEnumerable<T> Select(IEnumerable<T> items)
         {

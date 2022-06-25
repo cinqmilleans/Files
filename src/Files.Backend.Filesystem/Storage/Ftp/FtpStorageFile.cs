@@ -1,4 +1,4 @@
-﻿using Files.Backend.Filesystem.Extensions;
+﻿using Files.Backend.Filesystem.Helpers;
 using Files.Shared.Extensions;
 using FluentFTP;
 using System;
@@ -103,13 +103,13 @@ namespace Files.Backend.Filesystem.Storage
 
                 if (accessMode is FileAccessMode.Read)
                 {
-                    var inStream = await ftpClient.OpenReadAsync(FtpPath, cancellationToken);
+                    var inStream = await ftpClient.OpenReadAsync(FtpPath, token: cancellationToken);
                     return new NonSeekableRandomAccessStreamForRead(inStream, (ulong)inStream.Length)
                     {
                         DisposeCallback = ftpClient.Dispose
                     };
                 }
-                return new NonSeekableRandomAccessStreamForWrite(await ftpClient.OpenWriteAsync(FtpPath, cancellationToken))
+                return new NonSeekableRandomAccessStreamForWrite(await ftpClient.OpenWriteAsync(FtpPath, token: cancellationToken))
                 {
                     DisposeCallback = ftpClient.Dispose
                 };
@@ -127,7 +127,7 @@ namespace Files.Backend.Filesystem.Storage
                     return null;
                 }
 
-                var inStream = await ftpClient.OpenReadAsync(FtpPath, cancellationToken);
+                var inStream = await ftpClient.OpenReadAsync(FtpPath, token: cancellationToken);
                 var nsStream = new NonSeekableRandomAccessStreamForRead(inStream, (ulong)inStream.Length) { DisposeCallback = ftpClient.Dispose };
                 return new StreamWithContentType(nsStream);
             });
@@ -142,7 +142,7 @@ namespace Files.Backend.Filesystem.Storage
                     return null;
                 }
 
-                var inStream = await ftpClient.OpenReadAsync(FtpPath, cancellationToken);
+                var inStream = await ftpClient.OpenReadAsync(FtpPath, token: cancellationToken);
                 return new InputStreamWithDisposeCallback(inStream) { DisposeCallback = () => ftpClient.Dispose() };
             });
         }
@@ -166,8 +166,8 @@ namespace Files.Backend.Filesystem.Storage
                     return null;
                 }
 
-                BaseStorageFolder destFolder = destinationFolder.AsBaseStorageFolder();
-                BaseStorageFile file = await destFolder.CreateFileAsync(desiredNewName, option.Convert());
+                IBaseStorageFolder destFolder = destinationFolder.AsBaseStorageFolder();
+                IBaseStorageFile file = await destFolder.CreateFileAsync(desiredNewName, option.Convert());
 
                 var stream = await file.OpenStreamForWriteAsync();
                 return await ftpClient.DownloadAsync(stream, FtpPath, token: cancellationToken) ? file : null;

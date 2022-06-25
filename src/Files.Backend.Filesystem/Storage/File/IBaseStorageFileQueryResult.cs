@@ -8,7 +8,7 @@ namespace Files.Backend.Filesystem.Storage
     {
         StorageFileQueryResult ToStorageFileQueryResult();
 
-        IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync();
-        IAsyncOperation<IReadOnlyList<IBaseStorageFile>> GetFilesAsync(uint startIndex, uint maxNumberOfItems);
+        IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync();
+        IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(uint startIndex, uint maxNumberOfItems);
     }
 }
