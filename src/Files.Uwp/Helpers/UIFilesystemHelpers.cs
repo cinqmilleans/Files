@@ -1,9 +1,11 @@
-﻿using Files.Shared;
-using Files.Uwp.Dialogs;
+﻿using Files.Backend.Enums;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
+using Files.Shared;
 using Files.Shared.Enums;
 using Files.Shared.Extensions;
+using Files.Uwp.Dialogs;
 using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Interacts;
 using Files.Uwp.ViewModels;
 using Microsoft.Toolkit.Uwp;
@@ -17,7 +19,6 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Windows.Storage;
-using Files.Backend.Enums;
 using Windows.System;
 
 namespace Files.Uwp.Helpers
@@ -371,7 +372,7 @@ namespace Files.Uwp.Helpers
                 {
                     return;
                 }
-                await associatedInstance.FilesystemHelpers.MoveItemsAsync(items, items.Select(x => PathNormalization.Combine(folder.Path, x.Name)), false, true);
+                await associatedInstance.FilesystemHelpers.MoveItemsAsync(items, items.Select(x => folder.Path.CombinePath(x.Name)), false, true);
             }
             catch (Exception ex)
             {

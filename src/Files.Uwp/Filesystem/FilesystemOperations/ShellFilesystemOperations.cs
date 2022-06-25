@@ -1,8 +1,16 @@
-﻿using Files.Shared.Extensions;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
+using Files.Backend.Services;
+using Files.Backend.ViewModels.Dialogs;
+using Files.Backend.ViewModels.Dialogs.FileSystemDialog;
+using Files.Shared;
 using Files.Shared.Enums;
+using Files.Shared.Extensions;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.FilesystemHistory;
 using Files.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,13 +21,6 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
-using Files.Shared;
-using Files.Backend.ViewModels.Dialogs;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.Backend.Services;
-using Microsoft.Toolkit.Uwp;
-using Files.Uwp.Filesystem.StorageItems;
-using Files.Backend.ViewModels.Dialogs.FileSystemDialog;
 
 namespace Files.Uwp.Filesystem
 {
@@ -226,7 +227,7 @@ namespace Files.Uwp.Filesystem
 
             switch (source.ItemType)
             {
-                case FilesystemItemType.File:
+                case StorageItemType.File:
                     {
                         var newEntryInfo = await ShellNewEntryExtensions.GetNewContextMenuEntryForType(Path.GetExtension(source.Path));
                         if (newEntryInfo?.Command != null)
@@ -237,7 +238,7 @@ namespace Files.Uwp.Filesystem
                                 (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
                                 {
                                     { "Arguments", "LaunchApp" },
-                                    { "WorkingDirectory", PathNormalization.GetParentDir(source.Path) },
+                                    { "WorkingDirectory", source.Path.GetParentDir() },
                                     { "Application", args[0].Replace("\"", "", StringComparison.Ordinal) },
                                     { "Parameters", string.Join(" ", args.Skip(1)).Replace("%1", source.Path) }
                                 });
@@ -256,7 +257,7 @@ namespace Files.Uwp.Filesystem
                         }
                         break;
                     }
-                case FilesystemItemType.Directory:
+                case StorageItemType.Directory:
                     {
                         (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
                         {

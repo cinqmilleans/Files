@@ -1,27 +1,19 @@
-﻿using Files.Shared.Enums;
-using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Services.Settings;
-using Files.Uwp.ViewModels;
+using Files.Uwp.Filesystem;
 using Files.Uwp.ViewModels.Widgets;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.AccessCache;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using System.Collections.Specialized;
-using Windows.UI.Core;
-using System.Threading;
-using System.Collections.Generic;
 
 namespace Files.Uwp.UserControls.Widgets
 {

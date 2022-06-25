@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Backend.Services.Settings;
 using Files.Shared.Extensions;
 using Files.Uwp.DataModels;
 using Files.Uwp.DataModels.NavigationControlItems;
 using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
 using Files.Uwp.Helpers.ContextFlyouts;
 using Files.Uwp.ViewModels;

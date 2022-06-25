@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.Backend.Extensions;
+using Files.Backend.Filesystem.Services.SizeProvider;
 using Files.Backend.Services.Settings;
-using Files.Backend.Services.SizeProvider;
 using Files.Shared;
 using Files.Uwp.Extensions;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
 using Files.Uwp.Helpers.FileListCache;
 using Microsoft.Toolkit.Uwp;
@@ -19,7 +17,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using static Files.Backend.Helpers.NativeFindStorageItemHelper;
+using static Files.Backend.Filesystem.Storage.NativeFindStorageItemHelper;
 using FileAttributes = System.IO.FileAttributes;
 
 namespace Files.Uwp.Filesystem.StorageEnumerators

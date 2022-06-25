@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Backend.Services.Settings;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.StorageItems;
@@ -199,7 +201,7 @@ namespace Files.Uwp.Filesystem.StorageEnumerators
                         Opacity = 1,
                         FileImage = null,
                         LoadFileIcon = false,
-                        ItemPath = string.IsNullOrEmpty(folder.Path) ? PathNormalization.Combine(currentStorageFolder.Path, folder.Name) : folder.Path,
+                        ItemPath = string.IsNullOrEmpty(folder.Path) ? currentStorageFolder.Path.CombinePath(folder.Name) : folder.Path,
                         FileSize = null,
                         FileSizeBytes = 0,
                         ItemDateDeletedReal = binFolder.DateDeleted,

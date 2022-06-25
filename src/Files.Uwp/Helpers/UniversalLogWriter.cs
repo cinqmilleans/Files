@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using static Files.Uwp.Helpers.NativeFileOperationsHelper;
+using static Files.Backend.Filesystem.Storage.NativeFileOperationsHelper;
 
 namespace Files.Uwp.Helpers
 {

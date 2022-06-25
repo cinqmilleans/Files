@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Filesystem.Helpers;
-using Files.Backend.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Backend.Services.Settings;
 using Files.Shared;
 using Files.Shared.Enums;
 using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.ViewModels;
 using Files.Uwp.Views;
 using Microsoft.Toolkit.Uwp;
@@ -64,7 +63,7 @@ namespace Files.Uwp.Helpers
                     { "WorkingDirectory", workingDir },
                     { "Application", terminal.Path },
                     { "Parameters", string.Format(terminal.Arguments,
-                       Helpers.PathNormalization.NormalizePath(workingDir)) }
+                       workingDir.NormalizePath()) }
                 };
                 await connection.SendMessageAsync(value);
             }

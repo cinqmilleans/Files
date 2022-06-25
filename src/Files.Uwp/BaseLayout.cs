@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
 using Files.Shared.Extensions;
 using Files.Uwp.EventArguments;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem;
-using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
 using Files.Uwp.Helpers.ContextFlyouts;
 using Files.Uwp.Interacts;
@@ -36,7 +36,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using static Files.Uwp.Helpers.PathNormalization;
 
 namespace Files.Uwp
 {
@@ -433,7 +432,7 @@ namespace Files.Uwp
 
                 // pathRoot will be empty on recycle bin path
                 var workingDir = ParentShellPageInstance.FilesystemViewModel.WorkingDirectory ?? string.Empty;
-                string pathRoot = GetPathRoot(workingDir);
+                string pathRoot = workingDir.GetPathRoot();
                 if (string.IsNullOrEmpty(pathRoot) || workingDir.StartsWith(CommonPaths.RecycleBinPath, StringComparison.Ordinal)) // Can't go up from recycle bin
                 {
                     ParentShellPageInstance.ToolbarViewModel.CanNavigateToParent = false;
@@ -445,7 +444,7 @@ namespace Files.Uwp
 
                 ParentShellPageInstance.InstanceViewModel.IsPageTypeRecycleBin = workingDir.StartsWith(CommonPaths.RecycleBinPath, StringComparison.Ordinal);
                 ParentShellPageInstance.InstanceViewModel.IsPageTypeMtpDevice = workingDir.StartsWith("\\\\?\\", StringComparison.Ordinal);
-                ParentShellPageInstance.InstanceViewModel.IsPageTypeFtp = FtpHelpers.IsFtpPath(workingDir);
+                ParentShellPageInstance.InstanceViewModel.IsPageTypeFtp = workingDir.IsFtpPath();
                 ParentShellPageInstance.InstanceViewModel.IsPageTypeZipFolder = ZipStorageFolder.IsZipPath(workingDir);
                 ParentShellPageInstance.InstanceViewModel.IsPageTypeLibrary = LibraryHelper.IsLibraryPath(workingDir);
                 ParentShellPageInstance.InstanceViewModel.IsPageTypeSearchResults = false;

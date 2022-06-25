@@ -442,9 +442,6 @@
     <Compile Include="Filesystem\Search\FolderSearch.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\FilesystemResult.cs" />
     <Compile Include="Filesystem\StorageFileHelpers\StorageFileExtensions.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\IStorageItemWithPath.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\StorageFileWithPath.cs" />
-    <Compile Include="Filesystem\StorageFileHelpers\StorageFolderWithPath.cs" />
     <Compile Include="Filesystem\StorageHistory\Helpers\StorageHistoryHelpers.cs" />
     <Compile Include="Filesystem\StorageHistory\IStorageHistory.cs" />
     <Compile Include="Filesystem\StorageHistory\IStorageHistoryOperations.cs" />

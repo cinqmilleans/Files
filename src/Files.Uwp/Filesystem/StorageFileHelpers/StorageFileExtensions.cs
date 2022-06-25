@@ -1,4 +1,5 @@
 ﻿using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Filesystem.Storage;
 using Files.Shared.Extensions;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.StorageItems;
@@ -133,10 +134,10 @@ namespace Files.Uwp.Filesystem
                     foreach (var component in currComponents.ExceptBy(prevComponents, c => c.Path).SkipLast(1))
                     {
                         folder = await folder.GetFolderAsync(component.Title);
-                        path = PathNormalization.Combine(path, folder.Name);
+                        path = path.CombinePath(folder.Name);
                     }
                     var file = await folder.GetFileAsync(currComponents.Last().Title);
-                    path = PathNormalization.Combine(path, file.Name);
+                    path = path.CombinePath(file.Name);
                     return new StorageFileWithPath(file, path);
                 }
                 else if (value.IsSubPathOf(rootFolder.Path))
@@ -146,10 +147,10 @@ namespace Files.Uwp.Filesystem
                     foreach (var component in currComponents.Skip(1).SkipLast(1))
                     {
                         folder = await folder.GetFolderAsync(component.Title);
-                        path = PathNormalization.Combine(path, folder.Name);
+                        path = path.CombinePath(folder.Name);
                     }
                     var file = await folder.GetFileAsync(currComponents.Last().Title);
-                    path = PathNormalization.Combine(path, file.Name);
+                    path = path.CombinePath(file.Name);
                     return new StorageFileWithPath(file, path);
                 }
             }
@@ -185,7 +186,7 @@ namespace Files.Uwp.Filesystem
                     foreach (var component in currComponents.ExceptBy(prevComponents, c => c.Path))
                     {
                         folder = await folder.GetFolderAsync(component.Title);
-                        path = PathNormalization.Combine(path, folder.Name);
+                        path = path.CombinePath(folder.Name);
                     }
                     return new StorageFolderWithPath(folder, path);
                 }
@@ -196,7 +197,7 @@ namespace Files.Uwp.Filesystem
                     foreach (var component in currComponents.Skip(1))
                     {
                         folder = await folder.GetFolderAsync(component.Title);
-                        path = PathNormalization.Combine(path, folder.Name);
+                        path = path.CombinePath(folder.Name);
                     }
                     return new StorageFolderWithPath(folder, path);
                 }
@@ -216,7 +217,7 @@ namespace Files.Uwp.Filesystem
         public async static Task<IList<StorageFolderWithPath>> GetFoldersWithPathAsync
             (this StorageFolderWithPath parentFolder, uint maxNumberOfItems = uint.MaxValue)
                 => (await parentFolder.Item.GetFoldersAsync(CommonFolderQuery.DefaultQuery, 0, maxNumberOfItems))
-                    .Select(x => new StorageFolderWithPath(x, string.IsNullOrEmpty(x.Path) ? PathNormalization.Combine(parentFolder.Path, x.Name) : x.Path)).ToList();
+                    .Select(x => new StorageFolderWithPath(x, string.IsNullOrEmpty(x.Path) ? parentFolder.Path.CombinePath(x.Name) : x.Path)).ToList();
         public async static Task<IList<StorageFolderWithPath>> GetFoldersWithPathAsync
             (this StorageFolderWithPath parentFolder, string nameFilter, uint maxNumberOfItems = uint.MaxValue)
         {
@@ -229,10 +230,10 @@ namespace Files.Uwp.Filesystem
             {
                 ApplicationSearchFilter = $"System.FileName:{nameFilter}*"
             };
-            BaseStorageFolderQueryResult queryResult = parentFolder.Item.CreateFolderQueryWithOptions(queryOptions);
+            IBaseStorageFolderQueryResult queryResult = parentFolder.Item.CreateFolderQueryWithOptions(queryOptions);
 
             return (await queryResult.GetFoldersAsync(0, maxNumberOfItems))
-                .Select(x => new StorageFolderWithPath(x, string.IsNullOrEmpty(x.Path) ? PathNormalization.Combine(parentFolder.Path, x.Name) : x.Path)).ToList();
+                .Select(x => new StorageFolderWithPath(x, string.IsNullOrEmpty(x.Path) ? parentFolder.Path.CombinePath(x.Name) : x.Path)).ToList();
         }
 
         private static PathBoxItem GetPathItem(string component, string path)
