@@ -1,67 +1,26 @@
-﻿using Files.Shared;
-using Files.Shared.Extensions;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared;
 using Files.Shared.Helpers;
-using Files.Uwp.Helpers;
+using Files.Shared.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.AppService;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Search;
-using Storage = Windows.Storage;
+using S = Windows.Storage;
 
-namespace Files.Uwp.Filesystem.StorageItems
+namespace Files.Backend.Filesystem.Storage
 {
-    public class ShortcutStorageFolder : ShellStorageFolder, IShortcutStorageItem
-    {
-        public string TargetPath { get; }
-        public string Arguments { get; }
-        public string WorkingDirectory { get; }
-        public bool RunAsAdmin { get; }
-
-        public ShortcutStorageFolder(ShellLinkItem item) : base(item)
-        {
-            TargetPath = item.TargetPath;
-            Arguments = item.Arguments;
-            WorkingDirectory = item.WorkingDirectory;
-            RunAsAdmin = item.RunAsAdmin;
-        }
-    }
-
-    public interface IShortcutStorageItem : IStorageItem
-    {
-        string TargetPath { get; }
-        string Arguments { get; }
-        string WorkingDirectory { get; }
-        bool RunAsAdmin { get; }
-    }
-
-    public class BinStorageFolder : ShellStorageFolder, IBinStorageItem
-    {
-        public string OriginalPath { get; }
-        public DateTimeOffset DateDeleted { get; }
-
-        public BinStorageFolder(ShellFileItem item) : base(item)
-        {
-            OriginalPath = item.FilePath;
-            DateDeleted = item.RecycleDate;
-        }
-    }
-
-    public interface IBinStorageItem : IStorageItem
-    {
-        string OriginalPath { get; }
-        DateTimeOffset DateDeleted { get; }
-    }
-
     public class ShellStorageFolder : BaseStorageFolder
     {
+        private static readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
+
         public override string Path { get; }
         public override string Name { get; }
         public override string DisplayName => Name;
@@ -69,7 +28,7 @@ namespace Files.Uwp.Filesystem.StorageItems
         public override string FolderRelativeId => $"0\\{Name}";
 
         public override DateTimeOffset DateCreated { get; }
-        public override Storage.FileAttributes Attributes => Storage.FileAttributes.Directory;
+        public override S.FileAttributes Attributes => S.FileAttributes.Directory;
         public override IStorageItemExtraProperties Properties => new BaseBasicStorageItemExtraProperties(this);
 
         public ShellStorageFolder(ShellFileItem item)
@@ -122,22 +81,22 @@ namespace Files.Uwp.Filesystem.StorageItems
 
         protected static async Task<(ShellFileItem Folder, List<ShellFileItem> Items)> GetFolderAndItems(string path, bool enumerate, int startIndex = 0, int maxItemsToRetrieve = int.MaxValue)
         {
-            if (await AppServiceConnectionHelper.Instance is NamedPipeAsAppServiceConnection connection)
+            if (asker is not null)
             {
-                ValueSet value = new ValueSet()
+                var parameter = new ValueSet
                 {
-                    { "Arguments", "ShellFolder" },
-                    { "action", enumerate ? "Enumerate" : "Query" },
-                    { "from", startIndex },
-                    { "count", maxItemsToRetrieve },
-                    { "folder", path }
+                    ["Arguments"] = "ShellFolder",
+                    ["action"] = enumerate ? "Enumerate" : "Query",
+                    ["from"] = startIndex,
+                    ["count"] = maxItemsToRetrieve,
+                    ["folder"] = path,
                 };
-                var (status, response) = await connection.SendMessageForResponseAsync(value);
 
-                if (status == AppServiceResponseStatus.Success)
+                var response = await asker.GetResponseAsync(parameter);
+                if (response.IsSuccess)
                 {
-                    var folder = JsonConvert.DeserializeObject<ShellFileItem>(response.Get("Folder", ""));
-                    var items = JsonConvert.DeserializeObject<List<ShellFileItem>>(response.Get("Enumerate", ""), new JsonSerializerSettings()
+                    var folder = JsonConvert.DeserializeObject<ShellFileItem>(response.Get("Folder", string.Empty));
+                    var items = JsonConvert.DeserializeObject<List<ShellFileItem>>(response.Get("Enumerate", string.Empty), new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Objects,
                         SerializationBinder = new KnownTypesBinder { KnownTypes = { typeof(ShellFileItem), typeof(ShellLinkItem) } }
@@ -155,16 +114,16 @@ namespace Files.Uwp.Filesystem.StorageItems
 
         public override IAsyncOperation<IndexedState> GetIndexedStateAsync() => Task.FromResult(IndexedState.NotIndexed).AsAsyncOperation();
 
-        public override IAsyncOperation<BaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFolder> GetParentAsync() => throw new NotSupportedException();
 
-        public override IAsyncOperation<BaseBasicProperties> GetBasicPropertiesAsync()
+        public override IAsyncOperation<IBaseBasicProperties> GetBasicPropertiesAsync()
         {
-            return AsyncInfo.Run(async (cancellationToken) =>
+            return AsyncInfo.Run<IBaseBasicProperties>(async (cancellationToken) =>
             {
                 var res = await GetFolderAndItems(Path, false);
                 if (res.Folder is not null)
                 {
-                    return new ShellFolderBasicProperties(res.Folder);
+                    return new ShellBasicProperties(res.Folder);
                 }
                 return new BaseBasicProperties();
             });
@@ -227,7 +186,7 @@ namespace Files.Uwp.Filesystem.StorageItems
                 {
                     if (entry.IsFolder)
                     {
-                        items.Add(ShellStorageFolder.FromShellItem(entry));
+                        items.Add(FromShellItem(entry));
                     }
                     else
                     {
@@ -238,38 +197,38 @@ namespace Files.Uwp.Filesystem.StorageItems
             });
         }
 
-        public override IAsyncOperation<BaseStorageFile> GetFileAsync(string name)
-            => AsyncInfo.Run<BaseStorageFile>(async (cancellationToken) => await GetItemAsync(name) as ShellStorageFile);
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFile>> GetFilesAsync()
-            => AsyncInfo.Run<IReadOnlyList<BaseStorageFile>>(async (cancellationToken) => (await GetItemsAsync())?.OfType<ShellStorageFile>().ToList());
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFile>> GetFilesAsync(CommonFileQuery query)
+        public override IAsyncOperation<IBaseStorageFile> GetFileAsync(string name)
+            => AsyncInfo.Run<IBaseStorageFile>(async (cancellationToken) => await GetItemAsync(name) as ShellStorageFile);
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync()
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFile>>(async (cancellationToken) => (await GetItemsAsync())?.OfType<ShellStorageFile>());
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query)
             => AsyncInfo.Run(async (cancellationToken) => await GetFilesAsync());
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve)
-            => AsyncInfo.Run<IReadOnlyList<BaseStorageFile>>(async (cancellationToken)
-                => (await GetFilesAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve).ToList()
+        public override IAsyncOperation<IEnumerable<IBaseStorageFile>> GetFilesAsync(CommonFileQuery query, uint startIndex, uint maxItemsToRetrieve)
+            => AsyncInfo.Run(async (cancellationToken)
+                => (await GetFilesAsync()).Skip((int)startIndex).Take((int)maxItemsToRetrieve)
             );
 
-        public override IAsyncOperation<BaseStorageFolder> GetFolderAsync(string name)
-            => AsyncInfo.Run<BaseStorageFolder>(async (cancellationToken) => await GetItemAsync(name) as ShellStorageFolder);
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFolder>> GetFoldersAsync()
-            => AsyncInfo.Run<IReadOnlyList<BaseStorageFolder>>(async (cancellationToken) => (await GetItemsAsync())?.OfType<ShellStorageFolder>().ToList());
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query)
+        public override IAsyncOperation<IBaseStorageFolder> GetFolderAsync(string name)
+            => AsyncInfo.Run<IBaseStorageFolder>(async (cancellationToken) => await GetItemAsync(name) as ShellStorageFolder);
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync()
+            => AsyncInfo.Run<IEnumerable<IBaseStorageFolder>>(async (cancellationToken) => (await GetItemsAsync())?.OfType<ShellStorageFolder>());
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query)
             => AsyncInfo.Run(async (cancellationToken) => await GetFoldersAsync());
-        public override IAsyncOperation<IReadOnlyList<BaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve)
+        public override IAsyncOperation<IEnumerable<IBaseStorageFolder>> GetFoldersAsync(CommonFolderQuery query, uint startIndex, uint maxItemsToRetrieve)
         {
-            return AsyncInfo.Run<IReadOnlyList<BaseStorageFolder>>(async (cancellationToken) =>
+            return AsyncInfo.Run(async (cancellationToken) =>
             {
                 var items = await GetFoldersAsync();
-                return items.Skip((int)startIndex).Take((int)maxItemsToRetrieve).ToList();
+                return items.Skip((int)startIndex).Take((int)maxItemsToRetrieve);
             });
         }
 
-        public override IAsyncOperation<BaseStorageFile> CreateFileAsync(string desiredName) => throw new NotSupportedException();
-        public override IAsyncOperation<BaseStorageFile> CreateFileAsync(string desiredName, CreationCollisionOption options)
+        public override IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName) => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFile> CreateFileAsync(string desiredName, CreationCollisionOption options)
             => throw new NotSupportedException();
 
-        public override IAsyncOperation<BaseStorageFolder> CreateFolderAsync(string desiredName) => throw new NotSupportedException();
-        public override IAsyncOperation<BaseStorageFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options)
+        public override IAsyncOperation<IBaseStorageFolder> CreateFolderAsync(string desiredName) => throw new NotSupportedException();
+        public override IAsyncOperation<IBaseStorageFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options)
             => throw new NotSupportedException();
 
         public override IAsyncAction RenameAsync(string desiredName) => throw new NotSupportedException();
@@ -283,15 +242,15 @@ namespace Files.Uwp.Filesystem.StorageItems
         public override bool IsCommonFolderQuerySupported(CommonFolderQuery query) => false;
 
         public override StorageItemQueryResult CreateItemQuery() => throw new NotSupportedException();
-        public override BaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageItemQueryResult CreateItemQueryWithOptions(QueryOptions queryOptions) => new BaseStorageItemQueryResult(this, queryOptions);
 
         public override StorageFileQueryResult CreateFileQuery() => throw new NotSupportedException();
         public override StorageFileQueryResult CreateFileQuery(CommonFileQuery query) => throw new NotSupportedException();
-        public override BaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageFileQueryResult CreateFileQueryWithOptions(QueryOptions queryOptions) => new BaseStorageFileQueryResult(this, queryOptions);
 
         public override StorageFolderQueryResult CreateFolderQuery() => throw new NotSupportedException();
         public override StorageFolderQueryResult CreateFolderQuery(CommonFolderQuery query) => throw new NotSupportedException();
-        public override BaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions) => new(this, queryOptions);
+        public override IBaseStorageFolderQueryResult CreateFolderQueryWithOptions(QueryOptions queryOptions) => new BaseStorageFolderQueryResult(this, queryOptions);
 
         public override IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode)
         {
@@ -328,18 +287,6 @@ namespace Files.Uwp.Filesystem.StorageItems
                 var zipFolder = await StorageFolder.GetFolderFromPathAsync(Path);
                 return await zipFolder.GetThumbnailAsync(mode, requestedSize, options);
             });
-        }
-
-        private class ShellFolderBasicProperties : BaseBasicProperties
-        {
-            private readonly ShellFileItem folder;
-
-            public ShellFolderBasicProperties(ShellFileItem folder) => this.folder = folder;
-
-            public override ulong Size => folder.FileSizeBytes;
-
-            public override DateTimeOffset ItemDate => folder.ModifiedDate;
-            public override DateTimeOffset DateModified => folder.ModifiedDate;
         }
     }
 }

@@ -1,13 +1,10 @@
-﻿using Files.Uwp.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Files.Shared.Helpers;
+using Files.Uwp.ViewModels;
 using Files.Uwp.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Files.Uwp.Helpers;
 
 namespace Files.Uwp.UserControls.MultitaskingControl
 {

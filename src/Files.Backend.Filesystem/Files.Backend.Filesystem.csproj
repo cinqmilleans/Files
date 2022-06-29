@@ -28,6 +28,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -51,6 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -63,6 +66,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -75,6 +79,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -87,6 +92,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
     <PlatformTarget>ARM64</PlatformTarget>
@@ -99,6 +105,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
     <PlatformTarget>ARM64</PlatformTarget>
@@ -111,6 +118,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -123,6 +131,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -135,6 +144,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -144,11 +154,69 @@
     <Compile Include="Helpers\ConflitExtensions.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\PathExtensions.cs" />
+    <Compile Include="IsExternalInit.cs" />
     <Compile Include="Models\ByteSize.cs" />
     <Compile Include="Models\VolumeInfo\IVolumeInfoFactory.cs" />
     <Compile Include="Models\VolumeInfo\VolumeInfo.cs" />
     <Compile Include="Models\VolumeInfo\VolumeInfoFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage\File\BaseStorageFile.cs" />
+    <Compile Include="Storage\File\BaseStorageFileQueryResult.cs" />
+    <Compile Include="Storage\File\IBaseStorageFile.cs" />
+    <Compile Include="Storage\File\IBaseStorageFileQueryResult.cs" />
+    <Compile Include="Storage\File\StorageFileExtensions.cs" />
+    <Compile Include="Storage\Folder\BaseStorageFolder.cs" />
+    <Compile Include="Storage\Folder\BaseStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\Folder\IBaseStorageFolder.cs" />
+    <Compile Include="Storage\Folder\IBaseStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\Folder\StorageFolderExtensions.cs" />
+    <Compile Include="Storage\Ftp\FtpBasicProperties.cs" />
+    <Compile Include="Storage\Ftp\FtpExtensions.cs" />
+    <Compile Include="Storage\Ftp\FtpManager.cs" />
+    <Compile Include="Storage\Ftp\FtpStorageFile.cs" />
+    <Compile Include="Storage\Ftp\FtpStorageFolder.cs" />
+    <Compile Include="Storage\Item\AbstractStorageItemQueryResult.cs" />
+    <Compile Include="Storage\Item\BaseStorageItemQueryResult.cs" />
+    <Compile Include="Storage\Item\IBaseStorageItem.cs" />
+    <Compile Include="Storage\Item\IBaseStorageItemQueryResult.cs" />
+    <Compile Include="Storage\Item\IStorageItemQueryResult.cs" />
+    <Compile Include="Storage\Item\StorageFileItem.cs" />
+    <Compile Include="Storage\Native\NativeFileOperationsHelper.cs" />
+    <Compile Include="Storage\Native\NativeFindStorageItemHelper.cs" />
+    <Compile Include="Storage\Native\NativeStorageFile.cs" />
+    <Compile Include="Storage\Native\NativeWinApiHelper.cs" />
+    <Compile Include="Storage\Path\IStorageFileWithPath.cs" />
+    <Compile Include="Storage\Path\IStorageFolderWithPath.cs" />
+    <Compile Include="Storage\Path\IStorageItemWithPath.cs" />
+    <Compile Include="Storage\Path\StorageFileWithPath.cs" />
+    <Compile Include="Storage\Path\StorageFolderWithPath.cs" />
+    <Compile Include="Storage\Property\BaseBasicProperties.cs" />
+    <Compile Include="Storage\Property\BaseBasicStorageItemExtraProperties.cs" />
+    <Compile Include="Storage\Property\BaseStorageItemExtraProperties.cs" />
+    <Compile Include="Storage\Property\IBaseBasicProperties.cs" />
+    <Compile Include="Storage\Shell\BinStorageFile.cs" />
+    <Compile Include="Storage\Shell\BinStorageFolder.cs" />
+    <Compile Include="Storage\Shell\IBinStorageItem.cs" />
+    <Compile Include="Storage\Shell\IShortcutStorageItem.cs" />
+    <Compile Include="Storage\Shell\ShellBasicProperties.cs" />
+    <Compile Include="Storage\Shell\ShellStorageFile.cs" />
+    <Compile Include="Storage\Shell\ShellStorageFolder.cs" />
+    <Compile Include="Storage\Shell\ShortcutStorageFile.cs" />
+    <Compile Include="Storage\Shell\ShortcutStorageFolder.cs" />
+    <Compile Include="Storage\Stream\InputStreamWithDisposeCallback.cs" />
+    <Compile Include="Storage\Stream\NonSeekableRandomAccessStreamForRead.cs" />
+    <Compile Include="Storage\Stream\NonSeekableRandomAccessStreamForWrite.cs" />
+    <Compile Include="Storage\Stream\StreamWithContentType.cs" />
+    <Compile Include="Storage\System\SystemBasicProperties.cs" />
+    <Compile Include="Storage\System\SystemStorageFile.cs" />
+    <Compile Include="Storage\System\SystemStorageFileQueryResult.cs" />
+    <Compile Include="Storage\System\SystemStorageFolder.cs" />
+    <Compile Include="Storage\System\SystemStorageFolderQueryResult.cs" />
+    <Compile Include="Storage\System\SystemStorageItemQueryResult.cs" />
+    <Compile Include="Storage\Virtual\VirtualStorageItem.cs" />
+    <Compile Include="Storage\Zip\ZipBasicProperties.cs" />
+    <Compile Include="Storage\Zip\ZipStorageFile.cs" />
+    <Compile Include="Storage\Zip\ZipStorageFolder.cs" />
     <EmbeddedResource Include="Properties\Files.Backend.Filesystem.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -158,11 +226,20 @@
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>8.0.0-preview4</Version>
     </PackageReference>
+	    <PackageReference Include="Microsoft.Extensions.DependencyInjection">
+    <Version>6.0.0</Version>
+    </PackageReference>
     <PackageReference Include="FluentFTP">
       <Version>37.0.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.2-beta1</Version>
+    </PackageReference>
+    <PackageReference Include="SharpZipLib">
+      <Version>1.3.4</Version>
     </PackageReference>
     <PackageReference Include="Ude.NetStandard">
       <Version>1.2.0</Version>
@@ -174,6 +251,7 @@
       <Name>Files.Shared</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
