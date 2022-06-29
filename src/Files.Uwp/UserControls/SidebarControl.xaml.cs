@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.Backend.Filesystem.Helpers;
 using Files.Backend.Services.Settings;
 using Files.Shared.Extensions;
 using Files.Uwp.DataModels;

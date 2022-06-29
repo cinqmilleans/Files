@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Helpers;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
 using Files.Backend.Services.SizeProvider;
