@@ -141,6 +141,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\CommonPaths.cs" />
+    <Compile Include="Helpers\ConflitExtensions.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\PathExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

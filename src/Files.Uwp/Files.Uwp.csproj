@@ -262,7 +262,6 @@
     <Compile Include="DataModels\SidebarPinnedModel.cs" />
     <Compile Include="Controllers\TerminalController.cs" />
     <Compile Include="Helpers\ContextFlyoutItemHelper.cs" />
-    <Compile Include="Helpers\EnumConversionHelpers.cs" />
     <Compile Include="Helpers\Fractions.cs" />
     <Compile Include="Helpers\ItemModelListToContextFlyoutHelper.cs" />
     <Compile Include="Helpers\FilePropertiesHelpers.cs" />
