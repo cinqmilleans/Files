@@ -1,8 +1,16 @@
-﻿using Files.Shared.Extensions;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Helpers;
+using Files.Backend.Services;
+using Files.Backend.ViewModels.Dialogs;
+using Files.Backend.ViewModels.Dialogs.FileSystemDialog;
+using Files.Shared;
 using Files.Shared.Enums;
+using Files.Shared.Extensions;
 using Files.Uwp.Extensions;
 using Files.Uwp.Filesystem.FilesystemHistory;
+using Files.Uwp.Filesystem.StorageItems;
 using Files.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,13 +21,6 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Storage;
-using Files.Shared;
-using Files.Backend.ViewModels.Dialogs;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.Backend.Services;
-using Microsoft.Toolkit.Uwp;
-using Files.Uwp.Filesystem.StorageItems;
-using Files.Backend.ViewModels.Dialogs.FileSystemDialog;
 
 namespace Files.Uwp.Filesystem
 {
@@ -237,7 +238,7 @@ namespace Files.Uwp.Filesystem
                                 (status, response) = await connection.SendMessageForResponseAsync(new ValueSet()
                                 {
                                     { "Arguments", "LaunchApp" },
-                                    { "WorkingDirectory", PathNormalization.GetParentDir(source.Path) },
+                                    { "WorkingDirectory", source.Path.GetParentPath() },
                                     { "Application", args[0].Replace("\"", "", StringComparison.Ordinal) },
                                     { "Parameters", string.Join(" ", args.Skip(1)).Replace("%1", source.Path) }
                                 });
@@ -589,7 +590,7 @@ namespace Files.Uwp.Filesystem
                         return await MoveItemsAsync(source, destination, collisions, progress, errorCode, cancellationToken);
                     }
                 }
-                else if (source.Zip(destination, (src, dest) => (src, dest)).FirstOrDefault(x => x.src.ItemType == FilesystemItemType.Directory && PathNormalization.GetParentDir(x.dest).IsSubPathOf(x.src.Path)) is (IStorageItemWithPath, string) subtree)
+                else if (source.Zip(destination, (src, dest) => (src, dest)).FirstOrDefault(x => x.src.ItemType == FilesystemItemType.Directory && x.dest.GetParentPath().IsSubPathOf(x.src.Path)) is (IStorageItemWithPath, string) subtree)
                 {
                     var destName = subtree.dest.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
                     var srcName = subtree.src.Path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();

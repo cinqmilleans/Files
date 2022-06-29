@@ -36,7 +36,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Files.Uwp.UserControls.Menus;
-using static Files.Uwp.Helpers.PathNormalization;
+using Files.Backend.Filesystem.Helpers;
 
 namespace Files.Uwp
 {
@@ -432,7 +432,7 @@ namespace Files.Uwp
 
                 // pathRoot will be empty on recycle bin path
                 var workingDir = ParentShellPageInstance.FilesystemViewModel.WorkingDirectory ?? string.Empty;
-                string pathRoot = GetPathRoot(workingDir);
+                string pathRoot = workingDir.GetRootPath();
                 if (string.IsNullOrEmpty(pathRoot) || workingDir.StartsWith(CommonPaths.RecycleBinPath, StringComparison.Ordinal)) // Can't go up from recycle bin
                 {
                     ParentShellPageInstance.ToolbarViewModel.CanNavigateToParent = false;

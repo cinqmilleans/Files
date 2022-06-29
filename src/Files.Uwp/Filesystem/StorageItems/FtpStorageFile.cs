@@ -1,4 +1,5 @@
-﻿using Files.Shared.Extensions;
+﻿using Files.Backend.Filesystem.Helpers;
+using Files.Shared.Extensions;
 using Files.Uwp.Helpers;
 using FluentFTP;
 using Microsoft.Toolkit.Uwp;
@@ -51,7 +52,7 @@ namespace Files.Uwp.Filesystem.StorageItems
         }
         public FtpStorageFile(string folder, FtpListItem ftpItem)
         {
-            Path = PathNormalization.Combine(folder, ftpItem.Name);
+            Path = folder.CombinePath(ftpItem.Name);
             Name = ftpItem.Name;
             FtpPath = FtpHelpers.GetFtpPath(Path);
             DateCreated = ftpItem.RawCreated < DateTime.FromFileTimeUtc(0) ? DateTimeOffset.MinValue : ftpItem.RawCreated;
@@ -191,7 +192,7 @@ namespace Files.Uwp.Filesystem.StorageItems
                     return;
                 }
 
-                string destination = $"{PathNormalization.GetParentDir(FtpPath)}/{desiredName}";
+                string destination = $"{FtpPath.GetParentPath()}/{desiredName}";
                 var remoteExists = option is NameCollisionOption.ReplaceExisting ? FtpRemoteExists.Overwrite : FtpRemoteExists.Skip;
                 bool isSuccessful = await ftpClient.MoveFileAsync(FtpPath, destination, remoteExists, cancellationToken);
                 if (!isSuccessful && option is NameCollisionOption.GenerateUniqueName)

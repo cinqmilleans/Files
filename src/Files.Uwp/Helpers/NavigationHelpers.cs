@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Backend.Filesystem.Helpers;
 using Files.Backend.Helpers;
 using Files.Backend.Services.Settings;
 using Files.Shared;
@@ -63,7 +64,7 @@ namespace Files.Uwp.Helpers
                     { "WorkingDirectory", workingDir },
                     { "Application", terminal.Path },
                     { "Parameters", string.Format(terminal.Arguments,
-                       Helpers.PathNormalization.NormalizePath(workingDir)) }
+                       workingDir.NormalizePath()) }
                 };
                 await connection.SendMessageAsync(value);
             }
@@ -443,7 +444,7 @@ namespace Files.Uwp.Helpers
                             BaseStorageFileQueryResult fileQueryResult = null;
 
                             //Get folder to create a file query (to pass to apps like Photos, Movies & TV..., needed to scroll through the folder like what Windows Explorer does)
-                            BaseStorageFolder currentFolder = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(PathNormalization.GetParentDir(path));
+                            BaseStorageFolder currentFolder = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(path.GetParentPath());
 
                             if (currentFolder != null)
                             {

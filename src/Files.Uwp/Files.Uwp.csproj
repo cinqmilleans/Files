@@ -492,7 +492,6 @@
     <Compile Include="Helpers\NativeWinApiHelper.cs" />
     <Compile Include="Helpers\NaturalStringComparer.cs" />
     <Compile Include="Helpers\PackageHelper.cs" />
-    <Compile Include="Helpers\PathNormalization.cs" />
     <Compile Include="Helpers\PostBannerHelpers.cs" />
     <Compile Include="Helpers\RecycleBinHelpers.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
