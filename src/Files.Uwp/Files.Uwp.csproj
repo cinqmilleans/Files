@@ -1611,6 +1611,10 @@
       <Project>{3d19293f-0e3a-4946-ade3-680a1e9123ec}</Project>
       <Name>BackgroundTasks</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Files.Backend.Filesystem\Files.Backend.Filesystem.csproj">
+      <Project>{e767bf6e-db30-4b2a-907d-79268bd2949f}</Project>
+      <Name>Files.Backend.Filesystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Files.Shared\Files.Shared.csproj">
       <Project>{0533133f-2559-4b53-a0fd-0970bc0e312e}</Project>
       <Name>Files.Shared</Name>
