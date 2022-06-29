@@ -6,7 +6,7 @@ using Windows.Foundation.Collections;
 
 namespace Files.Backend.Filesystem.Services
 {
-    internal class VolumeInfoFactory : IVolumeInfoFactory
+    public class VolumeInfoFactory : IVolumeInfoFactory
     {
         private readonly IFullTrustAsker asker = Ioc.Default.GetService<IFullTrustAsker>();
 

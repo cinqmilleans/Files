@@ -311,7 +311,6 @@
     <Compile Include="ServicesImplementation\ThreadingService.cs" />
     <Compile Include="ServicesImplementation\UpdateService.cs" />
     <Compile Include="ServicesImplementation\UserSizeProvider.cs" />
-    <Compile Include="ServicesImplementation\VolumeInfoFactory.cs" />
     <Compile Include="TemplateSelectors\BaseTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\FileSystemDialogItemSelector.cs" />
     <Compile Include="UserControls\ColoredIcon.xaml.cs">
