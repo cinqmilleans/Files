@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-//using Files.Backend.Filesystem.Storage;
+using Files.Backend.Filesystem.Storage;
 using Files.Shared;
 using Files.Shared.Extensions;
 using System;
@@ -83,7 +83,7 @@ namespace Files.Backend.Filesystem.Helpers
             {
                 return path;
             }
-            if (path.StartsWith("\\\\") || path.StartsWith("//")) // || path.IsFtpPath())
+            if (path.StartsWith(@"\\") || path.StartsWith("//") || path.IsFtpPath())
             {
                 return path.TrimEnd('\\', '/').ToUpperInvariant();
             }

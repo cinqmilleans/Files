@@ -102,7 +102,7 @@ namespace Files.Backend.Filesystem.Storage
                         return await backingFile.OpenAsync(accessMode);
                     }
 
-                    var file = NativeFileOperationsHelper.OpenFileForRead(containerPath, rw);
+                    var file = NativeHelpers.OpenFileForRead(containerPath, rw);
                     if (file.IsInvalid)
                     {
                         return null;
@@ -154,7 +154,7 @@ namespace Files.Backend.Filesystem.Storage
                     return new NonSeekableRandomAccessStreamForWrite(stream);
                 }
 
-                var hFile = NativeFileOperationsHelper.OpenFileForRead(containerPath, true);
+                var hFile = NativeHelpers.OpenFileForRead(containerPath, true);
                 if (hFile.IsInvalid)
                 {
                     return null;
@@ -179,7 +179,7 @@ namespace Files.Backend.Filesystem.Storage
                         return await backingFile.OpenReadAsync();
                     }
 
-                    var hFile = NativeFileOperationsHelper.OpenFileForRead(containerPath);
+                    var hFile = NativeHelpers.OpenFileForRead(containerPath);
                     if (hFile.IsInvalid)
                     {
                         return null;
@@ -221,7 +221,7 @@ namespace Files.Backend.Filesystem.Storage
                         return await backingFile.OpenSequentialReadAsync();
                     }
 
-                    var hFile = NativeFileOperationsHelper.OpenFileForRead(containerPath);
+                    var hFile = NativeHelpers.OpenFileForRead(containerPath);
                     if (hFile.IsInvalid)
                     {
                         return null;
@@ -344,7 +344,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             try
             {
-                var hFile = NativeFileOperationsHelper.OpenFileForRead(path);
+                var hFile = NativeHelpers.OpenFileForRead(path);
                 if (hFile.IsInvalid)
                 {
                     return false;
@@ -389,8 +389,8 @@ namespace Files.Backend.Filesystem.Storage
                 }
 
                 var hFile = openProtected
-                    ? await NativeFileOperationsHelper.OpenProtectedFileForRead(containerPath)
-                    : NativeFileOperationsHelper.OpenFileForRead(containerPath, readWrite);
+                    ? await NativeHelpers.OpenProtectedFileForRead(containerPath)
+                    : NativeHelpers.OpenFileForRead(containerPath, readWrite);
                 if (hFile.IsInvalid)
                 {
                     return null;

@@ -80,7 +80,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             async Task<bool> queryFileAssoc()
             {
-                var assoc = await NativeWinApiHelper.GetFileAssociationAsync(filePath);
+                var assoc = await NativeHelpers.GetFileAssociationAsync(filePath);
                 if (assoc is not null)
                 {
                     isDefaultZipApp = assoc == Package.Current.Id.FamilyName
@@ -449,7 +449,7 @@ namespace Files.Backend.Filesystem.Storage
         {
             return SafetyExtensions.IgnoreExceptions(() =>
             {
-                var hFile = NativeFileOperationsHelper.OpenFileForRead(path);
+                var hFile = NativeHelpers.OpenFileForRead(path);
                 if (hFile.IsInvalid)
                 {
                     return false;
@@ -488,7 +488,7 @@ namespace Files.Backend.Filesystem.Storage
                     return new ZipFile((await backingFile.OpenAsync(accessMode)).AsStream());
                 }
 
-                var hFile = NativeFileOperationsHelper.OpenFileForRead(containerPath, readWrite);
+                var hFile = NativeHelpers.OpenFileForRead(containerPath, readWrite);
                 if (hFile.IsInvalid)
                 {
                     return null;

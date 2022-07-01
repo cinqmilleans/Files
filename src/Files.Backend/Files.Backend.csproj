@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Files.Shared\Files.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>

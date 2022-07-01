@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using static Files.Backend.Filesystem.Storage.NativeFindStorageItemHelper;
 
 namespace Files.Backend.Filesystem.Storage
 {
@@ -42,13 +41,13 @@ namespace Files.Backend.Filesystem.Storage
         public static VirtualStorageItem FromPath(string path)
         {
             FINDEX_INFO_LEVELS findInfoLevel = FINDEX_INFO_LEVELS.FindExInfoBasic;
-            int additionalFlags = FIND_FIRST_EX_LARGE_FETCH;
-            IntPtr hFile = FindFirstFileExFromApp(path, findInfoLevel, out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
+            int additionalFlags = NativeConstants.FIND_FIRST_EX_LARGE_FETCH;
+            IntPtr hFile = NativeApi.FindFirstFileExFromApp(path, findInfoLevel, out WIN32_FIND_DATA findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags);
             if (hFile.ToInt64() != -1)
             {
                 // https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/c8e77b37-3909-4fe6-a4ea-2b9d423b1ee4
                 bool isReparsePoint = ((System.IO.FileAttributes)findData.dwFileAttributes & System.IO.FileAttributes.ReparsePoint) == System.IO.FileAttributes.ReparsePoint;
-                bool isSymlink = isReparsePoint && findData.dwReserved0 == NativeFileOperationsHelper.IO_REPARSE_TAG_SYMLINK;
+                bool isSymlink = isReparsePoint && findData.dwReserved0 == NativeConstants.IO_REPARSE_TAG_SYMLINK;
                 bool isHidden = ((System.IO.FileAttributes)findData.dwFileAttributes & System.IO.FileAttributes.Hidden) == System.IO.FileAttributes.Hidden;
                 bool isDirectory = ((System.IO.FileAttributes)findData.dwFileAttributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory;
 
@@ -58,7 +57,7 @@ namespace Files.Backend.Filesystem.Storage
 
                     try
                     {
-                        FileTimeToSystemTime(ref findData.ftCreationTime, out SYSTEMTIME systemCreatedDateOutput);
+                        NativeApi.FileTimeToSystemTime(ref findData.ftCreationTime, out SYSTEMTIME systemCreatedDateOutput);
                         itemCreatedDate = systemCreatedDateOutput.ToDateTime();
                     }
                     catch (ArgumentException)
@@ -76,7 +75,7 @@ namespace Files.Backend.Filesystem.Storage
                     };
                 }
 
-                FindClose(hFile);
+                NativeApi.FindClose(hFile);
             }
 
             return null;

@@ -216,7 +216,6 @@
     <Compile Include="Filesystem\StorageItems\BaseQueryResults.cs" />
     <Compile Include="Filesystem\StorageItems\FtpStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\FtpStorageFolder.cs" />
-    <Compile Include="Filesystem\StorageItems\NativeStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\ShellStorageFile.cs" />
     <Compile Include="Filesystem\StorageItems\ShellStorageFolder.cs" />
     <Compile Include="Filesystem\StorageItems\StreamWithContentType.cs" />
@@ -483,10 +482,6 @@
     <Compile Include="ViewModels\Properties\FilePropertySection.cs" />
     <Compile Include="Helpers\ItemsDataTemplateSelector.cs" />
     <Compile Include="Helpers\JumpListManager.cs" />
-    <Compile Include="Helpers\NativeDirectoryChangesHelper.cs" />
-    <Compile Include="Helpers\NativeFileOperationsHelper.cs" />
-    <Compile Include="Helpers\NativeIoDeviceControlHelper.cs" />
-    <Compile Include="Helpers\NativeWinApiHelper.cs" />
     <Compile Include="Helpers\NaturalStringComparer.cs" />
     <Compile Include="Helpers\PackageHelper.cs" />
     <Compile Include="Helpers\PostBannerHelpers.cs" />
