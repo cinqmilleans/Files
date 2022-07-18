@@ -236,6 +236,9 @@
     <Compile Include="Helpers\CommonPaths.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
+    <Compile Include="Helpers\ShortKey\SettingShortKey.cs" />
+    <Compile Include="Helpers\ShortKey\ShortKey.cs" />
+    <Compile Include="Helpers\ShortKey\ShortKeyManager.cs" />
     <Compile Include="Helpers\KnownTypesBinder.cs" />
     <Compile Include="Helpers\LocalizedEnumHelper.cs" />
     <Compile Include="Helpers\ResourceHelpers.cs" />
