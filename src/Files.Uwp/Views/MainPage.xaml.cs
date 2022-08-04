@@ -28,6 +28,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Files.Backend.Extensions;
+using Windows.UI.Core;
+using Windows.System;
+using Files.Uwp.Command;
 
 namespace Files.Uwp.Views
 {
@@ -86,6 +89,61 @@ namespace Files.Uwp.Views
             }
 
             UserSettingsService.OnSettingChangedEvent += UserSettingsService_OnSettingChangedEvent;
+
+            Window.Current.Dispatcher.AcceleratorKeyActivated += AccelertorKeyActivedHandle;
+        }
+
+        private async void AccelertorKeyActivedHandle(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.VirtualKey is VirtualKey.None)
+            {
+                return;
+            }
+            if (args.VirtualKey is VirtualKey.Menu or VirtualKey.LeftMenu or VirtualKey.RightMenu)
+            {
+                return;
+            }
+            if (args.VirtualKey is VirtualKey.Control or VirtualKey.LeftControl or VirtualKey.RightControl)
+            {
+                return;
+            }
+            if (args.VirtualKey is VirtualKey.Shift or VirtualKey.LeftShift or VirtualKey.RightShift)
+            {
+                return;
+            }
+            if (args.VirtualKey is VirtualKey.LeftWindows or VirtualKey.RightWindows)
+            {
+                return;
+            }
+
+            if (args.EventType.ToString().Contains("Down"))
+            {
+                var menu = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu);
+                var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift);
+
+                var modifier = (menu is CoreVirtualKeyStates.Down ? VirtualKeyModifiers.Menu : VirtualKeyModifiers.None)
+                    | (ctrl is CoreVirtualKeyStates.Down ? VirtualKeyModifiers.Control : VirtualKeyModifiers.None)
+                    | (shift is CoreVirtualKeyStates.Down ? VirtualKeyModifiers.Shift : VirtualKeyModifiers.None);
+
+                var shortKey = new ShortKey(args.VirtualKey, modifier);
+
+                if (shortKey == new ShortKey(VirtualKey.Number1, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
+                {
+                    var instanceViewModel = new CurrentInstanceViewModel();
+                    instanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
+                }
+
+
+                //if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+                //{
+                //    if (args.VirtualKey == Windows.System.VirtualKey.Number1)
+                //    {
+                //        // add the content in textbox
+                //    }
+                //}
+
+            }
         }
 
         private async void PromptForReview()

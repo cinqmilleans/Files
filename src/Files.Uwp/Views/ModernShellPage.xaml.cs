@@ -822,7 +822,7 @@ namespace Files.Uwp.Views
                     break;
 
                 case (true, true, false, _, VirtualKey.Number1): // ctrl+shift+1, details view
-                    InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
+                    //InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
                     break;
 
                 case (true, true, false, _, VirtualKey.Number2): // ctrl+shift+2, tiles view

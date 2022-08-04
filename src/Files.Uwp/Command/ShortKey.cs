@@ -3,14 +3,13 @@ using System.Text;
 using Windows.System;
 using Windows.UI.Xaml.Input;
 
-namespace Files.Uwp.Helpers
+namespace Files.Uwp.Command
 {
     public struct ShortKey : IEquatable<ShortKey>
     {
         public static ShortKey None { get; } = new ShortKey(VirtualKey.None);
 
-        public bool IsEmpty => Key is VirtualKey.None && Modifier is VirtualKeyModifiers.None;
-        public bool IsValid => Key is not VirtualKey.None;
+        public bool IsNone => Key is VirtualKey.None && Modifier is VirtualKeyModifiers.None;
 
         public VirtualKey Key { get; }
         public VirtualKeyModifiers Modifier { get; }
@@ -20,9 +19,6 @@ namespace Files.Uwp.Helpers
         }
         public ShortKey(VirtualKey key, VirtualKeyModifiers modifier)
         {
-            Key = VirtualKey.None;
-            Modifier = VirtualKeyModifiers.None;
-
             if (key is VirtualKey.None)
             {
                 throw new ArgumentException(nameof(key), "The key cannot be None.");
@@ -45,6 +41,12 @@ namespace Files.Uwp.Helpers
                 or VirtualKey.Shift or VirtualKey.LeftShift or VirtualKey.RightShift
                 or VirtualKey.LeftWindows or VirtualKey.RightWindows;
         }
+
+        public void Deconstruct(out VirtualKey key, out VirtualKeyModifiers modifier)
+            => (key, modifier) = (Key, Modifier);
+
+        public static bool operator ==(ShortKey a, ShortKey b) => a.Equals(b);
+        public static bool operator !=(ShortKey a, ShortKey b) => !a.Equals(b);
 
         public override string ToString()
         {

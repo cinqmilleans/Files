@@ -5,10 +5,10 @@
     xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,8)"
     xmlns:controls="using:Files.Uwp.UserControls"
     xmlns:converters="using:Files.Uwp.Converters"
-    xmlns:helpers="using:Files.Uwp.Helpers"
     xmlns:converters1="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:custom="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Files.Uwp.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -53,13 +53,13 @@
         </ResourceDictionary>
     </Page.Resources>
     <Page.KeyboardAccelerators>
-        <KeyboardAccelerator Key="Number1" Modifiers="Control">
+        <!--<KeyboardAccelerator Key="Number1" Modifiers="Control">
             <i:Interaction.Behaviors>
                 <icore:EventTriggerBehavior EventName="Invoked">
                     <icore:InvokeCommandAction Command="{x:Bind ViewModel.NavigateToNumberedTabKeyboardAcceleratorCommand}" />
                 </icore:EventTriggerBehavior>
             </i:Interaction.Behaviors>
-        </KeyboardAccelerator>
+        </KeyboardAccelerator>-->
         <KeyboardAccelerator Key="Number2" Modifiers="Control">
             <i:Interaction.Behaviors>
                 <icore:EventTriggerBehavior EventName="Invoked">

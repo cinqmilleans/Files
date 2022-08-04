@@ -153,6 +153,14 @@
     <Compile Include="CommandLine\ParsedCommand.cs" />
     <Compile Include="CommandLine\ParsedCommands.cs" />
     <Compile Include="CommandLine\ParsedCommandType.cs" />
+    <Compile Include="Command\CommandManager.cs" />
+    <Compile Include="Command\CustomShortKeyCollection.cs" />
+    <Compile Include="Command\ICommandManager.cs" />
+    <Compile Include="Command\ICustomShortKeyCollection.cs" />
+    <Compile Include="Command\IKeyboardCommand.cs" />
+    <Compile Include="Command\KeyboardCommand.cs" />
+    <Compile Include="Command\ShortKeyAgent.cs" />
+    <Compile Include="Command\ViewCommandManager.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\IJson.cs" />
     <Compile Include="Controllers\SidebarPinnedController.cs" />
@@ -236,8 +244,11 @@
     <Compile Include="Helpers\CommonPaths.cs" />
     <Compile Include="Helpers\FileExtensionHelpers.cs" />
     <Compile Include="Helpers\ItemListDisplayHelpers\BlockingListEnumerator.cs" />
+    <Compile Include="Helpers\ShortKey\IShortKeyAction.cs" />
+    <Compile Include="Helpers\ShortKey\IShortKeyManager.cs" />
     <Compile Include="Helpers\ShortKey\SettingShortKey.cs" />
-    <Compile Include="Helpers\ShortKey\ShortKey.cs" />
+    <Compile Include="Command\ShortKey.cs" />
+    <Compile Include="Helpers\ShortKey\ShortKeyCodes.cs" />
     <Compile Include="Helpers\ShortKey\ShortKeyManager.cs" />
     <Compile Include="Helpers\KnownTypesBinder.cs" />
     <Compile Include="Helpers\LocalizedEnumHelper.cs" />

@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Input;
+﻿using Windows.System;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
 
 namespace Files.Uwp.Helpers
 {
-    [MarkupExtensionReturnType(ReturnType = KeyboardAccelerator)]
-    public sealed class SettingShortKey : MarkupExtension
+    /*[MarkupExtensionReturnType(ReturnType = typeof(VirtualKey))]
+    public sealed class SettingShortKey : MarkupExtension, IBinding
     {
-        private static ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+        Binding
 
-        public string Name
-        {
-            get; set;
-        }
+        private readonly IShortKeyManager manager = new ShortKeyManager();
 
-        public bool IsEnabled { get; }
+        public ShortKeyCodes Code { get; set; } = ShortKeyCodes.None;
 
-        protected override object ProvideValue()
-        {
-            return resourceLoader.GetString(this.Name);
-        }
-    }
+        protected override object ProvideValue() => manager.GetShortKey(Code);
+    }*/
 
 }

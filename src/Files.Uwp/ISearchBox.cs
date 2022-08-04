@@ -6,6 +6,47 @@ using Windows.UI.Xaml.Controls;
 
 namespace Files.Uwp
 {
+    public interface IStorage
+    {
+    }
+
+    public interface IDeletableStorage : IStorage
+    {
+        /// <summary>
+        /// Deletes the provided storable item from this folder.
+        /// </summary>
+        public Task DeleteAsync(bool permanantly = false, CancellationToken cancellationToken = default);
+    }
+
+    public interface INamedStorage : IStorage
+    {
+        string Name { get; }
+    }
+
+    public interface IRenamed
+        
+        
+        { string NameA { get; } }
+    public interface IB { string NameB { get; } }
+
+    public class C : IA, IB
+    {
+        public string NameA => "A";
+        public string NameB => "B";
+
+        public static string Test(object c)
+        {
+            if (c is IA and IB m)
+            {
+                m.
+            }
+
+            return string.Empty;
+        }
+    }
+
+
+
     public interface ISearchBox
     {
         event TypedEventHandler<ISearchBox, SearchBoxTextChangedEventArgs> TextChanged;

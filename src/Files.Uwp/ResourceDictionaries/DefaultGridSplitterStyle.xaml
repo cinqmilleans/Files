@@ -21,11 +21,10 @@
                         x:Name="RootGrid"
                         Background="Transparent"
                         BorderBrush="{TemplateBinding BorderBrush}">
-
-                        <Border 
+                        <Border
                             Width="1"
-                            Background="{ThemeResource SplitterBorderBrush}"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center"
+                            Background="{ThemeResource SplitterBorderBrush}" />
 
                         <ContentPresenter
                             HorizontalContentAlignment="Left"
