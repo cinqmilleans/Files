@@ -30,6 +30,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Files.Backend.Enums;
 using Files.App.Shell;
+using Files.App.UserControls.Menus;
 
 namespace Files.App.Interacts
 {
@@ -584,25 +585,28 @@ namespace Files.App.Interacts
 
         public async Task CompressIntoArchive()
         {
-            string archivePath;
-            string[] sources = associatedInstance.SlimContentPage.SelectedItems
-                .Select(item => item.ItemPath)
-                .ToArray();
+            //string archivePath;
+            //string[] sources = associatedInstance.SlimContentPage.SelectedItems
+            //    .Select(item => item.ItemPath)
+            //    .ToArray();
 
-            if (sources.Length == 1)
-                archivePath = sources[0] + ".zip";
-            else
-            {
+            //if (sources.Length == 1)
+            //    archivePath = sources[0] + ".zip";
+            //else
+            //{
+				var dialog = new CompressDialog();
+			await dialog.ShowAsync();
+			var a = string.Empty;
                 DynamicDialog archiveDialog = DynamicDialogFactory.GetFor_RenameDialog();
-                await archiveDialog.ShowAsync();
-                if (archiveDialog.DynamicResult != DynamicDialogResult.Primary)
-                    return;
-                archivePath = Path.Combine(
-                    associatedInstance.FilesystemViewModel.WorkingDirectory,
-                    $"{(string)archiveDialog.ViewModel.AdditionalData}.zip");
-            }
+                //await archiveDialog.ShowAsync();
+                //if (archiveDialog.DynamicResult != DynamicDialogResult.Primary)
+                //    return;
+                //archivePath = Path.Combine(
+                //    associatedInstance.FilesystemViewModel.WorkingDirectory,
+                //    $"{(string)archiveDialog.ViewModel.AdditionalData}.zip");
+            //}
 
-            CancellationTokenSource compressionToken = new();
+            /*CancellationTokenSource compressionToken = new();
             PostedStatusBanner banner = App.OngoingTasksViewModel.PostOperationBanner(
                 "CompressionInProgress".GetLocalizedResource(),
                 archivePath,
@@ -610,9 +614,9 @@ namespace Files.App.Interacts
                 ReturnResult.InProgress,
                 FileOperationType.Compressed,
                 compressionToken);
-            
+
             bool result = await ZipHelpers.CompressMultipleToArchive(sources, archivePath, banner.Progress);
-            
+
             banner.Remove();
             if (result)
                 App.OngoingTasksViewModel.PostBanner(
@@ -627,7 +631,7 @@ namespace Files.App.Interacts
                     string.Format("CompressionFailed".GetLocalizedResource(), archivePath),
                     0,
                     ReturnResult.Failed,
-                    FileOperationType.Compressed);
+                    FileOperationType.Compressed);*/
 		}
 
         public async Task DecompressArchive()
