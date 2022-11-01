@@ -2,13 +2,13 @@
 	x:Class="Files.App.UserControls.Menus.CompressDialog"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:helpers="using:Files.App.Helpers"
 	xmlns:here="using:Files.App.UserControls.Menus"
 	xmlns:local="using:Files.App.UserControls.Settings"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Title="Add to Archive"
-
 	d:DesignHeight="300"
 	d:DesignWidth="400"
 	CloseButtonText="Cancel"
@@ -20,12 +20,17 @@
 	Style="{StaticResource DefaultContentDialogStyle}"
 	mc:Ignorable="d">
 
-	<Grid ColumnSpacing="8" MinHeight="200">
+	<ContentDialog.Resources>
+		<converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</ContentDialog.Resources>
+
+	<Grid MinHeight="200" ColumnSpacing="8">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
@@ -53,12 +58,19 @@
 			</Grid>
 		</Button>
 
-		<ListView BorderBrush="{ThemeResource SolidBackgroundFillColorBase}" BorderThickness="1"
-			Grid.Row="2"
+		<HyperlinkButton Grid.ColumnSpan="2" HorizontalAlignment="Right" Grid.Row="1" Visibility="{x:Bind ViewModel.IsMore, Mode=OneWay}"
+			Tapped="HyperlinkButton_Tapped">More options</HyperlinkButton>
+		<HyperlinkButton Grid.ColumnSpan="2" HorizontalAlignment="Right" Grid.Row="1" Visibility="{x:Bind ViewModel.IsFewer, Mode=OneWay}"
+			Tapped="HyperlinkButton_Tapped">Fewer options</HyperlinkButton>
+
+		<ListView
+			Grid.Row="1"
 			Grid.ColumnSpan="2"
 			Margin="0,16"
 			Padding="-5,-2"
 			Background="{ThemeResource SolidBackgroundFillColorBase}"
+			BorderBrush="{ThemeResource SolidBackgroundFillColorBase}"
+			BorderThickness="1"
 			CornerRadius="{StaticResource OverlayCornerRadius}"
 			SelectedIndex="0"
 			Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay}">
@@ -84,6 +96,9 @@
 			</ListViewItem>
 		</ListView>
 
+		<!--<TextBlock
+			Text="Coucou" />-->
+
 		<!--<ComboBox Grid.Column="1" VerticalAlignment="Bottom"
 				x:Name="DateFormatChooser"
 				FlowDirection="RightToLeft"
@@ -103,24 +118,31 @@
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>-->
-	</Grid>
 	<!--<local:SettingsBlockControl x:Name="Test" Title="Format" HorizontalAlignment="Stretch">
 			<local:SettingsBlockControl.Icon>
 				<FontIcon Glyph="&#xE790;" />
 			</local:SettingsBlockControl.Icon>
 		</local:SettingsBlockControl>-->
 
-	<!--<local:SettingsBlockControl Title="Level" HorizontalAlignment="Stretch">
+	<local:SettingsBlockControl
+
+		Grid.Row="2" Grid.ColumnSpan="2"
+			Visibility="{x:Bind ViewModel.IsFewer, Mode=OneWay}"
+		Title="Level" HorizontalAlignment="Stretch">
 			<local:SettingsBlockControl.Icon>
 				<FontIcon Glyph="&#xE790;" />
 			</local:SettingsBlockControl.Icon>
 			<ComboBox
 				x:Name="LevelFormatChooser"
-				Grid.Column="1" FlowDirection="RightToLeft"
 				AutomationProperties.Name="{helpers:ResourceString Name=DateFormat}"
-				ItemsSource="{x:Bind Levels}"
 				SelectedIndex="{x:Bind FormatIndex, Mode=TwoWay}">
-				<ComboBox.ItemTemplate>
+				<ComboBoxItem>Ultra</ComboBoxItem>
+				<ComboBoxItem>Maximum</ComboBoxItem>
+				<ComboBoxItem>Normal</ComboBoxItem>
+				<ComboBoxItem>Fast</ComboBoxItem>
+				<ComboBoxItem>Faster</ComboBoxItem>
+				<ComboBoxItem>None</ComboBoxItem>
+				<!--<ComboBox.ItemTemplate>
 					<DataTemplate x:DataType="here:Format">
 						<StackPanel Orientation="Vertical">
 							<TextBlock Text="{x:Bind Label}" />
@@ -128,12 +150,13 @@
 								FontSize="12"
 								FontWeight="Light"
 								Text="{x:Bind Description}" TextWrapping="Wrap"
-								Visibility="{Binding IsDropDownOpen, ElementName=DateFormatChooser}" />
+								Visibility="{Binding IsDropDownOpen, ElementName=LevelFormatChooser}" />
 						</StackPanel>
 					</DataTemplate>
-				</ComboBox.ItemTemplate>
+				</ComboBox.ItemTemplate>-->
 			</ComboBox>
-		</local:SettingsBlockControl>-->
+		</local:SettingsBlockControl>
 
+	</Grid>
 
 </ContentDialog>

@@ -19,7 +19,7 @@ namespace Files.App.UserControls.Menus
 			InitializeComponent();
 		}
 
-		private int FormatIndex { get; set; } = 0;
+		private int FormatIndex { get; set; } = 2;
 
 		private IList<Format> Formats { get; } = new List<Format>
 		{
@@ -29,7 +29,11 @@ namespace Files.App.UserControls.Menus
 
 		private IList<Format> Levels { get; } = new List<Format>
 		{
-			new Format("High", "Le plus lent"),
+			new Format("Ultra", "The slowest"),
+			new Format("Maximum", "The slowest"),
+			new Format("Normal", "The slowest"),
+			new Format("Fast", "The slowest"),
+			new Format("Ultra", "The slowest"),
 			new Format("Low", "Le plus rapide"),
 		};
 
@@ -48,17 +52,42 @@ namespace Files.App.UserControls.Menus
 		{
 			ViewModel.IsVisible = !ViewModel.IsVisible;
 		}
+
+		private void HyperlinkButton_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+		{
+			ViewModel.IsOption = !ViewModel.IsOption;
+		}
 	}
 
 	public record Format(string Label, string Description = "");
 
 	public class CompressViewModel : ObservableObject
 	{
+		public bool IsMore => !isOption && !isVisible;
+		public bool IsFewer => isOption && !isVisible;
+
+		public bool isOption = false;
+		public bool IsOption
+		{
+			get => isOption;
+			set
+			{
+				SetProperty(ref isOption, value);
+				OnPropertyChanged(nameof(IsMore));
+				OnPropertyChanged(nameof(IsFewer));
+			}
+		}
+
 		public bool isVisible = false;
 		public bool IsVisible
 		{
 			get => isVisible;
-			set => SetProperty(ref isVisible, value);
+			set
+			{
+				SetProperty(ref isVisible, value);
+				OnPropertyChanged(nameof(IsMore));
+				OnPropertyChanged(nameof(IsFewer));
+			}
 		}
 	}
 }
