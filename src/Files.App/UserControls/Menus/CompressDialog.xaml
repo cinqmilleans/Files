@@ -6,7 +6,15 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
-	Title="Coucou" PrimaryButtonText="A" IsPrimaryButtonEnabled="True"
+	Title="Add to Archive"
+	xmlns:helpers="using:Files.App.Helpers"
+	DefaultButton="Primary"
+	CornerRadius="{StaticResource OverlayCornerRadius}"
+	IsPrimaryButtonEnabled="True" PrimaryButtonText="Create"
+		RequestedTheme="{x:Bind helpers:ThemeHelper.RootTheme}"
+	Style="{StaticResource DefaultContentDialogStyle}"
+	CloseButtonText="Close"
+
 	mc:Ignorable="d">
 	<StackPanel>
 	<TextBlock Text="Coucou" />
