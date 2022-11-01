@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.DataModels;
 using Files.App.Helpers;
+using Files.App.UserControls.Menus;
 using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
 using Microsoft.UI.Xaml;
@@ -151,5 +152,11 @@ namespace Files.App.UserControls
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeColumnView(true);
 		private void NavToolbarAdaptiveHeader_Tapped(object sender, TappedRoutedEventArgs e)
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptive();
-	}
+
+        private async void PreviewPane_Click(object sender, RoutedEventArgs e)
+        {
+			var d = new CompressDialog();
+			await d.ShowAsync();
+        }
+    }
 }
