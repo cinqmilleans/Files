@@ -32,6 +32,7 @@
 	<AutoSuggestBox
 		x:Name="Picker"
 		PlaceholderText="Pick a key"
+		PreviewKeyDown="Picker_PreviewKeyDown"
 		TextBoxStyle="{StaticResource TextBoxStyle}"
 		UpdateTextOnSelect="False">
 		<AutoSuggestBox.QueryIcon>
