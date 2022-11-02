@@ -6,6 +6,7 @@
 	xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:dm="using:Files.App.DataModels"
+	xmlns:local="using:Files.App.UserControls"
 	xmlns:helpers="using:Files.App.Helpers"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="300"
@@ -71,7 +72,9 @@
 		</DataTemplate>
 	</UserControl.Resources>
 
-	<AutoSuggestBox
+	<local:ShortKeyPicker />
+
+	<!--<AutoSuggestBox
 		x:Name="SearchRegion"
 		ItemTemplate="{StaticResource SuggestionTemplate}"
 		ItemsSource="{x:Bind SearchBoxViewModel.Suggestions, Mode=OneWay}"
@@ -95,6 +98,6 @@
 		<AutoSuggestBox.KeyboardAccelerators>
 			<KeyboardAccelerator Key="Escape" Invoked="SearchRegion_Escaped" />
 		</AutoSuggestBox.KeyboardAccelerators>
-	</AutoSuggestBox>
+	</AutoSuggestBox>-->
 
 </UserControl>
