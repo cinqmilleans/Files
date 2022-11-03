@@ -115,6 +115,7 @@ namespace Files.App
 				// Settings not related to IUserSettingsService:
 				.AddSingleton<IFileTagsSettingsService, FileTagsSettingsService>()
 				.AddSingleton<IBundlesSettingsService, BundlesSettingsService>()
+				.AddSingleton<IShortKeySettingsService, ShortKeySettingsService>()
 
 				// Other services
 				.AddSingleton(Logger)
@@ -123,6 +124,11 @@ namespace Files.App
 				.AddSingleton<IThreadingService, ThreadingService>()
 				.AddSingleton<ILocalizationService, LocalizationService>()
 				.AddSingleton<ICloudDetector, CloudDetector>()
+				.AddSingleton<IShortKeysViewModel>((provider) => {
+					var settings = provider.GetRequiredService<IShortKeySettingsService>();
+					var shortKeys = settings.GetUserShortKeys();
+					return new ShortKeysViewModel(shortKeys);
+				})
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
 #else

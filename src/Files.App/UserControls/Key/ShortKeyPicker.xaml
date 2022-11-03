@@ -1,15 +1,18 @@
 ﻿<UserControl
 	x:Class="Files.App.UserControls.ShortKeyPicker"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="50"
 	d:DesignWidth="300"
 	mc:Ignorable="d">
 
 	<UserControl.Resources>
-		<Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}">
+		<Style
+			x:Key="TextBoxStyle"
+			BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}"
+			TargetType="TextBox">
 			<Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}" />
 			<Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
 			<Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />

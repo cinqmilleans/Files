@@ -57,6 +57,8 @@ namespace Files.App.Views
 
 		private IUpdateService UpdateSettingsService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
 
+		public IShortKeysViewModel ShortKeysViewModel { get; } = Ioc.Default.GetRequiredService<IShortKeysViewModel>();
+
 		private bool isCurrentInstance = false;
 		public bool IsCurrentInstance
 		{
@@ -241,7 +243,7 @@ namespace Files.App.Views
 
 		private void InitToolbarCommands()
 		{
-			ToolbarViewModel.SelectAllContentPageItemsCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.SelectAllItems());
+			//ToolbarViewModel.SelectAllContentPageItemsCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.SelectAllItems());
 			ToolbarViewModel.InvertContentPageSelctionCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.InvertSelection());
 			ToolbarViewModel.ClearContentPageSelectionCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.ClearSelection());
 			ToolbarViewModel.PasteItemsFromClipboardCommand = new RelayCommand(async () => await UIFilesystemHelpers.PasteItemAsync(FilesystemViewModel.WorkingDirectory, this));
@@ -734,12 +736,6 @@ namespace Files.App.Views
 
 					break;
 
-				case (true, false, false, true, VirtualKey.A): // ctrl + a, select all
-					if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
-						this.SlimContentPage.ItemManipulationModel.SelectAllItems();
-
-					break;
-
 				case (true, false, false, true, VirtualKey.D): // ctrl + d, delete item
 				case (false, false, false, true, VirtualKey.Delete): // delete, delete item
 					if (ContentPage.IsItemSelected && !ContentPage.IsRenamingItem && !InstanceViewModel.IsPageTypeSearchResults)
@@ -821,6 +817,13 @@ namespace Files.App.Views
 					}
 					break;
 			}
+		}
+
+		private void SelectAll_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
+				SlimContentPage.ItemManipulationModel.SelectAllItems();
+			e.Handled = true;
 		}
 
 		public async void Refresh_Click()

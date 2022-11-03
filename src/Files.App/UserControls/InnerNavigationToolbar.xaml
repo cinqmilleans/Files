@@ -426,7 +426,7 @@
 							</MenuFlyoutItem.Icon>
 							<MenuFlyoutItem.KeyboardAccelerators>
 								<KeyboardAccelerator
-									Key="A"
+									Key="B"
 									IsEnabled="False"
 									Modifiers="Control" />
 							</MenuFlyoutItem.KeyboardAccelerators>
@@ -457,7 +457,7 @@
 				Width="Auto"
 				MinWidth="40"
 				x:Load="{x:Bind ViewModel.InstanceViewModel.IsPageTypeNotHome, Mode=OneWay}"
-				AccessKey="A"
+				AccessKey="B"
 				AutomationProperties.Name="{helpers:ResourceString Name=NavToolbarSortOptionsButton/AutomationProperties/Name}"
 				Label="{helpers:ResourceString Name=NavToolbarSortOptionsButton/Label}"
 				LabelPosition="Collapsed"

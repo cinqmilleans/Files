@@ -64,10 +64,10 @@
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
 			Modifiers="Control" />
 		<KeyboardAccelerator
-			Key="A"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.SelectAll.Key}"
+			Invoked="SelectAll_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control" />
+			Modifiers="{x:Bind ShortKeysViewModel.SelectAll.Modifier}" />
 		<KeyboardAccelerator
 			Key="D"
 			Invoked="KeyboardAccelerator_Invoked"

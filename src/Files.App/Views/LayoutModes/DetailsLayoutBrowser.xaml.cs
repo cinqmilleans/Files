@@ -135,7 +135,7 @@ namespace Files.App.Views.LayoutModes
 			if (SelectedItems.Count < GetAllItems().Count() / 2)
 			{
 				var oldSelectedItems = SelectedItems.ToList();
-				ItemManipulationModel.SelectAllItems();
+				//ItemManipulationModel.SelectAllItems();
 				ItemManipulationModel.RemoveSelectedItems(oldSelectedItems);
 			}
 			else

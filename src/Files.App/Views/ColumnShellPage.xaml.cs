@@ -272,7 +272,7 @@ namespace Files.App.Views
 
 		private void InitToolbarCommands()
 		{
-			ToolbarViewModel.SelectAllContentPageItemsCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.SelectAllItems());
+			//ToolbarViewModel.SelectAllContentPageItemsCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.SelectAllItems());
 			ToolbarViewModel.InvertContentPageSelctionCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.InvertSelection());
 			ToolbarViewModel.ClearContentPageSelectionCommand = new RelayCommand(() => SlimContentPage?.ItemManipulationModel.ClearSelection());
 			ToolbarViewModel.PasteItemsFromClipboardCommand = new RelayCommand(async () => await UIFilesystemHelpers.PasteItemAsync(FilesystemViewModel.WorkingDirectory, this));
@@ -743,13 +743,13 @@ namespace Files.App.Views
 
 					break;
 
-				case (true, false, false, true, VirtualKey.A): // ctrl + a, select all
-					if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
-					{
-						this.SlimContentPage.ItemManipulationModel.SelectAllItems();
-					}
+				//case (true, false, false, true, VirtualKey.A): // ctrl + a, select all
+				//	if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
+				//	{
+						//this.SlimContentPage.ItemManipulationModel.SelectAllItems();
+				//	}
 
-					break;
+				//	break;
 
 				case (true, false, false, true, VirtualKey.D): // ctrl + d, delete item
 				case (false, false, false, true, VirtualKey.Delete): // delete, delete item

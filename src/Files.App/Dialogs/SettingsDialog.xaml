@@ -37,7 +37,7 @@
 
 			<NavigationView.MenuItems>
 				<NavigationViewItem
-					AccessKey="A"
+					AccessKey="B"
 					AutomationProperties.AutomationId="SettingsItemAppearance"
 					Content="{helpers:ResourceString Name=Appearance}"
 					CornerRadius="4,0,0,4"
