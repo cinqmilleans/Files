@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Windows.System;
 
-namespace Files.Backend.Models
+namespace Files.App.DataModels
 {
 	public struct ShortKey : IEquatable<ShortKey>
 	{
@@ -46,7 +46,7 @@ namespace Files.Backend.Models
 			var parts = shortKey.Split('+').Select(item => item.Trim());
 			foreach (string part in parts)
 			{
-				if (part is "ctrl")
+				if (part.ToLower() is "ctrl")
 					modifiers |= VirtualKeyModifiers.Control;
 				if (Enum.TryParse(part, true, out VirtualKeyModifiers itemModifiers))
 					modifiers |= itemModifiers;

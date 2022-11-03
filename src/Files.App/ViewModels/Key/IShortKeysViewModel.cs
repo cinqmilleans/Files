@@ -1,26 +1,25 @@
-﻿using Files.Backend.Models;
-using System.ComponentModel;
+﻿using Files.App.DataModels;
 
 namespace Files.App.ViewModels
 {
-	public interface IShortKeysViewModel : INotifyPropertyChanged
+	public interface IShortKeysViewModel
 	{
 		// selection
-		ShortKey ToggleMultiSelection { get; set; }
-		ShortKey SelectAll { get; set; }
-		ShortKey InvertSelection { get; set; }
-		ShortKey ClearSelection { get; set; }
+		ShortKey ToggleMultiSelection { get; }
+		ShortKey SelectAll { get; }
+		ShortKey InvertSelection { get; }
+		ShortKey ClearSelection { get; }
 
 		// layout
-		ShortKey ToggleLayoutDetails { get; set; }
-		ShortKey ToggleLayoutTiles { get; set; }
-		ShortKey ToggleLayoutGridSmall { get; set; }
-		ShortKey ToggleLayoutGridMedium { get; set; }
-		ShortKey ToggleLayoutGridLarge { get; set; }
-		ShortKey ToggleLayoutColumns { get; set; }
-		ShortKey ToggleLayoutAdaptative { get; set; }
+		ShortKey ToggleLayoutDetails { get; }
+		ShortKey ToggleLayoutTiles { get; }
+		ShortKey ToggleLayoutGridSmall { get; }
+		ShortKey ToggleLayoutGridMedium { get; }
+		ShortKey ToggleLayoutGridLarge { get; }
+		ShortKey ToggleLayoutColumns { get; }
+		ShortKey ToggleLayoutAdaptative { get; }
 
-		ShortKey ToggleShowHiddenItems { get; set; }
-		ShortKey ToggleShowFileExtensions { get; set; }
+		ShortKey ToggleShowHiddenItems { get; }
+		ShortKey ToggleShowFileExtensions { get; }
 	}
 }

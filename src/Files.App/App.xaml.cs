@@ -15,6 +15,7 @@ using Files.App.ServicesImplementation.Settings;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
 using Files.App.Views;
+using Files.Backend.Models;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
 using Files.Backend.Services.SizeProvider;
@@ -126,8 +127,9 @@ namespace Files.App
 				.AddSingleton<ICloudDetector, CloudDetector>()
 				.AddSingleton<IShortKeysViewModel>((provider) => {
 					var settings = provider.GetRequiredService<IShortKeySettingsService>();
-					var shortKeys = settings.GetUserShortKeys();
-					return new ShortKeysViewModel();
+					var shortKeys = settings.GetUserShortKeys()
+						.ToDictionary(item => item.Key, item => ShortKey.Parse(item.Value));
+					return new ShortKeysViewModel(shortKeys);
 				})
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()

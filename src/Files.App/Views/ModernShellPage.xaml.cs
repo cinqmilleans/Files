@@ -802,8 +802,6 @@ namespace Files.App.Views
 		private void ToggleLayoutDetails_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
 		{
 			InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
-			ShortKeysViewModel.ToggleLayoutGridSmall.Key = VirtualKey.B;
-			ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers = VirtualKeyModifiers.Shift;
 			e.Handled = true;
 		}
 		private void ToggleLayoutTiles_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
