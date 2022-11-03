@@ -127,7 +127,7 @@ namespace Files.App
 				.AddSingleton<IShortKeysViewModel>((provider) => {
 					var settings = provider.GetRequiredService<IShortKeySettingsService>();
 					var shortKeys = settings.GetUserShortKeys();
-					return new ShortKeysViewModel(shortKeys);
+					return new ShortKeysViewModel();
 				})
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()

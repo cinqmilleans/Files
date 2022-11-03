@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 using Windows.System;
@@ -10,28 +9,28 @@ namespace Files.Backend.Models
 	{
 		public static ShortKey None { get; } = new ShortKey(false);
 
-		public bool IsNone => Key is VirtualKey.None && Modifier is VirtualKeyModifiers.None;
+		public bool IsNone => Key is VirtualKey.None && Modifiers is VirtualKeyModifiers.None;
 
 		public VirtualKey Key { get; } = VirtualKey.None;
-		public VirtualKeyModifiers Modifier { get; } = VirtualKeyModifiers.None;
+		public VirtualKeyModifiers Modifiers { get; } = VirtualKeyModifiers.None;
 
 		private ShortKey(bool _) {}
 		public ShortKey(VirtualKey key) : this(key, VirtualKeyModifiers.None) {}
-		public ShortKey(VirtualKey key, VirtualKeyModifiers modifier)
+		public ShortKey(VirtualKey key, VirtualKeyModifiers modifiers)
 		{
 			if (key is VirtualKey.None)
 				throw new ArgumentException("The key cannot be None.", nameof(key));
-			if (isModifier(key))
+			if (IsModifier(key))
 				throw new ArgumentException("The key cannot be a modifier.", nameof(key));
-			if (modifier.HasFlag(VirtualKeyModifiers.Windows))
-				throw new ArgumentException("Windows is not a valid modifier.", nameof(modifier));
+			if (modifiers.HasFlag(VirtualKeyModifiers.Windows))
+				throw new ArgumentException("Windows is not a valid modifier.", nameof(modifiers));
 
 			Key = key;
-			Modifier = modifier;
+			Modifiers = modifiers;
 		}
 
-		public void Deconstruct(out VirtualKey key, out VirtualKeyModifiers modifier)
-			=> (key, modifier) = (Key, Modifier);
+		public void Deconstruct(out VirtualKey key, out VirtualKeyModifiers modifiers)
+			=> (key, modifiers) = (Key, Modifiers);
 
 		public static implicit operator ShortKey(string shortKey) => Parse(shortKey);
 		public static implicit operator string(ShortKey shortKey) => shortKey.ToString();
@@ -61,21 +60,21 @@ namespace Files.Backend.Models
 		public override string ToString()
 		{
 			StringBuilder builder = new();
-			if (Modifier.HasFlag(VirtualKeyModifiers.Menu))
+			if (Modifiers.HasFlag(VirtualKeyModifiers.Menu))
 				builder.Append("Menu+");
-			if (Modifier.HasFlag(VirtualKeyModifiers.Control))
+			if (Modifiers.HasFlag(VirtualKeyModifiers.Control))
 				builder.Append("Ctrl+");
-			if (Modifier.HasFlag(VirtualKeyModifiers.Shift))
+			if (Modifiers.HasFlag(VirtualKeyModifiers.Shift))
 				builder.Append("Shift+");
 			builder.Append(ToString(Key));
 			return builder.ToString();
 		}
 
-		public override int GetHashCode() => (Key, Modifier).GetHashCode();
+		public override int GetHashCode() => (Key, Modifiers).GetHashCode();
 		public override bool Equals(object? other) => other is ShortKey shortKey && Equals(shortKey);
-		public bool Equals(ShortKey other) => (other.Key, other.Modifier).Equals((Key, Modifier));
+		public bool Equals(ShortKey other) => (other.Key, other.Modifiers).Equals((Key, Modifiers));
 
-		private static bool isModifier(VirtualKey key)
+		private static bool IsModifier(VirtualKey key)
 			=> key is VirtualKey.Menu or VirtualKey.LeftMenu or VirtualKey.RightMenu
 			or VirtualKey.Control or VirtualKey.LeftControl or VirtualKey.RightControl
 			or VirtualKey.Shift or VirtualKey.LeftShift or VirtualKey.RightShift

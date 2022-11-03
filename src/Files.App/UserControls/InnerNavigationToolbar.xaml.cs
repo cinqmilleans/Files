@@ -27,6 +27,8 @@ namespace Files.App.UserControls
 
 		public AppModel AppModel => App.AppModel;
 
+		public IShortKeysViewModel ShortKeysViewModel { get; } = Ioc.Default.GetRequiredService<IShortKeysViewModel>();
+
 		public ToolbarViewModel ViewModel
 		{
 			get => (ToolbarViewModel)GetValue(ViewModelProperty);

@@ -14,6 +14,7 @@ using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
 using Files.App.Views.LayoutModes;
 using Files.Backend.Enums;
+using Files.Backend.Models;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
 using Files.Backend.ViewModels.Dialogs.AddItemDialog;
@@ -776,34 +777,6 @@ namespace Files.App.Views
 				case (false, false, false, _, VirtualKey.F1): // F1, open Files wiki
 					await Launcher.LaunchUriAsync(new Uri(@"https://files.community/docs"));
 					break;
-
-				case (true, true, false, _, VirtualKey.Number1): // ctrl+shift+1, details view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number2): // ctrl+shift+2, tiles view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeTiles(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number3): // ctrl+shift+3, grid small view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewSmall(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number4): // ctrl+shift+4, grid medium view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewMedium(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number5): // ctrl+shift+5, grid large view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewLarge(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number6): // ctrl+shift+6, column view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeColumnView(true);
-					break;
-
-				case (true, true, false, _, VirtualKey.Number7): // ctrl+shift+7, adaptive
-					InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptive();
-					break;
 			}
 
 			switch (args.KeyboardAccelerator.Key)
@@ -823,6 +796,44 @@ namespace Files.App.Views
 		{
 			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
 				SlimContentPage.ItemManipulationModel.SelectAllItems();
+			e.Handled = true;
+		}
+
+		private void ToggleLayoutDetails_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
+			ShortKeysViewModel.ToggleLayoutGridSmall.Key = VirtualKey.B;
+			ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers = VirtualKeyModifiers.Shift;
+			e.Handled = true;
+		}
+		private void ToggleLayoutTiles_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeTiles(true);
+			e.Handled = true;
+		}
+		private void ToggleLayoutGridSmall_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewSmall(true);
+			e.Handled = true;
+		}
+		private void ToggleLayoutGridMedium_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewMedium(true);
+			e.Handled = true;
+		}
+		private void ToggleLayoutGridLarge_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewLarge(true);
+			e.Handled = true;
+		}
+		private void ToggleLayoutColumns_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeColumnView(true);
+			e.Handled = true;
+		}
+		private void ToggleLayoutAdaptative_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptive();
 			e.Handled = true;
 		}
 

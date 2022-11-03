@@ -64,10 +64,10 @@
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
 			Modifiers="Control" />
 		<KeyboardAccelerator
-			Key="{x:Bind ShortKeysViewModel.SelectAll.Key}"
+			Key="A"
 			Invoked="SelectAll_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="{x:Bind ShortKeysViewModel.SelectAll.Modifier}" />
+			Modifiers="Control" />
 		<KeyboardAccelerator
 			Key="D"
 			Invoked="KeyboardAccelerator_Invoked"
@@ -122,40 +122,40 @@
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
 		<KeyboardAccelerator
-			Key="Number1"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Key}"
+			Invoked="ToggleLayoutDetails_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number2"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Key}"
+			Invoked="ToggleLayoutTiles_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number3"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Key}"
+			Invoked="ToggleLayoutGridSmall_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number4"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridMedium.Key}"
+			Invoked="ToggleLayoutGridMedium_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridMedium.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number5"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridLarge.Key}"
+			Invoked="ToggleLayoutGridLarge_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridLarge.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number6"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutColumns.Key}"
+			Invoked="ToggleLayoutColumns_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutColumns.Modifiers}" />
 		<KeyboardAccelerator
-			Key="Number7"
-			Invoked="KeyboardAccelerator_Invoked"
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutAdaptative.Key}"
+			Invoked="ToggleLayoutAdaptative_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutAdaptative.Modifiers}" />
 		<KeyboardAccelerator
 			Key="H"
 			Invoked="KeyboardAccelerator_Invoked"
