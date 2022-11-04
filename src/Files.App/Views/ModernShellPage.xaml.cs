@@ -775,7 +775,7 @@ namespace Files.App.Views
 					break;
 
 				case (false, false, false, _, VirtualKey.F1): // F1, open Files wiki
-					
+
 					break;
 			}
 
@@ -798,10 +798,28 @@ namespace Files.App.Views
 			e.Handled = true;
 		}
 
+		private void ToggleMultiSelection_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
+				AppModel.MultiselectEnabled = !AppModel.MultiselectEnabled;
+			e.Handled = true;
+		}
 		private void SelectAll_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
 		{
 			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
 				SlimContentPage.ItemManipulationModel.SelectAllItems();
+			e.Handled = true;
+		}
+		private void InvertSelection_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
+				SlimContentPage.ItemManipulationModel.InvertSelection();
+			e.Handled = true;
+		}
+		private void ClearSelection_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			if (!ToolbarViewModel.IsEditModeEnabled && !ContentPage.IsRenamingItem)
+				SlimContentPage.ItemManipulationModel.ClearSelection();
 			e.Handled = true;
 		}
 

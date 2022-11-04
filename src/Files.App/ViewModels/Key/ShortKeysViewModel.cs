@@ -37,6 +37,6 @@ namespace Files.App.ViewModels
 		}
 
 		private ShortKey Get([CallerMemberName] string propertyName = "")
-			=> shortKeys?[propertyName] ?? ShortKey.None;
+			=> shortKeys.ContainsKey(propertyName) ? shortKeys[propertyName] : ShortKey.None;
 	}
 }

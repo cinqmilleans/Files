@@ -8,7 +8,8 @@ namespace Files.App.ServicesImplementation.Settings
 	{
 		private static readonly IImmutableDictionary<string, string> shortKeys = new Dictionary<string, string>
 		{
-			["Help"] = "F1",
+			//["Help"] = "F1",
+			["ToggleMultiSelection"] = "F1",
 			["SelectAll"] = "Ctrl+A",
 			["ToggleLayoutDetails"] = "Ctrl+Shift+1",
 			["ToggleLayoutTiles"] = "Ctrl+Shift+2",
