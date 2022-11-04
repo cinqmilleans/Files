@@ -119,7 +119,7 @@
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
 		<KeyboardAccelerator
 			Key="F1"
-			Invoked="KeyboardAccelerator_Invoked"
+			Invoked="Help_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
 		<KeyboardAccelerator
 			Key="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Key}"

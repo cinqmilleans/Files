@@ -90,7 +90,7 @@ namespace Files.App.DataModels
 				"Pad7" => VirtualKey.NumberPad7,
 				"Pad8" => VirtualKey.NumberPad8,
 				"Pad9" => VirtualKey.NumberPad9,
-				_ => Enum.Parse<VirtualKey>(part, true),
+				_ => Enum.TryParse(part, true, out VirtualKey key) ? key : VirtualKey.None,
 			};
 		}
 

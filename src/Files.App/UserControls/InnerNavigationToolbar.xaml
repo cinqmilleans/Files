@@ -447,9 +447,7 @@
 								<FontIcon Glyph="&#xE8E6;" />
 							</MenuFlyoutItem.Icon>
 							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Key, Mode=OneWay}"
-									Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers, Mode=OneWay}" />
+								<KeyboardAccelerator Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Key, Mode=OneWay}" Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers, Mode=OneWay}" />
 							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 					</MenuFlyout>

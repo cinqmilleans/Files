@@ -4,6 +4,9 @@ namespace Files.App.ViewModels
 {
 	public interface IShortKeysViewModel
 	{
+		// general
+		ShortKey Help { get; }
+
 		// selection
 		ShortKey ToggleMultiSelection { get; }
 		ShortKey SelectAll { get; }

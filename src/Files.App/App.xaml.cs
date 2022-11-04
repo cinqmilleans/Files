@@ -125,12 +125,7 @@ namespace Files.App
 				.AddSingleton<IThreadingService, ThreadingService>()
 				.AddSingleton<ILocalizationService, LocalizationService>()
 				.AddSingleton<ICloudDetector, CloudDetector>()
-				.AddSingleton<IShortKeysViewModel>((provider) => {
-					var settings = provider.GetRequiredService<IShortKeySettingsService>();
-					var shortKeys = settings.GetUserShortKeys()
-						.ToDictionary(item => item.Key, item => ShortKey.Parse(item.Value));
-					return new UserShortKeysViewModel(shortKeys);
-				})
+				.AddSingleton<IShortKeysViewModel, ShortKeysViewModel>()
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
 #else

@@ -775,7 +775,7 @@ namespace Files.App.Views
 					break;
 
 				case (false, false, false, _, VirtualKey.F1): // F1, open Files wiki
-					await Launcher.LaunchUriAsync(new Uri(@"https://files.community/docs"));
+					
 					break;
 			}
 
@@ -790,6 +790,12 @@ namespace Files.App.Views
 					}
 					break;
 			}
+		}
+
+		private async void Help_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
+		{
+			await Launcher.LaunchUriAsync(new Uri(Constants.GitHub.DocumentationUrl));
+			e.Handled = true;
 		}
 
 		private void SelectAll_Invoked(KeyboardAccelerator _, KeyboardAcceleratorInvokedEventArgs e)
