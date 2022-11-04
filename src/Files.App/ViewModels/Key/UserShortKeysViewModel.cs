@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Files.App.ViewModels
 {
-	internal class ShortKeysViewModel : IShortKeysViewModel
+	internal class UserShortKeysViewModel : IShortKeysViewModel
 	{
 		private readonly IImmutableDictionary<string, ShortKey> shortKeys;
 
@@ -25,7 +25,7 @@ namespace Files.App.ViewModels
 		public ShortKey ToggleShowHiddenItems => Get();
 		public ShortKey ToggleShowFileExtensions => Get();
 
-		public ShortKeysViewModel(IDictionary<string, ShortKey> shortKeys)
+		public UserShortKeysViewModel(IDictionary<string, ShortKey> shortKeys)
 			=> this.shortKeys = shortKeys.ToImmutableDictionary();
 
 		private ShortKey Get([CallerMemberName] string propertyName = "")

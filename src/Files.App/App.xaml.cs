@@ -129,7 +129,7 @@ namespace Files.App
 					var settings = provider.GetRequiredService<IShortKeySettingsService>();
 					var shortKeys = settings.GetUserShortKeys()
 						.ToDictionary(item => item.Key, item => ShortKey.Parse(item.Value));
-					return new ShortKeysViewModel(shortKeys);
+					return new UserShortKeysViewModel(shortKeys);
 				})
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
