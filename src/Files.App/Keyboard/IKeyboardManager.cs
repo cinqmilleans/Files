@@ -9,6 +9,9 @@ namespace Files.App.Keyboard
 
 		IEnumerable<IKeyboardAction> EnumerateActions();
 
+		void Execute(ShortKey shortKey);
+		void Execute(KeyboardActionCodes code);
+
 		void Initialize(IEnumerable<IKeyboardAction> actions);
 
 		void FillKeyboard(UIElement element);

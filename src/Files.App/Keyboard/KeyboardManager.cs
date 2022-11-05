@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Windows.System;
 
 namespace Files.App.Keyboard
@@ -15,6 +16,9 @@ namespace Files.App.Keyboard
 		public IKeyboardAction this[KeyboardActionCodes code] => actions[code];
 
 		public IEnumerable<IKeyboardAction> EnumerateActions() => actions.Values;
+
+		public void Execute(ShortKey shortKey) => actions.Values.FirstOrDefault(action => action.ShortKey == shortKey)?.Execute();
+		public void Execute(KeyboardActionCodes code) => actions[code].Execute();
 
 		public void Initialize(IEnumerable<IKeyboardAction> actions)
 			=> this.actions = actions.ToImmutableDictionary(action => action.Code);

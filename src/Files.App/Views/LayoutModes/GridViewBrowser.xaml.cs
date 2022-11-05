@@ -378,6 +378,8 @@ namespace Files.App.Views.LayoutModes
 
 			if (ctrlPressed && e.Key is VirtualKey.A)
 			{
+				var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+				manager.Execute("Ctrl+A");
 				e.Handled = true;
 				return;
 			}

@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI;
 using Files.App.EventArguments;
@@ -5,6 +6,7 @@ using Files.App.Filesystem;
 using Files.App.Helpers;
 using Files.App.Helpers.XamlHelpers;
 using Files.App.Interacts;
+using Files.App.Keyboard;
 using Files.App.UserControls;
 using Files.App.UserControls.Selection;
 using Files.App.ViewModels;
@@ -432,6 +434,8 @@ namespace Files.App.Views.LayoutModes
 
 			if (ctrlPressed && e.Key is VirtualKey.A)
 			{
+				var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+				manager.Execute("Ctrl+A");
 				e.Handled = true;
 				return;
 			}
