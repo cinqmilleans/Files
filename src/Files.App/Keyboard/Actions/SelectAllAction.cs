@@ -6,7 +6,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override string Code => "SelectAll";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.SelectAll;
 
 		public override string Label => "SelectAll";
 

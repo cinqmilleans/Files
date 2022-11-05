@@ -5,7 +5,7 @@ namespace Files.App.Keyboard
 {
 	internal class HelpAction : KeyboardAction
 	{
-		public override string Code => "Help";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.Help;
 
 		public override string Label => "Help";
 		public override string Description => "Opens the help in the web browser.";

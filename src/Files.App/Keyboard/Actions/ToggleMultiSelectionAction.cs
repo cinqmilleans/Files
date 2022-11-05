@@ -6,11 +6,11 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly AppModel model;
 
-		public override string Code => "ToggleMultiSelection";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleMultiSelection;
 
 		public override string Label => "MultiSelection";
 
-		public override ShortKey DefaultShortKey => "Ctrl+B";
+		public override ShortKey DefaultShortKey => ShortKey.None;
 
 		public ToggleMultiSelectionAction(AppModel model) => this.model = model;
 

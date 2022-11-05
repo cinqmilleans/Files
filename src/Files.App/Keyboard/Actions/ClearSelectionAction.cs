@@ -6,7 +6,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override string Code => "ClearSelection";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.ClearSelection;
 
 		public override string Label => "ClearSelection";
 

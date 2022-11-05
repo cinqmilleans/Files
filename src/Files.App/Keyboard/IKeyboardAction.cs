@@ -6,7 +6,7 @@ namespace Files.App.Keyboard
 	{
 		event EventHandler? ShortKeyChanged;
 
-		string Code { get; }
+		KeyboardActionCodes Code { get; }
 
 		string Label { get; }
 		string Description { get; }

@@ -7,7 +7,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override string Code => "ToggleLayoutAdaptive";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutAdaptive;
 
 		public override string Label => "Adaptive".GetLocalizedResource();
 

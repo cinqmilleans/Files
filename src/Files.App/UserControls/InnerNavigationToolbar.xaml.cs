@@ -141,10 +141,10 @@ namespace Files.App.UserControls
 
 		private void SelectionFlyout_Opening(object sender, object e)
 		{
-			keyboardManager.FillMenu(MultiselectMFI, "ToggleMultiSelection");
-			keyboardManager.FillMenu(SelectAllMFI, "SelectAll");
-			keyboardManager.FillMenu(InvertSelectionMFI, "InvertSelection");
-			keyboardManager.FillMenu(ClearSelectionMFI, "ClearSelection");
+			keyboardManager.FillMenu(MultiselectMFI, KeyboardActionCodes.ToggleMultiSelection);
+			keyboardManager.FillMenu(SelectAllMFI, KeyboardActionCodes.SelectAll);
+			keyboardManager.FillMenu(InvertSelectionMFI, KeyboardActionCodes.InvertSelection);
+			keyboardManager.FillMenu(ClearSelectionMFI, KeyboardActionCodes.ClearSelection);
 		}
 
 		private void NavToolbarDetailsHeader_Tapped(object sender, TappedRoutedEventArgs e)

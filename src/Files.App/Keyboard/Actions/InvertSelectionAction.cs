@@ -6,7 +6,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override string Code => "InvertSelection";
+		public override KeyboardActionCodes Code => KeyboardActionCodes.InvertSelection;
 
 		public override string Label => "InvertSelection";
 
