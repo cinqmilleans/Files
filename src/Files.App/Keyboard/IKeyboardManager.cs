@@ -8,6 +8,6 @@ namespace Files.App.Keyboard
 		void Initialize(IEnumerable<IKeyboardAction> actions);
 
 		void FillKeyboard(UIElement element);
-		void FillMenu(UIElement element, KeyboardActionCodes actionCode);
+		void FillMenu(UIElement element, string actionCode);
 	}
 }

@@ -7,7 +7,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutColumns;
+		public override string Code => "ToggleLayoutColumns";
 
 		public override string Label => "Columns".GetLocalizedResource();
 

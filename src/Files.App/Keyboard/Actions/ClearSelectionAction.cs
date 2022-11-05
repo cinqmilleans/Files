@@ -2,17 +2,17 @@
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class SelectAllAction : KeyboardAction
+	internal class ClearSelectionAction : KeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override string Code => "SelectAll";
+		public override string Code => "ClearSelection";
 
-		public override string Label => "SelectAll";
+		public override string Label => "ClearSelection";
 
-		public override ShortKey DefaultShortKey => "Ctrl+A";
+		public override ShortKey DefaultShortKey => ShortKey.None;
 
-		public SelectAllAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
+		public ClearSelectionAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
 		public override void Execute()
 		{
@@ -22,7 +22,7 @@ namespace Files.App.Keyboard.Actions
 			bool isRenaming = pane?.SlimContentPage?.IsRenamingItem ?? true;
 
 			if (!isEditing && !isRenaming)
-				pane?.SlimContentPage?.ItemManipulationModel?.SelectAllItems();
+				pane?.SlimContentPage?.ItemManipulationModel?.ClearSelection();
 		}
 	}
 }

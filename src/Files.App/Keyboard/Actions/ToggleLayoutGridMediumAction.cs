@@ -7,7 +7,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutGridMedium;
+		public override string Code => "ToggleLayoutGridMedium";
 
 		public override string Label => "MediumIcons".GetLocalizedResource();
 

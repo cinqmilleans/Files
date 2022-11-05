@@ -408,7 +408,10 @@
 				Style="{StaticResource ToolBarAppBarButtonFlyoutStyle}"
 				ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSelectionOptions/ToolTipService/ToolTip}">
 				<AppBarButton.Flyout>
-					<MenuFlyout Placement="Bottom">
+					<MenuFlyout
+						x:Name="SelectionFlyout"
+						Opening="SelectionFlyout_Opening"
+						Placement="Bottom">
 						<ToggleMenuFlyoutItem
 							x:Name="MultiselectMFI"
 							IsChecked="{x:Bind AppModel.MultiselectEnabled, Mode=TwoWay}"
@@ -424,12 +427,6 @@
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="&#xE8B3;" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									Key="A"
-									IsEnabled="False"
-									Modifiers="Control" />
-							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="InvertSelectionMFI"

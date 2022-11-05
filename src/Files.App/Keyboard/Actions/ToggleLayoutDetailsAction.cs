@@ -7,7 +7,7 @@ namespace Files.App.Keyboard
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutDetails;
+		public override string Code => "ToggleLayoutDetails";
 
 		public override string Label => "Details".GetLocalizedResource();
 

@@ -7,7 +7,7 @@ namespace Files.App.Keyboard.Actions
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutGridSmall;
+		public override string Code => "ToggleLayoutGridSmall";
 
 		public override string Label => "SmallIcons".GetLocalizedResource();
 

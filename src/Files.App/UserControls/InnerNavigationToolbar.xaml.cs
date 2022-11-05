@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.DataModels;
 using Files.App.Helpers;
+using Files.App.Keyboard;
 using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
 using Microsoft.UI.Xaml;
@@ -18,6 +19,8 @@ namespace Files.App.UserControls
 {
 	public sealed partial class InnerNavigationToolbar : UserControl
 	{
+		private readonly IKeyboardManager keyboardManager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+
 		public InnerNavigationToolbar()
 		{
 			this.InitializeComponent();
@@ -134,6 +137,14 @@ namespace Files.App.UserControls
 					NewEmptySpace.Items.Insert(separatorIndex + 1, menuLayoutItem);
 				}
 			}
+		}
+
+		private void SelectionFlyout_Opening(object sender, object e)
+		{
+			keyboardManager.FillMenu(MultiselectMFI, "ToggleMultiSelection");
+			keyboardManager.FillMenu(SelectAllMFI, "SelectAll");
+			keyboardManager.FillMenu(InvertSelectionMFI, "InvertSelection");
+			keyboardManager.FillMenu(ClearSelectionMFI, "ClearSelection");
 		}
 
 		private void NavToolbarDetailsHeader_Tapped(object sender, TappedRoutedEventArgs e)

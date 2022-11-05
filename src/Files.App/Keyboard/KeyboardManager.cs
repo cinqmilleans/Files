@@ -9,8 +9,8 @@ namespace Files.App.Keyboard
 {
 	public class KeyboardManager : IKeyboardManager
 	{
-		private IImmutableDictionary<KeyboardActionCodes, IKeyboardAction> actions
-			= ImmutableDictionary<KeyboardActionCodes, IKeyboardAction>.Empty;
+		private IImmutableDictionary<string, IKeyboardAction> actions
+			= ImmutableDictionary<string, IKeyboardAction>.Empty;
 
 		public void Initialize(IEnumerable<IKeyboardAction> actions)
 			=> this.actions = actions.ToImmutableDictionary(action => action.Code);
@@ -23,7 +23,7 @@ namespace Files.App.Keyboard
 				accelerators.Add(new ActionKeyboardAccelerator(action));
 		}
 
-		public void FillMenu(UIElement element, KeyboardActionCodes actionCode)
+		public void FillMenu(UIElement element, string actionCode)
 		{
 			var action = actions[actionCode];
 			var accelerators = element.KeyboardAccelerators;

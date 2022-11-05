@@ -354,7 +354,10 @@ namespace Files.App.Views
 			var actions = new List<IKeyboardAction>
 			{
 				new HelpAction(),
+				new ToggleMultiSelectionAction(AppModel),
 				new SelectAllAction(SidebarAdaptiveViewModel),
+				new InvertSelectionAction(SidebarAdaptiveViewModel),
+				new ClearSelectionAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutDetailsAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutTilesAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutGridSmallAction(SidebarAdaptiveViewModel),
