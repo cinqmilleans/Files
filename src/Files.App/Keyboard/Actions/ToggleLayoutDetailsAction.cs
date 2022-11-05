@@ -1,4 +1,5 @@
-﻿using Files.App.ViewModels;
+﻿using Files.App.Extensions;
+using Files.App.ViewModels;
 
 namespace Files.App.Keyboard
 {
@@ -8,7 +9,7 @@ namespace Files.App.Keyboard
 
 		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutDetails;
 
-		public override string Label => "Détails";
+		public override string Label => "Details".GetLocalizedResource();
 
 		public override ShortKey DefaultShortKey => "Ctrl+Shift+1";
 

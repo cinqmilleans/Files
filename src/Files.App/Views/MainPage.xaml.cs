@@ -8,6 +8,7 @@ using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Helpers;
 using Files.App.Keyboard;
+using Files.App.Keyboard.Actions;
 using Files.App.UserControls;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
@@ -355,6 +356,11 @@ namespace Files.App.Views
 				new HelpAction(),
 				new ToggleLayoutDetailsAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutTilesAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutGridSmallAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutGridMediumAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutGridLargeAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutColumnsAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutAdaptiveAction(SidebarAdaptiveViewModel),
 			};
 
 			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();

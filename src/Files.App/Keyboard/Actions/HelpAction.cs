@@ -7,8 +7,8 @@ namespace Files.App.Keyboard
 	{
 		public override KeyboardActionCodes Code => KeyboardActionCodes.Help;
 
-		public override string Label => "Aide";
-		public override string Description => "Ouvre l'aide dans le navigateur web.";
+		public override string Label => "Help";
+		public override string Description => "Opens the help in the web browser.";
 
 		public override ShortKey DefaultShortKey => "F1";
 

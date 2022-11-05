@@ -20,7 +20,7 @@
 		ToggleLayoutGridMedium,
 		ToggleLayoutGridLarge,
 		ToggleLayoutColumns,
-		ToggleLayoutAdaptative,
+		ToggleLayoutAdaptive,
 
 		// file
 		ToggleShowHiddenItems,
