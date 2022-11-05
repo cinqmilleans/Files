@@ -1,18 +1,24 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.App.DataModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.App.Keyboard;
 using Files.Backend.Services.Settings;
+using Microsoft.UI.Xaml.Input;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using Windows.System;
 
 namespace Files.App.ViewModels
 {
-	internal class ShortKeysViewModel : IShortKeysViewModel
+    internal class ShortKeysViewModel : ObservableObject, IShortKeysViewModel
 	{
 		private readonly IImmutableDictionary<string, ShortKey> shortKeys;
 
 		public ShortKey Help => Get();
 
-		public ShortKey ToggleMultiSelection => Get();
+		private int n = 0;
+		public ShortKey ToggleMultiSelection => n++ % 2 == 0 ? SelectAll : ToggleLayoutAdaptative;
+
 		public ShortKey SelectAll => Get();
 		public ShortKey InvertSelection => Get();
 		public ShortKey ClearSelection => Get();
@@ -34,6 +40,16 @@ namespace Files.App.ViewModels
 			shortKeys = service?.GetShortKeys()
 				?.ToImmutableDictionary(item => item.Key, item => ShortKey.Parse(item.Value))
 				?? ImmutableDictionary<string, ShortKey>.Empty;
+		}
+
+		private readonly List<(IList<KeyboardAccelerator> accelerators, string field)> items = new();
+
+		public void Register(IList<KeyboardAccelerator> accelerators, string field)
+		{
+			items.Add((accelerators, field));
+			accelerators.Clear();
+			var shortKey = (ShortKey)GetType()?.GetProperty(field)?.GetValue(this)!;
+			accelerators.Add(new KeyboardAccelerator { Key = shortKey.Key, Modifiers = shortKey.Modifiers, IsEnabled = false });
 		}
 
 		private ShortKey Get([CallerMemberName] string propertyName = "")

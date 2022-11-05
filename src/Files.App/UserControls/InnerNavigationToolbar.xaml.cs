@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using Windows.System;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -152,5 +153,36 @@ namespace Files.App.UserControls
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeColumnView(true);
 		private void NavToolbarAdaptiveHeader_Tapped(object sender, TappedRoutedEventArgs e)
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptive();
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			var newShortKey = ShortKeysViewModel.ToggleMultiSelection;
+			MultiselectMFI.KeyboardAccelerators.Clear();
+			var key = new KeyboardAccelerator { IsEnabled = false, Key = newShortKey.Key, Modifiers = newShortKey.Modifiers };
+			MultiselectMFI.KeyboardAccelerators.Add(key);
+
+
+			//var newShortKey = ShortKeysViewModel.ToggleMultiSelection;
+			//if (MultiselectMFI.KeyboardAccelerators.Any())
+			//{
+			//	var key = MultiselectMFI.KeyboardAccelerators[0];
+			//	var old = new ShortKey(key.Key, key.Modifiers);
+			//	if (old == newShortKey)
+			//		return;
+			//	if (newShortKey.Key is not VirtualKey.None)
+			//	{
+			//		key = new KeyboardAccelerator { IsEnabled = false, Key = newShortKey.Key, Modifiers = newShortKey.Modifiers };
+			//		MultiselectMFI.KeyboardAccelerators.Add(key);
+			//	}
+			//}
+			//else
+			//{
+			//	if (newShortKey.Key is not VirtualKey.None)
+			//	{
+			//		var key = new KeyboardAccelerator { IsEnabled = false, Key = newShortKey.Key, Modifiers = newShortKey.Modifiers };
+			//		MultiselectMFI.KeyboardAccelerators.Add(key);
+			//	}
+			//}
+		}
 	}
 }

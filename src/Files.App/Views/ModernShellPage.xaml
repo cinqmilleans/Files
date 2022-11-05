@@ -112,65 +112,65 @@
 			Key="F3"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
-		<KeyboardAccelerator
+		<!--<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.Help.Key}"
 			Invoked="Help_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.Help.Key}"
-			Modifiers="{x:Bind ShortKeysViewModel.Help.Modifiers}" />
+			Modifiers="{x:Bind ShortKeysViewModel.Help.Modifiers}" />-->
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleMultiSelection.Key}"
 			Invoked="ToggleMultiSelection_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleMultiSelection.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleMultiSelection.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Key}"
 			Invoked="SelectAll_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.InvertSelection.Key}"
 			Invoked="InvertSelection_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.InvertSelection.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.InvertSelection.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ClearSelection.Key}"
 			Invoked="ClearSelection_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ClearSelection.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ClearSelection.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Key}"
 			Invoked="ToggleLayoutDetails_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutDetails.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Key}"
 			Invoked="ToggleLayoutTiles_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutTiles.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Key}"
 			Invoked="ToggleLayoutGridSmall_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridSmall.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridMedium.Key}"
 			Invoked="ToggleLayoutGridMedium_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridMedium.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridMedium.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridLarge.Key}"
 			Invoked="ToggleLayoutGridLarge_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutGridLarge.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutGridLarge.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutColumns.Key}"
 			Invoked="ToggleLayoutColumns_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutColumns.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutColumns.Modifiers}" />
 		<KeyboardAccelerator
+			Key="{x:Bind ShortKeysViewModel.ToggleLayoutAdaptative.Key}"
 			Invoked="ToggleLayoutAdaptative_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Key="{x:Bind ShortKeysViewModel.ToggleLayoutAdaptative.Key}"
 			Modifiers="{x:Bind ShortKeysViewModel.ToggleLayoutAdaptative.Modifiers}" />
 		<KeyboardAccelerator
 			Key="H"

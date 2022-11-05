@@ -412,16 +412,17 @@
 						<ToggleMenuFlyoutItem
 							x:Name="MultiselectMFI"
 							IsChecked="{x:Bind AppModel.MultiselectEnabled, Mode=TwoWay}"
+							Loaded="UserControl_Loaded"
 							Text="{helpers:ResourceString Name=NavToolbarMultiselect/Text}">
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="&#xE762;" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
+							<!--<ToggleMenuFlyoutItem.KeyboardAccelerators>
 								<KeyboardAccelerator
 									IsEnabled="False"
-									Key="{x:Bind ShortKeysViewModel.ToggleMultiSelection.Key}"
-									Modifiers="{x:Bind ShortKeysViewModel.ToggleMultiSelection.Modifiers}" />
-							</MenuFlyoutItem.KeyboardAccelerators>
+									Key="{x:Bind ShortKeysViewModel.ToggleMultiSelectionKey, Mode=OneWay}"
+									Modifiers="{x:Bind ShortKeysViewModel.ToggleMultiSelectionModifiers, Mode=OneWay}" />
+							</ToggleMenuFlyoutItem.KeyboardAccelerators>-->
 						</ToggleMenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="SelectAllMFI"
@@ -430,12 +431,6 @@
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="&#xE8B3;" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									IsEnabled="False"
-									Key="{x:Bind ShortKeysViewModel.SelectAll.Key}"
-									Modifiers="{x:Bind ShortKeysViewModel.SelectAll.Modifiers}" />
-							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="InvertSelectionMFI"
@@ -444,12 +439,6 @@
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="&#xE746;" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									IsEnabled="False"
-									Key="{x:Bind ShortKeysViewModel.InvertSelection.Key}"
-									Modifiers="{x:Bind ShortKeysViewModel.InvertSelection.Modifiers}" />
-							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="ClearSelectionMFI"
@@ -458,12 +447,6 @@
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="&#xE8E6;" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									IsEnabled="False"
-									Key="{x:Bind ShortKeysViewModel.ClearSelection.Key}"
-									Modifiers="{x:Bind ShortKeysViewModel.ClearSelection.Modifiers}" />
-							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 					</MenuFlyout>
 				</AppBarButton.Flyout>
