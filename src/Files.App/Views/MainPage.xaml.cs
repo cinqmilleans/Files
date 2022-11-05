@@ -7,6 +7,7 @@ using Files.App.DataModels.NavigationControlItems;
 using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Helpers;
+using Files.App.Keyboard;
 using Files.App.UserControls;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
@@ -347,6 +348,9 @@ namespace Files.App.Views
 			FindName(nameof(InnerNavigationToolbar));
 			FindName(nameof(horizontalMultitaskingControl));
 			FindName(nameof(NavToolbar));
+
+			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+			manager.FillKeyboard(KeyboardAccelerators);
 		}
 
 		private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

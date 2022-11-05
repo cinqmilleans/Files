@@ -15,6 +15,7 @@ namespace Files.App.Keyboard
 
 		public void FillKeyboard(IList<KeyboardAccelerator> accelerators)
 		{
+			accelerators.Clear();
 			foreach (var action in actions.Values)
 				accelerators.Add(new ActionKeyboardAccelerator(action));
 		}
@@ -53,7 +54,10 @@ namespace Files.App.Keyboard
 			}
 
 			private void ActionKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e)
-				=> action.Execute();
+			{
+				action.Execute();
+				e.Handled = true;
+			}
 
 			private void Action_ShortKeyChanged(object? _, EventArgs e) => Update();
 

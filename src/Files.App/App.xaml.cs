@@ -9,13 +9,13 @@ using Files.App.Filesystem;
 using Files.App.Filesystem.Cloud;
 using Files.App.Filesystem.FilesystemHistory;
 using Files.App.Helpers;
+using Files.App.Keyboard;
 using Files.App.ServicesImplementation;
 using Files.App.ServicesImplementation.DateTimeFormatter;
 using Files.App.ServicesImplementation.Settings;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
 using Files.App.Views;
-using Files.Backend.Models;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
 using Files.Backend.Services.SizeProvider;
@@ -126,6 +126,7 @@ namespace Files.App
 				.AddSingleton<ILocalizationService, LocalizationService>()
 				.AddSingleton<ICloudDetector, CloudDetector>()
 				.AddSingleton<IShortKeysViewModel, ShortKeysViewModel>()
+				.AddSingleton<IKeyboardManager, KeyboardManager>()
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
 #else
