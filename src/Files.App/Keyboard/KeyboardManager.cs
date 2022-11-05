@@ -1,4 +1,4 @@
-﻿using Files.App.Keyboard.Actions;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
@@ -9,34 +9,36 @@ namespace Files.App.Keyboard
 {
 	public class KeyboardManager : IKeyboardManager
 	{
-		private readonly IImmutableDictionary<KeyboardActionCodes, IKeyboardAction> actions;
+		private IImmutableDictionary<KeyboardActionCodes, IKeyboardAction> actions
+			= ImmutableDictionary<KeyboardActionCodes, IKeyboardAction>.Empty;
 
-		public KeyboardManager() => actions = CreateActions().ToImmutableDictionary(action => action.Code);
+		public void Initialize(IEnumerable<IKeyboardAction> actions)
+			=> this.actions = actions.ToImmutableDictionary(action => action.Code);
 
-		public void FillKeyboard(IList<KeyboardAccelerator> accelerators)
+		public void FillKeyboard(UIElement element)
 		{
+			var accelerators = element.KeyboardAccelerators;
 			accelerators.Clear();
 			foreach (var action in actions.Values)
 				accelerators.Add(new ActionKeyboardAccelerator(action));
 		}
 
-		public void FillMenu(IList<KeyboardAccelerator> accelerators, KeyboardActionCodes actionCode)
+		public void FillMenu(UIElement element, KeyboardActionCodes actionCode)
 		{
 			var action = actions[actionCode];
-			var accelerator = new KeyboardAccelerator
-			{
-				IsEnabled = false,
-				Key = action.ShortKey.Key,
-				Modifiers = action.ShortKey.Modifiers,
-			};
+			var accelerators = element.KeyboardAccelerators;
 
 			accelerators.Clear();
-			accelerators.Add(accelerator);
-		}
-
-		private static IEnumerable<IKeyboardAction> CreateActions()
-		{
-			yield return new HelpAction();
+			if (action.ShortKey.Key is not VirtualKey.None)
+			{
+				var accelerator = new KeyboardAccelerator
+				{
+					IsEnabled = false,
+					Key = action.ShortKey.Key,
+					Modifiers = action.ShortKey.Modifiers,
+				};
+				accelerators.Add(accelerator);
+			}
 		}
 
 		private class ActionKeyboardAccelerator : KeyboardAccelerator

@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.DataModels;
 using Files.App.Helpers;
+using Files.App.Keyboard;
 using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
 using Microsoft.UI.Xaml;
@@ -156,10 +157,14 @@ namespace Files.App.UserControls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			var newShortKey = ShortKeysViewModel.ToggleMultiSelection;
-			MultiselectMFI.KeyboardAccelerators.Clear();
-			var key = new KeyboardAccelerator { IsEnabled = false, Key = newShortKey.Key, Modifiers = newShortKey.Modifiers };
-			MultiselectMFI.KeyboardAccelerators.Add(key);
+			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+
+			manager.FillMenu(MultiselectMFI, KeyboardActionCodes.Help);
+
+			//var newShortKey = ShortKeysViewModel.ToggleMultiSelection;
+			//MultiselectMFI.KeyboardAccelerators.Clear();
+			//var key = new KeyboardAccelerator { IsEnabled = false, Key = newShortKey.Key, Modifiers = newShortKey.Modifiers };
+			//MultiselectMFI.KeyboardAccelerators.Add(key);
 
 
 			//var newShortKey = ShortKeysViewModel.ToggleMultiSelection;
@@ -183,6 +188,18 @@ namespace Files.App.UserControls
 			//		MultiselectMFI.KeyboardAccelerators.Add(key);
 			//	}
 			//}
+		}
+
+		private void MultiselectMFI_Loading(FrameworkElement sender, object args)
+		{
+
+		}
+
+		private void MenuFlyout_Opening(object sender, object e)
+		{
+			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
+			manager.FillMenu(MultiselectMFI, KeyboardActionCodes.Help);
+
 		}
 	}
 }

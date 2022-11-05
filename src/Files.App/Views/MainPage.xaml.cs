@@ -8,6 +8,7 @@ using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Helpers;
 using Files.App.Keyboard;
+using Files.App.Keyboard.Actions;
 using Files.App.UserControls;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
@@ -22,6 +23,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -349,8 +351,16 @@ namespace Files.App.Views
 			FindName(nameof(horizontalMultitaskingControl));
 			FindName(nameof(NavToolbar));
 
+			/*var actions = new List<IKeyboardAction>
+			{
+				new HelpAction(),
+				new ToggleLayoutDetailsAction(SidebarAdaptiveViewModel),
+				new ToggleLayoutTilesAction(SidebarAdaptiveViewModel),
+			};
+
 			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
-			manager.FillKeyboard(KeyboardAccelerators);
+			manager.Initialize(actions);
+			manager.FillKeyboard(this);*/
 		}
 
 		private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
