@@ -430,6 +430,12 @@ namespace Files.App.Views.LayoutModes
 			var isHeaderFocused = DependencyObjectHelpers.FindParent<DataGridHeader>(focusedElement) is not null;
 			var isFooterFocused = focusedElement is HyperlinkButton;
 
+			if (ctrlPressed && e.Key is VirtualKey.A)
+			{
+				e.Handled = true;
+				return;
+			}
+
 			if (e.Key == VirtualKey.Enter && !e.KeyStatus.IsMenuKeyDown)
 			{
 				if (IsRenamingItem)

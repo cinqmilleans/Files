@@ -353,6 +353,12 @@ namespace Files.App.Views.LayoutModes
 			var ctrlPressed = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
 			var shiftPressed = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
+			if (ctrlPressed && e.Key is VirtualKey.A)
+			{
+				e.Handled = true;
+				return;
+			}
+
 			if (e.Key == VirtualKey.Enter && !e.KeyStatus.IsMenuKeyDown)
 			{
 				if (IsRenamingItem)

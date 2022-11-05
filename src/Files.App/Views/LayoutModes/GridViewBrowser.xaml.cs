@@ -376,6 +376,12 @@ namespace Files.App.Views.LayoutModes
 			var focusedElement = FocusManager.GetFocusedElement() as FrameworkElement;
 			var isFooterFocused = focusedElement is HyperlinkButton;
 
+			if (ctrlPressed && e.Key is VirtualKey.A)
+			{
+				e.Handled = true;
+				return;
+			}
+
 			if (e.Key == VirtualKey.Enter && !isFooterFocused && !e.KeyStatus.IsMenuKeyDown)
 			{
 				if (IsRenamingItem)

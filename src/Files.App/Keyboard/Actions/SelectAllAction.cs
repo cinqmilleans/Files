@@ -10,7 +10,7 @@ namespace Files.App.Keyboard.Actions
 
 		public override string Label => "SelectAll";
 
-		public override ShortKey DefaultShortKey => "Ctrl+B";
+		public override ShortKey DefaultShortKey => "Ctrl+A";
 
 		public SelectAllAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
