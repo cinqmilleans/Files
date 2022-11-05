@@ -117,7 +117,7 @@
 			Key="F3"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
-		<KeyboardAccelerator
+		<!--<KeyboardAccelerator
 			Key="F1"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
@@ -155,7 +155,7 @@
 			Key="Number7"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
+			Modifiers="Control,Shift" />-->
 		<KeyboardAccelerator
 			Key="H"
 			Invoked="KeyboardAccelerator_Invoked"
