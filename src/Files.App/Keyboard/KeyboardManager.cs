@@ -3,58 +3,59 @@ using Microsoft.UI.Xaml.Input;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Windows.System;
 
 namespace Files.App.Keyboard
 {
 	public class KeyboardManager : IKeyboardManager
 	{
-		private readonly IKeyboardAction NoneAction = new NoneAction();
+		private readonly IKeyboardAction None = new NoneAction();
 
-		private IImmutableDictionary<KeyboardActionCodes, IKeyboardAction> actions
-			= ImmutableDictionary<KeyboardActionCodes, IKeyboardAction>.Empty;
+		private IImmutableDictionary<KeyboardActionCodes, KeyboardAction> actions
+			= ImmutableDictionary<KeyboardActionCodes, KeyboardAction>.Empty;
 
-		private IDictionary<ShortKey, IKeyboardAction> shortKeys = new Dictionary<ShortKey, IKeyboardAction>();
+		private readonly IDictionary<ShortKey, KeyboardAction> shortKeys = new Dictionary<ShortKey, KeyboardAction>();
 
 		private UIElement? keyboard;
 
 		public IKeyboardAction this[KeyboardActionCodes code]
-			=> actions.TryGetValue(code, out IKeyboardAction? action) ? action : NoneAction;
+			=> actions.TryGetValue(code, out KeyboardAction? action) ? action : None;
 		public IKeyboardAction this[ShortKey shortKey]
-			=> shortKeys.TryGetValue(shortKey, out IKeyboardAction? action) ? action : NoneAction;
+			=> shortKeys.TryGetValue(shortKey, out KeyboardAction? action) ? action : None;
 
 		public ShortKeyStatus GetStatus(ShortKey shortKey) => shortKey switch
 		{
-			{ Key: VirtualKey.None } => ShortKeyStatus.Invalid,
+			{ IsNone: true } => ShortKeyStatus.Invalid,
 			_ when shortKeys.ContainsKey(shortKey) => ShortKeyStatus.Used,
 			_ => ShortKeyStatus.Available,
 		};
 		public void SetShortKey(KeyboardActionCodes code, ShortKey shortKey)
 		{
-			if (shortKeys.ContainsKey(shortKey))
-			{
-				shortKeys.Remove(shortKey);
-				RemoveFromKeyboard(shortKey);
-			}
+			RemoveShortKey(shortKey);
+			RemoveShortKey(this[code].ShortKey);
+			AddShortKey(actions[code], shortKey);
 
-			var oldShortKey = shortKeys.FirstOrDefault(s => s.Value.Code == code).Key;
-			if (oldShortKey.Key is not VirtualKey.None)
+			void AddShortKey(KeyboardAction action, ShortKey shortKey)
 			{
-				shortKeys.Remove(oldShortKey);
-				RemoveFromKeyboard(shortKey);
-			}
-
-			if (shortKey.Key is not VirtualKey.None && actions.TryGetValue(code, out IKeyboardAction? action))
-			{
+				action.ShortKey = shortKey;
 				shortKeys.Add(shortKey, action);
 				AddToKeyboard(shortKey);
+			}
+			void RemoveShortKey(ShortKey shortKey)
+			{
+				if (shortKeys.TryGetValue(shortKey, out KeyboardAction? action))
+				{
+					action.ShortKey = ShortKey.None;
+					shortKeys.Remove(shortKey);
+					RemoveFromKeyboard(shortKey);
+				}
 			}
 		}
 
 		public void Initialize(IEnumerable<IKeyboardAction> actions)
 		{
-			this.actions = actions.ToImmutableDictionary(action => action.Code);
-			shortKeys = actions.Where(action => action.ShortKey.Key is not VirtualKey.None).ToDictionary(action => action.ShortKey);
+			this.actions = actions.ToImmutableDictionary(action => action.Code, action => new KeyboardAction(action));
+			foreach (var action in actions)
+				SetShortKey(action.Code, action.ShortKey);
 		}
 
 		public void RegisterKeyboard(UIElement keyboard)
@@ -70,7 +71,7 @@ namespace Files.App.Keyboard
 			element.KeyboardAccelerators.Clear();
 
 			var shortKey = shortKeys.FirstOrDefault(s => s.Value.Code == code).Key;
-			if (shortKey.Key is not VirtualKey.None)
+			if (!shortKey.IsNone)
 			{
 				var accelerator = new KeyboardAccelerator
 				{
@@ -84,7 +85,7 @@ namespace Files.App.Keyboard
 
 		private void AddToKeyboard(ShortKey shortKey)
 		{
-			if (keyboard is null || shortKey.Key is VirtualKey.None)
+			if (keyboard is null || shortKey.IsNone)
 				return;
 			var accelerator = new KeyboardAccelerator
 			{
@@ -96,7 +97,7 @@ namespace Files.App.Keyboard
 		}
 		private void RemoveFromKeyboard(ShortKey shortKey)
 		{
-			if (keyboard is null || shortKey.Key is VirtualKey.None)
+			if (keyboard is null || shortKey.IsNone)
 				return;
 
 			var accelerator = keyboard.KeyboardAccelerators
@@ -117,6 +118,39 @@ namespace Files.App.Keyboard
 				action.Execute();
 				e.Handled = true;
 			}
+		}
+
+		private class NoneAction : IKeyboardAction
+		{
+			public string Label => string.Empty;
+			public string Description => string.Empty;
+
+			public KeyboardActionCodes Code => KeyboardActionCodes.None;
+			public ShortKey ShortKey => ShortKey.None;
+
+			public void Execute() {}
+		}
+
+		private class KeyboardAction : IKeyboardAction
+		{
+			private readonly IKeyboardAction action;
+
+			public string Label => action.Label;
+			public string Description => action.Label;
+
+			public KeyboardActionCodes Code => action.Code;
+			public ShortKey ShortKey { get; set; }
+
+			public KeyboardAction(IKeyboardAction action) : this(action, action.ShortKey)
+			{
+			}
+			public KeyboardAction(IKeyboardAction action, ShortKey shortKey)
+			{
+				this.action = action;
+				ShortKey = shortKey;
+			}
+
+			public void Execute() => action.Execute();
 		}
 	}
 }

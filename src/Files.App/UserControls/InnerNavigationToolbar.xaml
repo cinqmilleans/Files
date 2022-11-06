@@ -533,8 +533,11 @@
 					<FontIcon FontSize="10" Glyph="&#xE152;" />
 				</AppBarButton.Icon>
 				<AppBarButton.Flyout>
-					<Flyout x:Name="LayoutFlyout" Opening="LayoutFlyout_Opening"
-						contract8Present:ShouldConstrainToRootBounds="False" Placement="Bottom">
+					<Flyout
+						x:Name="LayoutFlyout"
+						contract8Present:ShouldConstrainToRootBounds="False"
+						Opening="LayoutFlyout_Opening"
+						Placement="Bottom">
 						<StackPanel Spacing="12">
 							<TextBlock FontWeight="Medium" Text="{helpers:ResourceString Name=NavToolbarLayout/Text}" />
 
