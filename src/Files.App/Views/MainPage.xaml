@@ -280,7 +280,7 @@
 					</usercontrols:HorizontalMultitaskingControl>
 
 					<controls:AddressToolbar
-						x:Name="NavToolbar"
+						x:Name="NavToolbar" Visibility="Collapsed"
 						Grid.Row="1"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Stretch"
