@@ -1,21 +1,22 @@
 ﻿using Files.App.Extensions;
 using Files.App.ViewModels;
+using Windows.System;
 
-namespace Files.App.Keyboard
+namespace Files.App.Keyboard.Actions
 {
-	internal class ToggleLayoutDetailsAction : KeyboardAction
+	internal class ToggleLayoutDetailsAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutDetails;
+		public string Label => "Details".GetLocalizedResource();
+		public string Description => string.Empty;
 
-		public override string Label => "Details".GetLocalizedResource();
-
-		public override ShortKey DefaultShortKey => "Ctrl+Shift+1";
+		public KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutDetails;
+		public ShortKey ShortKey => new(VirtualKey.Number1, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public ToggleLayoutDetailsAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 			=> viewModel.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings?.ToggleLayoutModeDetailsView(true);
 	}
 }

@@ -369,7 +369,7 @@ namespace Files.App.Views
 
 			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();
 			manager.Initialize(actions);
-			manager.FillKeyboard(this);
+			manager.RegisterKeyboard(this);
 		}
 
 		private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

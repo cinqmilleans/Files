@@ -1,21 +1,22 @@
 ﻿using Files.App.Extensions;
 using Files.App.ViewModels;
+using Windows.System;
 
-namespace Files.App.Keyboard
+namespace Files.App.Keyboard.Actions
 {
-	internal class ToggleLayoutTilesAction : KeyboardAction
+	internal class ToggleLayoutTilesAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutTiles;
+		public string Label => "Tiles".GetLocalizedResource();
+		public string Description => string.Empty;
 
-		public override string Label => "Tiles".GetLocalizedResource();
-
-		public override ShortKey DefaultShortKey => "Ctrl+Shift+2";
+		public KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutTiles;
+		public ShortKey ShortKey => new(VirtualKey.Number2, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public ToggleLayoutTilesAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 			=> viewModel.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings?.ToggleLayoutModeTiles(true);
 	}
 }

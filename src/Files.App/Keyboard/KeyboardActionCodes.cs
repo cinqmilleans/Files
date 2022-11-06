@@ -1,6 +1,6 @@
 ﻿namespace Files.App.Keyboard
 {
-	public enum KeyboardActionCodes
+	public enum KeyboardActionCodes : ushort
 	{
 		None,
 

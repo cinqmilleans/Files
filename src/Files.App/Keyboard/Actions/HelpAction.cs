@@ -1,18 +1,17 @@
 ﻿using System;
 using Windows.System;
 
-namespace Files.App.Keyboard
+namespace Files.App.Keyboard.Actions
 {
-	internal class HelpAction : KeyboardAction
+	internal class HelpAction : IKeyboardAction
 	{
-		public override KeyboardActionCodes Code => KeyboardActionCodes.Help;
+		public string Label => "Help";
+		public string Description => "Opens the help in the web browser.";
 
-		public override string Label => "Help";
-		public override string Description => "Opens the help in the web browser.";
+		public KeyboardActionCodes Code => KeyboardActionCodes.Help;
+		public ShortKey ShortKey => new(VirtualKey.F1);
 
-		public override ShortKey DefaultShortKey => "F1";
-
-		public override async void Execute()
+		public async void Execute()
 		{
 			var url = new Uri(Constants.GitHub.DocumentationUrl);
 			await Launcher.LaunchUriAsync(url);

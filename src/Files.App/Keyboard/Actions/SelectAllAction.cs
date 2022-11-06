@@ -1,20 +1,21 @@
 ﻿using Files.App.ViewModels;
+using Windows.System;
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class SelectAllAction : KeyboardAction
+	internal class SelectAllAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.SelectAll;
+		public string Label => "SelectAll";
+		public string Description => string.Empty;
 
-		public override string Label => "SelectAll";
-
-		public override ShortKey DefaultShortKey => "Ctrl+A";
+		public KeyboardActionCodes Code => KeyboardActionCodes.SelectAll;
+		public ShortKey ShortKey => new(VirtualKey.A, VirtualKeyModifiers.Control);
 
 		public SelectAllAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 		{
 			var pane = viewModel.PaneHolder?.ActivePaneOrColumn;
 

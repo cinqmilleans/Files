@@ -2,19 +2,19 @@
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class InvertSelectionAction : KeyboardAction
+	internal class InvertSelectionAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.InvertSelection;
+		public string Label => "InvertSelection";
+		public string Description => string.Empty;
 
-		public override string Label => "InvertSelection";
-
-		public override ShortKey DefaultShortKey => ShortKey.None;
+		public KeyboardActionCodes Code => KeyboardActionCodes.InvertSelection;
+		public ShortKey ShortKey => ShortKey.None;
 
 		public InvertSelectionAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 		{
 			var pane = viewModel.PaneHolder?.ActivePaneOrColumn;
 

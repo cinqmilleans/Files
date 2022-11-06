@@ -2,18 +2,18 @@
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class ToggleMultiSelectionAction : KeyboardAction
+	internal class ToggleMultiSelectionAction : IKeyboardAction
 	{
 		private readonly AppModel model;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleMultiSelection;
+		public string Label => "MultiSelection";
+		public string Description => string.Empty;
 
-		public override string Label => "MultiSelection";
-
-		public override ShortKey DefaultShortKey => ShortKey.None;
+		public KeyboardActionCodes Code => KeyboardActionCodes.ToggleMultiSelection;
+		public ShortKey ShortKey => ShortKey.None;
 
 		public ToggleMultiSelectionAction(AppModel model) => this.model = model;
 
-		public override void Execute() => model.MultiselectEnabled = !model.MultiselectEnabled;
+		public void Execute() => model.MultiselectEnabled = !model.MultiselectEnabled;
 	}
 }

@@ -31,7 +31,7 @@ namespace Files.App.Keyboard
 		public void Deconstruct(out VirtualKey key, out VirtualKeyModifiers modifiers)
 			=> (key, modifiers) = (Key, Modifiers);
 
-		public static implicit operator ShortKey(string shortKey) => Parse(shortKey);
+		public static explicit operator ShortKey(string shortKey) => Parse(shortKey);
 		public static implicit operator string(ShortKey shortKey) => shortKey.ToString();
 
 		public static bool operator ==(ShortKey a, ShortKey b) => a.Equals(b);

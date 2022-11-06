@@ -2,19 +2,19 @@
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class ClearSelectionAction : KeyboardAction
+	internal class ClearSelectionAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ClearSelection;
+		public string Label => "ClearSelection";
+		public string Description => string.Empty;
 
-		public override string Label => "ClearSelection";
-
-		public override ShortKey DefaultShortKey => ShortKey.None;
+		public KeyboardActionCodes Code => KeyboardActionCodes.ClearSelection;
+		public ShortKey ShortKey => ShortKey.None;
 
 		public ClearSelectionAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 		{
 			var pane = viewModel.PaneHolder?.ActivePaneOrColumn;
 

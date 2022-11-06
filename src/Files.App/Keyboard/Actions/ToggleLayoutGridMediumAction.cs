@@ -1,21 +1,22 @@
 ﻿using Files.App.Extensions;
 using Files.App.ViewModels;
+using Windows.System;
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class ToggleLayoutGridMediumAction : KeyboardAction
+	internal class ToggleLayoutGridMediumAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutGridMedium;
+		public string Label => "MediumIcons".GetLocalizedResource();
+		public string Description => string.Empty;
 
-		public override string Label => "MediumIcons".GetLocalizedResource();
-
-		public override ShortKey DefaultShortKey => "Ctrl+Shift+4";
+		public KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutGridMedium;
+		public ShortKey ShortKey => new(VirtualKey.Number4, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public ToggleLayoutGridMediumAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 			=> viewModel.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings?.ToggleLayoutModeGridViewMedium(true);
 	}
 }

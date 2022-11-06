@@ -1,21 +1,22 @@
 ﻿using Files.App.Extensions;
 using Files.App.ViewModels;
+using Windows.System;
 
 namespace Files.App.Keyboard.Actions
 {
-	internal class ToggleLayoutAdaptiveAction : KeyboardAction
+	internal class ToggleLayoutAdaptiveAction : IKeyboardAction
 	{
 		private readonly SidebarViewModel viewModel;
 
-		public override KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutAdaptive;
+		public string Label => "Adaptive".GetLocalizedResource();
+		public string Description => string.Empty;
 
-		public override string Label => "Adaptive".GetLocalizedResource();
-
-		public override ShortKey DefaultShortKey => "Ctrl+Shift+7";
+		public KeyboardActionCodes Code => KeyboardActionCodes.ToggleLayoutAdaptive;
+		public ShortKey ShortKey => new(VirtualKey.Number7, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public ToggleLayoutAdaptiveAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
-		public override void Execute()
+		public void Execute()
 			=> viewModel.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings?.ToggleLayoutModeAdaptive();
 	}
 }

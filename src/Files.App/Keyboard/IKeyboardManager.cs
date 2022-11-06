@@ -6,15 +6,14 @@ namespace Files.App.Keyboard
 	public interface IKeyboardManager
 	{
 		IKeyboardAction this[KeyboardActionCodes code] { get; }
+		IKeyboardAction this[ShortKey shortKey] { get; }
 
-		IEnumerable<IKeyboardAction> EnumerateActions();
-
-		void Execute(ShortKey shortKey);
-		void Execute(KeyboardActionCodes code);
+		ShortKeyStatus GetStatus(ShortKey shortKey);
+		void SetShortKey(KeyboardActionCodes code, ShortKey shortKey);
 
 		void Initialize(IEnumerable<IKeyboardAction> actions);
 
-		void FillKeyboard(UIElement element);
+		void RegisterKeyboard(UIElement element);
 		void FillMenu(UIElement element, KeyboardActionCodes code);
 	}
 }
