@@ -11,7 +11,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Windows.Input;
+using Windows.System;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -145,6 +147,24 @@ namespace Files.App.UserControls
 			keyboardManager.FillMenu(SelectAllMFI, KeyboardActionCodes.SelectAll);
 			keyboardManager.FillMenu(InvertSelectionMFI, KeyboardActionCodes.InvertSelection);
 			keyboardManager.FillMenu(ClearSelectionMFI, KeyboardActionCodes.ClearSelection);
+		}
+
+		private void LayoutFlyout_Opening(object sender, object e)
+		{
+			SetToolTip(LayoutDetailsButton, KeyboardActionCodes.ToggleLayoutDetails);
+			SetToolTip(LayoutTilesButton, KeyboardActionCodes.ToggleLayoutTiles);
+			SetToolTip(LayoutGridSmallButton, KeyboardActionCodes.ToggleLayoutGridSmall);
+			SetToolTip(LayoutGridMediumButton, KeyboardActionCodes.ToggleLayoutGridMedium);
+			SetToolTip(LayoutGridLargeButton, KeyboardActionCodes.ToggleLayoutGridLarge);
+			SetToolTip(LayoutColumnsButton, KeyboardActionCodes.ToggleLayoutColumns);
+			SetToolTip(LayoutAdaptiveButton, KeyboardActionCodes.ToggleLayoutAdaptive);
+
+			void SetToolTip(UIElement element, KeyboardActionCodes code)
+			{
+				var action = keyboardManager[code];
+				string text = action.ShortKey.IsNone ? action.Label : $"{action.Label} ({action.ShortKey})";
+				ToolTipService.SetToolTip(element, new ToolTip { Content = text});
+			}
 		}
 
 		private void NavToolbarDetailsHeader_Tapped(object sender, TappedRoutedEventArgs e)

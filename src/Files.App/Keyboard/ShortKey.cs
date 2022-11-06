@@ -9,12 +9,17 @@ namespace Files.App.Keyboard
 	{
 		public static ShortKey None { get; } = new ShortKey(VirtualKey.None, VirtualKeyModifiers.None);
 
-		public VirtualKey Key { get; }
-		public VirtualKeyModifiers Modifiers { get; }
+		public bool IsNone => Key is VirtualKey.None;
+
+		public VirtualKey Key { get; } = VirtualKey.None;
+		public VirtualKeyModifiers Modifiers { get; } = VirtualKeyModifiers.None;
 
 		public ShortKey(VirtualKey key) : this(key, VirtualKeyModifiers.None) { }
 		public ShortKey(VirtualKey key, VirtualKeyModifiers modifiers)
 		{
+			if (key is VirtualKey.None)
+				return;
+
 			if (IsModifier(key))
 				throw new ArgumentException("The key cannot be a modifier.", nameof(key));
 
