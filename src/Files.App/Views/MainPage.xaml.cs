@@ -365,6 +365,8 @@ namespace Files.App.Views
 				new ToggleLayoutGridLargeAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutColumnsAction(SidebarAdaptiveViewModel),
 				new ToggleLayoutAdaptiveAction(SidebarAdaptiveViewModel),
+				new ToggleShowHiddenItemsAction(),
+				new ToggleShowFileExtensionsAction(),
 			};
 
 			var manager = Ioc.Default.GetRequiredService<IKeyboardManager>();

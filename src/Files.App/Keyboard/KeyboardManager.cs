@@ -54,7 +54,7 @@ namespace Files.App.Keyboard
 		public void Initialize(IEnumerable<IKeyboardAction> actions)
 		{
 			this.actions = actions.ToImmutableDictionary(action => action.Code);
-			shortKeys = actions.ToDictionary(action => action.ShortKey);
+			shortKeys = actions.Where(action => action.ShortKey.Key is not VirtualKey.None).ToDictionary(action => action.ShortKey);
 		}
 
 		public void RegisterKeyboard(UIElement keyboard)
