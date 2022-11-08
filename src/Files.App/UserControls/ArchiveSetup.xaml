@@ -1,0 +1,114 @@
+﻿<ContentDialog
+	x:Class="Files.App.UserControls.ArchiveSetup"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:converters="using:Files.App.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:helpers="using:Files.App.Helpers"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="Add to Archive"
+	d:DesignHeight="300"
+	d:DesignWidth="400"
+	CloseButtonText="Cancel"
+	CornerRadius="{StaticResource OverlayCornerRadius}"
+	DefaultButton="Primary"
+	IsPrimaryButtonEnabled="True"
+	PrimaryButtonText="Create"
+	RequestedTheme="{x:Bind helpers:ThemeHelper.RootTheme}"
+	Style="{StaticResource DefaultContentDialogStyle}"
+	mc:Ignorable="d">
+
+	<ContentDialog.Resources>
+		<converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
+	</ContentDialog.Resources>
+
+	<Grid MinHeight="200" ColumnSpacing="8">
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TextBox
+			Width="340"
+			VerticalAlignment="Bottom"
+			Header="Archive name"
+			PlaceholderText="Enter a name"
+			Text="{x:Bind FileName, Mode=TwoWay}" />
+
+		<Button
+			Grid.Column="1"
+			Width="80"
+			VerticalAlignment="Bottom"
+			HorizontalContentAlignment="Stretch"
+			Tapped="FormatButton_Tapped">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBlock x:Name="FormatLabel" Loading="FormatLabel_Loading" />
+				<FontIcon Grid.Column="1" FontSize="10" Glyph="&#xE70D;" />
+			</Grid>
+		</Button>
+
+		<Popup
+			x:Name="FormatPopup"
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			DesiredPlacement="BottomEdgeAlignedRight"
+			ExitDisplayModeOnAccessKeyInvoked="True"
+			IsLightDismissEnabled="True">
+			<ListView
+				x:Name="FormatSelector"
+				Width="428"
+				Margin="0,16"
+				Padding="-5,-2"
+				Background="{ThemeResource SolidBackgroundFillColorBase}"
+				BorderBrush="{ThemeResource SolidBackgroundFillColorBase}"
+				BorderThickness="1"
+				CornerRadius="{StaticResource OverlayCornerRadius}"
+				Loading="FormatSelector_Loading"
+				ItemsSource="{x:Bind Formats}"
+				SelectedValue="{x:Bind Format}"
+				SelectedValuePath="Key">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Padding="8" Orientation="Vertical">
+							<TextBlock Text="{Binding Label}" />
+							<TextBlock
+								FontSize="12"
+								FontWeight="Light"
+								Text="{Binding Description}"
+								TextWrapping="Wrap" />
+						</StackPanel>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+		</Popup>
+
+		<Grid
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			Visibility="{Binding IsOpen, ElementName=FormatPopup, Converter={StaticResource VisibilityInvertConverter}}">
+
+			<ComboBox
+				x:Name="CompressionLevelSelector"
+				Grid.Row="1"
+				Loading="CompressionLevelSelector_Loading"
+				VerticalAlignment="Bottom"
+				DisplayMemberPath="Label"
+				Header="Compression Level"
+				ItemsSource="{x:Bind CompressionLevels}"
+				SelectedValue="{x:Bind CompressionLevel, Mode=TwoWay}"
+				SelectedValuePath="Key" />
+
+		</Grid>
+
+	</Grid>
+
+</ContentDialog>
