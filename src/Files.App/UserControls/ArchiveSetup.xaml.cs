@@ -72,15 +72,12 @@ namespace Files.App.UserControls
 			=> FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
 		private void FormatSelector_Loading(FrameworkElement sender, object args)
 			=> FormatSelector.SelectedItem = Formats.First(format => format.Key == Format);
+		private void FormatSelector_SelectionChanged(object _, SelectionChangedEventArgs e)
+			=> FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
 		private void CompressionLevelSelector_Loading(FrameworkElement _, object e)
 			=> CompressionLevelSelector.SelectedItem = CompressionLevels.First(level => level.Key == CompressionLevel);
 		private void UseEncyptionSwitch_Toggled(object _, RoutedEventArgs e)
-			=> PasswordBox.Focus(FocusState.Programmatic);
-
-		private void FormatSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
-		}
+		{ } //=> PasswordBox.Focus(FocusState.Programmatic);
 
 		private record FormatItem(ArchiveFormat Key, string Label, string Description);
 		private record CompressionLevelItem(ArchiveCompressionLevel Key, string Label);

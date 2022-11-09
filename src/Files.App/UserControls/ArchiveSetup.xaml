@@ -36,7 +36,7 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" MinHeight="280" />
+			<RowDefinition Height="Auto" MinHeight="180" />
 		</Grid.RowDefinitions>
 
 		<TextBox
@@ -69,9 +69,9 @@
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
 			DesiredPlacement="BottomEdgeAlignedRight"
-			IsLightDismissEnabled="True"
-			ExitDisplayModeOnAccessKeyInvoked="True">
-			<ListBox
+			ExitDisplayModeOnAccessKeyInvoked="True"
+			IsLightDismissEnabled="True">
+			<ListView
 				x:Name="FormatSelector"
 				Width="428"
 				Margin="0,16"
@@ -82,10 +82,10 @@
 				CornerRadius="{StaticResource OverlayCornerRadius}"
 				ItemsSource="{x:Bind Formats}"
 				Loading="FormatSelector_Loading"
-				SelectionChanged="FormatSelector_SelectionChanged"
 				SelectedValue="{x:Bind Format, Mode=TwoWay}"
-				SelectedValuePath="Key">
-				<ListBox.ItemTemplate>
+				SelectedValuePath="Key"
+				SelectionChanged="FormatSelector_SelectionChanged">
+				<ListView.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Padding="8" Orientation="Vertical">
 							<TextBlock Text="{Binding Label}" />
@@ -96,8 +96,8 @@
 								TextWrapping="Wrap" />
 						</StackPanel>
 					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+				</ListView.ItemTemplate>
+			</ListView>
 		</Popup>
 
 		<StackPanel
@@ -127,56 +127,19 @@
 					SelectedValuePath="Key" />
 			</settings:SettingsBlockControl>
 
-			<StackPanel Spacing="2">
-				<settings:SettingsBlockControl Title="Encryption" HorizontalAlignment="Stretch">
-					<settings:SettingsBlockControl.Icon>
-						<FontIcon Glyph="&#xE790;" />
-					</settings:SettingsBlockControl.Icon>
-					<ToggleSwitch
-						x:Name="UseEncyptionSwitch"
-						Style="{StaticResource RightAlignedToggleSwitchStyle}"
-						Toggled="UseEncyptionSwitch_Toggled" />
-				</settings:SettingsBlockControl>
-				<Grid
-					x:Name="PasswordPanel"
-					Background="{StaticResource ExpanderDropDownBackground}"
-					BorderBrush="{StaticResource ExpanderDropDownBorderBrush}"
-					Visibility="{Binding IsOn, ElementName=UseEncyptionSwitch}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<TextBlock
-						Margin="24,0"
-						VerticalAlignment="Center"
-						Text="Password" />
-					<PasswordBox
-						x:Name="PasswordBox"
-						Grid.Column="1"
-						Width="164"
-						Margin="16,8"
-						FontSize="12" />
-				</Grid>
-				<Grid
-					x:Name="RetypePasswordPanel"
-					Background="{StaticResource ExpanderDropDownBackground}"
-					BorderBrush="{StaticResource ExpanderDropDownBorderBrush}"
-					Visibility="{Binding IsOn, ElementName=UseEncyptionSwitch}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<TextBlock
-						Margin="24,0"
-						VerticalAlignment="Center"
-						Text="Retype Password" />
-					<PasswordBox
-						Grid.Column="1"
-						Width="164"
-						Margin="16,8"
-						FontSize="12" />
-				</Grid>
-			</StackPanel>
+			<settings:SettingsBlockControl
+				Title="Encryption"
+				HorizontalAlignment="Stretch"
+				Description="Optional">
+				<settings:SettingsBlockControl.Icon>
+					<FontIcon Glyph="&#xE790;" />
+				</settings:SettingsBlockControl.Icon>
+				<PasswordBox
+					x:Name="PasswordBox"
+					MinWidth="120"
+					PasswordRevealMode="Peek"
+					PlaceholderText="Password" />
+			</settings:SettingsBlockControl>
 
 		</StackPanel>
 
