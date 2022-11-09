@@ -1,6 +1,6 @@
 ﻿namespace Files.Backend.Enums
 {
-	public enum ArchiveCompressionLevel : ushort
+	public enum ArchiveCompressionLevel
 	{
 		None,
 		Fast,

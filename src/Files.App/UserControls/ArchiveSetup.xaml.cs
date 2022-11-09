@@ -18,7 +18,7 @@ namespace Files.App.UserControls
 		public static readonly DependencyProperty FormatProperty = DependencyProperty
 			.Register(nameof(Format), typeof(ArchiveFormat), typeof(ArchiveSetup), new(ArchiveFormat.Zip));
 
-		public static readonly DependencyProperty LevelProperty = DependencyProperty
+		public static readonly DependencyProperty CompressionLevelProperty = DependencyProperty
 			.Register(nameof(CompressionLevel), typeof(ArchiveCompressionLevel), typeof(ArchiveSetup), new(ArchiveCompressionLevel.Normal));
 
 		public string FileName
@@ -30,19 +30,13 @@ namespace Files.App.UserControls
 		public ArchiveFormat Format
 		{
 			get => (ArchiveFormat)GetValue(FormatProperty);
-			set
-			{
-				SetValue(FormatProperty, (ushort)value);
-
-				if (FormatLabel is not null)
-					FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
-			}
+			set => SetValue(FormatProperty, (int)value);
 		}
 
 		public ArchiveCompressionLevel CompressionLevel
 		{
-			get => (ArchiveCompressionLevel)GetValue(LevelProperty);
-			set => SetValue(LevelProperty, (ushort)value);
+			get => (ArchiveCompressionLevel)GetValue(CompressionLevelProperty);
+			set => SetValue(CompressionLevelProperty, (int)value);
 		}
 
 		private IList<FormatItem> Formats { get; } = new List<FormatItem>
@@ -72,14 +66,21 @@ namespace Files.App.UserControls
 			return contentDialog;
 		}
 
-		private void FormatButton_Tapped(object _, TappedRoutedEventArgs e) => FormatPopup.IsOpen = true;
-
+		private void FormatButton_Tapped(object _, TappedRoutedEventArgs e)
+			=> FormatPopup.IsOpen = true;
 		private void FormatLabel_Loading(FrameworkElement _, object e)
 			=> FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
 		private void FormatSelector_Loading(FrameworkElement sender, object args)
 			=> FormatSelector.SelectedItem = Formats.First(format => format.Key == Format);
 		private void CompressionLevelSelector_Loading(FrameworkElement _, object e)
 			=> CompressionLevelSelector.SelectedItem = CompressionLevels.First(level => level.Key == CompressionLevel);
+		private void UseEncyptionSwitch_Toggled(object _, RoutedEventArgs e)
+			=> PasswordBox.Focus(FocusState.Programmatic);
+
+		private void FormatSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			FormatLabel.Text = Formats.First(format => format.Key == Format).Label;
+		}
 
 		private record FormatItem(ArchiveFormat Key, string Label, string Description);
 		private record CompressionLevelItem(ArchiveCompressionLevel Key, string Label);

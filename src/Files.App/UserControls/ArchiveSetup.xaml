@@ -6,6 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:helpers="using:Files.App.Helpers"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:settings="using:Files.App.UserControls.Settings"
 	Title="Add to Archive"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
@@ -19,7 +20,12 @@
 	mc:Ignorable="d">
 
 	<ContentDialog.Resources>
-		<converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
+		<ResourceDictionary>
+			<converters:VisibilityInvertConverter x:Key="VisibilityInvertConverter" />
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/ResourceDictionaries/RightAlignedToggleSwitchStyle.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</ContentDialog.Resources>
 
 	<Grid MinHeight="200" ColumnSpacing="8">
@@ -30,13 +36,12 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" MinHeight="280" />
 		</Grid.RowDefinitions>
 
 		<TextBox
 			Width="340"
 			VerticalAlignment="Bottom"
-			Header="Archive name"
 			PlaceholderText="Enter a name"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
@@ -52,7 +57,10 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<TextBlock x:Name="FormatLabel" Loading="FormatLabel_Loading" />
-				<FontIcon Grid.Column="1" FontSize="10" Glyph="&#xE70D;" />
+				<FontIcon
+					Grid.Column="1"
+					FontSize="10"
+					Glyph="&#xE70D;" />
 			</Grid>
 		</Button>
 
@@ -61,9 +69,9 @@
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
 			DesiredPlacement="BottomEdgeAlignedRight"
-			ExitDisplayModeOnAccessKeyInvoked="True"
-			IsLightDismissEnabled="True">
-			<ListView
+			IsLightDismissEnabled="True"
+			ExitDisplayModeOnAccessKeyInvoked="True">
+			<ListBox
 				x:Name="FormatSelector"
 				Width="428"
 				Margin="0,16"
@@ -72,11 +80,12 @@
 				BorderBrush="{ThemeResource SolidBackgroundFillColorBase}"
 				BorderThickness="1"
 				CornerRadius="{StaticResource OverlayCornerRadius}"
-				Loading="FormatSelector_Loading"
 				ItemsSource="{x:Bind Formats}"
-				SelectedValue="{x:Bind Format}"
+				Loading="FormatSelector_Loading"
+				SelectionChanged="FormatSelector_SelectionChanged"
+				SelectedValue="{x:Bind Format, Mode=TwoWay}"
 				SelectedValuePath="Key">
-				<ListView.ItemTemplate>
+				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Padding="8" Orientation="Vertical">
 							<TextBlock Text="{Binding Label}" />
@@ -87,27 +96,89 @@
 								TextWrapping="Wrap" />
 						</StackPanel>
 					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
+				</ListBox.ItemTemplate>
+			</ListBox>
 		</Popup>
 
-		<Grid
+		<StackPanel
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
+			Margin="0,16"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Spacing="4"
 			Visibility="{Binding IsOpen, ElementName=FormatPopup, Converter={StaticResource VisibilityInvertConverter}}">
+			<StackPanel.ChildrenTransitions>
+				<TransitionCollection>
+					<EntranceThemeTransition />
+				</TransitionCollection>
+			</StackPanel.ChildrenTransitions>
 
-			<ComboBox
-				x:Name="CompressionLevelSelector"
-				Grid.Row="1"
-				Loading="CompressionLevelSelector_Loading"
-				VerticalAlignment="Bottom"
-				DisplayMemberPath="Label"
-				Header="Compression Level"
-				ItemsSource="{x:Bind CompressionLevels}"
-				SelectedValue="{x:Bind CompressionLevel, Mode=TwoWay}"
-				SelectedValuePath="Key" />
+			<settings:SettingsBlockControl Title="Compression Level" HorizontalAlignment="Stretch">
+				<settings:SettingsBlockControl.Icon>
+					<FontIcon Glyph="&#xE790;" />
+				</settings:SettingsBlockControl.Icon>
+				<ComboBox
+					x:Name="CompressionLevelSelector"
+					DisplayMemberPath="Label"
+					ItemsSource="{x:Bind CompressionLevels}"
+					Loading="CompressionLevelSelector_Loading"
+					SelectedValue="{x:Bind CompressionLevel, Mode=TwoWay}"
+					SelectedValuePath="Key" />
+			</settings:SettingsBlockControl>
 
-		</Grid>
+			<StackPanel Spacing="2">
+				<settings:SettingsBlockControl Title="Encryption" HorizontalAlignment="Stretch">
+					<settings:SettingsBlockControl.Icon>
+						<FontIcon Glyph="&#xE790;" />
+					</settings:SettingsBlockControl.Icon>
+					<ToggleSwitch
+						x:Name="UseEncyptionSwitch"
+						Style="{StaticResource RightAlignedToggleSwitchStyle}"
+						Toggled="UseEncyptionSwitch_Toggled" />
+				</settings:SettingsBlockControl>
+				<Grid
+					x:Name="PasswordPanel"
+					Background="{StaticResource ExpanderDropDownBackground}"
+					BorderBrush="{StaticResource ExpanderDropDownBorderBrush}"
+					Visibility="{Binding IsOn, ElementName=UseEncyptionSwitch}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<TextBlock
+						Margin="24,0"
+						VerticalAlignment="Center"
+						Text="Password" />
+					<PasswordBox
+						x:Name="PasswordBox"
+						Grid.Column="1"
+						Width="164"
+						Margin="16,8"
+						FontSize="12" />
+				</Grid>
+				<Grid
+					x:Name="RetypePasswordPanel"
+					Background="{StaticResource ExpanderDropDownBackground}"
+					BorderBrush="{StaticResource ExpanderDropDownBorderBrush}"
+					Visibility="{Binding IsOn, ElementName=UseEncyptionSwitch}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<TextBlock
+						Margin="24,0"
+						VerticalAlignment="Center"
+						Text="Retype Password" />
+					<PasswordBox
+						Grid.Column="1"
+						Width="164"
+						Margin="16,8"
+						FontSize="12" />
+				</Grid>
+			</StackPanel>
+
+		</StackPanel>
 
 	</Grid>
 
