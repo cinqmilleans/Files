@@ -28,7 +28,7 @@
 		</ResourceDictionary>
 	</ContentDialog.Resources>
 
-	<Grid MinHeight="200" ColumnSpacing="8">
+	<Grid Margin="0,16,0,0" ColumnSpacing="8">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -36,12 +36,14 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" MinHeight="180" />
+			<RowDefinition Height="Auto" MinHeight="244" />
 		</Grid.RowDefinitions>
 
 		<TextBox
+			x:Name="FileNameBox"
 			Width="340"
 			VerticalAlignment="Bottom"
+			Header="Archive name"
 			PlaceholderText="Enter a name"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
@@ -50,13 +52,17 @@
 			Width="80"
 			VerticalAlignment="Bottom"
 			HorizontalContentAlignment="Stretch"
-			Tapped="FormatButton_Tapped">
+			Tapped="FileFormatButton_Tapped">
+			<Button.KeyboardAccelerators>
+				<KeyboardAccelerator Key="Enter" Invoked="FileFormatButton_Invoked" />
+				<KeyboardAccelerator Key="Down" Invoked="FileFormatButton_Invoked" />
+			</Button.KeyboardAccelerators>
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<TextBlock x:Name="FormatLabel" Loading="FormatLabel_Loading" />
+				<TextBlock x:Name="FileFormatLabel" Loading="FileFormatLabel_Loading" />
 				<FontIcon
 					Grid.Column="1"
 					FontSize="10"
@@ -65,14 +71,16 @@
 		</Button>
 
 		<Popup
-			x:Name="FormatPopup"
+			x:Name="FileFormatPopup"
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
-			DesiredPlacement="BottomEdgeAlignedRight"
+			Margin="0,8,0,0"
+			Closed="FileFormatPopup_Closed"
 			ExitDisplayModeOnAccessKeyInvoked="True"
-			IsLightDismissEnabled="True">
+			IsLightDismissEnabled="True"
+			Opened="FileFormatPopup_Opened">
 			<ListView
-				x:Name="FormatSelector"
+				x:Name="FileFormatSelector"
 				Width="428"
 				Margin="0,16"
 				Padding="-5,-2"
@@ -80,21 +88,30 @@
 				BorderBrush="{ThemeResource SolidBackgroundFillColorBase}"
 				BorderThickness="1"
 				CornerRadius="{StaticResource OverlayCornerRadius}"
-				ItemsSource="{x:Bind Formats}"
-				Loading="FormatSelector_Loading"
-				SelectedValue="{x:Bind Format, Mode=TwoWay}"
+				ItemsSource="{x:Bind FileFormats}"
+				Loading="FileFormatSelector_Loading"
+				SelectedValue="{x:Bind FileFormat, Mode=TwoWay}"
 				SelectedValuePath="Key"
-				SelectionChanged="FormatSelector_SelectionChanged">
+				SelectionChanged="FileFormatSelector_SelectionChanged"
+				Tapped="FileFormatSelector_Tapped">
+				<ListView.KeyboardAccelerators>
+					<KeyboardAccelerator Key="Enter" Invoked="FileFormatSelector_Invoked" />
+				</ListView.KeyboardAccelerators>
 				<ListView.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Padding="8" Orientation="Vertical">
+						<Grid Padding="8" ColumnSpacing="24">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
 							<TextBlock Text="{Binding Label}" />
 							<TextBlock
+								Grid.Column="1"
 								FontSize="12"
 								FontWeight="Light"
 								Text="{Binding Description}"
 								TextWrapping="Wrap" />
-						</StackPanel>
+						</Grid>
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
@@ -103,11 +120,11 @@
 		<StackPanel
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
-			Margin="0,16"
+			Margin="0,24,0,0"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			Spacing="4"
-			Visibility="{Binding IsOpen, ElementName=FormatPopup, Converter={StaticResource VisibilityInvertConverter}}">
+			Visibility="{Binding IsOpen, ElementName=FileFormatPopup, Converter={StaticResource VisibilityInvertConverter}}">
 			<StackPanel.ChildrenTransitions>
 				<TransitionCollection>
 					<EntranceThemeTransition />
@@ -127,6 +144,19 @@
 					SelectedValuePath="Key" />
 			</settings:SettingsBlockControl>
 
+			<settings:SettingsBlockControl Title="Splitting size" HorizontalAlignment="Stretch">
+				<settings:SettingsBlockControl.Icon>
+					<FontIcon Glyph="&#xE790;" />
+				</settings:SettingsBlockControl.Icon>
+				<ComboBox
+					x:Name="SplittingSizeSelector"
+					DisplayMemberPath="Label"
+					ItemsSource="{x:Bind SplittingSizes}"
+					Loading="SplittingSizeSelector_Loading"
+					SelectedValue="{x:Bind SplittingSize, Mode=TwoWay}"
+					SelectedValuePath="Key" />
+			</settings:SettingsBlockControl>
+
 			<settings:SettingsBlockControl
 				Title="Encryption"
 				HorizontalAlignment="Stretch"
@@ -137,6 +167,7 @@
 				<PasswordBox
 					x:Name="PasswordBox"
 					MinWidth="120"
+					Password="{x:Bind Password, Mode=TwoWay}"
 					PasswordRevealMode="Peek"
 					PlaceholderText="Password" />
 			</settings:SettingsBlockControl>

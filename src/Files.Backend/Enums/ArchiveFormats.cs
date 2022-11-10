@@ -1,6 +1,6 @@
 ﻿namespace Files.Backend.Enums
 {
-	public enum ArchiveFormat
+	public enum ArchiveFormats
 	{
 		None,
 		Zip,
