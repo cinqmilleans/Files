@@ -38,7 +38,7 @@ namespace Files.App.UserControls
 		public ArchiveFormats FileFormat
 		{
 			get => (ArchiveFormats)GetValue(FileFormatProperty);
-			set => SetValue(FileFormatProperty, value is not ArchiveFormats.None ? (int)value : (int)ArchiveFormats.Zip);
+			set => SetValue(FileFormatProperty, (int)value);
 		}
 
 		public ArchiveCompressionLevels CompressionLevel

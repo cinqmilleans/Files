@@ -2,7 +2,6 @@
 {
 	public enum ArchiveFormats
 	{
-		None,
 		Zip,
 		SevenZip,
 	}
