@@ -1,4 +1,4 @@
-﻿namespace Files.Backend.Enums
+﻿namespace Files.App.Filesystem.Archive
 {
 	public enum ArchiveCompressionLevels
 	{

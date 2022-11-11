@@ -1,5 +1,4 @@
 using Files.App.Filesystem.StorageItems;
-using Files.Backend.Enums;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -10,59 +9,6 @@ using System.Threading.Tasks;
 
 namespace Files.App.Helpers
 {
-	public interface IArchiveCreator
-	{
-
-	}
-
-	public class ArchiveCreator
-	{
-		public string FileName { get; set; } = string.Empty;
-		public ArchiveFormats FileFormat { get; set; } = ArchiveFormats.Zip;
-		public ArchiveCompressionLevels CompressionLevel { get; set; } = ArchiveCompressionLevels.Normal;
-		public ArchiveSplittingSizes SplittingSize { get; set; } = ArchiveSplittingSizes.None;
-		public string Password { get; set; } = string.Empty;
-
-		public IList<string> SourceFolders { get; set; } = new List<string>();
-
-		public static async Task<bool> CreateArchive(string[] sourceFolders, IProgress<float> progressDelegate)
-		{
-			SevenZipCompressor compressor = new()
-			{
-				ArchiveFormat = OutArchiveFormat.Zip,
-				CompressionLevel = CompressionLevel.High,
-				EventSynchronization = EventSynchronizationStrategy.AlwaysAsynchronous,
-				FastCompression = true,
-				IncludeEmptyDirectories = true,
-				PreserveDirectoryRoot = sourceFolders.Length > 1
-			};
-
-			bool noErrors = true;
-			try
-			{
-				for (int i = 0; i < sourceFolders.Length; i++)
-				{
-					if (i > 0)
-						compressor.CompressionMode = CompressionMode.Append;
-
-					await compressor.CompressDirectoryAsync(sourceFolders[i], archive);
-					float percentage = (i + 1.0f) / sourceFolders.Length * 100.0f;
-					progressDelegate?.Report(percentage);
-				}
-			}
-			catch (Exception ex)
-			{
-				App.Logger.Warn(ex, $"Error compressing folder: {archive}");
-				NativeFileOperationsHelper.DeleteFileFromApp(archive);
-				noErrors = false;
-			}
-			return noErrors;
-		}
-
-
-	}
-
-
 	public static class ZipHelpers
 	{
 		public static async Task<bool> CompressMultipleToArchive(string[] sourceFolders, string archive, IProgress<float> progressDelegate)

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.DataModels;
+using Files.App.Dialogs;
 using Files.App.Helpers;
 using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
@@ -153,8 +154,9 @@ namespace Files.App.UserControls
 
         private async void PreviewPane_Click(object sender, RoutedEventArgs e)
         {
-			var d = new ArchiveSetup();
+			var d = new CompressArchiveDialog();
 			await d.ShowAsync();
+			var c = d.ToCreator();
         }
     }
 }
