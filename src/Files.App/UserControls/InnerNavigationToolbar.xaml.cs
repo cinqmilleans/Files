@@ -154,8 +154,8 @@ namespace Files.App.UserControls
 
         private async void PreviewPane_Click(object sender, RoutedEventArgs e)
         {
-			//var d = new CompressArchiveDialog();
-			//await d.ShowAsync();
+			var d = new CompressArchiveDialog();
+			await d.ShowAsync();
 			//var c = d.ToCreator();
         }
     }

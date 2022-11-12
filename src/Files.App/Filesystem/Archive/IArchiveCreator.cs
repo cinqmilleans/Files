@@ -6,6 +6,8 @@ namespace Files.App.Filesystem.Archive
 {
 	public interface IArchiveCreator
 	{
+		event EventHandler<IArchiveCreator>? ProgressionUpdated;
+
 		string ArchiveName { get; }
 
 		string Directory { get; set; }
@@ -18,8 +20,9 @@ namespace Files.App.Filesystem.Archive
 		ArchiveCompressionLevels CompressionLevel { get; set; }
 		ArchiveSplittingSizes SplittingSize { get; set; }
 
-		IProgress<float> Progress { get; set; }
+		ArchiveCreatorStatus Status { get; }
+		float Percent { get; }
 
-		Task<bool> CreateArchiveAsync();
+		void RunCreationAsync();
 	}
 }

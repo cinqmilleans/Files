@@ -1,6 +1,7 @@
 #nullable disable warnings
 
 using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.UI.Controls;
 using Files.App.Dialogs;
 using Files.App.Extensions;
 using Files.App.Filesystem;
@@ -15,6 +16,7 @@ using Files.Backend.Enums;
 using Files.Shared;
 using Files.Shared.Enums;
 using Microsoft.AppCenter.Utils.Files;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -31,6 +33,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.System;
+using static Vanara.PInvoke.Kernel32.PSS_HANDLE_ENTRY;
 
 namespace Files.App.Interacts
 {
@@ -610,10 +613,10 @@ namespace Files.App.Interacts
 				SplittingSize = dialog.SplittingSize,
 			};
 
-			await CompressArchiveAsync(creator);
+			CompressArchiveAsync(creator);
 		}
 
-		private async Task CompressArchiveAsync(IArchiveCreator creator)
+		private static void CompressArchiveAsync(IArchiveCreator creator)
 		{
 			var archiveName = creator.ArchiveName;
 
@@ -627,29 +630,44 @@ namespace Files.App.Interacts
 				FileOperationType.Compressed,
 				compressionToken
 			);
-			creator.Progress = banner.Progress;
 
-			bool isSuccess = await creator.CreateArchiveAsync();
+			creator.ProgressionUpdated += Creator_ProgressionUpdated;
+			creator.RunCreationAsync();
 
-			banner.Remove();
-			if (isSuccess)
-				App.OngoingTasksViewModel.PostBanner
-				(
-					"CompressionCompleted".GetLocalizedResource(),
-					string.Format("CompressionSucceded".GetLocalizedResource(), archiveName),
-					0,
-					ReturnResult.Success,
-					FileOperationType.Compressed
-				);
-			else
-				App.OngoingTasksViewModel.PostBanner
-				(
-					"CompressionCompleted".GetLocalizedResource(),
-					string.Format("CompressionFailed".GetLocalizedResource(), archiveName),
-					0,
-					ReturnResult.Failed,
-					FileOperationType.Compressed
-				);
+			void Creator_ProgressionUpdated(object? sender, IArchiveCreator creator)
+			{
+				creator.ProgressionUpdated -= Creator_ProgressionUpdated;
+
+				switch (creator.Status)
+				{
+					case ArchiveCreatorStatus.Running:
+						IProgress<float> progress = banner.Progress;
+						progress.Report(creator.Percent);
+						break;
+					case ArchiveCreatorStatus.Failed:
+						banner.Remove();
+						App.OngoingTasksViewModel.PostBanner
+						(
+							"CompressionCompleted".GetLocalizedResource(),
+							string.Format("CompressionFailed".GetLocalizedResource(), archiveName),
+							0,
+							ReturnResult.Failed,
+							FileOperationType.Compressed
+						);
+						break;
+					case ArchiveCreatorStatus.Completed:
+						banner.Remove();
+						App.OngoingTasksViewModel.PostBanner
+						(
+							"CompressionCompleted".GetLocalizedResource(),
+							string.Format("CompressionSucceded".GetLocalizedResource(), archiveName),
+							0,
+							ReturnResult.Success,
+							FileOperationType.Compressed
+						);
+						break;
+				}
+			}
 		}
 
 		public async Task DecompressArchive()

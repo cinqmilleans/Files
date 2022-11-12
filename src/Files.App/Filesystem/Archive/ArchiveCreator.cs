@@ -10,6 +10,8 @@ namespace Files.App.Filesystem.Archive
 {
 	public class ArchiveCreator : IArchiveCreator
 	{
+		public event EventHandler<IArchiveCreator>? ProgressionUpdated;
+
 		public string ArchiveName => Path.Combine(Directory, FileName + ArchiveExtension);
 
 		public string Directory { get; set; } = string.Empty;
@@ -22,7 +24,11 @@ namespace Files.App.Filesystem.Archive
 		public ArchiveCompressionLevels CompressionLevel { get; set; } = ArchiveCompressionLevels.Normal;
 		public ArchiveSplittingSizes SplittingSize { get; set; } = ArchiveSplittingSizes.None;
 
-		public IProgress<float> Progress { get; set; } = new Progress<float>();
+		private ArchiveCreatorStatus status = ArchiveCreatorStatus.Initial;
+		public ArchiveCreatorStatus Status => status;
+
+		private float percent = 0;
+		public float Percent => percent;
 
 		private string ArchiveExtension => FileFormat switch
 		{
@@ -62,9 +68,13 @@ namespace Files.App.Filesystem.Archive
 			_ => throw new ArgumentOutOfRangeException(nameof(SplittingSize)),
 		};
 
-		public async Task<bool> CreateArchiveAsync()
+		public void RunCreationAsync()
 		{
-			var archive = ArchiveName;
+			status = ArchiveCreatorStatus.Running;
+			percent = 0;
+			UpdateProgression();
+
+			var path = ArchiveName;
 			var sources = Sources.ToArray();
 
 			var compressor = new SevenZipCompressor
@@ -81,30 +91,49 @@ namespace Files.App.Filesystem.Archive
 
 			try
 			{
-				if (!string.IsNullOrEmpty(Password))
+				compressor.Compressing += Compressor_Compressing;
+				compressor.CompressionFinished += Compressor_CompressionFinished;
+
+				using var stream = new FileStream(path, FileMode.CreateNew);
 				{
-					await compressor.CompressFilesEncryptedAsync(archive, Password, sources.ToArray());
-					return true;
+					if (string.IsNullOrEmpty(Password))
+						compressor.BeginCompressFiles(stream, sources);
+					else
+						compressor.BeginCompressFilesEncrypted(path, Password, sources);
 				}
 
-				for (int i = 0; i < sources.Length; ++i)
-				{
-					if (i > 0)
-						compressor.CompressionMode = CompressionMode.Append;
-
-					await compressor.CompressDirectoryAsync(sources[i], archive);
-					float percentage = (i + 1.0f) / sources.Length * 100.0f;
-					Progress.Report(percentage);
-				}
-
-				return true;
 			}
 			catch (Exception ex)
 			{
-				App.Logger.Warn(ex, $"Error compressing folder: {archive}");
-				NativeFileOperationsHelper.DeleteFileFromApp(archive);
-				return false;
+				App.Logger.Warn(ex, $"Error compressing folder: {path}");
+				NativeFileOperationsHelper.DeleteFileFromApp(path);
+
+				compressor.Compressing -= Compressor_Compressing;
+				compressor.CompressionFinished -= Compressor_CompressionFinished;
+
+				status = ArchiveCreatorStatus.Failed;
+				percent = 0;
+				UpdateProgression();
 			}
 		}
+
+		private void Compressor_Compressing(object? sender, ProgressEventArgs e)
+		{
+			percent = e.PercentDone;
+			UpdateProgression();
+		}
+		private void Compressor_CompressionFinished(object? sender, EventArgs e)
+		{
+			var compressor = (sender as SevenZipCompressor)!;
+			compressor.Compressing -= Compressor_Compressing;
+			compressor.CompressionFinished -= Compressor_CompressionFinished;
+
+			status = ArchiveCreatorStatus.Completed;
+			percent = 100;
+			UpdateProgression();
+		}
+
+		private void UpdateProgression()
+			=> ProgressionUpdated?.Invoke(this, this);
 	}
 }

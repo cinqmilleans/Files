@@ -127,8 +127,10 @@
 				</settings:SettingsBlockControl.Icon>
 				<PasswordBox
 					x:Name="PasswordBox"
+					MinWidth="120"
 					Password="{x:Bind Password, Mode=TwoWay}"
 					PasswordRevealMode="Peek"
+					IsPasswordRevealButtonEnabled="True"
 					PlaceholderText="Password" />
 			</settings:SettingsBlockControl>
 
