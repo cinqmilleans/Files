@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Input;
 using Files.App.Filesystem.Archive;
 using Files.Backend.Models;
 using Microsoft.UI.Xaml;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.Foundation.Metadata;
 
 namespace Files.App.Dialogs
@@ -27,6 +29,9 @@ namespace Files.App.Dialogs
 
 		public static readonly DependencyProperty SplittingSizeProperty = DependencyProperty
 			.Register(nameof(SplittingSize), typeof(ArchiveSplittingSizes), typeof(CompressArchiveDialog), new(ArchiveSplittingSizes.None));
+
+		private bool canCreate = false;
+		public bool CanCreate => canCreate;
 
 		public string FileName
 		{
@@ -54,6 +59,8 @@ namespace Files.App.Dialogs
 			get => (ArchiveSplittingSizes)GetValue(SplittingSizeProperty);
 			set => SetValue(SplittingSizeProperty, (int)value);
 		}
+
+		private ICommand CreateCommand { get; }
 
 		private IImmutableList<FileFormatItem> FileFormats { get; } = new List<FileFormatItem>
 		{
@@ -86,16 +93,11 @@ namespace Files.App.Dialogs
 			new(ArchiveSplittingSizes.Bd23040, ToSizeText(23040, "Bluray")),
 		}.ToImmutableList();
 
-		public CompressArchiveDialog() => InitializeComponent();
-
-		public IArchiveCreator ToCreator() => new ArchiveCreator
+		public CompressArchiveDialog()
 		{
-			FileName = FileName,
-			Password = Password,
-			FileFormat = FileFormat,
-			CompressionLevel = CompressionLevel,
-			SplittingSize = SplittingSize,
-		};
+			InitializeComponent();
+			CreateCommand = new RelayCommand(() => canCreate = true);
+		}
 
 		public new Task<ContentDialogResult> ShowAsync() => SetContentDialogRoot(this).ShowAsync().AsTask();
 
@@ -109,16 +111,25 @@ namespace Files.App.Dialogs
 		private static string ToSizeText(ulong size) => ByteSize.FromMebiBytes(size).ShortString;
 		private static string ToSizeText(ulong size, string labelKey) => $"{ToSizeText(size)} - {labelKey}";
 
-		private void FileFormatSelector_Loading(FrameworkElement _, object args)
-			=> FileFormatSelector.SelectedItem = FileFormats.First(format => format.Key == FileFormat);
-		private void CompressionLevelSelector_Loading(FrameworkElement _, object e)
-			=> CompressionLevelSelector.SelectedItem = CompressionLevels.First(level => level.Key == CompressionLevel);
-		private void SplittingSizeSelector_Loading(FrameworkElement _, object e)
-			=> SplittingSizeSelector.SelectedItem = SplittingSizes.First(level => level.Key == SplittingSize);
-
-		private void FileFormatSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void FileNameBox_Loading(FrameworkElement _, object args)
 		{
-
+			FileNameBox.Loading -= FileNameBox_Loading;
+			FileNameBox.SelectionStart = FileNameBox.Text.Length;
+		}
+		private void FileFormatSelector_Loading(FrameworkElement _, object args)
+		{
+			FileFormatSelector.Loading -= FileFormatSelector_Loading;
+			FileFormatSelector.SelectedItem = FileFormats.First(format => format.Key == FileFormat);
+		}
+		private void CompressionLevelSelector_Loading(FrameworkElement _, object e)
+		{
+			CompressionLevelSelector.Loading -= CompressionLevelSelector_Loading;
+			CompressionLevelSelector.SelectedItem = CompressionLevels.First(level => level.Key == CompressionLevel);
+		}
+		private void SplittingSizeSelector_Loading(FrameworkElement _, object e)
+		{
+			SplittingSizeSelector.Loading -= SplittingSizeSelector_Loading;
+			SplittingSizeSelector.SelectedItem = SplittingSizes.First(level => level.Key == SplittingSize);
 		}
 
 		private record FileFormatItem(ArchiveFormats Key, string Label, string Description);

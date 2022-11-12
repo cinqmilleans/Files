@@ -15,6 +15,7 @@
 	DefaultButton="Primary"
 	IsPrimaryButtonEnabled="True"
 	PrimaryButtonText="Create"
+	PrimaryButtonCommand="{x:Bind CreateCommand}"
 	RequestedTheme="{x:Bind helpers:ThemeHelper.RootTheme}"
 	Style="{StaticResource DefaultContentDialogStyle}"
 	mc:Ignorable="d">
@@ -45,6 +46,7 @@
 			VerticalAlignment="Bottom"
 			Header="Archive name"
 			PlaceholderText="Enter a name"
+			Loading="FileNameBox_Loading"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
 		<ComboBox
@@ -66,6 +68,7 @@
 						<TextBlock Text="{Binding Label}" />
 						<TextBlock
 							Grid.Column="1"
+							VerticalAlignment="Bottom"
 							FontSize="12"
 							FontWeight="Light"
 							Text="{Binding Description}"

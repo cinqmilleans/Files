@@ -6,6 +6,9 @@ namespace Files.App.Filesystem.Archive
 {
 	public interface IArchiveCreator
 	{
+		string ArchiveName { get; }
+
+		string Directory { get; set; }
 		string FileName { get; set; }
 		string Password { get; set; }
 
@@ -17,6 +20,6 @@ namespace Files.App.Filesystem.Archive
 
 		IProgress<float> Progress { get; set; }
 
-		Task<bool> CreateArchive();
+		Task<bool> CreateArchiveAsync();
 	}
 }
