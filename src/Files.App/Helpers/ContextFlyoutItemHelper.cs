@@ -619,6 +619,8 @@ namespace Files.App.Helpers
 
 		public static List<ContextMenuFlyoutItemViewModel> GetBaseItemMenuItems(BaseLayoutCommandsViewModel commandsViewModel, List<ListedItem> selectedItems, SelectedItemsPropertiesViewModel selectedItemsPropertiesViewModel, CurrentInstanceViewModel currentInstanceViewModel)
 		{
+			bool isArchive = selectedItems.Any() && selectedItems.All(x => x.IsArchive) || selectedItems.All(x => x.PrimaryItemAttribute == StorageItemTypes.File && FileExtensionHelpers.IsZipFile(x.FileExtension));
+
 			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
 
 			return new List<ContextMenuFlyoutItemViewModel>()
@@ -942,44 +944,6 @@ namespace Files.App.Helpers
 				},
 				new ContextMenuFlyoutItemViewModel()
 				{
-					Text = "BaseLayoutItemContextFlyoutExtractionOptions".GetLocalizedResource(),
-					Glyph = "\xF11A",
-					ShowItem = selectedItems.Any() && selectedItems.All(x => x.IsArchive) || selectedItems.All(x => x.PrimaryItemAttribute == StorageItemTypes.File && FileExtensionHelpers.IsZipFile(x.FileExtension)),
-					ShowInSearchPage = true,
-					GlyphFontFamilyName = "CustomGlyph",
-					Items = new List<ContextMenuFlyoutItemViewModel>()
-					{
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "BaseLayoutItemContextFlyoutExtractFilesOption".GetLocalizedResource(),
-							ShowItem = selectedItems.Count == 1,
-							Command = commandsViewModel.DecompressArchiveCommand,
-							Glyph = "\xF11A",
-							GlyphFontFamilyName = "CustomGlyph",
-							ShowInSearchPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "BaseLayoutItemContextFlyoutExtractHereOption".GetLocalizedResource(),
-							Command = commandsViewModel.DecompressArchiveHereCommand,
-							Glyph = "\xF11A",
-							GlyphFontFamilyName = "CustomGlyph",
-							ShowInSearchPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = selectedItems.Count > 1
-								? string.Format("BaseLayoutItemContextFlyoutExtractToChildFolder".GetLocalizedResource(), "*")
-								: string.Format("BaseLayoutItemContextFlyoutExtractToChildFolder".GetLocalizedResource(), Path.GetFileNameWithoutExtension(selectedItems.First().Name)),
-							Command = commandsViewModel.DecompressArchiveToChildFolderCommand,
-							Glyph = "\xF11A",
-							GlyphFontFamilyName = "CustomGlyph",
-							ShowInSearchPage = true,
-						}
-					}
-				},
-				new ContextMenuFlyoutItemViewModel()
-				{
 					Text = "BaseLayoutItemContextFlyoutOpenParentFolder/Text".GetLocalizedResource(),
 					Glyph = "\uE197",
 					Command = commandsViewModel.OpenParentFolderCommand,
@@ -1027,28 +991,68 @@ namespace Files.App.Helpers
 					ShowInFtpPage = true,
 					SingleItemOnly = true,
 				},
+				new ContextMenuFlyoutItemViewModel
+				{
+					Text = "Archive",
+					ShowInSearchPage = true,
+					Items = new List<ContextMenuFlyoutItemViewModel>
+					{
+						new ContextMenuFlyoutItemViewModel()
+						{
+							Text = "BaseLayoutItemContextFlyoutExtractFilesOption".GetLocalizedResource(),
+							ShowItem = isArchive,
+							Command = commandsViewModel.DecompressArchiveCommand,
+							Glyph = "\xF11A",
+							GlyphFontFamilyName = "CustomGlyph",
+							ShowInSearchPage = true,
+						},
+						new ContextMenuFlyoutItemViewModel()
+						{
+							Text = "BaseLayoutItemContextFlyoutExtractHereOption".GetLocalizedResource(),
+							ShowItem = isArchive,
+							Command = commandsViewModel.DecompressArchiveHereCommand,
+							Glyph = "\xF11A",
+							GlyphFontFamilyName = "CustomGlyph",
+							ShowInSearchPage = true,
+						},
+						new ContextMenuFlyoutItemViewModel()
+						{
+							Text = selectedItems.Count > 1
+								? string.Format("BaseLayoutItemContextFlyoutExtractToChildFolder".GetLocalizedResource(), "*")
+								: string.Format("BaseLayoutItemContextFlyoutExtractToChildFolder".GetLocalizedResource(), Path.GetFileNameWithoutExtension(selectedItems.First().Name)),
+							Command = commandsViewModel.DecompressArchiveToChildFolderCommand,
+							Glyph = "\xF11A",
+							GlyphFontFamilyName = "CustomGlyph",
+							ShowInSearchPage = true,
+							ShowItem = isArchive,
+						},
+						new ContextMenuFlyoutItemViewModel
+						{
+							ShowItem = isArchive,
+							ItemType = ItemType.Separator,
+						},
+						new ContextMenuFlyoutItemViewModel
+						{
+							Text = "AddToArchive".GetLocalizedResource(),
+							Glyph = "\uE8DE",
+							ShowInSearchPage = true,
+							Command = commandsViewModel.CompressIntoArchiveCommand,
+						},
+						new ContextMenuFlyoutItemViewModel
+						{
+							Text = string.Format("AddSingleItemToArchive".GetLocalizedResource(), selectedItems.First().Name),
+							Glyph = "\uE8DE",
+							ShowInSearchPage = true,
+							Command = commandsViewModel.CompressIntoArchiveCommand,
+						},
+					},
+				},
 				new ContextMenuFlyoutItemViewModel()
 				{
 					ItemType = ItemType.Separator,
 					Tag = "OverflowSeparator",
 					ShowInSearchPage = true,
 					IsHidden = true,
-				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Command = commandsViewModel.CompressIntoArchiveCommand,
-					Glyph = "\uE8DE",
-					Text = string.Format("AddSingleItemToArchive".GetLocalizedResource(), selectedItems.First().Name),
-					ShowInSearchPage = true,
-					ShowItem = selectedItems.Count == 1 && !selectedItems.First().IsArchive,
-				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Command = commandsViewModel.CompressIntoArchiveCommand,
-					Glyph = "\uE8DE",
-					Text = "AddToArchive".GetLocalizedResource(),
-					ShowInSearchPage = true,
-					ShowItem = selectedItems.Count > 1 && !selectedItems.First().IsArchive,
 				},
 				new ContextMenuFlyoutItemViewModel()
 				{
