@@ -616,7 +616,7 @@ namespace Files.App.Interacts
 			CompressArchiveAsync(creator);
 		}
 
-		private static void CompressArchiveAsync(IArchiveCreator creator)
+		private static async Task CompressArchiveAsync(IArchiveCreator creator)
 		{
 			var archiveName = creator.ArchiveName;
 
@@ -631,43 +631,27 @@ namespace Files.App.Interacts
 				compressionToken
 			);
 
-			creator.ProgressionUpdated += Creator_ProgressionUpdated;
-			creator.RunCreationAsync();
+			bool isSuccess = await creator.RunCreationAsync();
 
-			void Creator_ProgressionUpdated(object? sender, IArchiveCreator creator)
-			{
-				creator.ProgressionUpdated -= Creator_ProgressionUpdated;
-
-				switch (creator.Status)
-				{
-					case ArchiveCreatorStatus.Running:
-						IProgress<float> progress = banner.Progress;
-						progress.Report(creator.Percent);
-						break;
-					case ArchiveCreatorStatus.Failed:
-						banner.Remove();
-						App.OngoingTasksViewModel.PostBanner
-						(
-							"CompressionCompleted".GetLocalizedResource(),
-							string.Format("CompressionFailed".GetLocalizedResource(), archiveName),
-							0,
-							ReturnResult.Failed,
-							FileOperationType.Compressed
-						);
-						break;
-					case ArchiveCreatorStatus.Completed:
-						banner.Remove();
-						App.OngoingTasksViewModel.PostBanner
-						(
-							"CompressionCompleted".GetLocalizedResource(),
-							string.Format("CompressionSucceded".GetLocalizedResource(), archiveName),
-							0,
-							ReturnResult.Success,
-							FileOperationType.Compressed
-						);
-						break;
-				}
-			}
+			banner.Remove();
+			if (isSuccess)
+				App.OngoingTasksViewModel.PostBanner
+				(
+					"CompressionCompleted".GetLocalizedResource(),
+					string.Format("CompressionSucceded".GetLocalizedResource(), archiveName),
+					0,
+					ReturnResult.Success,
+					FileOperationType.Compressed
+				);
+			else
+				App.OngoingTasksViewModel.PostBanner
+				(
+					"CompressionCompleted".GetLocalizedResource(),
+					string.Format("CompressionFailed".GetLocalizedResource(), archiveName),
+					0,
+					ReturnResult.Failed,
+					FileOperationType.Compressed
+				);
 		}
 
 		public async Task DecompressArchive()
