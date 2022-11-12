@@ -620,6 +620,7 @@ namespace Files.App.Helpers
 		public static List<ContextMenuFlyoutItemViewModel> GetBaseItemMenuItems(BaseLayoutCommandsViewModel commandsViewModel, List<ListedItem> selectedItems, SelectedItemsPropertiesViewModel selectedItemsPropertiesViewModel, CurrentInstanceViewModel currentInstanceViewModel)
 		{
 			bool isArchive = selectedItems.Any() && selectedItems.All(x => x.IsArchive) || selectedItems.All(x => x.PrimaryItemAttribute == StorageItemTypes.File && FileExtensionHelpers.IsZipFile(x.FileExtension));
+			string archiveName = Path.GetFileName(selectedItems.Count > 1 ? selectedItems[0].ItemPath : Path.GetDirectoryName(selectedItems[0].ItemPath)) ?? string.Empty;
 
 			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
 
@@ -1040,7 +1041,14 @@ namespace Files.App.Helpers
 						},
 						new ContextMenuFlyoutItemViewModel
 						{
-							Text = string.Format("AddSingleItemToArchive".GetLocalizedResource(), selectedItems.First().Name),
+							Text = string.Format("AddSingleItemToArchive".GetLocalizedResource(), archiveName),
+							Glyph = "\uE8DE",
+							ShowInSearchPage = true,
+							Command = commandsViewModel.CompressIntoArchiveCommand,
+						},
+						new ContextMenuFlyoutItemViewModel
+						{
+							Text = string.Format("AddSingleItemToArchive".GetLocalizedResource(), archiveName),
 							Glyph = "\uE8DE",
 							ShowInSearchPage = true,
 							Command = commandsViewModel.CompressIntoArchiveCommand,
