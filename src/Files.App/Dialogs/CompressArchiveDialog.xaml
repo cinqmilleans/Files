@@ -7,15 +7,15 @@
 	xmlns:helpers="using:Files.App.Helpers"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:settings="using:Files.App.UserControls.Settings"
-	Title="Add to Archive"
+	Title="{helpers:ResourceString Name=CreateArchive}"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
-	CloseButtonText="Cancel"
+	CloseButtonText="{helpers:ResourceString Name=Cancel}"
 	CornerRadius="{StaticResource OverlayCornerRadius}"
 	DefaultButton="Primary"
 	IsPrimaryButtonEnabled="True"
-	PrimaryButtonText="Create"
 	PrimaryButtonCommand="{x:Bind CreateCommand}"
+	PrimaryButtonText="{helpers:ResourceString Name=Create}"
 	RequestedTheme="{x:Bind helpers:ThemeHelper.RootTheme}"
 	Style="{StaticResource DefaultContentDialogStyle}"
 	mc:Ignorable="d">
@@ -45,8 +45,8 @@
 			Width="340"
 			VerticalAlignment="Bottom"
 			Header="{helpers:ResourceString Name=ArchiveName}"
-			PlaceholderText="{helpers:ResourceString Name=EnterName}"
 			Loading="FileNameBox_Loading"
+			PlaceholderText="{helpers:ResourceString Name=EnterName}"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
 		<ComboBox
@@ -128,9 +128,9 @@
 				<PasswordBox
 					x:Name="PasswordBox"
 					MinWidth="120"
+					IsPasswordRevealButtonEnabled="True"
 					Password="{x:Bind Password, Mode=TwoWay}"
 					PasswordRevealMode="Peek"
-					IsPasswordRevealButtonEnabled="True"
 					PlaceholderText="Password" />
 			</settings:SettingsBlockControl>
 

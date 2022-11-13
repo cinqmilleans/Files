@@ -613,7 +613,59 @@ namespace Files.App.Interacts
 				SplittingSize = dialog.SplittingSize,
 			};
 
-			CompressArchiveAsync(creator);
+			await CompressArchiveAsync(creator);
+		}
+
+		public async Task CompressIntoZip()
+		{
+			string[] sources = associatedInstance.SlimContentPage.SelectedItems
+				.Select(item => item.ItemPath)
+				.ToArray();
+
+			if (sources.Length is 0)
+				return;
+
+			string directory = associatedInstance.FilesystemViewModel.WorkingDirectory;
+
+			string fileName = sources.Length is 1
+				? Path.GetFileNameWithoutExtension(sources[0])
+				: Path.GetFileNameWithoutExtension(directory);
+
+			var creator = new ArchiveCreator
+			{
+				Sources = sources,
+				Directory = directory,
+				FileName = fileName,
+				FileFormat = ArchiveFormats.Zip,
+			};
+
+			await CompressArchiveAsync(creator);
+		}
+
+		public async Task CompressIntoSevenZip()
+		{
+			string[] sources = associatedInstance.SlimContentPage.SelectedItems
+				.Select(item => item.ItemPath)
+				.ToArray();
+
+			if (sources.Length is 0)
+				return;
+
+			string directory = associatedInstance.FilesystemViewModel.WorkingDirectory;
+
+			string fileName = sources.Length is 1
+				? Path.GetFileNameWithoutExtension(sources[0])
+				: Path.GetFileNameWithoutExtension(directory);
+
+			var creator = new ArchiveCreator
+			{
+				Sources = sources,
+				Directory = directory,
+				FileName = fileName,
+				FileFormat = ArchiveFormats.SevenZip,
+			};
+
+			await CompressArchiveAsync(creator);
 		}
 
 		private static async Task CompressArchiveAsync(IArchiveCreator creator)
