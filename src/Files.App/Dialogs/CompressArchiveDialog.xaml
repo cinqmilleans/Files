@@ -94,7 +94,7 @@
 
 			<settings:SettingsBlockControl Title="{helpers:ResourceString Name=CompressionLevel}" HorizontalAlignment="Stretch">
 				<settings:SettingsBlockControl.Icon>
-					<FontIcon Glyph="&#xE790;" />
+					<FontIcon Glyph="&#xE73F;" />
 				</settings:SettingsBlockControl.Icon>
 				<ComboBox
 					x:Name="CompressionLevelSelector"
@@ -123,11 +123,11 @@
 				HorizontalAlignment="Stretch"
 				Description="Optional">
 				<settings:SettingsBlockControl.Icon>
-					<FontIcon Glyph="&#xE790;" />
+					<FontIcon Glyph="&#xE72E;" />
 				</settings:SettingsBlockControl.Icon>
 				<PasswordBox
 					x:Name="PasswordBox"
-					MinWidth="120"
+					MinWidth="132"
 					IsPasswordRevealButtonEnabled="True"
 					Password="{x:Bind Password, Mode=TwoWay}"
 					PasswordRevealMode="Peek"

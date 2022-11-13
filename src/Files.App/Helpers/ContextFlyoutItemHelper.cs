@@ -1034,7 +1034,7 @@ namespace Files.App.Helpers
 						},
 						new ContextMenuFlyoutItemViewModel
 						{
-							Text = "AddToArchive".GetLocalizedResource(),
+							Text = "CreateArchive".GetLocalizedResource(),
 							Glyph = "\uE8DE",
 							ShowInSearchPage = true,
 							Command = commandsViewModel.CompressIntoArchiveCommand,
