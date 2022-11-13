@@ -6,8 +6,6 @@ namespace Files.App.Filesystem.Archive
 {
 	public interface IArchiveCreator
 	{
-		event EventHandler<IArchiveCreator>? ProgressionUpdated;
-
 		string ArchiveName { get; }
 
 		string Directory { get; set; }

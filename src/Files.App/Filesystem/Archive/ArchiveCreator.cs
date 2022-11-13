@@ -10,8 +10,6 @@ namespace Files.App.Filesystem.Archive
 {
 	public class ArchiveCreator : IArchiveCreator
 	{
-		public event EventHandler<IArchiveCreator>? ProgressionUpdated;
-
 		public string ArchiveName => Path.Combine(Directory, FileName + ArchiveExtension);
 
 		public string Directory { get; set; } = string.Empty;
@@ -48,19 +46,19 @@ namespace Files.App.Filesystem.Archive
 			ArchiveCompressionLevels.None => SevenZip.CompressionLevel.None,
 			_ => throw new ArgumentOutOfRangeException(nameof(CompressionLevel)),
 		};
-		private int SevenZipVolumeSize => SplittingSize switch
+		private long SevenZipVolumeSize => SplittingSize switch
 		{
-			ArchiveSplittingSizes.None => 0,
-			ArchiveSplittingSizes.Mo10 => 10,
-			ArchiveSplittingSizes.Mo100 => 100,
-			ArchiveSplittingSizes.Mo1024 => 1024,
-			ArchiveSplittingSizes.Mo5120 => 5120,
-			ArchiveSplittingSizes.Fat4092 => 4092,
-			ArchiveSplittingSizes.Cd650 => 650,
-			ArchiveSplittingSizes.Cd700 => 700,
-			ArchiveSplittingSizes.Dvd4480 => 4480,
-			ArchiveSplittingSizes.Dvd8128 => 8128,
-			ArchiveSplittingSizes.Bd23040 => 23040,
+			ArchiveSplittingSizes.None => 0L,
+			ArchiveSplittingSizes.Mo10 => 10 * 1000 * 1000L,
+			ArchiveSplittingSizes.Mo100 => 100 * 1000 * 1000L,
+			ArchiveSplittingSizes.Mo1024 => 1024 * 1000 * 1000L,
+			ArchiveSplittingSizes.Mo5120 => 5120 * 1000 * 1000L,
+			ArchiveSplittingSizes.Fat4092 => 4092 * 1000 * 1000L,
+			ArchiveSplittingSizes.Cd650 => 650 * 1000 * 1000L,
+			ArchiveSplittingSizes.Cd700 => 700 * 1000 * 1000L,
+			ArchiveSplittingSizes.Dvd4480 => 4480 * 1000 * 1000L,
+			ArchiveSplittingSizes.Dvd8128 => 8128 * 1000 * 1000L,
+			ArchiveSplittingSizes.Bd23040 => 23040 * 1000 * 1000L,
 			_ => throw new ArgumentOutOfRangeException(nameof(SplittingSize)),
 		};
 
@@ -69,6 +67,10 @@ namespace Files.App.Filesystem.Archive
 			string path = ArchiveName;
 			string[] sources = Sources.ToArray();
 			bool hasPassword = !string.IsNullOrEmpty(Password);
+
+			int index = 1;
+			while (File.Exists(path) || System.IO.Directory.Exists(path))
+				path = Path.Combine(Directory, $"{FileName} ({++index}){ArchiveExtension}");
 
 			var compressor = new SevenZipCompressor
 			{
