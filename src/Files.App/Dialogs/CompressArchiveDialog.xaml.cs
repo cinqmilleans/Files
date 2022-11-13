@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using Files.App.Extensions;
 using Files.App.Filesystem.Archive;
 using Files.Backend.Models;
 using Microsoft.UI.Xaml;
@@ -64,33 +65,33 @@ namespace Files.App.Dialogs
 
 		private IImmutableList<FileFormatItem> FileFormats { get; } = new List<FileFormatItem>
 		{
-			new(ArchiveFormats.Zip, ".zip", "Works natively with Windows."),
-			new(ArchiveFormats.SevenZip, ".7z", "Smaller archives but requires compatible software."),
+			new(ArchiveFormats.Zip, ".zip", "CompressionFormatZipDescription".GetLocalizedResource()),
+			new(ArchiveFormats.SevenZip, ".7z", "CompressionFormatSevenZipDescription".GetLocalizedResource()),
 		}.ToImmutableList();
 
 		private IImmutableList<CompressionLevelItem> CompressionLevels { get; } = new List<CompressionLevelItem>
 		{
-			new(ArchiveCompressionLevels.Ultra, "Ultra"),
-			new(ArchiveCompressionLevels.High, "High"),
-			new(ArchiveCompressionLevels.Normal, "Normal"),
-			new(ArchiveCompressionLevels.Low, "Low"),
-			new(ArchiveCompressionLevels.Fast, "Fast"),
-			new(ArchiveCompressionLevels.None, "None"),
+			new(ArchiveCompressionLevels.Ultra, "CompressionLevelUltra".GetLocalizedResource()),
+			new(ArchiveCompressionLevels.High, "CompressionLevelHigh".GetLocalizedResource()),
+			new(ArchiveCompressionLevels.Normal, "CompressionLevelNormal".GetLocalizedResource()),
+			new(ArchiveCompressionLevels.Low, "CompressionLevelLow".GetLocalizedResource()),
+			new(ArchiveCompressionLevels.Fast, "CompressionLevelFast".GetLocalizedResource()),
+			new(ArchiveCompressionLevels.None, "CompressionLevelNone".GetLocalizedResource()),
 		}.ToImmutableList();
 
 		private IImmutableList<SplittingSizeItem> SplittingSizes { get; } = new List<SplittingSizeItem>
 		{
-			new(ArchiveSplittingSizes.None, "Do not split"),
+			new(ArchiveSplittingSizes.None, "Do not split".GetLocalizedResource()),
 			new(ArchiveSplittingSizes.Mo10, ToSizeText(10)),
 			new(ArchiveSplittingSizes.Mo100, ToSizeText(100)),
-			new(ArchiveSplittingSizes.Cd650, ToSizeText(650, "CD")),
-			new(ArchiveSplittingSizes.Cd700, ToSizeText(700, "CD")),
+			new(ArchiveSplittingSizes.Cd650, ToSizeText(650, "CD".GetLocalizedResource())),
+			new(ArchiveSplittingSizes.Cd700, ToSizeText(700, "CD".GetLocalizedResource())),
 			new(ArchiveSplittingSizes.Mo1024, ToSizeText(1024)),
-			new(ArchiveSplittingSizes.Fat4092, ToSizeText(4092, "FAT")),
-			new(ArchiveSplittingSizes.Dvd4480, ToSizeText(4480, "DVD")),
+			new(ArchiveSplittingSizes.Fat4092, ToSizeText(4092, "FAT".GetLocalizedResource())),
+			new(ArchiveSplittingSizes.Dvd4480, ToSizeText(4480, "DVD".GetLocalizedResource())),
 			new(ArchiveSplittingSizes.Mo5120, ToSizeText(5120)),
-			new(ArchiveSplittingSizes.Dvd8128, ToSizeText(8128, "DVD")),
-			new(ArchiveSplittingSizes.Bd23040, ToSizeText(23040, "Bluray")),
+			new(ArchiveSplittingSizes.Dvd8128, ToSizeText(8128, "DVD".GetLocalizedResource())),
+			new(ArchiveSplittingSizes.Bd23040, ToSizeText(23040, "Bluray".GetLocalizedResource())),
 		}.ToImmutableList();
 
 		public CompressArchiveDialog()

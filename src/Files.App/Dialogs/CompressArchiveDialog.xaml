@@ -44,8 +44,8 @@
 			x:Name="FileNameBox"
 			Width="340"
 			VerticalAlignment="Bottom"
-			Header="Archive name"
-			PlaceholderText="Enter a name"
+			Header="{helpers:ResourceString Name=ArchiveName}"
+			PlaceholderText="{helpers:ResourceString Name=EnterName}"
 			Loading="FileNameBox_Loading"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
@@ -92,7 +92,7 @@
 				</TransitionCollection>
 			</StackPanel.ChildrenTransitions>
 
-			<settings:SettingsBlockControl Title="Compression Level" HorizontalAlignment="Stretch">
+			<settings:SettingsBlockControl Title="{helpers:ResourceString Name=CompressionLevel}" HorizontalAlignment="Stretch">
 				<settings:SettingsBlockControl.Icon>
 					<FontIcon Glyph="&#xE790;" />
 				</settings:SettingsBlockControl.Icon>
