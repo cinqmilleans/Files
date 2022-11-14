@@ -674,6 +674,7 @@ namespace Files.App.Interacts
 				compressionToken
 			);
 
+			creator.Progress = banner.Progress;
 			bool isSuccess = await creator.RunCreationAsync();
 
 			banner.Remove();

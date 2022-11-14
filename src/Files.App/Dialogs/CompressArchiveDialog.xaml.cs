@@ -133,6 +133,15 @@ namespace Files.App.Dialogs
 			SplittingSizeSelector.SelectedItem = SplittingSizes.First(level => level.Key == SplittingSize);
 		}
 
+		private void FileFormatSelector_SelectionChanged(object _, SelectionChangedEventArgs e)
+		{
+			SplittingSizeSetting.IsEnabled = FileFormat is ArchiveFormats.SevenZip;
+		}
+		private void ContentDialog_Closing(ContentDialog _, ContentDialogClosingEventArgs e)
+		{
+			FileFormatSelector.SelectionChanged -= FileFormatSelector_SelectionChanged;
+		}
+
 		private record FileFormatItem(ArchiveFormats Key, string Label, string Description);
 		private record CompressionLevelItem(ArchiveCompressionLevels Key, string Label);
 		private record SplittingSizeItem(ArchiveSplittingSizes Key, string Label);

@@ -11,6 +11,7 @@
 	d:DesignHeight="300"
 	d:DesignWidth="400"
 	CloseButtonText="{helpers:ResourceString Name=Cancel}"
+	Closing="ContentDialog_Closing"
 	CornerRadius="{StaticResource OverlayCornerRadius}"
 	DefaultButton="Primary"
 	IsPrimaryButtonEnabled="True"
@@ -57,7 +58,8 @@
 			ItemsSource="{x:Bind FileFormats}"
 			Loading="FileFormatSelector_Loading"
 			SelectedValue="{x:Bind FileFormat, Mode=TwoWay}"
-			SelectedValuePath="Key">
+			SelectedValuePath="Key"
+			SelectionChanged="FileFormatSelector_SelectionChanged">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnSpacing="24">
@@ -105,7 +107,11 @@
 					SelectedValuePath="Key" />
 			</settings:SettingsBlockControl>
 
-			<settings:SettingsBlockControl Title="Splitting size" HorizontalAlignment="Stretch">
+			<settings:SettingsBlockControl
+				x:Name="SplittingSizeSetting"
+				Title="Splitting size"
+				HorizontalAlignment="Stretch"
+				IsEnabled="False">
 				<settings:SettingsBlockControl.Icon>
 					<FontIcon Glyph="&#xE790;" />
 				</settings:SettingsBlockControl.Icon>

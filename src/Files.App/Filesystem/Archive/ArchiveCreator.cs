@@ -77,12 +77,14 @@ namespace Files.App.Filesystem.Archive
 				ArchiveFormat = SevenZipArchiveFormat,
 				CompressionLevel = SevenZipCompressionLevel,
 				VolumeSize = SevenZipVolumeSize,
-				FastCompression = true,
+				FastCompression = false,
 				IncludeEmptyDirectories = true,
 				EncryptHeaders = true,
 				PreserveDirectoryRoot = sources.Length > 1,
 				EventSynchronization = EventSynchronizationStrategy.AlwaysAsynchronous,
 			};
+
+			compressor.Compressing += Compressor_Compressing;
 
 			try
 			{
@@ -98,9 +100,6 @@ namespace Files.App.Filesystem.Archive
 						await compressor.CompressFilesAsync(path, item);
 					else if (System.IO.Directory.Exists(item))
 						await compressor.CompressDirectoryAsync(item, path);
-
-					float percentage = (i + 1.0f) / sources.Length * 100.0f;
-					Progress.Report(percentage);
 				}
 				return true;
 			}
@@ -111,5 +110,7 @@ namespace Files.App.Filesystem.Archive
 				return false;
 			}
 		}
+
+		private void Compressor_Compressing(object? _, ProgressEventArgs e) => Progress.Report(e.PercentDone);
 	}
 }
