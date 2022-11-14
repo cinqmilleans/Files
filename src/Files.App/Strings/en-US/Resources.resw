@@ -2853,6 +2853,9 @@
   <data name="BinEmptyingFailed" xml:space="preserve">
     <value>Failed to empty recycle bin</value>
   </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
   <data name="CreateArchive" xml:space="preserve">
     <value>Create a archive</value>
   </data>
@@ -2877,7 +2880,7 @@
   <data name="CompressionLevel" xml:space="preserve">
     <value>Compression level</value>
   </data>
-  <data name="CompressionLevelUtra" xml:space="preserve">
+  <data name="CompressionLevelUltra" xml:space="preserve">
     <value>Ultra</value>
   </data>
   <data name="CompressionLevelHigh" xml:space="preserve">

@@ -588,10 +588,7 @@ namespace Files.App.Interacts
 				return;
 
 			string directory = associatedInstance.FilesystemViewModel.WorkingDirectory;
-
-			string fileName = sources.Length is 1
-				? Path.GetFileNameWithoutExtension(sources[0])
-				: Path.GetFileNameWithoutExtension(directory);
+			string fileName = Path.GetFileName(sources.Length is 1 ? sources[0] : directory);
 
 			var dialog = new CompressArchiveDialog
 			{
@@ -626,10 +623,7 @@ namespace Files.App.Interacts
 				return;
 
 			string directory = associatedInstance.FilesystemViewModel.WorkingDirectory;
-
-			string fileName = sources.Length is 1
-				? Path.GetFileNameWithoutExtension(sources[0])
-				: Path.GetFileNameWithoutExtension(directory);
+			string fileName = Path.GetFileName(sources.Length is 1 ? sources[0] : directory);
 
 			var creator = new ArchiveCreator
 			{
@@ -652,10 +646,7 @@ namespace Files.App.Interacts
 				return;
 
 			string directory = associatedInstance.FilesystemViewModel.WorkingDirectory;
-
-			string fileName = sources.Length is 1
-				? Path.GetFileNameWithoutExtension(sources[0])
-				: Path.GetFileNameWithoutExtension(directory);
+			string fileName = Path.GetFileName(sources.Length is 1 ? sources[0] : directory);
 
 			var creator = new ArchiveCreator
 			{

@@ -994,7 +994,7 @@ namespace Files.App.Helpers
 				},
 				new ContextMenuFlyoutItemViewModel
 				{
-					Text = "Archive",
+					Text = "Archive".GetLocalizedResource(),
 					ShowInSearchPage = true,
 					Items = new List<ContextMenuFlyoutItemViewModel>
 					{
