@@ -679,6 +679,7 @@ namespace Files.App.Interacts
 
 			banner.Remove();
 			if (isSuccess)
+			{
 				App.OngoingTasksViewModel.PostBanner
 				(
 					"CompressionCompleted".GetLocalizedResource(),
@@ -687,7 +688,11 @@ namespace Files.App.Interacts
 					ReturnResult.Success,
 					FileOperationType.Compressed
 				);
+			}
 			else
+			{
+				NativeFileOperationsHelper.DeleteFileFromApp(archiveName);
+
 				App.OngoingTasksViewModel.PostBanner
 				(
 					"CompressionCompleted".GetLocalizedResource(),
@@ -696,6 +701,7 @@ namespace Files.App.Interacts
 					ReturnResult.Failed,
 					FileOperationType.Compressed
 				);
+			}
 		}
 
 		public async Task DecompressArchive()

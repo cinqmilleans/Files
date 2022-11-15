@@ -1,4 +1,5 @@
-﻿using Files.App.Helpers;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.Shared;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace Files.App.Filesystem.Archive
 			var compressor = new SevenZipCompressor
 			{
 				ArchiveFormat = SevenZipArchiveFormat,
-				CompressionLevel = SevenZipCompressionLevel,
+				CompressionLevel = FileFormat is ArchiveFormats.SevenZip ? SevenZipCompressionLevel : 0,
 				VolumeSize = SevenZipVolumeSize,
 				FastCompression = false,
 				IncludeEmptyDirectories = true,
@@ -105,8 +106,9 @@ namespace Files.App.Filesystem.Archive
 			}
 			catch (Exception ex)
 			{
-				App.Logger.Warn(ex, $"Error compressing folder: {path}");
-				NativeFileOperationsHelper.DeleteFileFromApp(path);
+				var logger = Ioc.Default.GetService<ILogger>();
+				logger?.Warn(ex, $"Error compressing folder: {path}");
+
 				return false;
 			}
 		}
