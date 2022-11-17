@@ -129,21 +129,33 @@
 					Toggled="UseEncryption_Toggled" />
 			</settings:SettingsBlockControl>
 
-			<settings:SettingsBlockControl
-				Title="{helpers:ResourceString Name=Password}"
-				Margin="0,-4,0,0"
-				HorizontalAlignment="Stretch"
+			<Grid
+				Margin="1,-4,1,0"
+				Background="{StaticResource ExpanderDropDownBackground}"
+				BorderBrush="{StaticResource ExpanderDropDownBorderBrush}"
+				CornerRadius="4"
 				Visibility="{Binding IsOn, ElementName=UseEncryption, Mode=OneWay}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock
+					Margin="24,0"
+					VerticalAlignment="Center"
+					Text="{helpers:ResourceString Name=Password}" />
 				<PasswordBox
 					x:Name="PasswordBox"
-					MinWidth="180"
-					MaxWidth="260"
+					Grid.Column="1"
+					MinWidth="160"
+					MaxWidth="280"
+					Margin="16,8"
+					HorizontalAlignment="Right"
 					IsPasswordRevealButtonEnabled="True"
 					Password="{x:Bind Password, Mode=TwoWay}"
 					PasswordChanging="PasswordBox_PasswordChanging"
 					PasswordRevealMode="Peek"
 					PlaceholderText="{helpers:ResourceString Name=Password}" />
-			</settings:SettingsBlockControl>
+			</Grid>
 
 		</StackPanel>
 

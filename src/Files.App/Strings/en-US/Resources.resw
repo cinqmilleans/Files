@@ -2922,6 +2922,9 @@
   <data name="Bluray" xml:space="preserve">
     <value>Blu-ray</value>
   </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Encryption</value>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
