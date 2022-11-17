@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.Input;
 using Files.App.Extensions;
 using Files.App.Filesystem.Archive;
 using Files.Backend.Models;
@@ -9,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.Foundation.Metadata;
 
 namespace Files.App.Dialogs
@@ -39,6 +37,7 @@ namespace Files.App.Dialogs
 			get => (string)GetValue(FileNameProperty);
 			set => SetValue(FileNameProperty, value);
 		}
+
 		public string Password
 		{
 			get => (string)GetValue(PasswordProperty);
@@ -60,8 +59,6 @@ namespace Files.App.Dialogs
 			get => (ArchiveSplittingSizes)GetValue(SplittingSizeProperty);
 			set => SetValue(SplittingSizeProperty, (int)value);
 		}
-
-		private ICommand CreateCommand { get; }
 
 		private IImmutableList<FileFormatItem> FileFormats { get; } = new List<FileFormatItem>
 		{
@@ -94,11 +91,7 @@ namespace Files.App.Dialogs
 			new(ArchiveSplittingSizes.Bd23040, ToSizeText(23040, "Bluray".GetLocalizedResource())),
 		}.ToImmutableList();
 
-		public CompressArchiveDialog()
-		{
-			InitializeComponent();
-			CreateCommand = new RelayCommand(() => canCreate = true);
-		}
+		public CompressArchiveDialog() => InitializeComponent();
 
 		public new Task<ContentDialogResult> ShowAsync() => SetContentDialogRoot(this).ShowAsync().AsTask();
 
@@ -112,34 +105,42 @@ namespace Files.App.Dialogs
 		private static string ToSizeText(ulong size) => ByteSize.FromMebiBytes(size).ShortString;
 		private static string ToSizeText(ulong size, string labelKey) => $"{ToSizeText(size)} - {labelKey}";
 
-		private void FileNameBox_Loading(FrameworkElement _, object args)
+		private void ContentDialog_Loaded(object _, RoutedEventArgs e)
 		{
-			FileNameBox.Loading -= FileNameBox_Loading;
-			FileNameBox.SelectionStart = FileNameBox.Text.Length;
-		}
-		private void FileFormatSelector_Loading(FrameworkElement _, object args)
-		{
-			FileFormatSelector.Loading -= FileFormatSelector_Loading;
+			Loaded -= ContentDialog_Loaded;
+
 			FileFormatSelector.SelectedItem = FileFormats.First(format => format.Key == FileFormat);
-		}
-		private void CompressionLevelSelector_Loading(FrameworkElement _, object e)
-		{
-			CompressionLevelSelector.Loading -= CompressionLevelSelector_Loading;
 			CompressionLevelSelector.SelectedItem = CompressionLevels.First(level => level.Key == CompressionLevel);
+			SplittingSizeSelector.SelectedItem = SplittingSizes.First(size => size.Key == SplittingSize);
+
+			UseEncryption.IsOn = Password.Length > 0;
+			FileNameBox.SelectionStart = FileNameBox.Text.Length;
+			FileNameBox.Focus(FocusState.Programmatic);
 		}
-		private void SplittingSizeSelector_Loading(FrameworkElement _, object e)
+		private void ContentDialog_Closing(ContentDialog _, ContentDialogClosingEventArgs e)
 		{
-			SplittingSizeSelector.Loading -= SplittingSizeSelector_Loading;
-			SplittingSizeSelector.SelectedItem = SplittingSizes.First(level => level.Key == SplittingSize);
+			Closing -= ContentDialog_Closing;
+			FileFormatSelector.SelectionChanged -= FileFormatSelector_SelectionChanged;
+
+			if (e.Result is ContentDialogResult.Primary)
+				canCreate = true;
 		}
 
 		private void FileFormatSelector_SelectionChanged(object _, SelectionChangedEventArgs e)
 		{
 			SplittingSizeSelector.IsEnabled = FileFormat is ArchiveFormats.SevenZip;
 		}
-		private void ContentDialog_Closing(ContentDialog _, ContentDialogClosingEventArgs e)
+		private void UseEncryption_Toggled(object _, RoutedEventArgs e)
 		{
-			FileFormatSelector.SelectionChanged -= FileFormatSelector_SelectionChanged;
+			if (UseEncryption.IsOn)
+				PasswordBox.Focus(FocusState.Programmatic);
+			else
+				Password = string.Empty;
+		}
+		private void PasswordBox_PasswordChanging(PasswordBox _, PasswordBoxPasswordChangingEventArgs e)
+		{
+			if (PasswordBox.Password.Length > 0)
+				UseEncryption.IsOn = true;
 		}
 
 		private record FileFormatItem(ArchiveFormats Key, string Label, string Description);

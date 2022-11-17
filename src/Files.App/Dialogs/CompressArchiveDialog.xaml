@@ -15,7 +15,7 @@
 	CornerRadius="{StaticResource OverlayCornerRadius}"
 	DefaultButton="Primary"
 	IsPrimaryButtonEnabled="True"
-	PrimaryButtonCommand="{x:Bind CreateCommand}"
+	Loaded="ContentDialog_Loaded"
 	PrimaryButtonText="{helpers:ResourceString Name=Create}"
 	RequestedTheme="{x:Bind helpers:ThemeHelper.RootTheme}"
 	Style="{StaticResource DefaultContentDialogStyle}"
@@ -46,7 +46,6 @@
 			Width="340"
 			VerticalAlignment="Bottom"
 			Header="{helpers:ResourceString Name=ArchiveName}"
-			Loading="FileNameBox_Loading"
 			PlaceholderText="{helpers:ResourceString Name=EnterName}"
 			Text="{x:Bind FileName, Mode=TwoWay}" />
 
@@ -56,7 +55,6 @@
 			MinWidth="100"
 			VerticalAlignment="Bottom"
 			ItemsSource="{x:Bind FileFormats}"
-			Loading="FileFormatSelector_Loading"
 			SelectedValue="{x:Bind FileFormat, Mode=TwoWay}"
 			SelectedValuePath="Key"
 			SelectionChanged="FileFormatSelector_SelectionChanged">
@@ -84,6 +82,7 @@
 		<StackPanel
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
+			Height="264"
 			Margin="0,24,0,0"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
@@ -102,39 +101,48 @@
 					x:Name="CompressionLevelSelector"
 					DisplayMemberPath="Label"
 					ItemsSource="{x:Bind CompressionLevels}"
-					Loading="CompressionLevelSelector_Loading"
 					SelectedValue="{x:Bind CompressionLevel, Mode=TwoWay}"
 					SelectedValuePath="Key" />
 			</settings:SettingsBlockControl>
 
 			<settings:SettingsBlockControl Title="{helpers:ResourceString Name=SplittingSize}" HorizontalAlignment="Stretch">
 				<settings:SettingsBlockControl.Icon>
-					<FontIcon Glyph="&#xE790;" />
+					<FontIcon Glyph="&#xE8C6;" />
 				</settings:SettingsBlockControl.Icon>
 				<ComboBox
 					x:Name="SplittingSizeSelector"
 					DisplayMemberPath="Label"
 					IsEnabled="False"
 					ItemsSource="{x:Bind SplittingSizes}"
-					Loading="SplittingSizeSelector_Loading"
 					SelectedValue="{x:Bind SplittingSize, Mode=TwoWay}"
 					SelectedValuePath="Key" />
 			</settings:SettingsBlockControl>
 
-			<settings:SettingsBlockControl
-				Title="{helpers:ResourceString Name=Encryption}"
-				HorizontalAlignment="Stretch"
-				Description="{helpers:ResourceString Name=Optional}">
+			<settings:SettingsBlockControl Title="{helpers:ResourceString Name=Encryption}" HorizontalAlignment="Stretch">
 				<settings:SettingsBlockControl.Icon>
 					<FontIcon Glyph="&#xE72E;" />
 				</settings:SettingsBlockControl.Icon>
+				<ToggleSwitch
+					x:Name="UseEncryption"
+					HorizontalAlignment="Right"
+					Style="{StaticResource RightAlignedToggleSwitchStyle}"
+					Toggled="UseEncryption_Toggled" />
+			</settings:SettingsBlockControl>
+
+			<settings:SettingsBlockControl
+				Title="{helpers:ResourceString Name=Password}"
+				Margin="0,-4,0,0"
+				HorizontalAlignment="Stretch"
+				Visibility="{Binding IsOn, ElementName=UseEncryption, Mode=OneWay}">
 				<PasswordBox
 					x:Name="PasswordBox"
-					MinWidth="132"
+					MinWidth="180"
+					MaxWidth="260"
 					IsPasswordRevealButtonEnabled="True"
 					Password="{x:Bind Password, Mode=TwoWay}"
+					PasswordChanging="PasswordBox_PasswordChanging"
 					PasswordRevealMode="Peek"
-					PlaceholderText="Password" />
+					PlaceholderText="{helpers:ResourceString Name=Password}" />
 			</settings:SettingsBlockControl>
 
 		</StackPanel>
