@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
+using Files.App.Actionn;
 using Files.App.DataModels;
 using Files.App.Dialogs;
 using Files.App.EventArguments;
@@ -133,9 +134,16 @@ namespace Files.App.Views
 
 		public ToolbarViewModel ToolbarViewModel { get; } = new ToolbarViewModel();
 
+		public static bool Rename()
+		{
+			return true;
+		}
+
 		public ModernShellPage()
 		{
 			InitializeComponent();
+
+			ActionManager.Instance.ActionEvent += Instance_ActionEvent;
 
 			InstanceViewModel = new CurrentInstanceViewModel();
 			InstanceViewModel.FolderSettings.LayoutPreferencesUpdateRequired += FolderSettings_LayoutPreferencesUpdateRequired;
@@ -194,6 +202,12 @@ namespace Files.App.Views
 			App.DrivesManager.PropertyChanged += DrivesManager_PropertyChanged;
 
 			PreviewKeyDown += ModernShellPage_PreviewKeyDown;
+		}
+
+		private void Instance_ActionEvent(IActionManager manager, ActionEventArgs e)
+		{
+			if (IsCurrentInstance)
+				e.Handled = true;
 		}
 
 		/**

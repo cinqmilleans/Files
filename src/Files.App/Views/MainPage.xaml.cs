@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.UI.Controls;
+using Files.App.Actionn;
 using Files.App.DataModels;
 using Files.App.DataModels.NavigationControlItems;
 using Files.App.Extensions;
@@ -22,6 +23,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel;
+using System.Management;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -58,9 +60,16 @@ namespace Files.App.Views
 
 		private ICommand ToggleSidebarCollapsedStateCommand => new RelayCommand<KeyboardAcceleratorInvokedEventArgs>(x => ToggleSidebarCollapsedState(x));
 
+		public static bool Rename()
+		{
+			return false;
+		}
+
 		public MainPage()
 		{
 			InitializeComponent();
+
+			ActionManager.Instance.ActionEvent += Instance_ActionEvent;
 
 			// TODO LayoutDirection is empty, might be an issue with WinAppSdk
 			var flowDirectionSetting = new Microsoft.Windows.ApplicationModel.Resources.ResourceManager().CreateResourceContext().QualifierValues["LayoutDirection"];
@@ -82,6 +91,10 @@ namespace Files.App.Views
 			UserSettingsService.OnSettingChangedEvent += UserSettingsService_OnSettingChangedEvent;
 
 			DispatcherQueue.TryEnqueue(async () => await LoadSelectedTheme());
+		}
+
+		private void Instance_ActionEvent(IActionManager manager, ActionEventArgs e)
+		{
 		}
 
 		private async Task LoadSelectedTheme()

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.App.Actionn;
 using Files.App.DataModels;
 using Files.App.Helpers;
 using Files.App.ViewModels;
@@ -150,5 +151,10 @@ namespace Files.App.UserControls
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeColumnView(true);
 		private void NavToolbarAdaptiveHeader_Tapped(object sender, TappedRoutedEventArgs e)
 			=> ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptive();
-	}
+
+        private void PreviewPane_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+			ActionManager.Instance.Execute(Actions.Rename);
+        }
+    }
 }
