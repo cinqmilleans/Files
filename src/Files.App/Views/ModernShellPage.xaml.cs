@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
-using Files.App.Actionn;
+using Files.App.Actions;
 using Files.App.DataModels;
 using Files.App.Dialogs;
 using Files.App.EventArguments;

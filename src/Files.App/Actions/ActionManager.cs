@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Input;
+using System;
 using System.Linq;
 
 namespace Files.App.Actions
@@ -13,6 +14,8 @@ namespace Files.App.Actions
 
 		public void Execute(Actions action)
 		{
+			var a = FocusManager.GetFocusedElement(App.Window.Content.XamlRoot);
+
 			ActionEventHandler[] handlers =
 				ActionEvent
 				?.GetInvocationList()
