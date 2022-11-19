@@ -1,3 +1,4 @@
+using Files.App.Actions;
 using Files.App.UserControls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -69,6 +70,22 @@ namespace Files.App.ViewModels
 		public bool ShowLoadingIndicator { get; set; }
 
 		public bool IsHidden { get; set; }
+
+		/*public ContextMenuFlyoutItemViewModel()
+		{
+		}
+		public ContextMenuFlyoutItemViewModel(IAction action) : this()
+		{
+			Text = action.Label;
+			Glyph = action.Glyph;
+			GlyphFontFamilyName = action.GlyphFamily;
+			Command = action.Command;
+		}
+		public ContextMenuFlyoutItemViewModel(IAction action, object? parameter) : this(action)
+		{
+			CommandParameter = parameter;
+			ShowItem = action.Command.CanExecute(parameter);
+		}*/
 	}
 
 	public enum ItemType
