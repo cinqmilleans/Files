@@ -11,8 +11,9 @@ namespace Files.App.Actions
 
 		public IAction CreateAction(ActionCodes code) => code switch
 		{
+			ActionCodes.None => new NoneAction(),
 			ActionCodes.Help => new HelpAction(),
-			ActionCodes.OpenFolderInNewTab => new OpenFolderInNewTabAction(viewModel.PaneHolder),
+			ActionCodes.OpenFolderInNewTab => new OpenFolderInNewTabAction(viewModel),
 			_ => throw new ArgumentOutOfRangeException(nameof(code)),
 		};
 	}

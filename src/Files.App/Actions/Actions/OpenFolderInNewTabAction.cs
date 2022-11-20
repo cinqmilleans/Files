@@ -13,7 +13,7 @@ namespace Files.App.Actions
 {
 	public class OpenFolderInNewTabAction : IAction
 	{
-		private readonly IPaneHolder paneHolder;
+		private readonly SidebarViewModel viewModel;
 
 		public ActionCodes Code => ActionCodes.OpenFolderInNewTab;
 
@@ -22,7 +22,7 @@ namespace Files.App.Actions
 		public string Glyph => "\uF113";
 		public string GlyphFamily => "CustomGlyph";
 
-		public OpenFolderInNewTabAction(IPaneHolder paneHolder) => this.paneHolder = paneHolder;
+		public OpenFolderInNewTabAction(SidebarViewModel viewModel) => this.viewModel = viewModel;
 
 		public bool CanExecute()
 		{
@@ -45,6 +45,6 @@ namespace Files.App.Actions
 			}
 		}
 
-		private IList<ListedItem>? GetItems() => paneHolder.ActivePane.SlimContentPage.SelectedItems;
+		private IList<ListedItem>? GetItems() => viewModel?.PaneHolder?.ActivePane?.SlimContentPage?.SelectedItems;
 	}
 }

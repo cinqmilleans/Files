@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.UI.Controls;
+using Files.App.Actions;
 using Files.App.DataModels;
 using Files.App.DataModels.NavigationControlItems;
 using Files.App.Extensions;
@@ -61,6 +62,7 @@ namespace Files.App.Views
 		public MainPage()
 		{
 			InitializeComponent();
+			ActionsViewModel.Initialize(SidebarAdaptiveViewModel);
 
 			// TODO LayoutDirection is empty, might be an issue with WinAppSdk
 			var flowDirectionSetting = new Microsoft.Windows.ApplicationModel.Resources.ResourceManager().CreateResourceContext().QualifierValues["LayoutDirection"];

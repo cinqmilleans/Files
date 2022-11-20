@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.WinUI.UI.Controls.TextToolbarSymbols;
 using Files.App.Actions.HotKeys;
+using Files.App.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -11,17 +12,21 @@ namespace Files.App.Actions
 {
 	internal class ActionsViewModel : IActionsViewModel
 	{
-		private readonly IImmutableDictionary<ActionCodes, ActionViewModel> actions;
+		private static IImmutableDictionary<ActionCodes, ActionViewModel> actions =
+			new Dictionary<ActionCodes, ActionViewModel>().ToImmutableDictionary();
 
-		private readonly IHotKeyManager hotKeyManager = new HotKeyManager();
+		private static readonly IHotKeyManager hotKeyManager = new HotKeyManager();
+
+		public IActionViewModel this[ActionCodes code] => actions[code];
+		public IActionViewModel this[HotKey hotKey] => actions[hotKeyManager[hotKey]];
 
 		public IActionViewModel None => actions[ActionCodes.None];
 		public IActionViewModel Help => actions[ActionCodes.Help];
 		public IActionViewModel OpenFolderInNewTab => actions[ActionCodes.OpenFolderInNewTab];
 
-		public ActionsViewModel()
+		public static void Initialize(SidebarViewModel viewModel)
 		{
-			IActionFactory factory = new ActionFactory(null);
+			IActionFactory factory = new ActionFactory(viewModel);
 
 			actions = Enum.GetValues<ActionCodes>()
 				.ToImmutableDictionary(code => code, code => new ActionViewModel(factory.CreateAction(code)));
@@ -29,10 +34,10 @@ namespace Files.App.Actions
 			hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
 		}
 
-		public HotKeyStatus GetStatus(HotKey hotkey) => hotKeyManager.GetStatus(hotkey);
-		public IActionViewModel GetAction(HotKey hotkey) => actions[hotKeyManager.GetActionCode(hotkey)];
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<IActionViewModel> GetEnumerator() => actions.Values.GetEnumerator();
 
-		private void HotKeyManager_HotKeyChanged(IHotKeyManager manager, HotKeyChangedEventArgs e)
+		private static void HotKeyManager_HotKeyChanged(IHotKeyManager manager, HotKeyChangedEventArgs e)
 		{
 			if (actions.ContainsKey(e.OldActionCode))
 				actions[e.OldActionCode].UserHotKey = HotKey.None;

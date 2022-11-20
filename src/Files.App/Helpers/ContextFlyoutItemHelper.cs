@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.App.Actions;
 using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Interacts;
@@ -23,6 +24,8 @@ namespace Files.App.Helpers
 {
 	public static class ContextFlyoutItemHelper
 	{
+		private static readonly IActionsViewModel actionsViewModel = new ActionsViewModel();
+
 		public static Task<List<ShellNewEntry>> CachedNewContextMenuEntries = ShellNewEntryExtensions.GetNewContextMenuEntries();
 
 		public static List<ContextMenuFlyoutItemViewModel> GetItemContextCommandsWithoutShellItems(CurrentInstanceViewModel currentInstanceViewModel, string workingDir, List<ListedItem> selectedItems, BaseLayoutCommandsViewModel commandsViewModel, bool shiftPressed, bool showOpenMenu, SelectedItemsPropertiesViewModel selectedItemsPropertiesViewModel)
@@ -688,13 +691,8 @@ namespace Files.App.Helpers
 					ShowInFtpPage = true,
 					ShowInZipPage = true,
 				},
-				new ContextMenuFlyoutItemViewModel()
+				new ContextMenuFlyoutItemViewModel(actionsViewModel.OpenFolderInNewTab, selectedItems)
 				{
-					Text = "BaseLayoutItemContextFlyoutOpenInNewTab/Text".GetLocalizedResource(),
-					Glyph = "\uF113",
-					GlyphFontFamilyName = "CustomGlyph",
-					Command = commandsViewModel.OpenDirectoryInNewTabCommand,
-					ShowItem = selectedItems.Count < 5 && selectedItems.All(i => i.PrimaryItemAttribute == Windows.Storage.StorageItemTypes.Folder),
 					ShowInSearchPage = true,
 					ShowInFtpPage = true,
 					ShowInZipPage = true,

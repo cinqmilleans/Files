@@ -4,8 +4,8 @@
 	{
 		event HotKeyChangedEventHandler? HotKeyChanged;
 
+		ActionCodes this[HotKey hotKey] { get; set; }
+
 		HotKeyStatus GetStatus(HotKey hotKey);
-		ActionCodes GetActionCode(HotKey hotKey);
-		void SetAction(HotKey hotKey, ActionCodes actionCode);
 	}
 }

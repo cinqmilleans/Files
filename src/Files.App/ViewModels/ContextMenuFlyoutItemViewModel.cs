@@ -71,21 +71,21 @@ namespace Files.App.ViewModels
 
 		public bool IsHidden { get; set; }
 
-		/*public ContextMenuFlyoutItemViewModel()
+		public ContextMenuFlyoutItemViewModel()
 		{
 		}
-		public ContextMenuFlyoutItemViewModel(IAction action) : this()
+		public ContextMenuFlyoutItemViewModel(IActionViewModel action) : this()
 		{
 			Text = action.Label;
 			Glyph = action.Glyph;
 			GlyphFontFamilyName = action.GlyphFamily;
 			Command = action.Command;
 		}
-		public ContextMenuFlyoutItemViewModel(IAction action, object? parameter) : this(action)
+		public ContextMenuFlyoutItemViewModel(IActionViewModel action, object? parameter) : this(action)
 		{
 			CommandParameter = parameter;
 			ShowItem = action.Command.CanExecute(parameter);
-		}*/
+		}
 	}
 
 	public enum ItemType
