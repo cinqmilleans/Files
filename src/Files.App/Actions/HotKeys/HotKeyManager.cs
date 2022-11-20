@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Files.App.Actions
+namespace Files.App.Actions.HotKeys
 {
 	public class HotKeyManager : IHotKeyManager
 	{

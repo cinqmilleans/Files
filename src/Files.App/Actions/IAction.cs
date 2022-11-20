@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Files.App.Actions.HotKeys;
 
 namespace Files.App.Actions
 {

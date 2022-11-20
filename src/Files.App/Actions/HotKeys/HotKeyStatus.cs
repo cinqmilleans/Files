@@ -1,4 +1,4 @@
-﻿namespace Files.App.Actions
+﻿namespace Files.App.Actions.HotKeys
 {
 	public enum HotKeyStatus
 	{

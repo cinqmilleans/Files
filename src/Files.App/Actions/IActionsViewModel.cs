@@ -1,9 +1,17 @@
-﻿namespace Files.App.Actions
-{
-	public interface IActionsViewModel
-	{
-		IAction Help { get; }
+﻿using Files.App.Actions.HotKeys;
+using System.Collections.Generic;
 
-		//IAction OpenFolderInNewTab { get; }
+namespace Files.App.Actions
+{
+	public interface IActionsViewModel : IEnumerable<IActionViewModel>
+	{
+		IActionViewModel None { get; }
+
+		IActionViewModel Help { get; }
+
+		IActionViewModel OpenFolderInNewTab { get; }
+
+		HotKeyStatus GetStatus(HotKey hotkey);
+		IActionViewModel GetAction(HotKey hotkey);
 	}
 }

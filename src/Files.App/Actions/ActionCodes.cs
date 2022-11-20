@@ -8,28 +8,28 @@
 		Help,
 
 		// selection
-		MultiSelection,
-		SelectAll,
-		InvertSelection,
-		ClearSelection,
+		//MultiSelection,
+		//SelectAll,
+		//InvertSelection,
+		//ClearSelection,
 
 		// layout
-		LayoutDetails,
-		LayoutTiles,
-		LayoutGridSmall,
-		LayoutGridMedium,
-		LayoutGridLarge,
-		LayoutColumns,
-		LayoutAdaptive,
+		//LayoutDetails,
+		//LayoutTiles,
+		//LayoutGridSmall,
+		//LayoutGridMedium,
+		//LayoutGridLarge,
+		//LayoutColumns,
+		//LayoutAdaptive,
 
 		// folder
 		OpenFolderInNewTab,
-		OpenFolderInNewWindow,
-		OpenFolderInMainPane,
-		OpenFolderInSecondPane,
+		//OpenFolderInNewWindow,
+		//OpenFolderInMainPane,
+		//OpenFolderInSecondPane,
 
 		// setting
-		ShowHiddenItems,
-		ShowFileExtensions,
+		//ShowHiddenItems,
+		//ShowFileExtensions,
 	}
 }

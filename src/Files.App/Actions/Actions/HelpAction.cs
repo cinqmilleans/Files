@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Files.App.Actions.HotKeys;
 using Windows.System;
 
 namespace Files.App.Actions
 {
-	public class HelpAction : IAction
+    public class HelpAction : IAction
 	{
 		public ActionCodes Code => ActionCodes.Help;
 
