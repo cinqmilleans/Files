@@ -27,7 +27,9 @@ namespace Files.App.Actions
 		public bool CanExecute()
 		{
 			var items = GetItems();
-			return items is not null && items.Count < 5 && items.All(i => i.PrimaryItemAttribute is StorageItemTypes.Folder);
+			return items is not null
+				&& items.Count < 5
+				&& items.All(i => i.PrimaryItemAttribute is StorageItemTypes.Folder);
 		}
 		public async Task ExecuteAsync()
 		{

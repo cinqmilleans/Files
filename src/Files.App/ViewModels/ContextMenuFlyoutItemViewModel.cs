@@ -80,6 +80,14 @@ namespace Files.App.ViewModels
 			Glyph = action.Glyph;
 			GlyphFontFamilyName = action.GlyphFamily;
 			Command = action.Command;
+
+			//if (!action.UserHotKey.IsNone)
+				KeyboardAccelerator = new KeyboardAccelerator
+				{
+					Key = Windows.System.VirtualKey.B,
+					Modifiers = Windows.System.VirtualKeyModifiers.Control | Windows.System.VirtualKeyModifiers.Shift,
+				};
+
 		}
 		public ContextMenuFlyoutItemViewModel(IActionViewModel action, object? parameter) : this(action)
 		{

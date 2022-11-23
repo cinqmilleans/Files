@@ -12,8 +12,7 @@ namespace Files.App.Actions
 {
 	internal class ActionsViewModel : IActionsViewModel
 	{
-		private static IImmutableDictionary<ActionCodes, ActionViewModel> actions =
-			new Dictionary<ActionCodes, ActionViewModel>().ToImmutableDictionary();
+		private static IDictionary<ActionCodes, ActionViewModel> actions = new Dictionary<ActionCodes, ActionViewModel>();
 
 		private static readonly IHotKeyManager hotKeyManager = new HotKeyManager();
 
@@ -39,8 +38,8 @@ namespace Files.App.Actions
 
 		private static void HotKeyManager_HotKeyChanged(IHotKeyManager manager, HotKeyChangedEventArgs e)
 		{
-			if (actions.ContainsKey(e.OldActionCode))
-				actions[e.OldActionCode].UserHotKey = HotKey.None;
+			if (actions.TryGetValue(e.OldActionCode, out ActionViewModel? value))
+				value.UserHotKey = HotKey.None;
 		}
 
 		private class ActionViewModel : IActionViewModel

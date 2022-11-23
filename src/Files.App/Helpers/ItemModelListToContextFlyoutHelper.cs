@@ -246,7 +246,7 @@ namespace Files.App.Helpers.ContextFlyouts
 			{
 				element = new AppBarButton()
 				{
-					Label = item.Text,
+					Label = "Cut (Ctrl + X)",
 					Tag = item.Tag,
 					Command = item.Command,
 					CommandParameter = item.CommandParameter,
@@ -256,6 +256,13 @@ namespace Files.App.Helpers.ContextFlyouts
 					IsEnabled = item.IsEnabled,
 					Visibility = item.IsHidden ? Visibility.Collapsed : Visibility.Visible,
 				};
+				
+				if ((item.KeyboardAccelerator?.Key ?? Windows.System.VirtualKey.None) is not Windows.System.VirtualKey.None)
+					(element as AppBarButton)?.KeyboardAccelerators.Add(item.KeyboardAccelerator);
+				//(element as AppBarButton).key .KeyboardAcceleratorTextOverride = "Ctrl+S";
+				//(element as AppBarButton)?.KeyboardAccelerators.Add(new Microsoft.UI.Xaml.Input.KeyboardAccelerator
+				//{ Key = Windows.System.VirtualKey.B, Modifiers = Windows.System.VirtualKeyModifiers.Control | Windows.System.VirtualKeyModifiers.Shift });
+
 
 				if (icon is not null)
 				{
