@@ -153,14 +153,10 @@ namespace Files.App.Helpers
 				return false;
 
 			var result = await FileOperationsHelpers.TestRecycleAsync(path.Split('|'));
-
-			return result.Item1 &= result.Item2 is not null && result.Item2.Items.All(x => x.Succeeded);
+			return result.IsSucceeded && result.Items.All(x => x.IsSucceeded);
 		}
 
-		public bool RecycleBinHasItems()
-		{
-			return Win32Shell.QueryRecycleBin().NumItems > 0;
-		}
+		public bool RecycleBinHasItems() => Win32Shell.QueryRecycleBin().NumItems > 0;
 
 		public static async Task S_RestoreItem(IShellPage associatedInstance)
 		{

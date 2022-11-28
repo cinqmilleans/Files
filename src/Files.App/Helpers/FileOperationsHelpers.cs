@@ -20,6 +20,8 @@ using Tulpep.ActiveDirectoryObjectPicker;
 using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 using Windows.ApplicationModel.DataTransfer;
+using S = Files.Backend.Models.Shell;
+using static Vanara.Windows.Shell.ShellFileOperations;
 
 namespace Files.App.Helpers
 {
@@ -36,7 +38,7 @@ namespace Files.App.Helpers
 				fileList.AddRange(filesToCopy);
 				MemoryStream dropEffect = new MemoryStream(operation == DataPackageOperation.Copy ?
 					new byte[] { 5, 0, 0, 0 } : new byte[] { 2, 0, 0, 0 });
-				var data = new System.Windows.Forms.DataObject();
+				var data = new DataObject();
 				data.SetFileDropList(fileList);
 				data.SetData("Preferred DropEffect", dropEffect);
 				System.Windows.Forms.Clipboard.SetDataObject(data, true);
@@ -89,10 +91,10 @@ namespace Files.App.Helpers
 			{
 				using var op = new ShellFileOperations();
 
-				op.Options = ShellFileOperations.OperationFlags.Silent
-							| ShellFileOperations.OperationFlags.NoConfirmMkDir
-							| ShellFileOperations.OperationFlags.RenameOnCollision
-							| ShellFileOperations.OperationFlags.NoErrorUI;
+				op.Options = OperationFlags.Silent
+							| OperationFlags.NoConfirmMkDir
+							| OperationFlags.RenameOnCollision
+							| OperationFlags.NoErrorUI;
 
 				var shellOperationResult = new ShellOperationResult();
 
@@ -103,7 +105,7 @@ namespace Files.App.Helpers
 						fileOp == "CreateFolder" ? FileAttributes.Directory : FileAttributes.Normal, template);
 				}))
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = false,
 						Destination = filePath,
@@ -114,7 +116,7 @@ namespace Files.App.Helpers
 				var createTcs = new TaskCompletionSource<bool>();
 				op.PostNewItem += (s, e) =>
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = e.Result.Succeeded,
 						Destination = e.DestItem.GetParsingPath(),
@@ -146,18 +148,18 @@ namespace Files.App.Helpers
 			});
 		}
 
-		public static Task<(bool, ShellOperationResult)> TestRecycleAsync(string[] fileToDeletePath)
+		public static Task<S.IShellOperationResult> TestRecycleAsync(string[] fileToDeletePath)
 		{
-			return Win32API.StartSTATask(async () =>
+			return Win32API.StartSTATask(TestAsync);
+
+			async Task<S.IShellOperationResult> TestAsync()
 			{
-				using var op = new ShellFileOperations();
+				const OperationFlags options =
+					OperationFlags.Silent | OperationFlags.NoConfirmation | OperationFlags.NoErrorUI | OperationFlags.RecycleOnDelete;
 
-				op.Options = ShellFileOperations.OperationFlags.Silent
-							| ShellFileOperations.OperationFlags.NoConfirmation
-							| ShellFileOperations.OperationFlags.NoErrorUI;
-				op.Options |= ShellFileOperations.OperationFlags.RecycleOnDelete;
+				using var op = new ShellFileOperations { Options = options };
 
-				var shellOperationResult = new ShellOperationResult();
+				S.ShellOperationResult result = new();
 
 				for (var i = 0; i < fileToDeletePath.Length; i++)
 				{
@@ -168,40 +170,13 @@ namespace Files.App.Helpers
 						op.QueueDeleteOperation(file);
 					}))
 					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
-						{
-							Succeeded = false,
-							Source = fileToDeletePath[i],
-							HResult = (int)-1
-						});
+						result.Items.Add(new S.ShellOperationItemResult{ Source = fileToDeletePath[i] });
 					}
 				}
 
-				var deleteTcs = new TaskCompletionSource<bool>();
-				op.PreDeleteItem += (s, e) =>
-				{
-					if (!e.Flags.HasFlag(ShellFileOperations.TransferFlags.DeleteRecycleIfPossible))
-					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
-						{
-							Succeeded = false,
-							Source = e.SourceItem.GetParsingPath(),
-							HResult = (int)HRESULT.COPYENGINE_E_RECYCLE_BIN_NOT_FOUND
-						});
-						throw new Win32Exception(HRESULT.COPYENGINE_E_RECYCLE_BIN_NOT_FOUND); // E_FAIL, stops operation
-					}
-					else
-					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
-						{
-							Succeeded = true,
-							Source = e.SourceItem.GetParsingPath(),
-							HResult = (int)HRESULT.COPYENGINE_E_USER_CANCELLED
-						});
-						throw new Win32Exception(HRESULT.COPYENGINE_E_USER_CANCELLED); // E_FAIL, stops operation
-					}
-				};
-				op.FinishOperations += (s, e) => deleteTcs.TrySetResult(e.Result.Succeeded);
+				TaskCompletionSource<bool> deleteTcs = new();
+				op.PreDeleteItem += OnPreDeleteItem;
+				op.FinishOperations += OnFinishOperations;
 
 				try
 				{
@@ -211,9 +186,41 @@ namespace Files.App.Helpers
 				{
 					deleteTcs.TrySetResult(false);
 				}
+				finally
+				{
+					op.PreDeleteItem -= OnPreDeleteItem;
+					op.FinishOperations -= OnFinishOperations;
+				}
 
-				return (await deleteTcs.Task, shellOperationResult);
-			});
+				result.IsSucceeded = await deleteTcs.Task;
+				return result;
+
+				[System.Diagnostics.DebuggerHidden]
+				void OnPreDeleteItem(object? s, ShellFileOpEventArgs e)
+				{
+					if (!e.Flags.HasFlag(TransferFlags.DeleteRecycleIfPossible))
+					{
+						result.Items.Add(new S.ShellOperationItemResult
+						{
+							HResult = HRESULT.COPYENGINE_E_RECYCLE_BIN_NOT_FOUND,
+							Source = e.SourceItem.GetParsingPath(),
+						});
+						throw new Win32Exception(HRESULT.COPYENGINE_E_RECYCLE_BIN_NOT_FOUND);
+					}
+					else
+					{
+						result.Items.Add(new S.ShellOperationItemResult
+						{
+							IsSucceeded = true,
+							HResult = HRESULT.COPYENGINE_E_USER_CANCELLED,
+							Source = e.SourceItem.GetParsingPath(),
+						});
+						throw new Win32Exception(HRESULT.COPYENGINE_E_USER_CANCELLED);
+					}
+				}
+
+				void OnFinishOperations(object? s, ShellFileOpEventArgs e) => deleteTcs.TrySetResult(e.Result.Succeeded);
+			}
 		}
 
 		public static Task<(bool, ShellOperationResult)> DeleteItemAsync(string[] fileToDeletePath, bool permanently, long ownerHwnd, string operationID = "", IProgress<float>? progress = default)
@@ -225,14 +232,14 @@ namespace Files.App.Helpers
 			return Win32API.StartSTATask(async () =>
 			{
 				using var op = new ShellFileOperations();
-				op.Options = ShellFileOperations.OperationFlags.Silent
-							| ShellFileOperations.OperationFlags.NoConfirmation
-							| ShellFileOperations.OperationFlags.NoErrorUI;
+				op.Options = OperationFlags.Silent
+							| OperationFlags.NoConfirmation
+							| OperationFlags.NoErrorUI;
 				op.OwnerWindow = (IntPtr)ownerHwnd;
 				if (!permanently)
 				{
-					op.Options |= ShellFileOperations.OperationFlags.RecycleOnDelete
-								| ShellFileOperations.OperationFlags.WantNukeWarning;
+					op.Options |= OperationFlags.RecycleOnDelete
+								| OperationFlags.WantNukeWarning;
 				}
 
 				var shellOperationResult = new ShellOperationResult();
@@ -245,7 +252,7 @@ namespace Files.App.Helpers
 						op.QueueDeleteOperation(shi);
 					}))
 					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
+						shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 						{
 							Succeeded = false,
 							Source = fileToDeletePath[i],
@@ -260,14 +267,14 @@ namespace Files.App.Helpers
 				var deleteTcs = new TaskCompletionSource<bool>();
 				op.PreDeleteItem += (s, e) =>
 				{
-					if (!permanently && !e.Flags.HasFlag(ShellFileOperations.TransferFlags.DeleteRecycleIfPossible))
+					if (!permanently && !e.Flags.HasFlag(TransferFlags.DeleteRecycleIfPossible))
 					{
 						throw new Win32Exception(HRESULT.COPYENGINE_E_RECYCLE_BIN_NOT_FOUND); // E_FAIL, stops operation
 					}
 				};
 				op.PostDeleteItem += (s, e) =>
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = e.Result.Succeeded,
 						Source = e.SourceItem.GetParsingPath(),
@@ -313,9 +320,9 @@ namespace Files.App.Helpers
 				using var op = new ShellFileOperations();
 				var shellOperationResult = new ShellOperationResult();
 
-				op.Options = ShellFileOperations.OperationFlags.Silent
-						  | ShellFileOperations.OperationFlags.NoErrorUI;
-				op.Options |= !overwriteOnRename ? ShellFileOperations.OperationFlags.RenameOnCollision : 0;
+				op.Options = OperationFlags.Silent
+						  | OperationFlags.NoErrorUI;
+				op.Options |= !overwriteOnRename ? OperationFlags.RenameOnCollision : 0;
 
 				if (!SafetyExtensions.IgnoreExceptions(() =>
 				{
@@ -323,7 +330,7 @@ namespace Files.App.Helpers
 					op.QueueRenameOperation(shi, newName);
 				}))
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = false,
 						Source = fileToRenamePath,
@@ -337,7 +344,7 @@ namespace Files.App.Helpers
 				var renameTcs = new TaskCompletionSource<bool>();
 				op.PostRenameItem += (s, e) =>
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = e.Result.Succeeded,
 						Source = e.SourceItem.GetParsingPath(),
@@ -374,12 +381,12 @@ namespace Files.App.Helpers
 				using var op = new ShellFileOperations();
 				var shellOperationResult = new ShellOperationResult();
 
-				op.Options = ShellFileOperations.OperationFlags.NoConfirmMkDir
-							| ShellFileOperations.OperationFlags.Silent
-							| ShellFileOperations.OperationFlags.NoErrorUI;
+				op.Options = OperationFlags.NoConfirmMkDir
+							| OperationFlags.Silent
+							| OperationFlags.NoErrorUI;
 				op.OwnerWindow = (IntPtr)ownerHwnd;
-				op.Options |= !overwriteOnMove ? ShellFileOperations.OperationFlags.PreserveFileExtensions | ShellFileOperations.OperationFlags.RenameOnCollision
-					: ShellFileOperations.OperationFlags.NoConfirmation;
+				op.Options |= !overwriteOnMove ? OperationFlags.PreserveFileExtensions | OperationFlags.RenameOnCollision
+					: OperationFlags.NoConfirmation;
 
 				for (var i = 0; i < fileToMovePath.Length; i++)
 				{
@@ -390,7 +397,7 @@ namespace Files.App.Helpers
 						op.QueueMoveOperation(shi, shd, Path.GetFileName(moveDestination[i]));
 					}))
 					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
+						shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 						{
 							Succeeded = false,
 							Source = fileToMovePath[i],
@@ -406,7 +413,7 @@ namespace Files.App.Helpers
 				var moveTcs = new TaskCompletionSource<bool>();
 				op.PostMoveItem += (s, e) =>
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = e.Result.Succeeded,
 						Source = e.SourceItem.GetParsingPath(),
@@ -453,12 +460,12 @@ namespace Files.App.Helpers
 
 				var shellOperationResult = new ShellOperationResult();
 
-				op.Options = ShellFileOperations.OperationFlags.NoConfirmMkDir
-							| ShellFileOperations.OperationFlags.Silent
-							| ShellFileOperations.OperationFlags.NoErrorUI;
+				op.Options = OperationFlags.NoConfirmMkDir
+							| OperationFlags.Silent
+							| OperationFlags.NoErrorUI;
 				op.OwnerWindow = (IntPtr)ownerHwnd;
-				op.Options |= !overwriteOnCopy ? ShellFileOperations.OperationFlags.PreserveFileExtensions | ShellFileOperations.OperationFlags.RenameOnCollision
-					: ShellFileOperations.OperationFlags.NoConfirmation;
+				op.Options |= !overwriteOnCopy ? OperationFlags.PreserveFileExtensions | OperationFlags.RenameOnCollision
+					: OperationFlags.NoConfirmation;
 
 				for (var i = 0; i < fileToCopyPath.Length; i++)
 				{
@@ -469,7 +476,7 @@ namespace Files.App.Helpers
 						op.QueueCopyOperation(shi, shd, Path.GetFileName(copyDestination[i]));
 					}))
 					{
-						shellOperationResult.Items.Add(new ShellOperationItemResult()
+						shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 						{
 							Succeeded = false,
 							Source = fileToCopyPath[i],
@@ -485,7 +492,7 @@ namespace Files.App.Helpers
 				var copyTcs = new TaskCompletionSource<bool>();
 				op.PostCopyItem += (s, e) =>
 				{
-					shellOperationResult.Items.Add(new ShellOperationItemResult()
+					shellOperationResult.Items.Add(new Shared.ShellOperationItemResult()
 					{
 						Succeeded = e.Result.Succeeded,
 						Source = e.SourceItem.GetParsingPath(),
@@ -719,7 +726,7 @@ namespace Files.App.Helpers
 			return null;
 		}
 
-		private static void UpdateFileTagsDb(ShellFileOperations.ShellFileOpEventArgs e, string operationType)
+		private static void UpdateFileTagsDb(ShellFileOpEventArgs e, string operationType)
 		{
 			var dbInstance = FileTagsHelper.GetDbInstance();
 			if (e.Result.Succeeded)
