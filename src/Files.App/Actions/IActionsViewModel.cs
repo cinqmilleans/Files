@@ -15,6 +15,14 @@ namespace Files.App.Actions
 		IActionViewModel Help { get; }
 		IActionViewModel FullScreen { get; }
 
+		IActionViewModel LayoutDetails { get; }
+		IActionViewModel LayoutTiles { get; }
+		IActionViewModel LayoutGridSmall { get; }
+		IActionViewModel LayoutGridMedium { get; }
+		IActionViewModel LayoutGridLarge { get; }
+		IActionViewModel LayoutColumns { get; }
+		IActionViewModel LayoutAdaptive { get; }
+
 		IActionViewModel OpenFolderInNewTab { get; }
 	}
 }

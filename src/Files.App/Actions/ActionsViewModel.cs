@@ -24,6 +24,13 @@ namespace Files.App.Actions
 		public IActionViewModel None => actions[ActionCodes.None];
 		public IActionViewModel Help => actions[ActionCodes.Help];
 		public IActionViewModel FullScreen => actions[ActionCodes.FullScreen];
+		public IActionViewModel LayoutDetails => actions[ActionCodes.LayoutDetails];
+		public IActionViewModel LayoutTiles => actions[ActionCodes.LayoutTiles];
+		public IActionViewModel LayoutGridSmall => actions[ActionCodes.LayoutGridSmall];
+		public IActionViewModel LayoutGridMedium => actions[ActionCodes.LayoutGridMedium];
+		public IActionViewModel LayoutGridLarge => actions[ActionCodes.LayoutGridLarge];
+		public IActionViewModel LayoutColumns => actions[ActionCodes.LayoutColumns];
+		public IActionViewModel LayoutAdaptive => actions[ActionCodes.LayoutAdaptive];
 		public IActionViewModel OpenFolderInNewTab => actions[ActionCodes.OpenFolderInNewTab];
 
 		public ActionsViewModel()
