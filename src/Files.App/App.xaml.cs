@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.Notifications;
+using Files.App.Actions;
+using Files.App.Actions.HotKeys;
 using Files.App.Controllers;
 using Files.App.DataModels;
 using Files.App.Extensions;
@@ -124,6 +126,9 @@ namespace Files.App
 				.AddSingleton<IThreadingService, ThreadingService>()
 				.AddSingleton<ILocalizationService, LocalizationService>()
 				.AddSingleton<ICloudDetector, CloudDetector>()
+
+				.AddSingleton<IActionFactory, ActionFactory>()
+				.AddSingleton<IHotKeyManager, HotKeyManager>()
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
 #else
@@ -319,7 +324,7 @@ namespace Files.App
 		{
 			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
 			IBundlesSettingsService bundlesSettingsService = Ioc.Default.GetRequiredService<IBundlesSettingsService>();
-			
+
 			bundlesSettingsService.FlushSettings();
 
 			userSettingsService.PreferencesSettingsService.LastSessionTabList = MainPageViewModel.AppInstances.DefaultIfEmpty().Select(tab =>
