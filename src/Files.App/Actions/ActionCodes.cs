@@ -5,7 +5,7 @@
 		None,
 
 		Help,
-		ToggleFullScreen,
+		FullScreen,
 
 		OpenFolderInNewTab,
 	}

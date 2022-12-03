@@ -23,7 +23,7 @@ namespace Files.App.Actions
 
 		public IActionViewModel None => actions[ActionCodes.None];
 		public IActionViewModel Help => actions[ActionCodes.Help];
-		public IActionViewModel ToggleFullScreen => actions[ActionCodes.ToggleFullScreen];
+		public IActionViewModel FullScreen => actions[ActionCodes.FullScreen];
 		public IActionViewModel OpenFolderInNewTab => actions[ActionCodes.OpenFolderInNewTab];
 
 		public ActionsViewModel()

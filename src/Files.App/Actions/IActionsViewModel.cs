@@ -13,7 +13,7 @@ namespace Files.App.Actions
 		IActionViewModel None { get; }
 
 		IActionViewModel Help { get; }
-		IActionViewModel ToggleFullScreen { get; }
+		IActionViewModel FullScreen { get; }
 
 		IActionViewModel OpenFolderInNewTab { get; }
 	}

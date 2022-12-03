@@ -4,10 +4,10 @@ using Windows.System;
 
 namespace Files.App.Actions.Action
 {
-	internal class ToggleFullScreenAction : SyncAction
+	internal class FullScreenAction : SyncAction
 	{
-		public override ActionCodes Code => ActionCodes.ToggleFullScreen;
-		public override string Label => "ToggleFullScreen";
+		public override ActionCodes Code => ActionCodes.FullScreen;
+		public override string Label => "FullScreen";
 
 		public override HotKey HotKey => new(VirtualKey.F11);
 
