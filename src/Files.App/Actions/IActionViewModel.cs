@@ -13,9 +13,9 @@ namespace Files.App.Actions
 		HotKey UserHotKey { get; }
 		HotKey DefaultHotKey { get; }
 
+		bool CanExecute { get; }
 		ICommand Command { get; }
 
-		bool CanExecute();
 		Task ExecuteAsync();
 	}
 }

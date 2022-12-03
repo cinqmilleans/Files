@@ -1,6 +1,8 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions.HotKeys;
+using Files.Shared.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +18,16 @@ namespace Files.App.Actions
 
 		private static readonly IHotKeyManager? hotKeyManager = Ioc.Default.GetService<IHotKeyManager>();
 
-		public IActionContext Context { get; set; } = ActionContext.Empty;
+		private IActionContext context = ActionContext.Empty;
+		public IActionContext Context
+		{
+			get => context;
+			set
+			{
+				context = value;
+				actions.Values.ForEach(action => action.UpdateCanExecute());
+			}
+		}
 
 		public IActionViewModel this[ActionCodes code] => actions[code];
 		public IActionViewModel this[HotKey hotKey] => actions[hotKeyManager?[hotKey] ?? ActionCodes.None];
@@ -54,7 +65,7 @@ namespace Files.App.Actions
 				value.UserHotKey = HotKey.None;
 		}
 
-		private class ActionViewModel : IActionViewModel
+		private class ActionViewModel : ObservableObject, IActionViewModel
 		{
 			private readonly IActionsViewModel parent;
 			private readonly IAction action;
@@ -67,6 +78,13 @@ namespace Files.App.Actions
 			public HotKey UserHotKey { get; set; }
 			public HotKey DefaultHotKey => action.HotKey;
 
+			private bool canExecute = false;
+			public bool CanExecute
+			{
+				get => canExecute;
+				private set => SetProperty(ref canExecute, value);
+			}
+
 			public ICommand Command { get; }
 
 			public ActionViewModel(IActionsViewModel parent, IAction action)
@@ -75,11 +93,14 @@ namespace Files.App.Actions
 				this.action = action;
 
 				UserHotKey = action.HotKey;
-				Command = new AsyncRelayCommand(ExecuteAsync, CanExecute);
+				Command = new AsyncRelayCommand(ExecuteAsync, CanExec);
+				UpdateCanExecute();
 			}
 
-			public bool CanExecute() => action.CanExecute(parent.Context);
+			public void UpdateCanExecute() => CanExecute = CanExec();
+
 			public async Task ExecuteAsync() => await action.ExecuteAsync(parent.Context);
+			private bool CanExec() => action.CanExecute(parent.Context);
 		}
 	}
 }

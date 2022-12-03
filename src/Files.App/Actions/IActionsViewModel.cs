@@ -1,5 +1,6 @@
 ﻿using Files.App.Actions.HotKeys;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Files.App.Actions
 {
