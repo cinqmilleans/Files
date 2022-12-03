@@ -4,12 +4,12 @@ namespace Files.App.Actions
 {
 	public abstract class SyncAction : AsyncAction
 	{
-		public override Task ExecuteAsync()
+		public override Task ExecuteAsync(IActionContext context)
 		{
-			Execute();
+			Execute(context);
 			return Task.CompletedTask;
 		}
 
-		public abstract void Execute();
+		public abstract void Execute(IActionContext context);
 	}
 }

@@ -12,7 +12,7 @@ namespace Files.App.Actions.Action
 
 		public override HotKey HotKey => new(VirtualKey.F1);
 
-		public async override Task ExecuteAsync()
+		public async override Task ExecuteAsync(IActionContext _)
 		{
 			var url = new Uri(Constants.GitHub.DocumentationUrl);
 			await Launcher.LaunchUriAsync(url);

@@ -4,7 +4,6 @@ using Files.App.Filesystem;
 using Files.App.ViewModels;
 using Files.App.Views;
 using Microsoft.UI.Dispatching;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -18,18 +17,15 @@ namespace Files.App.Actions.Action
 
 		public override IGlyph Glyph { get; } = new Glyph("\uF113") { Family = "CustomGlyph" };
 
-		public override bool CanExecute()
+		public override bool CanExecute(IActionContext context)
 		{
-			var items = GetItems();
-
-			return items.Count < 5
-				&& items.All(i => i.PrimaryItemAttribute is StorageItemTypes.Folder);
+			return context.Items.Count < 5
+				&& context.Items.All(i => i.PrimaryItemAttribute is StorageItemTypes.Folder);
 		}
 
-		public override async Task ExecuteAsync()
+		public override async Task ExecuteAsync(IActionContext context)
 		{
-			var items = GetItems();
-			foreach (var item in items)
+			foreach (var item in context.Items)
 			{
 				await App.Window.DispatcherQueue.EnqueueAsync(async () =>
 				{
@@ -38,7 +34,5 @@ namespace Files.App.Actions.Action
 				}, DispatcherQueuePriority.Low);
 			}
 		}
-
-		private static IImmutableList<ListedItem> GetItems() => ImmutableList<ListedItem>.Empty;
 	}
 }

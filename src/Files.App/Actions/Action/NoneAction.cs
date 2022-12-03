@@ -11,7 +11,7 @@ namespace Files.App.Actions.Action
 		public IGlyph Glyph => Actions.Glyph.None;
 		public HotKey HotKey => HotKey.None;
 
-		public bool CanExecute() => true;
-		public Task ExecuteAsync() => Task.CompletedTask;
+		public bool CanExecute(IActionContext _) => true;
+		public Task ExecuteAsync(IActionContext _) => Task.CompletedTask;
 	}
 }

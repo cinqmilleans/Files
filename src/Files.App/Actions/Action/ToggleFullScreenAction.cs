@@ -11,7 +11,7 @@ namespace Files.App.Actions.Action
 
 		public override HotKey HotKey => new(VirtualKey.F11);
 
-		public override void Execute()
+		public override void Execute(IActionContext _)
 		{
 			var view = App.GetAppWindow(App.Window);
 

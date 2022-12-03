@@ -11,7 +11,7 @@ namespace Files.App.Actions
 		IGlyph Glyph { get; }
 		HotKey HotKey { get; }
 
-		bool CanExecute();
-		Task ExecuteAsync();
+		bool CanExecute(IActionContext context);
+		Task ExecuteAsync(IActionContext context);
 	}
 }
