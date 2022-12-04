@@ -9,7 +9,7 @@ namespace Files.App.Actions
 		{
 			ActionCodes.None => new NoneAction(),
 			ActionCodes.Help => new HelpAction(),
-			ActionCodes.FullScreen => new FullScreenAction(),
+			ActionCodes.FullScreen => new ToggleFullScreenAction(),
 			ActionCodes.LayoutDetails => new LayoutDetailsAction(),
 			ActionCodes.LayoutTiles => new LayoutTilesAction(),
 			ActionCodes.LayoutGridSmall => new LayoutGridSmallAction(),
