@@ -4,8 +4,8 @@
 	{
 		IRichCommand NoneCommand { get; }
 		IRichCommand HelpCommand { get; }
-		IToggleObservableCommand FullScreenCommand { get; }
+		IToggleCommand FullScreenCommand { get; }
 		IRichCommand LayoutDetailsCommand { get; }
-		IObservableCommand PropertiesCommand { get; }
+		IRichCommand PropertiesCommand { get; }
 	}
 }

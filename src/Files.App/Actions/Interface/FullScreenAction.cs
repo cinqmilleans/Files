@@ -6,7 +6,7 @@ using Windows.System;
 
 namespace Files.App.Actions
 {
-	internal class FullScreenAction : ObservableObject, IToggleObservableAction
+	internal class FullScreenAction : ObservableObject, IToggleAction, IObservableAction
 	{
 		public ActionCodes Code => ActionCodes.FullScreen;
 

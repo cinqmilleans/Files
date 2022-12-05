@@ -18,7 +18,13 @@ namespace Files.App.Actions
 
 		public bool IsExecutable => true;
 
-		public async Task ExecuteAsync()
+		public Task ExecuteAsync()
+		{
+			Execute();
+			return Task.CompletedTask;
+		}
+
+		private void Execute()
 		{
 			var flyout = context?.ShellPage?.SlimContentPage?.ItemContextMenuFlyout;
 			if (flyout is not null)
@@ -28,8 +34,8 @@ namespace Files.App.Actions
 				else
 					FilePropertiesHelpers.ShowProperties(context?.ShellPage!);
 			}
-			return Task.CompletedTask;
 		}
+
 
 		private void OpenProperties(object? sender, object e)
 		{

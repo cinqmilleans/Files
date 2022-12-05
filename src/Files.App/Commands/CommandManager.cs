@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
 using Files.App.DataModels;
@@ -11,13 +12,15 @@ namespace Files.App.Commands
 {
 	internal class CommandManager : ICommandManager
 	{
-		public IRichCommand NoneCommand { get; } = new RichCommand(new NoneAction());
-		public IRichCommand HelpCommand { get; } = new RichCommand(new HelpAction());
-		public IToggleObservableCommand FullScreenCommand { get; } = new ToggleObservableCommand(new FullScreenAction());
-		public IRichCommand LayoutDetailsCommand { get; } = new RichCommand(new LayoutDetailsAction());
-		public IObservableCommand PropertiesCommand { get; } = new ObservableCommand(new PropertiesAction());
+		private static readonly IHotKeyManager? hotKeyManager = Ioc.Default.GetService<IHotKeyManager>();
 
-		public class RichCommand : IRichCommand
+		public IRichCommand NoneCommand { get; } = new Command(new NoneAction());
+		public IRichCommand HelpCommand { get; } = new Command(new HelpAction());
+		public IToggleCommand FullScreenCommand { get; } = new ToggleCommand(new FullScreenAction());
+		public IRichCommand LayoutDetailsCommand { get; } = new Command(new LayoutDetailsAction());
+		public IRichCommand PropertiesCommand { get; } = new Command(new PropertiesAction());
+
+		public class Command : ObservableObject, IRichCommand
 		{
 			public event EventHandler? CanExecuteChanged;
 
@@ -25,40 +28,22 @@ namespace Files.App.Commands
 			private readonly ICommand command;
 
 			public string Label => action.Label;
-
 			public IGlyph Glyph => action.Glyph;
-			public HotKey HotKey => action.HotKey;
 
-			public RichCommand(IAction action)
+			public HotKey UserHotKey => action.HotKey;
+			public HotKey DefaultHotKey => action.HotKey;
+
+			public bool IsExecutable { get; }
+
+			public Command(IAction action)
 			{
 				this.action = action;
 				command = new AsyncRelayCommand(ExecuteAsync);
 			}
-
-			public bool CanExecute(object? parameter) => true;
-			public void Execute(object? parameter) => command.Execute(parameter);
-
-			public Task ExecuteAsync() => action.ExecuteAsync();
-		}
-
-		public class ObservableCommand : ObservableObject, IObservableCommand
-		{
-			public event EventHandler? CanExecuteChanged;
-
-			private readonly IObservableAction action;
-			private readonly ICommand command;
-
-			public string Label => action.Label;
-
-			public IGlyph Glyph => action.Glyph;
-			public HotKey HotKey => action.HotKey;
-
-			public bool IsExecutable { get; }
-
-			public ObservableCommand(IObservableAction action)
+			public Command(IObservableAction action)
 			{
 				this.action = action;
-				command = new AsyncRelayCommand(ExecuteAsync, CanExecute);
+				command = new AsyncRelayCommand(ExecuteAsync, () => action.IsExecutable);
 
 				action.PropertyChanging += Action_PropertyChanging;
 				action.PropertyChanged += Action_PropertyChanged;
@@ -102,15 +87,13 @@ namespace Files.App.Commands
 				}
 			}
 
-
 			public bool CanExecute(object? parameter) => command.CanExecute(parameter);
 			public void Execute(object? parameter) => command.Execute(parameter);
 
 			public Task ExecuteAsync() => action.ExecuteAsync();
-			private bool CanExecute() => action.IsExecutable;
 		}
 
-		public class ToggleCommand : RichCommand, IToggleCommand
+		public class ToggleCommand : Command, IToggleCommand
 		{
 			private readonly IToggleAction action;
 
@@ -121,21 +104,6 @@ namespace Files.App.Commands
 			}
 
 			public ToggleCommand(IToggleAction action) : base(action) => this.action = action;
-
-			public void Toggle() => IsOn = !IsOn;
-		}
-
-		public class ToggleObservableCommand : ObservableCommand, IToggleObservableCommand
-		{
-			private readonly IToggleObservableAction action;
-
-			public bool IsOn
-			{
-				get => action.IsOn;
-				set => action.IsOn = value;
-			}
-
-			public ToggleObservableCommand(IToggleObservableAction action) : base(action) => this.action = action;
 
 			public void Toggle() => IsOn = !IsOn;
 		}
