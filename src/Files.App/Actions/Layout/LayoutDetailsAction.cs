@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.App.DataModels;
+using Files.App.DataModels.HotKeys;
 using Files.App.Extensions;
+using Files.App.ViewModels.ActionContexts;
+using Files.App.ViewModels.Actions;
 using System.Threading.Tasks;
 using Windows.System;
 
@@ -19,7 +21,7 @@ namespace Files.App.Actions
 			return Task.CompletedTask;
 		}
 
-		private void Execute()
+		private static void Execute()
 		{
 			var context = Ioc.Default.GetService<IActionContext>();
 			var settings = context?.ShellPage?.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings;

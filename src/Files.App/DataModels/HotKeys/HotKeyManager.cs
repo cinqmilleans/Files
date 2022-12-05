@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Files.App.DataModels
+namespace Files.App.DataModels.HotKeys
 {
 	public class HotKeyManager : IHotKeyManager
 	{

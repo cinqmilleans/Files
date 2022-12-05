@@ -1,7 +1,7 @@
 ﻿using Files.App.Filesystem;
 using System.Collections.Immutable;
 
-namespace Files.App.DataModels
+namespace Files.App.ViewModels.ActionContexts
 {
 	public interface IActionContextWriter
 	{

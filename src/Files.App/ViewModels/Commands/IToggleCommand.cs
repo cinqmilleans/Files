@@ -1,4 +1,4 @@
-﻿namespace Files.App.Commands
+﻿namespace Files.App.ViewModels.Commands
 {
 	public interface IToggleCommand : IRichCommand
 	{

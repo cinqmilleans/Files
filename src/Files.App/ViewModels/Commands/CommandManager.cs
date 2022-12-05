@@ -2,13 +2,15 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
-using Files.App.DataModels;
+using Files.App.DataModels.Glyphs;
+using Files.App.DataModels.HotKeys;
+using Files.App.ViewModels.Actions;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Files.App.Commands
+namespace Files.App.ViewModels.Commands
 {
 	internal class CommandManager : ICommandManager
 	{
@@ -30,15 +32,19 @@ namespace Files.App.Commands
 			public string Label => action.Label;
 			public IGlyph Glyph => action.Glyph;
 
-			public HotKey UserHotKey => action.HotKey;
+			public HotKey UserHotKey => hotKeyManager?[action.Code] ?? HotKey.None;
 			public HotKey DefaultHotKey => action.HotKey;
 
-			public bool IsExecutable { get; }
+			public bool IsExecutable
+				=> action is not IObservableAction observableAction || observableAction.IsExecutable;
 
 			public Command(IAction action)
 			{
 				this.action = action;
 				command = new AsyncRelayCommand(ExecuteAsync);
+
+				if (hotKeyManager is not null)
+					hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
 			}
 			public Command(IObservableAction action)
 			{
@@ -47,7 +53,15 @@ namespace Files.App.Commands
 
 				action.PropertyChanging += Action_PropertyChanging;
 				action.PropertyChanged += Action_PropertyChanged;
+
+				if (hotKeyManager is not null)
+					hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
 			}
+
+			public bool CanExecute(object? parameter) => command.CanExecute(parameter);
+			public void Execute(object? parameter) => command.Execute(parameter);
+
+			public Task ExecuteAsync() => action.ExecuteAsync();
 
 			private void Action_PropertyChanging(object? sender, PropertyChangingEventArgs e)
 			{
@@ -87,10 +101,11 @@ namespace Files.App.Commands
 				}
 			}
 
-			public bool CanExecute(object? parameter) => command.CanExecute(parameter);
-			public void Execute(object? parameter) => command.Execute(parameter);
-
-			public Task ExecuteAsync() => action.ExecuteAsync();
+			private void HotKeyManager_HotKeyChanged(IHotKeyManager manager, HotKeyChangedEventArgs e)
+			{
+				if (action.Code == e.OldActionCode || action.Code == e.NewActionCode)
+					OnPropertyChanged(nameof(UserHotKey));
+			}
 		}
 
 		public class ToggleCommand : Command, IToggleCommand

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace Files.App.DataModels
+namespace Files.App.ViewModels.ActionContexts
 {
 	public class ActionContext : IActionContext, IActionContextWriter
 	{

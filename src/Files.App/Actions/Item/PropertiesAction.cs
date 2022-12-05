@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.App.DataModels;
+using Files.App.DataModels.Glyphs;
 using Files.App.Extensions;
 using Files.App.Helpers;
+using Files.App.ViewModels.ActionContexts;
+using Files.App.ViewModels.Actions;
 using System.Threading.Tasks;
 
 namespace Files.App.Actions

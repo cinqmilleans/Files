@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Files.App.DataModels;
+using Files.App.DataModels.HotKeys;
+using Files.App.ViewModels.Actions;
 using Microsoft.UI.Windowing;
 using System.Threading.Tasks;
 using Windows.System;

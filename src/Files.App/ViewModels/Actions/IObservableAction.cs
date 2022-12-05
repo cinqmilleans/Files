@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Files.App.Actions
+namespace Files.App.ViewModels.Actions
 {
 	public interface IObservableAction : IAction, INotifyPropertyChanging, INotifyPropertyChanged
 	{

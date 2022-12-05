@@ -1,4 +1,4 @@
-﻿namespace Files.App.DataModels
+﻿namespace Files.App.DataModels.Glyphs
 {
 	public interface IGlyph
 	{

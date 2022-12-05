@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Windows.System;
 
-namespace Files.App.DataModels
+namespace Files.App.DataModels.HotKeys
 {
 	public readonly struct HotKey : IEquatable<HotKey>
 	{

@@ -1,4 +1,4 @@
-﻿namespace Files.App.Actions
+﻿namespace Files.App.ViewModels.Actions
 {
 	public interface IToggleAction : IAction
 	{

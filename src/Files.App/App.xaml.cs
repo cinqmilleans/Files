@@ -4,6 +4,7 @@ using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.Notifications;
 using Files.App.Controllers;
 using Files.App.DataModels;
+using Files.App.DataModels.HotKeys;
 using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Filesystem.Cloud;
@@ -14,6 +15,8 @@ using Files.App.ServicesImplementation.DateTimeFormatter;
 using Files.App.ServicesImplementation.Settings;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
+using Files.App.ViewModels.ActionContexts;
+using Files.App.ViewModels.Commands;
 using Files.App.Views;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
@@ -124,6 +127,11 @@ namespace Files.App
 				.AddSingleton<IThreadingService, ThreadingService>()
 				.AddSingleton<ILocalizationService, LocalizationService>()
 				.AddSingleton<ICloudDetector, CloudDetector>()
+
+				.AddSingleton<IActionContext, ActionContext>()
+				.AddSingleton<IActionContextWriter, ActionContext>()
+				.AddSingleton<IHotKeyManager, HotKeyManager>()
+				.AddSingleton<ICommandManager, CommandManager>()
 #if SIDELOAD
 				.AddSingleton<IUpdateService, SideloadUpdateService>()
 #else
@@ -319,7 +327,7 @@ namespace Files.App
 		{
 			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
 			IBundlesSettingsService bundlesSettingsService = Ioc.Default.GetRequiredService<IBundlesSettingsService>();
-			
+
 			bundlesSettingsService.FlushSettings();
 
 			userSettingsService.PreferencesSettingsService.LastSessionTabList = MainPageViewModel.AppInstances.DefaultIfEmpty().Select(tab =>

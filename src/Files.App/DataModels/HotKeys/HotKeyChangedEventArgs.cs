@@ -1,7 +1,7 @@
-﻿using System;
-using Files.App.Actions;
+﻿using Files.App.Actions;
+using System;
 
-namespace Files.App.DataModels
+namespace Files.App.DataModels.HotKeys
 {
 	public class HotKeyChangedEventArgs : EventArgs
 	{

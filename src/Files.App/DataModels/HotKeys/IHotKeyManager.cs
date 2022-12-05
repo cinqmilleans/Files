@@ -1,6 +1,6 @@
 ﻿using Files.App.Actions;
 
-namespace Files.App.DataModels
+namespace Files.App.DataModels.HotKeys
 {
 	public interface IHotKeyManager
 	{
