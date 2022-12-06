@@ -118,15 +118,6 @@
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
 		<KeyboardAccelerator
-			Key="F1"
-			Invoked="KeyboardAccelerator_Invoked"
-			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}" />
-		<KeyboardAccelerator
-			Key="Number1"
-			Invoked="KeyboardAccelerator_Invoked"
-			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="Control,Shift" />
-		<KeyboardAccelerator
 			Key="Number2"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"

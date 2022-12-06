@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.UI.Controls;
+using Files.App.Commands;
 using Files.App.DataModels;
 using Files.App.DataModels.NavigationControlItems;
 using Files.App.Extensions;
@@ -14,7 +15,6 @@ using Files.Backend.Extensions;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
 using Files.Shared.EventArguments;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,6 +22,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -38,6 +39,7 @@ namespace Files.App.Views
 	public sealed partial class MainPage : Page, INotifyPropertyChanged
 	{
 		public IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
+		public ICommandManager? commands = Ioc.Default.GetService<ICommandManager>();
 
 		public AppModel AppModel => App.AppModel;
 
@@ -82,6 +84,8 @@ namespace Files.App.Views
 			UserSettingsService.OnSettingChangedEvent += UserSettingsService_OnSettingChangedEvent;
 
 			DispatcherQueue.TryEnqueue(async () => await LoadSelectedTheme());
+
+			InitializeKeyboardAccelerators();
 		}
 
 		private async Task LoadSelectedTheme()
@@ -501,5 +505,67 @@ namespace Files.App.Views
 		}
 
 		private void NavToolbar_Loaded(object sender, RoutedEventArgs e) => UpdateNavToolbarProperties();
+
+		private void InitializeKeyboardAccelerators()
+		{
+			if (commands is null)
+				return;
+
+			var hotKeyManager = Ioc.Default.GetService<IHotKeyManager>();
+			if (hotKeyManager is not null)
+				hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
+
+			foreach (IRichCommand command in commands)
+				if (!command.UserHotKey.IsNone)
+					KeyboardAccelerators.Add(new CommandAccelerator(command));
+		}
+
+		private void HotKeyManager_HotKeyChanged(IHotKeyManager manager, HotKeyChangedEventArgs e)
+		{
+			if (commands is null)
+				return;
+
+			if (e.OldCommandCode is not CommandCodes.None && !e.OldHotKey.IsNone)
+			{
+				var oldAccelerator = KeyboardAccelerators
+					.FirstOrDefault(a => a.Key == e.OldHotKey.Key && a.Modifiers == e.OldHotKey.Modifiers);
+				if (oldAccelerator is not null)
+					KeyboardAccelerators.Remove(oldAccelerator);
+			}
+			if (e.NewCommandCode is not CommandCodes.None && !e.NewHotKey.IsNone)
+			{
+				var newCommand = commands[e.NewCommandCode];
+				KeyboardAccelerators.Add(new CommandAccelerator(newCommand));
+			}
+		}
+
+		protected override async void OnKeyboardAcceleratorInvoked(KeyboardAcceleratorInvokedEventArgs args)
+		{
+			base.OnKeyboardAcceleratorInvoked(args);
+			if (args.KeyboardAccelerator is CommandAccelerator accelerator)
+			{
+				await accelerator.ExecuteAsync();
+				args.Handled = true;
+			}
+		}
+
+		private class CommandAccelerator : KeyboardAccelerator
+		{
+			private readonly IRichCommand command;
+
+			public CommandAccelerator(IRichCommand command)
+			{
+				this.command = command;
+
+				Key = command.UserHotKey.Key;
+				Modifiers = command.UserHotKey.Modifiers;
+			}
+
+			public async Task ExecuteAsync()
+			{
+				if (command.IsExecutable)
+					await command.ExecuteAsync();
+			}
+		}
 	}
 }

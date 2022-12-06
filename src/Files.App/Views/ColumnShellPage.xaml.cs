@@ -777,10 +777,6 @@ namespace Files.App.Views
 				case (true, false, false, true, VirtualKey.H): // ctrl + h, toggle hidden folder visibility
 					UserSettingsService.FoldersSettingsService.ShowHiddenItems ^= true; // flip bool
 					break;
-
-				case (false, false, false, _, VirtualKey.F1): // F1, open Files wiki
-					await Launcher.LaunchUriAsync(new Uri(Constants.GitHub.DocumentationUrl));
-					break;
 			}
 
 			switch (args.KeyboardAccelerator.Key)

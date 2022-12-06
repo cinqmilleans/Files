@@ -772,14 +772,6 @@ namespace Files.App.Views
 					UserSettingsService.FoldersSettingsService.ShowHiddenItems ^= true; // flip bool
 					break;
 
-				case (false, false, false, _, VirtualKey.F1): // F1, open Files wiki
-					await Launcher.LaunchUriAsync(new Uri(Constants.GitHub.DocumentationUrl));
-					break;
-
-				case (true, true, false, _, VirtualKey.Number1): // ctrl+shift+1, details view
-					InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsView(true);
-					break;
-
 				case (true, true, false, _, VirtualKey.Number2): // ctrl+shift+2, tiles view
 					InstanceViewModel.FolderSettings.ToggleLayoutModeTiles(true);
 					break;

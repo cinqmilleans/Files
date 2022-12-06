@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Files.App.Commands
@@ -61,6 +62,13 @@ namespace Files.App.Commands
 				};
 				HotKeyChanged?.Invoke(this, args);
 			}
+		}
+
+		public void Initialize(IDictionary<HotKey, CommandCodes> hotKeys)
+		{
+			this.hotKeys.Clear();
+			foreach (var hotKey in hotKeys)
+				this.hotKeys.Add(hotKey.Key, hotKey.Value);
 		}
 	}
 }

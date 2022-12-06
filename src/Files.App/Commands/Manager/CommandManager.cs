@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -14,14 +15,14 @@ namespace Files.App.Commands
 {
 	internal class CommandManager : ICommandManager
 	{
-		private readonly IImmutableDictionary<CommandCodes, Command> commands = new Dictionary<CommandCodes, Command>
+		private readonly IImmutableDictionary<CommandCodes, Command> commands = new List<IAction>
 		{
-			[CommandCodes.None] = new Command(new NoneAction()),
-			[CommandCodes.Help] = new Command(new HelpAction()),
-			[CommandCodes.FullScreen] = new Command(new FullScreenAction()),
-			[CommandCodes.LayoutDetails] = new Command(new LayoutDetailsAction()),
-			[CommandCodes.Properties] = new Command(new PropertiesAction()),
-		}.ToImmutableDictionary();
+			new NoneAction(),
+			new HelpAction(),
+			new FullScreenAction(),
+			new LayoutDetailsAction(),
+			new PropertiesAction(),
+		}.ToImmutableDictionary(action => action.Code, action => new Command(action));
 
 		public IRichCommand this[CommandCodes commandCode]
 			=> commands.TryGetValue(CommandCodes.None, out var command) ? command : None;
@@ -35,18 +36,26 @@ namespace Files.App.Commands
 		public CommandManager()
 		{
 			var hotKeyManager = Ioc.Default.GetService<IHotKeyManager>();
-			if (hotKeyManager is not null)
-			{
-				hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
+			if (hotKeyManager is null)
+				return;
 
-				var commandCodes = Enum.GetValues<CommandCodes>();
-				foreach (CommandCodes commandCode in commandCodes)
-				{
-					var command = commands[commandCode];
-					var userHotKey = hotKeyManager[commandCode];
-					if (userHotKey != command.UserHotKey)
-						command.InitializeUserHotKey(userHotKey);
-				}
+			if (hotKeyManager is HotKeyManager manager)
+			{
+				var hotKeys = this
+					.Where(command => !command.DefaultHotKey.IsNone)
+					.ToDictionary(command => command.DefaultHotKey, command => command.Code);
+				manager.Initialize(hotKeys);
+			}
+
+			hotKeyManager.HotKeyChanged += HotKeyManager_HotKeyChanged;
+
+			var commandCodes = Enum.GetValues<CommandCodes>();
+			foreach (CommandCodes commandCode in commandCodes)
+			{
+				var command = commands[commandCode];
+				var userHotKey = hotKeyManager[commandCode];
+				if (userHotKey != command.UserHotKey)
+					command.InitializeUserHotKey(userHotKey);
 			}
 		}
 
