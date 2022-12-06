@@ -1,12 +1,12 @@
-﻿using Files.App.Actions;
+﻿using Files.App.CommandActions;
 
 namespace Files.App.DataModels.HotKeys
 {
-	public interface IHotKeyManager
+    public interface IHotKeyManager
 	{
 		event HotKeyChangedEventHandler? HotKeyChanged;
 
-		ActionCodes this[HotKey hotKey] { get; set; }
-		HotKey this[ActionCodes commandCode] { get; set; }
+		CommandCodes this[HotKey hotKey] { get; set; }
+		HotKey this[CommandCodes commandCode] { get; set; }
 	}
 }

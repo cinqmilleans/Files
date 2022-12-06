@@ -1,27 +1,27 @@
-﻿using Files.App.Actions;
+﻿using Files.App.CommandActions;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Files.App.DataModels.HotKeys
 {
-	public class HotKeyManager : IHotKeyManager
+    public class HotKeyManager : IHotKeyManager
 	{
-		private readonly IDictionary<HotKey, ActionCodes> hotKeys = new Dictionary<HotKey, ActionCodes>();
+		private readonly IDictionary<HotKey, CommandCodes> hotKeys = new Dictionary<HotKey, CommandCodes>();
 
 		public event HotKeyChangedEventHandler? HotKeyChanged;
 
-		public ActionCodes this[HotKey hotKey]
+		public CommandCodes this[HotKey hotKey]
 		{
-			get => hotKeys.TryGetValue(hotKey, out ActionCodes ActionCode) ? ActionCode : ActionCodes.None;
+			get => hotKeys.TryGetValue(hotKey, out CommandCodes ActionCode) ? ActionCode : CommandCodes.None;
 			set
 			{
 				var oldActionCode = this[hotKey];
 				if (oldActionCode == value)
 					return;
 
-				if (value is ActionCodes.None)
+				if (value is CommandCodes.None)
 					hotKeys.Remove(hotKey);
-				else if (oldActionCode is ActionCodes.None)
+				else if (oldActionCode is CommandCodes.None)
 					hotKeys[hotKey] = value;
 				else
 					hotKeys.Add(hotKey, value);
@@ -37,7 +37,7 @@ namespace Files.App.DataModels.HotKeys
 			}
 		}
 
-		public HotKey this[ActionCodes ActionCode]
+		public HotKey this[CommandCodes ActionCode]
 		{
 			get => hotKeys.FirstOrDefault(hotKey => hotKey.Value == ActionCode).Key;
 			set

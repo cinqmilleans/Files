@@ -1,20 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Files.App.Actions;
+using Files.App.CommandActions;
 using Files.App.DataModels.Glyphs;
 using Files.App.DataModels.HotKeys;
 using Files.App.ViewModels.Actions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Files.App.ViewModels.Commands
 {
-	internal class CommandManager : ICommandManager
+    internal class CommandManager : ICommandManager
 	{
 		private static readonly IHotKeyManager? hotKeyManager = Ioc.Default.GetService<IHotKeyManager>();
+
+		public IRichCommand this[CommandCodes actionCode] => actionCode switch
+		{
+			CommandCodes.Help => HelpCommand,
+			CommandCodes.FullScreen => FullScreenCommand,
+			CommandCodes.LayoutDetails => LayoutDetailsCommand,
+			CommandCodes.Properties => PropertiesCommand,
+			_ => NoneCommand,
+		};
 
 		public IRichCommand NoneCommand { get; } = new Command(new NoneAction());
 		public IRichCommand HelpCommand { get; } = new Command(new HelpAction());
@@ -22,12 +33,19 @@ namespace Files.App.ViewModels.Commands
 		public IRichCommand LayoutDetailsCommand { get; } = new Command(new LayoutDetailsAction());
 		public IRichCommand PropertiesCommand { get; } = new Command(new PropertiesAction());
 
+		public IEnumerable<IRichCommand> EnumerateCommands() => Enum
+			.GetValues<CommandCodes>()
+			.Select(actionCode => this[actionCode])
+			.Where(command => command.Code is not CommandCodes.None);
+
 		public class Command : ObservableObject, IRichCommand
 		{
 			public event EventHandler? CanExecuteChanged;
 
 			private readonly IAction action;
 			private readonly ICommand command;
+
+			public CommandCodes Code => action.Code;
 
 			public string Label => action.Label;
 			public IGlyph Glyph => action.Glyph;

@@ -1,4 +1,5 @@
-﻿using Files.App.DataModels.Glyphs;
+﻿using Files.App.CommandActions;
+using Files.App.DataModels.Glyphs;
 using Files.App.DataModels.HotKeys;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -6,8 +7,10 @@ using System.Windows.Input;
 
 namespace Files.App.ViewModels.Commands
 {
-	public interface IRichCommand : ICommand, INotifyPropertyChanging, INotifyPropertyChanged
+    public interface IRichCommand : ICommand, INotifyPropertyChanging, INotifyPropertyChanged
 	{
+		CommandCodes Code { get; }
+
 		string Label { get; }
 		IGlyph Glyph { get; }
 

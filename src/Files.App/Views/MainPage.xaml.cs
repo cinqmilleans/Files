@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.UI.Controls;
 using Files.App.DataModels;
+using Files.App.DataModels.HotKeys;
 using Files.App.DataModels.NavigationControlItems;
 using Files.App.Extensions;
 using Files.App.Filesystem;
@@ -10,6 +11,7 @@ using Files.App.Helpers;
 using Files.App.UserControls;
 using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
+using Files.App.ViewModels.Commands;
 using Files.Backend.Extensions;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
@@ -38,6 +40,8 @@ namespace Files.App.Views
 	public sealed partial class MainPage : Page, INotifyPropertyChanged
 	{
 		public IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
+
+		private ICommandManager CommandManager { get; } = Ioc.Default.GetRequiredService<ICommandManager>();
 
 		public AppModel AppModel => App.AppModel;
 
@@ -328,6 +332,19 @@ namespace Files.App.Views
 			FindName(nameof(InnerNavigationToolbar));
 			FindName(nameof(horizontalMultitaskingControl));
 			FindName(nameof(NavToolbar));
+
+			var a = new KeyboardAccelerator
+			{
+				Key = CommandManager.FullScreenCommand.UserHotKey.Key,
+				Modifiers = CommandManager.FullScreenCommand.UserHotKey.Modifiers,
+			};
+			a.Invoked += A_Invoked;
+			KeyboardAccelerators.Add(a);
+		}
+
+		private void A_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+		{
+			var hotKey = new HotKey(args.KeyboardAccelerator.Key, args.KeyboardAccelerator.Modifiers);
 		}
 
 		private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
