@@ -82,12 +82,8 @@ namespace Files.App.ViewModels
 			GlyphFontFamilyName = command.Glyph.Family;
 			Command = command;
 
-			var hotKey = command.UserHotKey;
-			if (!hotKey.IsNone)
-			{
-				KeyboardAccelerator = new(){ IsEnabled = false, Key = hotKey.Key, Modifiers = hotKey.Modifiers };
+			if (!command.UserHotKey.IsNone)
 				KeyboardAcceleratorTextOverride = command.UserHotKey.ToString();
-			}
 		}
 	}
 

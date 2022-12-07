@@ -18,6 +18,8 @@ namespace Files.App.Commands
 		IRichCommand LayoutColumns { get; }
 		IRichCommand LayoutAdaptive { get; }
 
+		IRichCommand MultiSelect { get; }
+
 		IRichCommand Properties { get; }
 	}
 }

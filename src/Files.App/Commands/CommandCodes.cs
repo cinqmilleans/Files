@@ -22,7 +22,7 @@
 		LayoutAdaptive,
 
 		// selection
-		//MultiSelection,
+		MultiSelect,
 		//SelectAll,
 		//InvertSelection,
 		//ClearSelection,

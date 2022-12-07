@@ -28,6 +28,7 @@ namespace Files.App.Commands
 			new LayoutGridLargeAction(),
 			new LayoutColumnsAction(),
 			new LayoutAdaptiveAction(),
+			new MultiSelectAction(),
 			new PropertiesAction(),
 		}.ToImmutableDictionary(action => action.Code, action => new Command(action));
 
@@ -44,6 +45,7 @@ namespace Files.App.Commands
 		public IRichCommand LayoutGridLarge => commands[CommandCodes.LayoutGridLarge];
 		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
 		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
+		public IRichCommand MultiSelect => commands[CommandCodes.MultiSelect];
 		public IRichCommand Properties => commands[CommandCodes.Properties];
 
 		public CommandManager()

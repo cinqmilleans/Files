@@ -1,4 +1,5 @@
-﻿using Files.App.Filesystem;
+﻿using Files.App.DataModels;
+using Files.App.Filesystem;
 using System.Collections.Immutable;
 
 namespace Files.App.Commands
@@ -7,6 +8,7 @@ namespace Files.App.Commands
 	{
 		event CommandContextChangedEventHandler? Changed;
 
+		AppModel? AppModel { get; }
 		IShellPage? ShellPage { get; }
 		IImmutableList<ListedItem> Items { get; }
 	}

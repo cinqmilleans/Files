@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.App.Commands;
 using Files.App.ViewModels;
 using Files.App.Views;
 using Microsoft.UI.Xaml.Controls;
@@ -20,6 +22,10 @@ namespace Files.App.DataModels
 
 			//todo: this doesn't belong here
 			DetectFontName();
+
+			var commandContextWriter = Ioc.Default.GetService<ICommandContextWriter>();
+			if (commandContextWriter is not null)
+				commandContextWriter.AppModel = this;
 		}
 
 		//todo: refactor this method
