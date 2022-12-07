@@ -1,8 +1,10 @@
+using Files.App.Commands;
 using Files.App.UserControls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Windows.System;
 
 namespace Files.App.ViewModels
 {
@@ -69,6 +71,24 @@ namespace Files.App.ViewModels
 		public bool ShowLoadingIndicator { get; set; }
 
 		public bool IsHidden { get; set; }
+
+		public ContextMenuFlyoutItemViewModel()
+		{
+		}
+		public ContextMenuFlyoutItemViewModel(IRichCommand command)
+		{
+			Text = command.Label;
+			Glyph = command.Glyph.Base;
+			GlyphFontFamilyName = command.Glyph.Family;
+			Command = command;
+
+			var hotKey = command.UserHotKey;
+			if (!hotKey.IsNone)
+			{
+				KeyboardAccelerator = new(){ IsEnabled = false, Key = hotKey.Key, Modifiers = hotKey.Modifiers };
+				KeyboardAcceleratorTextOverride = command.UserHotKey.ToString();
+			}
+		}
 	}
 
 	public enum ItemType

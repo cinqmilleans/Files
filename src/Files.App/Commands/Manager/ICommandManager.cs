@@ -9,7 +9,15 @@ namespace Files.App.Commands
 		IRichCommand None { get; }
 		IRichCommand Help { get; }
 		IRichCommand FullScreen { get; }
+
 		IRichCommand LayoutDetails { get; }
+		IRichCommand LayoutTiles { get; }
+		IRichCommand LayoutGridSmall { get; }
+		IRichCommand LayoutGridMedium { get; }
+		IRichCommand LayoutGridLarge { get; }
+		IRichCommand LayoutColumns { get; }
+		IRichCommand LayoutAdaptive { get; }
+
 		IRichCommand Properties { get; }
 	}
 }

@@ -14,12 +14,12 @@
 
 		// layout
 		LayoutDetails,
-		//LayoutTiles,
-		//LayoutGridSmall,
-		//LayoutGridMedium,
-		//LayoutGridLarge,
-		//LayoutColumns,
-		//LayoutAdaptive,
+		LayoutTiles,
+		LayoutGridSmall,
+		LayoutGridMedium,
+		LayoutGridLarge,
+		LayoutColumns,
+		LayoutAdaptive,
 
 		// selection
 		//MultiSelection,

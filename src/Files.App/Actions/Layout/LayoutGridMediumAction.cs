@@ -6,13 +6,13 @@ using Windows.System;
 
 namespace Files.App.Actions
 {
-	internal class LayoutDetailsAction : IAction
+	internal class LayoutGridMediumAction : IAction
 	{
-		public CommandCodes Code => CommandCodes.LayoutDetails;
-		public string Label => "Details".GetLocalizedResource();
+		public CommandCodes Code => CommandCodes.LayoutGridMedium;
+		public string Label => "MediumIcons".GetLocalizedResource();
 
-		public IGlyph Glyph { get; } = new Glyph("\uE179");
-		public HotKey HotKey => new(VirtualKey.Number1, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+		public IGlyph Glyph { get; } = new Glyph("\uF0E2");
+		public HotKey HotKey => new(VirtualKey.Number4, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public Task ExecuteAsync()
 		{
@@ -24,7 +24,7 @@ namespace Files.App.Actions
 		{
 			var context = Ioc.Default.GetService<ICommandContext>();
 			var settings = context?.ShellPage?.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings;
-			settings?.ToggleLayoutModeDetailsView(true);
+			settings?.ToggleLayoutModeGridViewMedium(true);
 		}
 	}
 }

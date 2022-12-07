@@ -141,7 +141,8 @@ namespace Files.App
 
 				.AddSingleton<IHotKeyManager, HotKeyManager>()
 				.AddSingleton<ICommandManager, CommandManager>()
-				.AddSingleton<ICommandContextWriter, CommandContext>()
+				.AddSingleton<ICommandContext, CommandContext>()
+				.AddSingleton<ICommandContextWriter, CommandContext>((sp) => (CommandContext)sp.GetRequiredService<ICommandContext>())
 
 				; // End of service configuration
 

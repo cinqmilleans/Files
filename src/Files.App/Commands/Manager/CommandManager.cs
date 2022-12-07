@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,17 +22,29 @@ namespace Files.App.Commands
 			new HelpAction(),
 			new FullScreenAction(),
 			new LayoutDetailsAction(),
+			new LayoutTilesAction(),
+			new LayoutGridSmallAction(),
+			new LayoutGridMediumAction(),
+			new LayoutGridLargeAction(),
+			new LayoutColumnsAction(),
+			new LayoutAdaptiveAction(),
 			new PropertiesAction(),
 		}.ToImmutableDictionary(action => action.Code, action => new Command(action));
 
 		public IRichCommand this[CommandCodes commandCode]
-			=> commands.TryGetValue(CommandCodes.None, out var command) ? command : None;
+			=> commands.TryGetValue(commandCode, out var command) ? command : None;
 
-		public IRichCommand None => this[CommandCodes.None];
-		public IRichCommand Help => this[CommandCodes.Help];
-		public IRichCommand FullScreen => this[CommandCodes.FullScreen];
-		public IRichCommand LayoutDetails => this[CommandCodes.LayoutDetails];
-		public IRichCommand Properties => this[CommandCodes.Properties];
+		public IRichCommand None => commands[CommandCodes.None];
+		public IRichCommand Help => commands[CommandCodes.Help];
+		public IRichCommand FullScreen => commands[CommandCodes.FullScreen];
+		public IRichCommand LayoutDetails => commands[CommandCodes.LayoutDetails];
+		public IRichCommand LayoutTiles => commands[CommandCodes.LayoutTiles];
+		public IRichCommand LayoutGridSmall => commands[CommandCodes.LayoutGridSmall];
+		public IRichCommand LayoutGridMedium => commands[CommandCodes.LayoutGridMedium];
+		public IRichCommand LayoutGridLarge => commands[CommandCodes.LayoutGridLarge];
+		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
+		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
+		public IRichCommand Properties => commands[CommandCodes.Properties];
 
 		public CommandManager()
 		{
@@ -41,7 +54,7 @@ namespace Files.App.Commands
 
 			if (hotKeyManager is HotKeyManager manager)
 			{
-				var hotKeys = this
+				var hotKeys = commands.Values
 					.Where(command => !command.DefaultHotKey.IsNone)
 					.ToDictionary(command => command.DefaultHotKey, command => command.Code);
 				manager.Initialize(hotKeys);
@@ -108,6 +121,8 @@ namespace Files.App.Commands
 			public void Execute(object? parameter) => command.Execute(parameter);
 
 			public Task ExecuteAsync() => action.ExecuteAsync();
+
+			public async void ExecuteTapped(object _, TappedRoutedEventArgs e) => await action.ExecuteAsync();
 
 			private void Action_PropertyChanging(object? sender, PropertyChangingEventArgs e)
 			{
