@@ -419,8 +419,8 @@
 					<MenuFlyout Placement="Bottom">
 						<ToggleMenuFlyoutItem
 							x:Name="MultiselectMFI"
-							IsChecked="{x:Bind Commands.MultiSelect.IsOn, Mode=OneWay}"
-							KeyboardAcceleratorTextOverride="{x:Bind Test, Mode=OneWay}"
+							IsChecked="{x:Bind Commands.MultiSelect.IsOn, Mode=TwoWay}"
+							KeyboardAcceleratorTextOverride="{x:Bind Commands.MultiSelect.HotKeyOverride, Mode=OneWay}"
 							Text="{x:Bind Commands.MultiSelect.Label}">
 							<MenuFlyoutItem.Icon>
 								<FontIcon Glyph="{x:Bind Commands.MultiSelect.Glyph.Base}" />
@@ -719,7 +719,7 @@
 									Style="{StaticResource DefaultToggleButtonStyle}"
 									ToolTipService.ToolTip="{helpers:ResourceString Name=ColumnsShortcutTooltip}">
 									<FontIcon
-										FontFamily="{x:Bind Commands.LayoutColumns.Glyph.Family}"
+										FontFamily="{x:Bind Commands.LayoutColumns.GlyphFamily}"
 										FontSize="16"
 										Glyph="{x:Bind Commands.LayoutColumns.Glyph.Base}" />
 								</RadioButton>
@@ -748,7 +748,10 @@
 									IsEnabled="{x:Bind ViewModel.IsAdaptiveLayoutEnabled, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
 									ToolTipService.ToolTip="{helpers:ResourceString Name=AdaptiveShortcutTooltip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutAdaptive.Glyph.Base}" />
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutAdaptive.GlyphFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutAdaptive.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock

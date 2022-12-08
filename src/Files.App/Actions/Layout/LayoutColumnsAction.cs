@@ -12,7 +12,7 @@ namespace Files.App.Actions
 		public CommandCodes Code => CommandCodes.LayoutColumns;
 		public string Label => "Columns".GetLocalizedResource();
 
-		public IGlyph Glyph { get; } = new Glyph("\uF115") { Family = "CustomGlyph" };
+		public IGlyph Glyph { get; } = new Glyph("\uF115") { Family = new("CustomGlyph") };
 		public HotKey HotKey => new(VirtualKey.Number6, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
 		public Task ExecuteAsync()

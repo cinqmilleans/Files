@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.Commands;
 using Files.App.DataModels;
 using Files.App.Extensions;
@@ -10,8 +9,6 @@ namespace Files.App.Actions
 {
 	internal class MultiSelectAction : ObservableObject, IToggleAction
 	{
-		private readonly ICommandContext context = Ioc.Default.GetRequiredService<ICommandContext>();
-
 		public CommandCodes Code => CommandCodes.MultiSelect;
 		public string Label => "NavToolbarMultiselect/Text".GetLocalizedResource();
 
@@ -19,29 +16,19 @@ namespace Files.App.Actions
 
 		public bool IsOn
 		{
-			get => context?.AppModel?.MultiselectEnabled ?? false;
-			set
-			{
-				if (context?.AppModel is AppModel model)
-					model.MultiselectEnabled = value;
-			}
+			get => App.AppModel.MultiselectEnabled;
+			set => App.AppModel.MultiselectEnabled = value;
 		}
 
-		public MultiSelectAction()
-		{
-			if (context?.AppModel is AppModel model)
-				model.PropertyChanged += Model_PropertyChanged;
-		}
+		public MultiSelectAction() => App.AppModel.PropertyChanged += Model_PropertyChanged;
 
 		public Task ExecuteAsync()
 		{
-			if (context.AppModel is AppModel model)
-				model.MultiselectEnabled = !model.MultiselectEnabled;
-
+			App.AppModel.MultiselectEnabled = !App.AppModel.MultiselectEnabled;
 			return Task.CompletedTask;
 		}
 
-		private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+		private void Model_PropertyChanged(object? _, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName is nameof(AppModel.MultiselectEnabled))
 				OnPropertyChanged(nameof(IsOn));

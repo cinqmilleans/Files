@@ -1,5 +1,6 @@
 ﻿using Files.App.DataModels;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,11 +13,14 @@ namespace Files.App.Commands
 
 		string Label { get; }
 		IGlyph Glyph { get; }
+		FontFamily? GlyphFamily { get; }
 
 		HotKey UserHotKey { get; }
 		HotKey DefaultHotKey { get; }
 
-		bool IsOn { get; }
+		string? HotKeyOverride { get; }
+
+		bool IsOn { get; set; }
 		bool IsExecutable { get; }
 
 		Task ExecuteAsync();

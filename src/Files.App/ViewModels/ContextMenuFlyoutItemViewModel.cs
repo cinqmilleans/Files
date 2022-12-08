@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Windows.System;
 
 namespace Files.App.ViewModels
 {

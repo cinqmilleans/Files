@@ -27,8 +27,6 @@ namespace Files.App.UserControls
 		public IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
 		private ICommandManager Commands { get; } = Ioc.Default.GetRequiredService<ICommandManager>();
 
-		public string? Test => null;
-
 		public AppModel AppModel => App.AppModel;
 
 		public ToolbarViewModel ViewModel

@@ -1,14 +1,11 @@
-﻿using Files.App.DataModels;
-using Files.App.Filesystem;
+﻿using Files.App.Filesystem;
 using System.Collections.Immutable;
+using System.ComponentModel;
 
 namespace Files.App.Commands
 {
-	public interface ICommandContext
+	public interface ICommandContext : INotifyPropertyChanged, INotifyPropertyChanging
 	{
-		event CommandContextChangedEventHandler? Changed;
-
-		AppModel? AppModel { get; }
 		IShellPage? ShellPage { get; }
 		IImmutableList<ListedItem> Items { get; }
 	}

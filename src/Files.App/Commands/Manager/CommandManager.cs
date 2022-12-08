@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
 using Files.App.DataModels;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -97,13 +98,26 @@ namespace Files.App.Commands
 
 			public string Label => action.Label;
 			public IGlyph Glyph => action.Glyph;
+			public FontFamily GlyphFamily => !string.IsNullOrEmpty(action.Glyph.Family)
+				? (FontFamily)App.Current.Resources[action.Glyph.Family]
+				: App.AppModel.SymbolFontFamily;
 
 			private HotKey userHotKey;
 			public HotKey UserHotKey => userHotKey;
 			public HotKey DefaultHotKey => action.HotKey;
 
+			public string? HotKeyOverride => !UserHotKey.IsNone ? UserHotKey.ToString() : null;
+
 			public bool IsOn
-				=> action is IToggleAction toggleAction && toggleAction.IsOn;
+			{
+				get => action is IToggleAction toggleAction && toggleAction.IsOn;
+				set
+				{
+					if (action is IToggleAction toggleAction && toggleAction.IsOn != value)
+						command.Execute(null);
+				}
+			}
+
 			public bool IsExecutable
 				=> action is not IObservableAction observableAction || observableAction.IsExecutable;
 

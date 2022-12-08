@@ -1,4 +1,6 @@
-﻿namespace Files.App.Commands
+﻿using Microsoft.UI.Xaml.Media;
+
+namespace Files.App.Commands
 {
 	public interface IGlyph
 	{
