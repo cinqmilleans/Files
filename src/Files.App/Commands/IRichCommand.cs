@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Input;
+﻿using Files.App.DataModels;
+using Microsoft.UI.Xaml.Input;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Files.App.Commands;
+using Files.App.DataModels;
 using Microsoft.UI.Windowing;
 using System.ComponentModel;
 using System.Threading.Tasks;

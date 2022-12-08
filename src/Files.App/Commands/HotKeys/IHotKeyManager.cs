@@ -1,4 +1,6 @@
-﻿namespace Files.App.Commands
+﻿using Files.App.DataModels;
+
+namespace Files.App.Commands
 {
 	public interface IHotKeyManager
 	{

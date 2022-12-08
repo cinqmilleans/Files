@@ -140,6 +140,7 @@ namespace Files.App
 				.AddSingleton<ISizeProvider, UserSizeProvider>()
 
 				.AddSingleton<IHotKeyManager, HotKeyManager>()
+				.AddSingleton<IHotKeyAccelerator, HotKeyAccelerator>()
 				.AddSingleton<ICommandManager, CommandManager>()
 				.AddSingleton<ICommandContext, CommandContext>()
 				.AddSingleton<ICommandContextWriter, CommandContext>((sp) => (CommandContext)sp.GetRequiredService<ICommandContext>())

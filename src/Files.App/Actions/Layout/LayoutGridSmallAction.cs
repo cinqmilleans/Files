@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.Commands;
+using Files.App.DataModels;
 using Files.App.Extensions;
 using System.Threading.Tasks;
 using Windows.System;

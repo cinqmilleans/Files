@@ -2,12 +2,14 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
+using Files.App.DataModels;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -83,6 +85,7 @@ namespace Files.App.Commands
 			commands[e.NewCommandCode].UpdateUserHotKey(manager[e.NewCommandCode]);
 		}
 
+		[DebuggerDisplay("Command {Code}")]
 		public class Command : ObservableObject, IRichCommand
 		{
 			public event EventHandler? CanExecuteChanged;
@@ -122,7 +125,12 @@ namespace Files.App.Commands
 			public bool CanExecute(object? parameter) => command.CanExecute(parameter);
 			public void Execute(object? parameter) => command.Execute(parameter);
 
-			public Task ExecuteAsync() => action.ExecuteAsync();
+			public Task ExecuteAsync()
+			{
+				if (IsExecutable)
+					return action.ExecuteAsync();
+				return Task.CompletedTask;
+			}
 
 			public async void ExecuteTapped(object _, TappedRoutedEventArgs e) => await action.ExecuteAsync();
 

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Files.App.DataModels;
+using System.Threading.Tasks;
 
 namespace Files.App.Commands
 {
