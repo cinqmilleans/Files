@@ -20,7 +20,7 @@ namespace Files.App.Actions
 		public IGlyph Glyph { get; } = new Glyph("\uE179");
 		public HotKey HotKey => new(VirtualKey.Number1, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-		public bool IsOn => context?.ShellPage?.ToolbarViewModel?.IsLayoutDetailsView ?? false;
+		public bool IsOn => context?.ToolbarViewModel?.IsLayoutDetailsView ?? false;
 
 		public LayoutDetailsAction()
 		{
@@ -39,7 +39,7 @@ namespace Files.App.Actions
 
 		private void Execute()
 		{
-			var settings = context?.ShellPage?.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings;
+			var settings = context?.ShellPage?.InstanceViewModel?.FolderSettings;
 			settings?.ToggleLayoutModeDetailsView(true);
 		}
 
