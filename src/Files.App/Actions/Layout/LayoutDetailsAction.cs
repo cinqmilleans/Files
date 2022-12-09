@@ -24,12 +24,11 @@ namespace Files.App.Actions
 
 		public LayoutDetailsAction()
 		{
-			var toolbarViewModel = context?.ShellPage?.ToolbarViewModel;
-			if (toolbarViewModel is null)
+			if (context is null)
 				return;
 
-			toolbarViewModel.PropertyChanging += ToolbarViewModel_PropertyChanging;
-			toolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
+			context.PropertyChanging += Context_PropertyChanging;
+			context.PropertyChanged += Context_PropertyChanged;
 		}
 
 		public Task ExecuteAsync()
@@ -42,6 +41,25 @@ namespace Files.App.Actions
 		{
 			var settings = context?.ShellPage?.PaneHolder?.ActivePane?.InstanceViewModel?.FolderSettings;
 			settings?.ToggleLayoutModeDetailsView(true);
+		}
+
+		private void Context_PropertyChanging(object? _, PropertyChangingEventArgs e)
+		{
+			if (e.PropertyName is nameof(ICommandContext.ToolbarViewModel) && context?.ToolbarViewModel is not null)
+			{
+				context.ToolbarViewModel.PropertyChanging -= ToolbarViewModel_PropertyChanging;
+				context.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+				OnPropertyChanging(nameof(IsOn));
+			}
+		}
+		private void Context_PropertyChanged(object? _, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName is nameof(ICommandContext.ToolbarViewModel) && context?.ToolbarViewModel is not null)
+			{
+				context.ToolbarViewModel.PropertyChanging += ToolbarViewModel_PropertyChanging;
+				context.ToolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
+				OnPropertyChanged(nameof(IsOn));
+			}
 		}
 
 		private void ToolbarViewModel_PropertyChanging(object? _, PropertyChangingEventArgs e)

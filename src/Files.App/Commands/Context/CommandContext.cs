@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Files.App.Filesystem;
+using Files.App.ViewModels;
 using System.Collections.Immutable;
 
 namespace Files.App.Commands
@@ -11,6 +12,13 @@ namespace Files.App.Commands
 		{
 			get => shellPage;
 			set => SetProperty(ref shellPage, value);
+		}
+
+		private ToolbarViewModel? toolbarViewModel;
+		public ToolbarViewModel? ToolbarViewModel
+		{
+			get => toolbarViewModel;
+			set => SetProperty(ref toolbarViewModel, value);
 		}
 
 		private IImmutableList<ListedItem> items = ImmutableList<ListedItem>.Empty;

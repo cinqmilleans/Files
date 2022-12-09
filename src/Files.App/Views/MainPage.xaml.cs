@@ -37,6 +37,8 @@ namespace Files.App.Views
 	/// </summary>
 	public sealed partial class MainPage : Page, INotifyPropertyChanged
 	{
+		private readonly ICommandContextWriter commandContextWriter = Ioc.Default.GetRequiredService<ICommandContextWriter>();
+
 		public IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
 
 		public AppModel AppModel => App.AppModel;
@@ -211,6 +213,9 @@ namespace Files.App.Views
 
 		private void UpdateNavToolbarProperties()
 		{
+			if (commandContextWriter is not null)
+				commandContextWriter.ToolbarViewModel = SidebarAdaptiveViewModel.PaneHolder?.ActivePaneOrColumn.ToolbarViewModel;
+
 			if (NavToolbar is not null)
 				NavToolbar.ViewModel = SidebarAdaptiveViewModel.PaneHolder?.ActivePaneOrColumn.ToolbarViewModel;
 
