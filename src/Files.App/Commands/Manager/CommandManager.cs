@@ -97,10 +97,9 @@ namespace Files.App.Commands
 			public CommandCodes Code => action.Code;
 
 			public string Label => action.Label;
+			public string LabelWithHotKey => UserHotKey.IsNone ? Label : $"{Label} ({UserHotKey})";
+
 			public IGlyph Glyph => action.Glyph;
-			public FontFamily GlyphFamily => !string.IsNullOrEmpty(action.Glyph.Family)
-				? (FontFamily)App.Current.Resources[action.Glyph.Family]
-				: App.AppModel.SymbolFontFamily;
 
 			private HotKey userHotKey;
 			public HotKey UserHotKey => userHotKey;
@@ -200,6 +199,7 @@ namespace Files.App.Commands
 				{
 					userHotKey = newUserHotKey;
 					OnPropertyChanged(nameof(UserHotKey));
+					OnPropertyChanged(nameof(LabelWithHotKey));
 				}
 			}
 		}

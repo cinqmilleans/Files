@@ -2,6 +2,6 @@
 {
 	public interface IToggleAction : IAction
 	{
-		bool IsOn { get; set; }
+		bool IsOn { get; }
 	}
 }

@@ -10,7 +10,6 @@
 	xmlns:local="using:Files.App.UserControls"
 	xmlns:local1="using:Files.App"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:xh="using:Files.App.Helpers.XamlHelpers"
 	d:DesignHeight="40"
 	d:DesignWidth="400"
 	mc:Ignorable="d">
@@ -576,10 +575,13 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutDetails.Label}"
 									Command="{x:Bind Commands.LayoutDetails}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutDetailsView, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutDetails.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarDetails/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutDetails.Glyph.Base}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutDetails.LabelWithHotKey, Mode=OneWay}">
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutDetails.Glyph.FontFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutDetails.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock
@@ -602,10 +604,13 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutTiles.Label}"
 									Command="{x:Bind Commands.LayoutTiles}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutTilesView, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutTiles.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarTiles/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutTiles.Glyph.Base}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutTiles.LabelWithHotKey, Mode=OneWay}">
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutTiles.Glyph.FontFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutTiles.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock
@@ -628,10 +633,13 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridSmall.Label}"
 									Command="{x:Bind Commands.LayoutGridSmall}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewSmall, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutGridSmall.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSmallIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridSmall.Glyph.Base}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridSmall.LabelWithHotKey, Mode=OneWay}">
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutGridSmall.Glyph.FontFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutGridSmall.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock
@@ -654,10 +662,13 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridMedium.Label}"
 									Command="{x:Bind Commands.LayoutGridMedium}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewMedium, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutGridMedium.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarMediumIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridMedium.Glyph.Base}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridMedium.LabelWithHotKey, Mode=OneWay}">
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutGridMedium.Glyph.FontFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutGridMedium.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock
@@ -689,10 +700,13 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridLarge.Label}"
 									Command="{x:Bind Commands.LayoutGridLarge}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewLarge, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutGridLarge.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLargeIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridLarge.Glyph.Base}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridLarge.LabelWithHotKey, Mode=OneWay}">
+									<FontIcon
+										FontFamily="{x:Bind Commands.LayoutGridLarge.Glyph.FontFamily}"
+										FontSize="16"
+										Glyph="{x:Bind Commands.LayoutGridLarge.Glyph.Base}" />
 								</RadioButton>
 
 								<TextBlock
@@ -715,11 +729,11 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutColumns.Label}"
 									Command="{x:Bind Commands.LayoutColumns}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutColumnsView, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutColumns.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=ColumnsShortcutTooltip}">
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutColumns.LabelWithHotKey, Mode=OneWay}">
 									<FontIcon
-										FontFamily="{x:Bind Commands.LayoutColumns.GlyphFamily}"
+										FontFamily="{x:Bind Commands.LayoutColumns.Glyph.FontFamily}"
 										FontSize="16"
 										Glyph="{x:Bind Commands.LayoutColumns.Glyph.Base}" />
 								</RadioButton>
@@ -744,12 +758,12 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutAdaptive.Label}"
 									Command="{x:Bind Commands.LayoutAdaptive}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutAdaptive, Mode=OneWay}"
-									IsEnabled="{x:Bind ViewModel.IsAdaptiveLayoutEnabled, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutAdaptive.IsOn, Mode=OneWay}"
+									IsEnabled="{x:Bind Commands.LayoutAdaptive.IsExecutable, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=AdaptiveShortcutTooltip}">
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutAdaptive.LabelWithHotKey, Mode=OneWay}">
 									<FontIcon
-										FontFamily="{x:Bind Commands.LayoutAdaptive.GlyphFamily}"
+										FontFamily="{x:Bind Commands.LayoutAdaptive.Glyph.FontFamily}"
 										FontSize="16"
 										Glyph="{x:Bind Commands.LayoutAdaptive.Glyph.Base}" />
 								</RadioButton>

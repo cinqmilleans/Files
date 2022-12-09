@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media;
+using static Microsoft.UI.Xaml.Application;
 
 namespace Files.App.Commands
 {
@@ -9,6 +10,10 @@ namespace Files.App.Commands
 		public string Base { get; init; } = string.Empty;
 		public string Overlay { get; init; } = string.Empty;
 		public string Family { get; init; } = string.Empty;
+
+		public FontFamily FontFamily => !string.IsNullOrEmpty(Family)
+			? (FontFamily)Current.Resources[Family]
+			: App.AppModel.SymbolFontFamily;
 
 		public Glyph() {}
 		public Glyph(string glyphBase) : this() => Base = glyphBase;
