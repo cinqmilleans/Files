@@ -48,6 +48,5 @@ namespace Files.App.Actions
 				}, DispatcherQueuePriority.Low);
 			}
 		}
-
 	}
 }

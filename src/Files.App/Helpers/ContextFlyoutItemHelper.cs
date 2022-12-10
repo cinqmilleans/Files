@@ -766,7 +766,7 @@ namespace Files.App.Helpers
 					SingleItemOnly = true,
 					ShowInSearchPage = true,
 				},
-				new ContextMenuFlyoutItemViewModel(commands.Rename){ IsPrimary = true },
+				new ContextMenuFlyoutItemViewModel(commands.Rename){ IsPrimary = true, Text = commands.Rename.LabelWithHotKey },
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "BaseLayoutItemContextFlyoutShare/Text".GetLocalizedResource(),

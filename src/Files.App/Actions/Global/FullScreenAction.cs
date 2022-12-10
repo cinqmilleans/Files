@@ -10,7 +10,6 @@ namespace Files.App.Actions
 	internal class FullScreenAction : ObservableObject, IAction
 	{
 		public CommandCodes Code => CommandCodes.FullScreen;
-
 		public string Label => "Full Screen";
 
 		public HotKey HotKey => new(VirtualKey.F11);
