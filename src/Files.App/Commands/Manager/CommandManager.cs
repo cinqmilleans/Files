@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
 using Files.App.DataModels;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -109,25 +108,22 @@ namespace Files.App.Commands
 
 			public bool IsOn
 			{
-				get => action is IToggleAction toggleAction && toggleAction.IsOn;
+				get => action.IsOn;
 				set
 				{
-					if (action is IToggleAction toggleAction && toggleAction.IsOn != value)
+					if (action.IsOn != value)
 						command.Execute(null);
 				}
 			}
 
-			public bool IsExecutable
-				=> action is not IObservableAction observableAction || observableAction.IsExecutable;
+			public bool IsExecutable => action.IsExecutable;
 
 			public Command(IAction action)
 			{
 				this.action = action;
 				userHotKey = action.HotKey;
 
-				command = action is IObservableAction observableAction
-					? new AsyncRelayCommand(ExecuteAsync, () => observableAction.IsExecutable)
-					: new AsyncRelayCommand(ExecuteAsync);
+				command = new AsyncRelayCommand(ExecuteAsync, () => action.IsExecutable);
 
 				if (action is INotifyPropertyChanging notifyPropertyChanging)
 					notifyPropertyChanging.PropertyChanging += Action_PropertyChanging;
@@ -160,10 +156,10 @@ namespace Files.App.Commands
 					case nameof(IAction.HotKey):
 						OnPropertyChanging(nameof(DefaultHotKey));
 						break;
-					case nameof(IToggleAction.IsOn):
+					case nameof(IAction.IsOn):
 						OnPropertyChanging(nameof(IsOn));
 						break;
-					case nameof(IObservableAction.IsExecutable):
+					case nameof(IAction.IsExecutable):
 						OnPropertyChanging(nameof(IsExecutable));
 						break;
 				}
@@ -181,10 +177,10 @@ namespace Files.App.Commands
 					case nameof(IAction.HotKey):
 						OnPropertyChanged(nameof(DefaultHotKey));
 						break;
-					case nameof(IToggleAction.IsOn):
+					case nameof(IAction.IsOn):
 						OnPropertyChanged(nameof(IsOn));
 						break;
-					case nameof(IObservableAction.IsExecutable):
+					case nameof(IAction.IsExecutable):
 						OnPropertyChanged(nameof(IsExecutable));
 						CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 						break;

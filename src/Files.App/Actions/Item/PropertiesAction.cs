@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Files.App.Actions
 {
-	internal class PropertiesAction : ObservableObject, IObservableAction
+	internal class PropertiesAction : ObservableObject, IAction
 	{
 		private readonly ICommandContext? context = Ioc.Default.GetService<ICommandContext>();
 

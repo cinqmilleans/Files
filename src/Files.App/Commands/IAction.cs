@@ -11,6 +11,9 @@ namespace Files.App.Commands
 		IGlyph Glyph => Commands.Glyph.None;
 		HotKey HotKey => HotKey.None;
 
+		bool IsOn => false;
+		bool IsExecutable => true;
+
 		Task ExecuteAsync();
 	}
 }

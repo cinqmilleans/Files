@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Files.App.Actions
 {
-	internal class MultiSelectAction : ObservableObject, IToggleAction
+	internal class MultiSelectAction : ObservableObject, IAction
 	{
 		public CommandCodes Code => CommandCodes.MultiSelect;
 		public string Label => "NavToolbarMultiselect/Text".GetLocalizedResource();

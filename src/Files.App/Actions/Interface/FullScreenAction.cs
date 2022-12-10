@@ -2,13 +2,12 @@
 using Files.App.Commands;
 using Files.App.DataModels;
 using Microsoft.UI.Windowing;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.System;
 
 namespace Files.App.Actions
 {
-	internal class FullScreenAction : ObservableObject, IToggleAction, INotifyPropertyChanged
+	internal class FullScreenAction : ObservableObject, IAction
 	{
 		public CommandCodes Code => CommandCodes.FullScreen;
 
