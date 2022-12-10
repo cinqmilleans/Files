@@ -447,10 +447,10 @@
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="ClearSelectionMFI"
-							Command="{x:Bind ViewModel.ClearContentPageSelectionCommand, Mode=OneWay}"
-							Text="{helpers:ResourceString Name=NavToolbarClearSelection/Text}">
+							Command="{x:Bind Commands.ClearSelection}"
+							Text="{x:Bind Commands.ClearSelection.Label}">
 							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="&#xE8E6;" />
+								<FontIcon Glyph="{x:Bind Commands.ClearSelection.Glyph.Base}" />
 							</MenuFlyoutItem.Icon>
 						</MenuFlyoutItem>
 					</MenuFlyout>
@@ -793,8 +793,8 @@
 									HorizontalAlignment="Right"
 									AutomationProperties.Name="{x:Bind Commands.ShowHiddenItems.Label}"
 									IsOn="{x:Bind Commands.ShowHiddenItems.IsOn, Mode=TwoWay}"
-									ToolTipService.ToolTip="{x:Bind Commands.ShowHiddenItems.LabelWithHotKey, Mode=OneWay}"
-									Style="{StaticResource RightAlignedToggleSwitchStyle}" />
+									Style="{StaticResource RightAlignedToggleSwitchStyle}"
+									ToolTipService.ToolTip="{x:Bind Commands.ShowHiddenItems.LabelWithHotKey, Mode=OneWay}" />
 								<TextBlock
 									Grid.Row="1"
 									Grid.Column="0"
@@ -807,8 +807,8 @@
 									AutomationProperties.Name="{x:Bind Commands.ShowFileExtensions.Label}"
 									IsOn="{x:Bind Commands.ShowFileExtensions.IsOn, Mode=TwoWay}"
 									Rotation="1"
-									ToolTipService.ToolTip="{x:Bind Commands.ShowFileExtensions.LabelWithHotKey, Mode=OneWay}"
-									Style="{StaticResource RightAlignedToggleSwitchStyle}" />
+									Style="{StaticResource RightAlignedToggleSwitchStyle}"
+									ToolTipService.ToolTip="{x:Bind Commands.ShowFileExtensions.LabelWithHotKey, Mode=OneWay}" />
 							</Grid>
 						</StackPanel>
 					</Flyout>

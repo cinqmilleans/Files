@@ -25,7 +25,7 @@
 		MultiSelect,
 		//SelectAll,
 		//InvertSelection,
-		//ClearSelection,
+		ClearSelection,
 
 		// item
 		//Cut,

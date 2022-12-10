@@ -33,6 +33,7 @@ namespace Files.App.Commands
 			new LayoutColumnsAction(),
 			new LayoutAdaptiveAction(),
 			new MultiSelectAction(),
+			new ClearSelectionAction(),
 			new RenameAction(),
 			new PropertiesAction(),
 		}.ToImmutableDictionary(action => action.Code, action => new Command(action));
@@ -53,6 +54,7 @@ namespace Files.App.Commands
 		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
 		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
 		public IRichCommand MultiSelect => commands[CommandCodes.MultiSelect];
+		public IRichCommand ClearSelection => commands[CommandCodes.ClearSelection];
 		public IRichCommand Rename => commands[CommandCodes.Rename];
 		public IRichCommand Properties => commands[CommandCodes.Properties];
 

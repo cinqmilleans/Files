@@ -22,6 +22,7 @@ namespace Files.App.Commands
 		IRichCommand LayoutAdaptive { get; }
 
 		IRichCommand MultiSelect { get; }
+		IRichCommand ClearSelection { get; }
 
 		IRichCommand Rename { get; }
 		IRichCommand Properties { get; }

@@ -1,7 +1,4 @@
-﻿using Files.App.DataModels;
-using Files.App.Filesystem;
-using Files.App.ViewModels;
-using System.Collections.Immutable;
+﻿using Files.App.ViewModels;
 
 namespace Files.App.Commands
 {
@@ -9,6 +6,5 @@ namespace Files.App.Commands
 	{
 		IShellPage? ShellPage { get; set; }
 		ToolbarViewModel? ToolbarViewModel { get; set; }
-		IImmutableList<ListedItem> Items { get; set; }
 	}
 }

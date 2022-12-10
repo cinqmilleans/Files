@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Files.App.Filesystem;
 using Files.App.ViewModels;
-using System.Collections.Immutable;
 
 namespace Files.App.Commands
 {
@@ -19,13 +17,6 @@ namespace Files.App.Commands
 		{
 			get => toolbarViewModel;
 			set => SetProperty(ref toolbarViewModel, value);
-		}
-
-		private IImmutableList<ListedItem> items = ImmutableList<ListedItem>.Empty;
-		public IImmutableList<ListedItem> Items
-		{
-			get => items;
-			set => SetProperty(ref items, value);
 		}
 	}
 }

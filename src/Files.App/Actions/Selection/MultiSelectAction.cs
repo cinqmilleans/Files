@@ -12,7 +12,7 @@ namespace Files.App.Actions
 		public CommandCodes Code => CommandCodes.MultiSelect;
 		public string Label => "NavToolbarMultiselect/Text".GetLocalizedResource();
 
-		public IGlyph Glyph = new Glyph("\uE762");
+		public IGlyph Glyph { get; } = new Glyph("\uE762");
 
 		public bool IsOn
 		{
