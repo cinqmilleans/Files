@@ -10,6 +10,9 @@ namespace Files.App.Commands
 		IRichCommand Help { get; }
 		IRichCommand FullScreen { get; }
 
+		IRichCommand ShowHiddenItems { get; }
+		IRichCommand ShowFileExtensions { get; }
+
 		IRichCommand LayoutDetails { get; }
 		IRichCommand LayoutTiles { get; }
 		IRichCommand LayoutGridSmall { get; }

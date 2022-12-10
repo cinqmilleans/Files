@@ -4,13 +4,13 @@
 	{
 		None,
 
-		// setting
-		//ShowHiddenItems,
-		//ShowFileExtensions,
-
 		// global
 		Help,
 		FullScreen,
+
+		// setting
+		ShowHiddenItems,
+		ShowFileExtensions,
 
 		// layout
 		LayoutDetails,

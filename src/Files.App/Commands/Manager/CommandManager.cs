@@ -23,6 +23,8 @@ namespace Files.App.Commands
 			new NoneAction(),
 			new HelpAction(),
 			new FullScreenAction(),
+			new ShowHiddenItemsAction(),
+			new ShowFileExtensionsAction(),
 			new LayoutDetailsAction(),
 			new LayoutTilesAction(),
 			new LayoutGridSmallAction(),
@@ -41,6 +43,8 @@ namespace Files.App.Commands
 		public IRichCommand None => commands[CommandCodes.None];
 		public IRichCommand Help => commands[CommandCodes.Help];
 		public IRichCommand FullScreen => commands[CommandCodes.FullScreen];
+		public IRichCommand ShowHiddenItems => commands[CommandCodes.ShowHiddenItems];
+		public IRichCommand ShowFileExtensions => commands[CommandCodes.ShowFileExtensions];
 		public IRichCommand LayoutDetails => commands[CommandCodes.LayoutDetails];
 		public IRichCommand LayoutTiles => commands[CommandCodes.LayoutTiles];
 		public IRichCommand LayoutGridSmall => commands[CommandCodes.LayoutGridSmall];
