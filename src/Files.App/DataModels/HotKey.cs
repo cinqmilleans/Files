@@ -7,7 +7,7 @@ namespace Files.App.DataModels
 {
 	public readonly struct HotKey : IEquatable<HotKey>
 	{
-		public static HotKey None { get; } = new HotKey(VirtualKey.None, VirtualKeyModifiers.None);
+		public static HotKey None { get; } = new(VirtualKey.None, VirtualKeyModifiers.None);
 
 		public bool IsNone => Key is VirtualKey.None;
 
@@ -59,7 +59,7 @@ namespace Files.App.DataModels
 					key = k;
 			}
 
-			return new HotKey(key, modifiers);
+			return new(key, modifiers);
 
 			static VirtualKeyModifiers ToModifiers(string modifiers) => modifiers switch
 			{

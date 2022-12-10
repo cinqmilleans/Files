@@ -26,6 +26,8 @@ namespace Files.App.Commands
 		IRichCommand InvertSelection { get; }
 		IRichCommand ClearSelection { get; }
 
+		IRichCommand OpenFolderInNewTab { get; }
+
 		IRichCommand Rename { get; }
 		IRichCommand Properties { get; }
 	}

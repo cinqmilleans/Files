@@ -18,7 +18,7 @@ namespace Files.App.Actions
 		public string Label => "BaseLayoutItemContextFlyoutRename/Text".GetLocalizedResource();
 
 		public IGlyph Glyph { get; } = new Glyph("\uF027", "\uF028");
-		public HotKey HotKey { get; } = new HotKey(VirtualKey.F2);
+		public HotKey HotKey { get; } = new(VirtualKey.F2);
 
 		public bool IsExecutable
 			=> (context?.ToolbarViewModel?.CanRename ?? false)

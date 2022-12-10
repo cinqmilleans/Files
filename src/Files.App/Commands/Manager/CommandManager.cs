@@ -36,6 +36,7 @@ namespace Files.App.Commands
 			new SelectAllAction(),
 			new InvertSelectionAction(),
 			new ClearSelectionAction(),
+			new OpenFolderInNewTabAction(),
 			new RenameAction(),
 			new PropertiesAction(),
 		}.ToImmutableDictionary(action => action.Code, action => new Command(action));
@@ -59,6 +60,7 @@ namespace Files.App.Commands
 		public IRichCommand SelectAll => commands[CommandCodes.SelectAll];
 		public IRichCommand InvertSelection => commands[CommandCodes.InvertSelection];
 		public IRichCommand ClearSelection => commands[CommandCodes.ClearSelection];
+		public IRichCommand OpenFolderInNewTab => commands[CommandCodes.OpenFolderInNewTab];
 		public IRichCommand Rename => commands[CommandCodes.Rename];
 		public IRichCommand Properties => commands[CommandCodes.Properties];
 

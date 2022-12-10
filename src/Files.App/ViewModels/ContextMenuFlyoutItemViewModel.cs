@@ -93,7 +93,8 @@ namespace Files.App.ViewModels
 				};
 			}
 
-			SingleItemOnly = ShowInRecycleBin = ShowInSearchPage = ShowInFtpPage = ShowInZipPage = command.IsExecutable;
+			ShowItem = command.IsExecutable;
+			ShowInRecycleBin = ShowInSearchPage = ShowInFtpPage = ShowInZipPage = true;
 
 			if (!command.UserHotKey.IsNone)
 				KeyboardAcceleratorTextOverride = command.UserHotKey.ToString();

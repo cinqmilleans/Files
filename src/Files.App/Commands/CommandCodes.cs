@@ -27,17 +27,11 @@
 		InvertSelection,
 		ClearSelection,
 
-		// item
-		//Cut,
-		//Copy,
-		//Paste,
+		// folder
+		OpenFolderInNewTab,
 
-		//Open,
+		// item
 		Rename,
 		Properties,
-
-		//OpenFolderInNewTab,
-		//OpenFolderInSecondaryPanel,
-		//OpenFolderInNewWindow,
 	}
 }
