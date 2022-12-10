@@ -20,6 +20,7 @@ namespace Files.App.Commands
 
 		IRichCommand MultiSelect { get; }
 
+		IRichCommand Rename { get; }
 		IRichCommand Properties { get; }
 	}
 }

@@ -77,9 +77,23 @@ namespace Files.App.ViewModels
 		public ContextMenuFlyoutItemViewModel(IRichCommand command)
 		{
 			Text = command.Label;
-			Glyph = command.Glyph.Base;
-			GlyphFontFamilyName = command.Glyph.Family;
 			Command = command;
+
+			if (string.IsNullOrEmpty(command.Glyph.Overlay))
+			{
+				Glyph = command.Glyph.Base;
+				GlyphFontFamilyName = command.Glyph.Family;
+			}
+			else
+			{
+				ColoredIcon = new ColoredIconModel
+				{
+					BaseLayerGlyph = command.Glyph.Base,
+					OverlayLayerGlyph = command.Glyph.Overlay,
+				};
+			}
+
+			SingleItemOnly = ShowInRecycleBin = ShowInSearchPage = ShowInFtpPage = ShowInZipPage = command.IsExecutable;
 
 			if (!command.UserHotKey.IsNone)
 				KeyboardAcceleratorTextOverride = command.UserHotKey.ToString();

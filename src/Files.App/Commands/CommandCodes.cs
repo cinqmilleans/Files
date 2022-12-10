@@ -33,7 +33,7 @@
 		//Paste,
 
 		//Open,
-		//Rename,
+		Rename,
 		Properties,
 
 		//OpenFolderInNewTab,

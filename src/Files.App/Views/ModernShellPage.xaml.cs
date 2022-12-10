@@ -772,18 +772,6 @@ namespace Files.App.Views
 					UserSettingsService.FoldersSettingsService.ShowHiddenItems ^= true; // flip bool
 					break;
 			}
-
-			switch (args.KeyboardAccelerator.Key)
-			{
-				case VirtualKey.F2: //F2, rename
-					if (CurrentPageType == typeof(DetailsLayoutBrowser)
-						|| CurrentPageType == typeof(GridViewBrowser))
-					{
-						if (ContentPage.IsItemSelected)
-							ContentPage.ItemManipulationModel.StartRenameItem();
-					}
-					break;
-			}
 		}
 
 		public async void Refresh_Click()

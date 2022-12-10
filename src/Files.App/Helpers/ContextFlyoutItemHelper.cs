@@ -108,55 +108,13 @@ namespace Files.App.Helpers
 					ShowInZipPage = true,
 					Items = new List<ContextMenuFlyoutItemViewModel>()
 					{
-						new ContextMenuFlyoutItemViewModel(commands.LayoutDetails)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutTiles)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutGridSmall)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutGridMedium)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutGridLarge)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutColumns)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
-						new ContextMenuFlyoutItemViewModel(commands.LayoutAdaptive)
-						{
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-						},
+						new ContextMenuFlyoutItemViewModel(commands.LayoutDetails),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutTiles),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutGridSmall),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutGridMedium),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutGridLarge),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutColumns),
+						new ContextMenuFlyoutItemViewModel(commands.LayoutAdaptive),
 					}
 				},
 				new ContextMenuFlyoutItemViewModel()
@@ -523,19 +481,7 @@ namespace Files.App.Helpers
 					ShowOnShift = true,
 					ShowItem = itemViewModel.CurrentFolder.IsItemPinnedToStart,
 				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Text = "BaseLayoutContextFlyoutPropertiesFolder/Text".GetLocalizedResource(),
-					IsPrimary = true,
-					ColoredIcon = new ColoredIconModel()
-					{
-						BaseLayerGlyph = "\uF031",
-						OverlayLayerGlyph = "\uF032"
-					},
-					Command = commandsViewModel.ShowFolderPropertiesCommand,
-					ShowInFtpPage = true,
-					ShowInZipPage = true,
-				},
+				new ContextMenuFlyoutItemViewModel(commands.Properties){ IsPrimary = true },
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "BaseLayoutContextFlyoutEmptyRecycleBin/Text".GetLocalizedResource(),
@@ -830,27 +776,7 @@ namespace Files.App.Helpers
 					SingleItemOnly = true,
 					ShowInSearchPage = true,
 				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Text = "BaseLayoutItemContextFlyoutRename/Text".GetLocalizedResource(),
-					//Glyph = "\uF8AC",
-					IsPrimary = true,
-					ColoredIcon = new ColoredIconModel()
-					{
-						BaseLayerGlyph = "\uF027",
-						OverlayLayerGlyph = "\uF028",
-					},
-					Command = commandsViewModel.RenameItemCommand,
-					SingleItemOnly = true,
-					ShowInSearchPage = true,
-					ShowInFtpPage = true,
-					ShowInZipPage = true,
-					KeyboardAccelerator = new KeyboardAccelerator
-					{
-						Key = Windows.System.VirtualKey.F2,
-						IsEnabled = false,
-					},
-				},
+				new ContextMenuFlyoutItemViewModel(commands.Rename){ IsPrimary = true },
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "BaseLayoutItemContextFlyoutShare/Text".GetLocalizedResource(),
@@ -885,22 +811,7 @@ namespace Files.App.Helpers
 						IsEnabled = false,
 					},
 				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Text = "BaseLayoutItemContextFlyoutProperties/Text".GetLocalizedResource(),
-					//Glyph = "\uF946",
-					IsPrimary = true,
-					ColoredIcon = new ColoredIconModel()
-					{
-						BaseLayerGlyph = "\uF031",
-						OverlayLayerGlyph = "\uF032"
-					},
-					Command = commandsViewModel.ShowPropertiesCommand,
-					ShowInRecycleBin = true,
-					ShowInSearchPage = true,
-					ShowInFtpPage = true,
-					ShowInZipPage = true,
-				},
+				new ContextMenuFlyoutItemViewModel(commands.Properties){ IsPrimary = true },
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "BaseLayoutItemContextFlyoutOpenParentFolder/Text".GetLocalizedResource(),

@@ -96,11 +96,6 @@
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
 			Modifiers="Menu" />
 		<KeyboardAccelerator
-			Key="F2"
-			Invoked="KeyboardAccelerator_Invoked"
-			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"
-			Modifiers="None" />
-		<KeyboardAccelerator
 			Key="P"
 			Invoked="KeyboardAccelerator_Invoked"
 			IsEnabled="{x:Bind IsCurrentInstance, Mode=OneWay}"

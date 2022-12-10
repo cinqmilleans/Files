@@ -147,15 +147,14 @@
 					x:Name="RenameButton"
 					Width="Auto"
 					MinWidth="40"
-					AccessKey="M"
 					AutomationProperties.AutomationId="InnerNavigationToolbarRenameButton"
-					Command="{x:Bind ViewModel.Rename, Mode=OneWay}"
-					IsEnabled="{x:Bind converters:MultiBooleanConverter.AndConvert(ViewModel.CanRename, ViewModel.InstanceViewModel.IsPageTypeNotHome), Mode=OneWay, FallbackValue=False}"
-					Label="{helpers:ResourceString Name=BaseLayoutItemContextFlyoutRename/Text}"
+					Command="{x:Bind Commands.Rename}"
+					IsEnabled="{x:Bind Commands.Rename.IsExecutable, Mode=OneWay, FallbackValue=False}"
+					Label="{x:Bind Commands.Rename.Label}"
 					LabelPosition="Collapsed"
-					ToolTipService.ToolTip="{helpers:ResourceString Name=BaseLayoutItemContextFlyoutRename/Text}">
+					ToolTipService.ToolTip="{x:Bind Commands.Rename.LabelWithHotKey}">
 					<AppBarButton.Content>
-						<local:ColoredIcon BaseLayerGlyph="&#xF027;" OverlayLayerGlyph="&#xF028;" />
+						<local:ColoredIcon BaseLayerGlyph="{x:Bind Commands.Rename.Glyph.Base}" OverlayLayerGlyph="{x:Bind Commands.Rename.Glyph.Overlay}" />
 					</AppBarButton.Content>
 				</AppBarButton>
 				<AppBarButton
@@ -190,15 +189,14 @@
 					x:Name="PropertiesButton"
 					Width="Auto"
 					MinWidth="40"
-					AccessKey="O"
-					AutomationProperties.Name="{helpers:ResourceString Name=PropertiesTitle}"
-					Command="{x:Bind ViewModel.PropertiesCommand, Mode=OneWay}"
-					IsEnabled="{x:Bind converters:MultiBooleanConverter.AndConvert(ViewModel.CanViewProperties, ViewModel.InstanceViewModel.IsPageTypeNotHome), Mode=OneWay, FallbackValue=False}"
-					Label="{helpers:ResourceString Name=PropertiesTitle}"
+					AutomationProperties.Name="{x:Bind Commands.Properties.Label}"
+					Command="{x:Bind Commands.Properties}"
+					IsEnabled="{x:Bind Commands.Properties.IsExecutable, Mode=OneWay, FallbackValue=False}"
+					Label="{x:Bind Commands.Properties.Label}"
 					LabelPosition="Collapsed"
-					ToolTipService.ToolTip="{helpers:ResourceString Name=PropertiesTitle}">
+					ToolTipService.ToolTip="{x:Bind Commands.Properties.LabelWithHotKey}">
 					<AppBarButton.Content>
-						<local:ColoredIcon BaseLayerGlyph="&#xF031;" OverlayLayerGlyph="&#xF032;" />
+						<local:ColoredIcon BaseLayerGlyph="{x:Bind Commands.Properties.Glyph.Base}" OverlayLayerGlyph="{x:Bind Commands.Properties.Glyph.Overlay}" />
 					</AppBarButton.Content>
 				</AppBarButton>
 				<AppBarSeparator x:Name="AdditionalActionSeparator" x:Load="{x:Bind ViewModel.HasAdditionalAction, Mode=OneWay}" />
