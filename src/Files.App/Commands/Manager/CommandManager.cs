@@ -33,6 +33,8 @@ namespace Files.App.Commands
 			new LayoutColumnsAction(),
 			new LayoutAdaptiveAction(),
 			new MultiSelectAction(),
+			new SelectAllAction(),
+			new InvertSelectionAction(),
 			new ClearSelectionAction(),
 			new RenameAction(),
 			new PropertiesAction(),
@@ -54,6 +56,8 @@ namespace Files.App.Commands
 		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
 		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
 		public IRichCommand MultiSelect => commands[CommandCodes.MultiSelect];
+		public IRichCommand SelectAll => commands[CommandCodes.SelectAll];
+		public IRichCommand InvertSelection => commands[CommandCodes.InvertSelection];
 		public IRichCommand ClearSelection => commands[CommandCodes.ClearSelection];
 		public IRichCommand Rename => commands[CommandCodes.Rename];
 		public IRichCommand Properties => commands[CommandCodes.Properties];

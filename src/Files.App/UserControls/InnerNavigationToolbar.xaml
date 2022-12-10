@@ -420,37 +420,34 @@
 							KeyboardAcceleratorTextOverride="{x:Bind Commands.MultiSelect.HotKeyOverride, Mode=OneWay}"
 							Text="{x:Bind Commands.MultiSelect.Label}">
 							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="{x:Bind Commands.MultiSelect.Glyph.Base}" />
+								<FontIcon FontFamily="{x:Bind Commands.MultiSelect.Glyph.FontFamily}" Glyph="{x:Bind Commands.MultiSelect.Glyph.Base}" />
 							</MenuFlyoutItem.Icon>
 						</ToggleMenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="SelectAllMFI"
-							Command="{x:Bind ViewModel.SelectAllContentPageItemsCommand, Mode=OneWay}"
-							Text="{helpers:ResourceString Name=NavToolbarSelectAll/Text}">
+							Command="{x:Bind Commands.SelectAll}"
+							KeyboardAcceleratorTextOverride="{x:Bind Commands.SelectAll.HotKeyOverride}"
+							Text="{x:Bind Commands.SelectAll.Label}">
 							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="&#xE8B3;" />
+								<FontIcon FontFamily="{x:Bind Commands.SelectAll.Glyph.FontFamily}" Glyph="{x:Bind Commands.SelectAll.Glyph.Base}" />
 							</MenuFlyoutItem.Icon>
-							<MenuFlyoutItem.KeyboardAccelerators>
-								<KeyboardAccelerator
-									Key="A"
-									IsEnabled="False"
-									Modifiers="Control" />
-							</MenuFlyoutItem.KeyboardAccelerators>
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="InvertSelectionMFI"
-							Command="{x:Bind ViewModel.InvertContentPageSelctionCommand, Mode=OneWay}"
-							Text="{helpers:ResourceString Name=NavToolbarInvertSelection/Text}">
+							Command="{x:Bind Commands.InvertSelection}"
+							KeyboardAcceleratorTextOverride="{x:Bind Commands.InvertSelection.HotKeyOverride}"
+							Text="{x:Bind Commands.InvertSelection.Label}">
 							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="&#xE746;" />
+								<FontIcon FontFamily="{x:Bind Commands.InvertSelection.Glyph.FontFamily}" Glyph="{x:Bind Commands.InvertSelection.Glyph.Base}" />
 							</MenuFlyoutItem.Icon>
 						</MenuFlyoutItem>
 						<MenuFlyoutItem
 							x:Name="ClearSelectionMFI"
 							Command="{x:Bind Commands.ClearSelection}"
+							KeyboardAcceleratorTextOverride="{x:Bind Commands.ClearSelection.HotKeyOverride}"
 							Text="{x:Bind Commands.ClearSelection.Label}">
 							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="{x:Bind Commands.ClearSelection.Glyph.Base}" />
+								<FontIcon FontFamily="{x:Bind Commands.ClearSelection.Glyph.FontFamily}" Glyph="{x:Bind Commands.ClearSelection.Glyph.Base}" />
 							</MenuFlyoutItem.Icon>
 						</MenuFlyoutItem>
 					</MenuFlyout>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.Commands;
+using Files.App.Extensions;
 using Files.App.ViewModels;
 using System.ComponentModel;
 using System.Linq;
@@ -13,11 +14,11 @@ namespace Files.App.Actions
 		private readonly ICommandContext context = Ioc.Default.GetRequiredService<ICommandContext>();
 
 		public CommandCodes Code => CommandCodes.ClearSelection;
-		public string Label => "ClearSelection";
+		public string Label => "NavToolbarClearSelection/Text".GetLocalizedResource();
 
 		public IGlyph Glyph { get; } = new Glyph("\uE8E6");
 
-		public bool IsExecutable => context?.ToolbarViewModel?.SelectedItems?.Any() ?? false;
+		public bool IsExecutable => context.ToolbarViewModel?.SelectedItems?.Any() ?? false;
 
 		public ClearSelectionAction()
 		{

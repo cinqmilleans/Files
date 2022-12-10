@@ -23,8 +23,8 @@
 
 		// selection
 		MultiSelect,
-		//SelectAll,
-		//InvertSelection,
+		SelectAll,
+		InvertSelection,
 		ClearSelection,
 
 		// item
