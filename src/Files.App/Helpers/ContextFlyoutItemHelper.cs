@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.App.Commands;
 using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Interacts;
@@ -8,7 +9,6 @@ using Files.Backend.Helpers;
 using Files.Backend.Services;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -25,6 +25,8 @@ namespace Files.App.Helpers
 {
 	public static class ContextFlyoutItemHelper
 	{
+		private static readonly IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
+		private static readonly ICommandManager commands = Ioc.Default.GetRequiredService<ICommandManager>();
 		private static readonly IAddItemService addItemService = Ioc.Default.GetRequiredService<IAddItemService>();
 
 		public static List<ContextMenuFlyoutItemViewModel> GetItemContextCommandsWithoutShellItems(CurrentInstanceViewModel currentInstanceViewModel, List<ListedItem> selectedItems, BaseLayoutCommandsViewModel commandsViewModel, bool shiftPressed, SelectedItemsPropertiesViewModel? selectedItemsPropertiesViewModel, ItemViewModel? itemViewModel = null)
@@ -41,8 +43,6 @@ namespace Files.App.Helpers
 		{
 			items = items.Where(x => Check(item: x, currentInstanceViewModel: currentInstanceViewModel, selectedItems: selectedItems)).ToList();
 			items.ForEach(x => x.Items = x.Items?.Where(y => Check(item: y, currentInstanceViewModel: currentInstanceViewModel, selectedItems: selectedItems)).ToList());
-
-			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
 
 			var overflow = items.Where(x => x.ID == "ItemOverflow").FirstOrDefault();
 			if (overflow is not null)
@@ -84,8 +84,6 @@ namespace Files.App.Helpers
 			CurrentInstanceViewModel currentInstanceViewModel,
 			ItemViewModel itemViewModel = null)
 		{
-			IUserSettingsService userSettingsService = Ioc.Default.GetRequiredService<IUserSettingsService>();
-
 			bool itemsSelected = itemViewModel is null;
 			bool canDecompress = selectedItems.Any() && selectedItems.All(x => x.IsArchive)
 				|| selectedItems.All(x => x.PrimaryItemAttribute == StorageItemTypes.File && FileExtensionHelpers.IsZipFile(x.FileExtension));
@@ -558,15 +556,11 @@ namespace Files.App.Helpers
 					ShowInZipPage = true,
 					ShowItem = !itemsSelected
 				},
-				new ContextMenuFlyoutItemViewModel()
-				{
-					Text = "BaseLayoutContextFlyoutEmptyRecycleBin/Text".GetLocalizedResource(),
-					Glyph = "\uEF88",
-					GlyphFontFamilyName = "RecycleBinIcons",
-					Command = commandsViewModel.EmptyRecycleBinCommand,
-					ShowItem = !itemsSelected && currentInstanceViewModel.IsPageTypeRecycleBin,
-					ShowInRecycleBin = true,
-				},
+				//new ContextMenuFlyoutItemViewModel(commands.EmptyRecycleBin)
+				//{
+				//	ShowItem = !itemsSelected && currentInstanceViewModel.IsPageTypeRecycleBin,
+				//	ShowInRecycleBin = true,
+				//},
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "RestoreAllItems".GetLocalizedResource(),
@@ -722,7 +716,7 @@ namespace Files.App.Helpers
 					},
 					Command = commandsViewModel.RotateImageRightCommand,
 					ShowInSearchPage = true,
-					ShowItem = selectedItemsPropertiesViewModel.IsSelectedItemImage
+					ShowItem = true //selectedItemsPropertiesViewModel.IsSelectedItemImage
 				},
 				new ContextMenuFlyoutItemViewModel
 				{
@@ -734,7 +728,7 @@ namespace Files.App.Helpers
 					},
 					Command = commandsViewModel.RotateImageLeftCommand,
 					ShowInSearchPage = true,
-					ShowItem = selectedItemsPropertiesViewModel.IsSelectedItemImage
+					ShowItem = true //selectedItemsPropertiesViewModel.IsSelectedItemImage
 				},
 				new ContextMenuFlyoutItemViewModel()
 				{

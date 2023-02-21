@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
+using Files.App.UserControls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Microsoft.UI.Xaml.Application;
 
 namespace Files.App.Commands
 {
@@ -27,6 +31,7 @@ namespace Files.App.Commands
 		public IRichCommand None => commands[CommandCodes.None];
 		public IRichCommand OpenHelp => commands[CommandCodes.OpenHelp];
 		public IRichCommand ToggleFullScreen => commands[CommandCodes.ToggleFullScreen];
+		public IRichCommand EmptyRecycleBin => commands[CommandCodes.EmptyRecycleBin];
 		public IRichCommand ToggleShowHiddenItems => commands[CommandCodes.ToggleShowHiddenItems];
 		public IRichCommand ToggleShowFileExtensions => commands[CommandCodes.ToggleShowFileExtensions];
 
@@ -50,6 +55,7 @@ namespace Files.App.Commands
 		{
 			[CommandCodes.OpenHelp] = new OpenHelpAction(),
 			[CommandCodes.ToggleFullScreen] = new ToggleFullScreenAction(),
+			[CommandCodes.EmptyRecycleBin] = new EmptyRecycleBinAction(),
 			[CommandCodes.ToggleShowHiddenItems] = new ToggleShowHiddenItemsAction(),
 			[CommandCodes.ToggleShowFileExtensions] = new ToggleShowFileExtensionsAction(),
 		};
@@ -66,6 +72,10 @@ namespace Files.App.Commands
 			public string Label => string.Empty;
 			public string LabelWithHotKey => string.Empty;
 			public string AutomationName => string.Empty;
+
+			public RichGlyph Glyph => RichGlyph.None;
+			public IconElement? IconElement => null;
+			public ColoredIcon? ColoredIcon => null;
 
 			public HotKey DefaultHotKey => HotKey.None;
 
@@ -98,8 +108,12 @@ namespace Files.App.Commands
 			public CommandCodes Code { get; }
 
 			public string Label => action.Label;
-			public string LabelWithHotKey => $"{Label} ({CustomHotKey})";
+			public string LabelWithHotKey => !CustomHotKey.IsNone ? $"{Label} ({CustomHotKey})" : Label;
 			public string AutomationName => Label;
+
+			public RichGlyph Glyph => action.Glyph;
+			public IconElement? IconElement { get; }
+			public ColoredIcon? ColoredIcon { get; }
 
 			public HotKey DefaultHotKey => action.HotKey;
 
@@ -125,7 +139,7 @@ namespace Files.App.Commands
 					{
 						Command = this,
 						OldHotKey = customHotKey,
-						NewHotKey= value,
+						NewHotKey = value,
 					};
 
 					SetProperty(ref customHotKey, value);
@@ -154,6 +168,26 @@ namespace Files.App.Commands
 				this.action = action;
 				customHotKey = action.HotKey;
 				command = new AsyncRelayCommand(ExecuteAsync, () => action.IsExecutable);
+
+				var glyph = action.Glyph;
+				if (!glyph.IsNone)
+				{
+					FontFamily fontFamily = string.IsNullOrEmpty(glyph.FontFamily)
+						? App.AppModel.SymbolFontFamily
+						: (FontFamily)Current.Resources[glyph.FontFamily];
+
+					IconElement = new FontIcon
+					{
+						Glyph = glyph.BaseGlyph,
+						FontFamily = fontFamily,
+					};
+					ColoredIcon = new()
+					{
+						BaseLayerGlyph = glyph.BaseGlyph,
+						OverlayLayerGlyph = glyph.OverlayGlyph,
+						FontFamily = fontFamily,
+					};
+				}
 
 				if (action is INotifyPropertyChanging notifyPropertyChanging)
 					notifyPropertyChanging.PropertyChanging += Action_PropertyChanging;

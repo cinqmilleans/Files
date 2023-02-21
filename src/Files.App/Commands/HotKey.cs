@@ -14,7 +14,7 @@ namespace Files.App.Commands
 		public VirtualKey Key { get; } = VirtualKey.None;
 		public VirtualKeyModifiers Modifiers { get; } = VirtualKeyModifiers.None;
 
-		public HotKey(VirtualKey key) : this(key, VirtualKeyModifiers.None) { }
+		public HotKey(VirtualKey key) : this(key, VirtualKeyModifiers.None) {}
 		public HotKey(VirtualKey key, VirtualKeyModifiers modifiers)
 		{
 			if (key is VirtualKey.None)

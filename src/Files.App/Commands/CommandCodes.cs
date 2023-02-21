@@ -7,6 +7,7 @@
 		// global
 		OpenHelp,
 		ToggleFullScreen,
+		EmptyRecycleBin,
 
 		// show
 		ToggleShowHiddenItems,
