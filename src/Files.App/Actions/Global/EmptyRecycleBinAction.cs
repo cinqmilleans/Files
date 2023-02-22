@@ -11,6 +11,8 @@ namespace Files.App.Actions
 
 		public RichGlyph Glyph { get; } = new RichGlyph("\uEF88", fontFamily: "RecycleBinIcons");
 
+		public bool IsExecutable => RecycleBinHelpers.RecycleBinHasItems();
+
 		public async Task ExecuteAsync() => await RecycleBinHelpers.EmptyRecycleBin();
 	}
 }

@@ -556,11 +556,12 @@ namespace Files.App.Helpers
 					ShowInZipPage = true,
 					ShowItem = !itemsSelected
 				},
-				//new ContextMenuFlyoutItemViewModel(commands.EmptyRecycleBin)
-				//{
-				//	ShowItem = !itemsSelected && currentInstanceViewModel.IsPageTypeRecycleBin,
-				//	ShowInRecycleBin = true,
-				//},
+				new ContextMenuFlyoutItemViewModel(commands.EmptyRecycleBin)
+				{
+					//IsEnabled = commands.EmptyRecycleBin.IsExecutable,
+					ShowItem = !itemsSelected && currentInstanceViewModel.IsPageTypeRecycleBin,
+					ShowInRecycleBin = true,
+				},
 				new ContextMenuFlyoutItemViewModel()
 				{
 					Text = "RestoreAllItems".GetLocalizedResource(),
