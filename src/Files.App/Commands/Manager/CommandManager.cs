@@ -32,6 +32,8 @@ namespace Files.App.Commands
 		public IRichCommand ToggleShowHiddenItems => commands[CommandCodes.ToggleShowHiddenItems];
 		public IRichCommand ToggleShowFileExtensions => commands[CommandCodes.ToggleShowFileExtensions];
 		public IRichCommand EmptyRecycleBin => commands[CommandCodes.EmptyRecycleBin];
+		public IRichCommand RestoreRecycleBin => commands[CommandCodes.RestoreRecycleBin];
+		public IRichCommand RestoreAllRecycleBin => commands[CommandCodes.RestoreAllRecycleBin];
 
 		public CommandManager()
 		{
@@ -56,6 +58,8 @@ namespace Files.App.Commands
 			[CommandCodes.ToggleShowHiddenItems] = new ToggleShowHiddenItemsAction(),
 			[CommandCodes.ToggleShowFileExtensions] = new ToggleShowFileExtensionsAction(),
 			[CommandCodes.EmptyRecycleBin] = new EmptyRecycleBinAction(),
+			[CommandCodes.RestoreRecycleBin] = new RestoreRecycleBinAction(),
+			[CommandCodes.RestoreAllRecycleBin] = new RestoreAllRecycleBinAction(),
 		};
 
 		[DebuggerDisplay("Command None")]

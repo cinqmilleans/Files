@@ -1,6 +1,6 @@
 ﻿namespace Files.App.Contexts
 {
-	public enum PageTypes : ushort
+	public enum ContentPageTypes : ushort
 	{
 		None,
 		Home,

@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.App.Contexts;
 using Files.App.Extensions;
 using Files.App.Filesystem;
 using Files.App.Filesystem.StorageItems;
@@ -34,7 +35,7 @@ namespace Files.App.ViewModels
 
 		public List<IMultitaskingControl> MultitaskingControls { get; } = new List<IMultitaskingControl>();
 
-		public static ObservableCollection<TabItem> AppInstances { get; private set; } = new ObservableCollection<TabItem>();
+		public static ObservableCollection<TabItem> AppInstances { get; } = new ObservableCollection<TabItem>();
 
 		private TabItem? selectedTabItem;
 		public TabItem? SelectedTabItem
@@ -66,6 +67,8 @@ namespace Files.App.ViewModels
 			AddNewInstanceAcceleratorCommand = new AsyncRelayCommand<KeyboardAcceleratorInvokedEventArgs>(AddNewInstanceAccelerator);
 			ReopenClosedTabAcceleratorCommand = new RelayCommand<KeyboardAcceleratorInvokedEventArgs>(ReopenClosedTabAccelerator);
 			OpenSettingsCommand = new RelayCommand(OpenSettings);
+
+			//var context = Ioc.Default.GetRequiredService<IPageContext>() as PageContext;
 		}
 
 		private void NavigateToNumberedTabKeyboardAccelerator(KeyboardAcceleratorInvokedEventArgs? e)
