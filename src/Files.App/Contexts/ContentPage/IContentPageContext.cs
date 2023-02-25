@@ -6,21 +6,13 @@ namespace Files.App.Contexts
 {
 	public interface IContentPageContext : INotifyPropertyChanged
 	{
-		IShellPage ShellPage { get; }
+		IShellPage? ShellPage { get; }
 
 		ContentPageTypes PageType { get; }
 
-		string Folder { get; }
+		ListedItem? Folder { get; }
 
 		bool HasItem { get; }
-		int ItemCount { get; }
-
 		IReadOnlyList<ListedItem> SelectedItems { get; }
-
-		void SelectAll();
-		void ClearSelection();
-		void InvertSelection();
-
-		void StartRename();
 	}
 }

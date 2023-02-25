@@ -1,17 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Files.App.Filesystem;
-using Files.App.Helpers;
 using Files.App.ViewModels;
 using Files.App.Views;
-using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Files.App.Contexts
 {
@@ -19,78 +13,70 @@ namespace Files.App.Contexts
 	{
 		private static readonly IReadOnlyList<ListedItem> EmptyListedItemList = Enumerable.Empty<ListedItem>().ToImmutableList();
 
-		private IShellPage shellPage = new NoneShellPage();
-		public IShellPage ShellPage => shellPage;
+		private ItemViewModel? filesystemViewModel;
+
+		private BaseShellPage? shellPage;
+		public IShellPage? ShellPage => shellPage;
 
 		private ContentPageTypes pageType = ContentPageTypes.None;
 		public ContentPageTypes PageType => pageType;
 
-		public string Folder => ShellPage.FilesystemViewModel?.WorkingDirectory ?? string.Empty;
+		public ListedItem? Folder => shellPage?.FilesystemViewModel?.CurrentFolder;
 
-		public bool HasItem => ShellPage.ToolbarViewModel?.HasItem ?? false;
-		public int ItemCount => ShellPage.FilesystemViewModel?.FilesAndFolders?.Count ?? 0;
+		public bool HasItem => shellPage?.ToolbarViewModel?.HasItem ?? false;
 
 		private IReadOnlyList<ListedItem> selectedItems = EmptyListedItemList;
 		public IReadOnlyList<ListedItem> SelectedItems => selectedItems;
 
-		public ContentPageContext() => BaseShellPage.CurrentInstanceChanged += BaseShellPage_CurrentInstanceChanged;
-
-		public void SelectAll() => ShellPage.SlimContentPage?.ItemManipulationModel?.SelectAllItems();
-		public void ClearSelection() => ShellPage.SlimContentPage?.ItemManipulationModel?.ClearSelection();
-		public void InvertSelection() => ShellPage.SlimContentPage?.ItemManipulationModel?.InvertSelection();
-
-		public void StartRename() => ShellPage.SlimContentPage?.ItemManipulationModel?.StartRenameItem();
-
-		public async Task Restore()
+		public ContentPageContext()
 		{
-			var items = SelectedItems.Where(x => x is RecycleBinItem).Select(ToPath);
-
-			await ShellPage.FilesystemHelpers.RestoreItemsFromTrashAsync(items.Select(x => x.Source), items.Select(x => x.Destination), true);
-
-			static (IStorageItemWithPath Source, string Destination) ToPath(ListedItem item) => (
-				StorageHelpers.FromPathAndType(item.ItemPath, ToFilesystemItemType(item.PrimaryItemAttribute)),
-				((RecycleBinItem)item).ItemOriginalPath
-			);
-
-			static FilesystemItemType ToFilesystemItemType(StorageItemTypes type)
-				=> type is StorageItemTypes.File ? FilesystemItemType.File : FilesystemItemType.Directory;
+			BaseShellPage.CurrentInstanceChanged += BaseShellPage_CurrentInstanceChanged;
 		}
 
-		private void UpdateShellPage(IShellPage newShellPage)
+		private void UpdateShellPage(BaseShellPage? newShellPage)
 		{
-			if (ShellPage == newShellPage)
+			if (shellPage == newShellPage)
 				return;
 
-			if (ShellPage is not NoneShellPage)
+			if (shellPage is not null)
 			{
-				ShellPage.FilesystemViewModel.WorkingDirectoryModified -= FilesystemViewModel_WorkingDirectoryModified;
-				ShellPage.FilesystemViewModel.FilesAndFolders.CollectionChanged -= FilesAndFolders_CollectionChanged;
-				ShellPage.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
-				ShellPage.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+				shellPage.PropertyChanged -= ShellPage_PropertyChanged;
+				shellPage.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
+				shellPage.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+
+				if (filesystemViewModel is not null)
+				{
+					filesystemViewModel.PropertyChanged -= FilesystemViewModel_PropertyChanged;
+					filesystemViewModel = null;
+				}
 			}
 
 			shellPage = newShellPage;
 
-			if (ShellPage is not NoneShellPage)
+			if (shellPage is not null)
 			{
-				ShellPage.FilesystemViewModel.WorkingDirectoryModified += FilesystemViewModel_WorkingDirectoryModified;
-				ShellPage.FilesystemViewModel.FilesAndFolders.CollectionChanged += FilesAndFolders_CollectionChanged;
-				ShellPage.InstanceViewModel.PropertyChanged += InstanceViewModel_PropertyChanged;
-				ShellPage.ToolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
+				shellPage.PropertyChanged += ShellPage_PropertyChanged;
+				shellPage.InstanceViewModel.PropertyChanged += InstanceViewModel_PropertyChanged;
+				shellPage.ToolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
+
+				if (shellPage.FilesystemViewModel is not null)
+				{
+					filesystemViewModel = shellPage.FilesystemViewModel;
+					filesystemViewModel.PropertyChanged += FilesystemViewModel_PropertyChanged;
+				}
 			}
 
 			UpdatePageType();
 			UpdateSelectedItems();
 
-			OnPropertyChanged(nameof(Folder));
 			OnPropertyChanged(nameof(HasItem));
-			OnPropertyChanged(nameof(ItemCount));
+			OnPropertyChanged(nameof(Folder));
 			OnPropertyChanged(nameof(ShellPage));
 		}
 
 		private void UpdatePageType()
 		{
-			var type = ShellPage.InstanceViewModel switch
+			var type = shellPage?.InstanceViewModel switch
 			{
 				null => ContentPageTypes.None,
 				{ IsPageTypeNotHome: false } => ContentPageTypes.Home,
@@ -108,7 +94,7 @@ namespace Files.App.Contexts
 
 		private void UpdateSelectedItems()
 		{
-			var items = ShellPage.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? EmptyListedItemList;
+			IReadOnlyList<ListedItem> items = shellPage?.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? EmptyListedItemList;
 			SetProperty(ref selectedItems, items, nameof(SelectedItems));
 		}
 
@@ -117,14 +103,23 @@ namespace Files.App.Contexts
 			UpdateShellPage(newShellPage);
 		}
 
-		private void FilesystemViewModel_WorkingDirectoryModified(object sender, WorkingDirectoryModifiedEventArgs e)
+		private void ShellPage_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			OnPropertyChanged(nameof(Folder));
-		}
-
-		private void FilesAndFolders_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			OnPropertyChanged(nameof(ItemCount));
+			switch (e.PropertyName)
+			{
+				case nameof(IShellPage.IsCurrentInstance):
+					if (shellPage is BaseShellPage { IsCurrentInstance: false })
+						UpdateShellPage(null);
+					break;
+				case nameof(IShellPage.FilesystemViewModel):
+					if (filesystemViewModel is not null)
+						filesystemViewModel.PropertyChanged -= FilesystemViewModel_PropertyChanged;
+					filesystemViewModel = shellPage?.FilesystemViewModel;
+					if (filesystemViewModel is not null)
+						filesystemViewModel.PropertyChanged += FilesystemViewModel_PropertyChanged;
+					OnPropertyChanged(nameof(Folder));
+					break;
+			}
 		}
 
 		private void InstanceViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -148,8 +143,6 @@ namespace Files.App.Contexts
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(ToolbarViewModel.CanCopy):
-				case nameof(ToolbarViewModel.CanRefresh):
 				case nameof(ToolbarViewModel.HasItem):
 					OnPropertyChanged(e.PropertyName);
 					break;
@@ -159,20 +152,10 @@ namespace Files.App.Contexts
 			}
 		}
 
-		private class NoneShellPage : BaseShellPage
+		private void FilesystemViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			public NoneShellPage() : base(new()) {}
-
-			public override bool CanNavigateForward => false;
-
-			public override bool CanNavigateBackward => false;
-
-			protected override Frame ItemDisplay => throw new NotImplementedException();
-
-			public override void NavigateHome() {}
-			public override void NavigateToPath(string? navigationPath, Type? sourcePageType, NavigationArguments? navArgs = null) {}
-
-			public override void Up_Click() {}
+			if (e.PropertyName is nameof(ItemViewModel.CurrentFolder))
+				OnPropertyChanged(nameof(Folder));
 		}
 	}
 }

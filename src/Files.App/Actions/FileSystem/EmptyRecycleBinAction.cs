@@ -15,6 +15,8 @@ namespace Files.App.Actions
 
 		public string Label { get; } = "EmptyRecycleBin".GetLocalizedResource();
 
+		public HotKey HotKey { get; } = (HotKey)"Ctrl+B";
+
 		public RichGlyph Glyph { get; } = new RichGlyph("\uEF88", fontFamily: "RecycleBinIcons");
 
 		public bool IsExecutable
@@ -34,6 +36,8 @@ namespace Files.App.Actions
 
 		public async Task ExecuteAsync()
 		{
+			if (context.ShellPage is not null)
+				context.ShellPage.SlimContentPage.ItemManipulationModel.InvertSelection();
 			await RecycleBinHelpers.EmptyRecycleBin();
 		}
 

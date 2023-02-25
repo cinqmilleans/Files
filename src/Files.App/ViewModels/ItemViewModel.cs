@@ -77,7 +77,13 @@ namespace Files.App.ViewModels
 
 		private FolderSettingsViewModel folderSettings = null;
 
-		public ListedItem CurrentFolder { get; private set; }
+		private ListedItem currentFolder;
+		public ListedItem CurrentFolder
+		{
+			get => currentFolder;
+			private set => SetProperty(ref currentFolder, value);
+		}
+
 		public CollectionViewSource viewSource;
 
 		private FileSystemWatcher watcher;
@@ -420,7 +426,7 @@ namespace Files.App.ViewModels
 				return;
 
 			using var folderItem = SafetyExtensions.IgnoreExceptions(() => new ShellItem(e.FullPath));
-			if (folderItem is null) 
+			if (folderItem is null)
 				return;
 
 			var shellFileItem = ShellFolderExtensions.GetShellFileItem(folderItem);
