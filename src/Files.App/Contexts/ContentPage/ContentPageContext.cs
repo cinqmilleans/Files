@@ -21,6 +21,9 @@ namespace Files.App.Contexts
 		private ContentPageTypes pageType = ContentPageTypes.None;
 		public ContentPageTypes PageType => pageType;
 
+		private ContentLayoutTypes layoutType = ContentLayoutTypes.None;
+		public ContentLayoutTypes LayoutType => layoutType;
+
 		public ListedItem? Folder => shellPage?.FilesystemViewModel?.CurrentFolder;
 
 		public bool HasItem => shellPage?.ToolbarViewModel?.HasItem ?? false;
@@ -70,6 +73,7 @@ namespace Files.App.Contexts
 			}
 
 			UpdatePageType();
+			UpdateLayoutType();
 			UpdateSelectedItems();
 
 			OnPropertyChanged(nameof(HasItem));
@@ -93,6 +97,25 @@ namespace Files.App.Contexts
 				_ => ContentPageTypes.Folder,
 			};
 			SetProperty(ref pageType, type, nameof(PageType));
+		}
+
+		private void UpdateLayoutType()
+		{
+			var type = shellPage?.ToolbarViewModel switch
+			{
+				null => ContentLayoutTypes.None,
+				{ IsLayoutDetailsView: true } => ContentLayoutTypes.Details,
+				{ IsLayoutTilesView: true } => ContentLayoutTypes.Tiles,
+				{ IsLayoutGridViewSmall: true } => ContentLayoutTypes.GridSmall,
+				{ IsLayoutGridViewMedium: true } => ContentLayoutTypes.GridMedium,
+				{ IsLayoutGridViewLarge: true } => ContentLayoutTypes.GridLarge,
+				{ IsLayoutColumnsView: true } => ContentLayoutTypes.Columns,
+				{ IsLayoutAdaptive: true } => ContentLayoutTypes.Adaptive,
+				_ => ContentLayoutTypes.None,
+			};
+			if (SetProperty(ref layoutType, type, nameof(LayoutType)))
+			{
+			}
 		}
 
 		private void UpdateSelectedItems()
@@ -160,6 +183,15 @@ namespace Files.App.Contexts
 					break;
 				case nameof(ToolbarViewModel.SelectedItems):
 					UpdateSelectedItems();
+					break;
+				case nameof(ToolbarViewModel.IsLayoutDetailsView):
+				case nameof(ToolbarViewModel.IsLayoutTilesView):
+				case nameof(ToolbarViewModel.IsLayoutGridViewSmall):
+				case nameof(ToolbarViewModel.IsLayoutGridViewMedium):
+				case nameof(ToolbarViewModel.IsLayoutGridViewLarge):
+				case nameof(ToolbarViewModel.IsLayoutColumnsView):
+				case nameof(ToolbarViewModel.IsLayoutAdaptive):
+					UpdateLayoutType();
 					break;
 			}
 		}

@@ -9,6 +9,7 @@ namespace Files.App.Contexts
 		IShellPage? ShellPage { get; }
 
 		ContentPageTypes PageType { get; }
+		ContentLayoutTypes LayoutType { get; }
 
 		ListedItem? Folder { get; }
 

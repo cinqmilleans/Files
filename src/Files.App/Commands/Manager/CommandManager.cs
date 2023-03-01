@@ -49,6 +49,15 @@ namespace Files.App.Commands
 		public IRichCommand CopyItem => commands[CommandCodes.CopyItem];
 		public IRichCommand CutItem => commands[CommandCodes.CutItem];
 		public IRichCommand DeleteItem => commands[CommandCodes.DeleteItem];
+		public IRichCommand LayoutPrevious => commands[CommandCodes.LayoutPrevious];
+		public IRichCommand LayoutNext => commands[CommandCodes.LayoutNext];
+		public IRichCommand LayoutDetails => commands[CommandCodes.LayoutDetails];
+		public IRichCommand LayoutTiles => commands[CommandCodes.LayoutTiles];
+		public IRichCommand LayoutGridSmall => commands[CommandCodes.LayoutGridSmall];
+		public IRichCommand LayoutGridMedium => commands[CommandCodes.LayoutGridMedium];
+		public IRichCommand LayoutGridLarge => commands[CommandCodes.LayoutGridLarge];
+		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
+		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
 
 		public CommandManager()
 		{
@@ -89,6 +98,15 @@ namespace Files.App.Commands
 			[CommandCodes.CopyItem] = new CopyItemAction(),
 			[CommandCodes.CutItem] = new CutItemAction(),
 			[CommandCodes.DeleteItem] = new DeleteItemAction(),
+			[CommandCodes.LayoutPrevious] = new LayoutPreviousAction(),
+			[CommandCodes.LayoutNext] = new LayoutNextAction(),
+			[CommandCodes.LayoutDetails] = new LayoutDetailsAction(),
+			[CommandCodes.LayoutTiles] = new LayoutTilesAction(),
+			[CommandCodes.LayoutGridSmall] = new LayoutGridSmallAction(),
+			[CommandCodes.LayoutGridMedium] = new LayoutGridMediumAction(),
+			[CommandCodes.LayoutGridLarge] = new LayoutGridLargeAction(),
+			[CommandCodes.LayoutColumns] = new LayoutColumnsAction(),
+			[CommandCodes.LayoutAdaptive] = new LayoutAdaptiveAction(),
 		};
 
 		[DebuggerDisplay("Command None")]
@@ -105,6 +123,7 @@ namespace Files.App.Commands
 			public string AutomationName => string.Empty;
 
 			public RichGlyph Glyph => RichGlyph.None;
+			public object? Icon => null;
 			public FontIcon? FontIcon => null;
 			public OpacityIcon? OpacityIcon => null;
 
@@ -144,6 +163,7 @@ namespace Files.App.Commands
 			public string AutomationName => Label;
 
 			public RichGlyph Glyph => action.Glyph;
+			public object? Icon => (object?)OpacityIcon ?? FontIcon;
 
 			private readonly Lazy<FontIcon?> fontIcon;
 			public FontIcon? FontIcon => fontIcon.Value;

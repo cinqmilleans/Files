@@ -36,5 +36,15 @@ namespace Files.App.Commands
 		IRichCommand UnpinFromStart { get; }
 		IRichCommand PinItemToFavorites { get; }
 		IRichCommand UnpinItemFromFavorites { get; }
+
+		IRichCommand LayoutPrevious { get; }
+		IRichCommand LayoutNext { get; }
+		IRichCommand LayoutDetails { get; }
+		IRichCommand LayoutTiles { get; }
+		IRichCommand LayoutGridSmall { get; }
+		IRichCommand LayoutGridMedium { get; }
+		IRichCommand LayoutGridLarge { get; }
+		IRichCommand LayoutColumns { get; }
+		IRichCommand LayoutAdaptive { get; }
 	}
 }

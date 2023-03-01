@@ -29,6 +29,17 @@
 		InvertSelection,
 		ClearSelection,
 
+		// Layout
+		LayoutPrevious,
+		LayoutNext,
+		LayoutDetails,
+		LayoutTiles,
+		LayoutGridSmall,
+		LayoutGridMedium,
+		LayoutGridLarge,
+		LayoutColumns,
+		LayoutAdaptive,
+
 		// Start
 		PinToStart,
 		UnpinFromStart,
