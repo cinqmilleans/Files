@@ -555,23 +555,21 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=Details}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeDetailsViewCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutDetails.AutomationName}"
+									Command="{x:Bind Commands.LayoutDetails}"
+									Content="{x:Bind Commands.LayoutDetails.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutDetailsView, Mode=OneWay}"
+									IsChecked="{x:Bind Commands.LayoutDetails.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarDetails/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="&#xE179;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutDetails.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarDetailsHeader"
 									Grid.Row="0"
 									Grid.Column="1"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarDetailsHeader_Tapped"
-									Text="{helpers:ResourceString Name=Details}" />
+									Tapped="{x:Bind Commands.LayoutDetails.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutDetails.Label}" />
 
 								<RadioButton
 									Grid.Row="1"
@@ -582,23 +580,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=Tiles}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeTilesCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutTiles.AutomationName}"
+									Command="{x:Bind Commands.LayoutTiles}"
+									Content="{x:Bind Commands.LayoutTiles.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutTilesView, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarTiles/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="&#xE15C;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutTiles.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarTilesHeader"
 									Grid.Row="1"
 									Grid.Column="1"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarTilesHeader_Tapped"
-									Text="{helpers:ResourceString Name=Tiles}" />
+									Tapped="{x:Bind Commands.LayoutTiles.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutTiles.Label}" />
 
 								<RadioButton
 									Grid.Row="2"
@@ -609,23 +604,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=SmallIcons}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewSmallCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutGridSmall.AutomationName}"
+									Command="{x:Bind Commands.LayoutGridSmall}"
+									Content="{x:Bind Commands.LayoutGridSmall.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewSmall, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarSmallIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="&#xE80A;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridSmall.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarSmallIconsHeader"
 									Grid.Row="2"
 									Grid.Column="1"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarSmallIconsHeader_Tapped"
-									Text="{helpers:ResourceString Name=SmallIcons}" />
+									Tapped="{x:Bind Commands.LayoutGridSmall.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutGridSmall.Label}" />
 
 								<RadioButton
 									Grid.Row="3"
@@ -636,23 +628,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=MediumIcons}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewMediumCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutGridMedium.AutomationName}"
+									Command="{x:Bind Commands.LayoutGridMedium}"
+									Content="{x:Bind Commands.LayoutGridMedium.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewMedium, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarMediumIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="&#xF0E2;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridMedium.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarMediumIconsHeader"
 									Grid.Row="3"
 									Grid.Column="1"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarMediumIconsHeader_Tapped"
-									Text="{helpers:ResourceString Name=MediumIcons}" />
+									Tapped="{x:Bind Commands.LayoutGridMedium.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutGridMedium.Label}" />
 
 								<Border
 									Grid.RowSpan="4"
@@ -672,23 +661,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=LargeIcons}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeGridViewLargeCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutGridLarge.AutomationName}"
+									Command="{x:Bind Commands.LayoutGridLarge}"
+									Content="{x:Bind Commands.LayoutGridLarge.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutGridViewLarge, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=NavToolbarLargeIcons/ToolTipService/ToolTip}">
-									<FontIcon FontSize="16" Glyph="&#xE739;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridLarge.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarLargeIconsHeader"
 									Grid.Row="0"
 									Grid.Column="4"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarLargeIconsHeader_Tapped"
-									Text="{helpers:ResourceString Name=LargeIcons}" />
+									Tapped="{x:Bind Commands.LayoutGridLarge.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutGridLarge.Label}" />
 
 								<RadioButton
 									Grid.Row="1"
@@ -699,26 +685,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=Columns}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeColumnViewCommand, Mode=OneWay}"
-									CommandParameter="{xh:SystemTypeToXaml Bool=True}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutColumns.AutomationName}"
+									Command="{x:Bind Commands.LayoutColumns}"
+									Content="{x:Bind Commands.LayoutColumns.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutColumnsView, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=ColumnsShortcutTooltip}">
-
-									<Viewbox Width="20">
-										<local:OpacityIcon Style="{StaticResource ColorIconColumnsLayout}" />
-									</Viewbox>
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutColumns.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarColumnsHeader"
 									Grid.Row="1"
 									Grid.Column="4"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarColumnsHeader_Tapped"
-									Text="{helpers:ResourceString Name=Columns}" />
+									Tapped="{x:Bind Commands.LayoutColumns.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutColumns.Label}" />
 
 								<RadioButton
 									Grid.Row="2"
@@ -729,23 +709,20 @@
 									Padding="0"
 									HorizontalContentAlignment="Center"
 									VerticalContentAlignment="Center"
-									AutomationProperties.Name="{helpers:ResourceString Name=Adaptive}"
-									Command="{x:Bind ViewModel.InstanceViewModel.FolderSettings.ToggleLayoutModeAdaptiveCommand, Mode=OneWay}"
+									AutomationProperties.Name="{x:Bind Commands.LayoutAdaptive.AutomationName}"
+									Command="{x:Bind Commands.LayoutAdaptive}"
+									Content="{x:Bind Commands.LayoutAdaptive.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
-									IsChecked="{x:Bind ViewModel.IsLayoutAdaptive, Mode=OneWay}"
-									IsEnabled="{x:Bind ViewModel.IsAdaptiveLayoutEnabled, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{helpers:ResourceString Name=AdaptiveShortcutTooltip}">
-									<FontIcon FontSize="16" Glyph="&#xF576;" />
-								</RadioButton>
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutAdaptive.LabelWithHotKey}" />
 
 								<TextBlock
 									x:Name="NavToolbarAdaptiveHeader"
 									Grid.Row="2"
 									Grid.Column="4"
 									VerticalAlignment="Center"
-									Tapped="NavToolbarAdaptiveHeader_Tapped"
-									Text="{helpers:ResourceString Name=Adaptive}" />
+									Tapped="{x:Bind Commands.LayoutAdaptive.ExecuteTapped}"
+									Text="{x:Bind Commands.LayoutAdaptive.Label}" />
 							</Grid>
 
 							<Border

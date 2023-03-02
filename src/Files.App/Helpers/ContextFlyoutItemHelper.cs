@@ -115,106 +115,13 @@ namespace Files.App.Helpers
 					ShowInZipPage = true,
 					Items = new List<ContextMenuFlyoutItemViewModel>()
 					{
-						// Details view
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Details".GetLocalizedResource(),
-							Glyph = "\uE179",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command = currentInstanceViewModel.FolderSettings.ToggleLayoutModeDetailsViewCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutDetails/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number1, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Tiles view
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Tiles".GetLocalizedResource(),
-							Glyph = "\uE15C",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command =  currentInstanceViewModel.FolderSettings.ToggleLayoutModeTilesCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutTiles/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number2, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Grid view small
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "SmallIcons".GetLocalizedResource(),
-							Glyph = "\uE80A",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command =  currentInstanceViewModel.FolderSettings.ToggleLayoutModeGridViewSmallCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutSmallIcons/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number3, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Grid view medium
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "MediumIcons".GetLocalizedResource(),
-							Glyph = "\uF0E2",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command =  currentInstanceViewModel.FolderSettings.ToggleLayoutModeGridViewMediumCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutMediumIcons/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number4, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Grid view large
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "LargeIcons".GetLocalizedResource(),
-							Glyph = "\uE739",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command =  currentInstanceViewModel.FolderSettings.ToggleLayoutModeGridViewLargeCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutLargeIcons/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number5, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Column view
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Columns".GetLocalizedResource(),
-							OpacityIcon = new OpacityIconModel()
-							{
-								OpacityIconStyle = "ColorIconColumnsLayout",
-							},
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command = currentInstanceViewModel.FolderSettings.ToggleLayoutModeColumnViewCommand,
-							CommandParameter = true,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutColumn/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number6, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
-						// Column view
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Adaptive".GetLocalizedResource(),
-							Glyph = "\uF576",
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command = currentInstanceViewModel.FolderSettings.ToggleLayoutModeAdaptiveCommand,
-							KeyboardAcceleratorTextOverride = "BaseLayoutContextFlyoutAdaptive/KeyboardAcceleratorTextOverride".GetLocalizedResource(),
-							KeyboardAccelerator = new KeyboardAccelerator{Key = VirtualKey.Number7, Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, IsEnabled = false}
-						},
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutDetails).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutTiles).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutGridSmall).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutGridMedium).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutGridLarge).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutColumns).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.LayoutAdaptive).Build(),
 					},
 					ShowItem = !itemsSelected
 				},

@@ -36,5 +36,16 @@
 		// Favorites
 		PinItemToFavorites,
 		UnpinItemFromFavorites,
+
+		// Layout
+		LayoutPrevious,
+		LayoutNext,
+		LayoutDetails,
+		LayoutTiles,
+		LayoutGridSmall,
+		LayoutGridMedium,
+		LayoutGridLarge,
+		LayoutColumns,
+		LayoutAdaptive,
 	}
 }

@@ -35,15 +35,6 @@ namespace Files.App.ViewModels
 		{
 			LayoutPreference = new LayoutPreferences();
 
-			ToggleLayoutModeGridViewLargeCommand = new RelayCommand<bool>(ToggleLayoutModeGridViewLarge);
-			ToggleLayoutModeColumnViewCommand = new RelayCommand<bool>(ToggleLayoutModeColumnView);
-			ToggleLayoutModeGridViewMediumCommand = new RelayCommand<bool>(ToggleLayoutModeGridViewMedium);
-			ToggleLayoutModeGridViewSmallCommand = new RelayCommand<bool>(ToggleLayoutModeGridViewSmall);
-			ToggleLayoutModeGridViewCommand = new RelayCommand<int>(ToggleLayoutModeGridView);
-			ToggleLayoutModeTilesCommand = new RelayCommand<bool>(ToggleLayoutModeTiles);
-			ToggleLayoutModeDetailsViewCommand = new RelayCommand<bool>(ToggleLayoutModeDetailsView);
-			ToggleLayoutModeAdaptiveCommand = new RelayCommand(ToggleLayoutModeAdaptive);
-
 			ChangeGroupOptionCommand = new RelayCommand<GroupOption>(ChangeGroupOption);
 			ChangeGroupDirectionCommand = new RelayCommand<SortDirection>(ChangeGroupDirection);
 		}
@@ -127,15 +118,6 @@ namespace Files.App.ViewModels
 		public event EventHandler<LayoutModeEventArgs>? LayoutModeChangeRequested;
 
 		public event EventHandler? GridViewSizeChangeRequested;
-
-		public ICommand ToggleLayoutModeGridViewLargeCommand { get; }
-		public ICommand ToggleLayoutModeColumnViewCommand { get; }
-		public ICommand ToggleLayoutModeGridViewMediumCommand { get; }
-		public ICommand ToggleLayoutModeGridViewSmallCommand { get; }
-		public ICommand ToggleLayoutModeGridViewCommand { get; }
-		public ICommand ToggleLayoutModeTilesCommand { get; }
-		public ICommand ToggleLayoutModeDetailsViewCommand { get; }
-		public ICommand ToggleLayoutModeAdaptiveCommand { get; }
 
 		public GridViewSizeKind GridViewSizeKind
 		{

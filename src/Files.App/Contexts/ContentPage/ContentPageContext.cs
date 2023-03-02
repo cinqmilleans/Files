@@ -21,6 +21,13 @@ namespace Files.App.Contexts
 		private ContentPageTypes pageType = ContentPageTypes.None;
 		public ContentPageTypes PageType => pageType;
 
+		private ContentLayoutTypes layoutType = ContentLayoutTypes.None;
+		public ContentLayoutTypes LayoutType
+		{
+			get => layoutType;
+			set => SetLayout(value);
+		}
+
 		public ListedItem? Folder => shellPage?.FilesystemViewModel?.CurrentFolder;
 
 		public bool HasItem => shellPage?.ToolbarViewModel?.HasItem ?? false;
@@ -70,6 +77,7 @@ namespace Files.App.Contexts
 			}
 
 			UpdatePageType();
+			UpdateLayoutType();
 			UpdateSelectedItems();
 
 			OnPropertyChanged(nameof(HasItem));
@@ -95,6 +103,23 @@ namespace Files.App.Contexts
 			SetProperty(ref pageType, type, nameof(PageType));
 		}
 
+		private void UpdateLayoutType()
+		{
+			var type = shellPage?.ToolbarViewModel switch
+			{
+				null => ContentLayoutTypes.None,
+				{ IsLayoutDetailsView: true } => ContentLayoutTypes.Details,
+				{ IsLayoutTilesView: true } => ContentLayoutTypes.Tiles,
+				{ IsLayoutGridViewSmall: true } => ContentLayoutTypes.GridSmall,
+				{ IsLayoutGridViewMedium: true } => ContentLayoutTypes.GridMedium,
+				{ IsLayoutGridViewLarge: true } => ContentLayoutTypes.GridLarge,
+				{ IsLayoutColumnsView: true } => ContentLayoutTypes.Columns,
+				{ IsLayoutAdaptive: true } => ContentLayoutTypes.Adaptive,
+				_ => ContentLayoutTypes.None,
+			};
+			SetProperty(ref layoutType, type, nameof(LayoutType));
+		}
+
 		private void UpdateSelectedItems()
 		{
 			bool oldHasSelection = HasSelection;
@@ -107,6 +132,38 @@ namespace Files.App.Contexts
 					OnPropertyChanged(nameof(HasSelection));
 				if (SelectedItem != oldSelectedItem)
 					OnPropertyChanged(nameof(SelectedItem));
+			}
+		}
+
+		protected void SetLayout(ContentLayoutTypes layoutType)
+		{
+			var viewModel = shellPage?.InstanceViewModel?.FolderSettings;
+			if (viewModel is null)
+				return;
+
+			switch (layoutType)
+			{
+				case ContentLayoutTypes.Details:
+					viewModel.ToggleLayoutModeDetailsView(true);
+					break;
+				case ContentLayoutTypes.Tiles:
+					viewModel.ToggleLayoutModeTiles(true);
+					break;
+				case ContentLayoutTypes.GridSmall:
+					viewModel.ToggleLayoutModeGridViewSmall(true);
+					break;
+				case ContentLayoutTypes.GridMedium:
+					viewModel.ToggleLayoutModeGridViewMedium(true);
+					break;
+				case ContentLayoutTypes.GridLarge:
+					viewModel.ToggleLayoutModeGridViewLarge(true);
+					break;
+				case ContentLayoutTypes.Columns:
+					viewModel.ToggleLayoutModeColumnView(true);
+					break;
+				case ContentLayoutTypes.Adaptive:
+					viewModel.ToggleLayoutModeAdaptive();
+					break;
 			}
 		}
 
@@ -160,6 +217,15 @@ namespace Files.App.Contexts
 					break;
 				case nameof(ToolbarViewModel.SelectedItems):
 					UpdateSelectedItems();
+					break;
+				case nameof(ToolbarViewModel.IsLayoutDetailsView):
+				case nameof(ToolbarViewModel.IsLayoutTilesView):
+				case nameof(ToolbarViewModel.IsLayoutGridViewSmall):
+				case nameof(ToolbarViewModel.IsLayoutGridViewMedium):
+				case nameof(ToolbarViewModel.IsLayoutGridViewLarge):
+				case nameof(ToolbarViewModel.IsLayoutColumnsView):
+				case nameof(ToolbarViewModel.IsLayoutAdaptive):
+					UpdateLayoutType();
 					break;
 			}
 		}
