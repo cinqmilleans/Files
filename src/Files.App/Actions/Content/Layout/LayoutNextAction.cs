@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutNextAction : IAction
 	{
-		private readonly IContentPageContext context = Ioc.Default.GetRequiredService<IContentPageContext>();
+		private readonly IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
 		public string Label { get; } = "Next".GetLocalizedResource();
 
@@ -15,14 +15,14 @@ namespace Files.App.Actions
 		{
 			context.LayoutType = context.LayoutType switch
 			{
-				ContentLayoutTypes.Details => ContentLayoutTypes.Tiles,
-				ContentLayoutTypes.Tiles => ContentLayoutTypes.GridSmall,
-				ContentLayoutTypes.GridSmall => ContentLayoutTypes.GridMedium,
-				ContentLayoutTypes.GridMedium => ContentLayoutTypes.GridLarge,
-				ContentLayoutTypes.GridLarge => ContentLayoutTypes.Columns,
-				ContentLayoutTypes.Columns => ContentLayoutTypes.Adaptive,
-				ContentLayoutTypes.Adaptive => ContentLayoutTypes.Details,
-				_ => ContentLayoutTypes.None,
+				LayoutTypes.Details => LayoutTypes.Tiles,
+				LayoutTypes.Tiles => LayoutTypes.GridSmall,
+				LayoutTypes.GridSmall => LayoutTypes.GridMedium,
+				LayoutTypes.GridMedium => LayoutTypes.GridLarge,
+				LayoutTypes.GridLarge => LayoutTypes.Columns,
+				LayoutTypes.Columns => LayoutTypes.Adaptive,
+				LayoutTypes.Adaptive => LayoutTypes.Details,
+				_ => LayoutTypes.None,
 			};
 
 			return Task.CompletedTask;

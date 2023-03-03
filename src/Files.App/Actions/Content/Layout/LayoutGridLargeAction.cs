@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutGridLargeAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.GridLarge;
+		protected override LayoutTypes LayoutType => LayoutTypes.GridLarge;
 
 		public override string Label { get; } = "LargeIcons".GetLocalizedResource();
 

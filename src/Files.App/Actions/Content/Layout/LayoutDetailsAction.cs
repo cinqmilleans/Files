@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutDetailsAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.Details;
+		protected override LayoutTypes LayoutType => LayoutTypes.Details;
 
 		public override string Label { get; } = "Details".GetLocalizedResource();
 

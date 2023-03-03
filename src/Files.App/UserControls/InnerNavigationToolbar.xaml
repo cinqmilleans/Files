@@ -557,11 +557,12 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutDetails.AutomationName}"
 									Command="{x:Bind Commands.LayoutDetails}"
-									Content="{x:Bind Commands.LayoutDetails.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									IsChecked="{x:Bind Commands.LayoutDetails.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutDetails.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutDetails.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutDetails.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarDetailsHeader"
@@ -582,10 +583,11 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutTiles.AutomationName}"
 									Command="{x:Bind Commands.LayoutTiles}"
-									Content="{x:Bind Commands.LayoutTiles.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutTiles.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutTiles.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutTiles.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarTilesHeader"
@@ -606,10 +608,11 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridSmall.AutomationName}"
 									Command="{x:Bind Commands.LayoutGridSmall}"
-									Content="{x:Bind Commands.LayoutGridSmall.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridSmall.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridSmall.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridSmall.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarSmallIconsHeader"
@@ -630,10 +633,11 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridMedium.AutomationName}"
 									Command="{x:Bind Commands.LayoutGridMedium}"
-									Content="{x:Bind Commands.LayoutGridMedium.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridMedium.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridMedium.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridMedium.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarMediumIconsHeader"
@@ -663,10 +667,11 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutGridLarge.AutomationName}"
 									Command="{x:Bind Commands.LayoutGridLarge}"
-									Content="{x:Bind Commands.LayoutGridLarge.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridLarge.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutGridLarge.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutGridLarge.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarLargeIconsHeader"
@@ -687,10 +692,13 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutColumns.AutomationName}"
 									Command="{x:Bind Commands.LayoutColumns}"
-									Content="{x:Bind Commands.LayoutColumns.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutColumns.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutColumns.LabelWithHotKey}">
+									<Viewbox Width="20">
+										<ContentControl Content="{x:Bind Commands.LayoutColumns.OpacityIcon}" />
+									</Viewbox>
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarColumnsHeader"
@@ -711,10 +719,11 @@
 									VerticalContentAlignment="Center"
 									AutomationProperties.Name="{x:Bind Commands.LayoutAdaptive.AutomationName}"
 									Command="{x:Bind Commands.LayoutAdaptive}"
-									Content="{x:Bind Commands.LayoutAdaptive.Icon}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
-									ToolTipService.ToolTip="{x:Bind Commands.LayoutAdaptive.LabelWithHotKey}" />
+									ToolTipService.ToolTip="{x:Bind Commands.LayoutAdaptive.LabelWithHotKey}">
+									<FontIcon FontSize="16" Glyph="{x:Bind Commands.LayoutAdaptive.Glyph.BaseGlyph}" />
+								</RadioButton>
 
 								<TextBlock
 									x:Name="NavToolbarAdaptiveHeader"

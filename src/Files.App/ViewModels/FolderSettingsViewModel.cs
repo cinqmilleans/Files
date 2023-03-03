@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Files.App.Contexts;
 using Files.App.EventArguments;
 using Files.App.Filesystem;
 using Files.App.Helpers;
@@ -10,6 +11,7 @@ using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
 using Files.Shared.Extensions;
 using System;
+using System.ComponentModel;
 using System.Text.Json;
 using System.Windows.Input;
 using Windows.Storage;
@@ -454,6 +456,23 @@ namespace Files.App.ViewModels
 					OnPropertyChanged(nameof(ColumnsViewModel));
 				}
 			}
+		}
+
+		public void ToggleLayout(FolderLayoutModes layoutMode)
+		{
+			ToggleLayout(layoutMode, GridViewSizeKind);
+		}
+		public void ToggleLayout(FolderLayoutModes layoutMode, GridViewSizeKind sizeKind)
+		{
+			int size = sizeKind switch
+			{
+				GridViewSizeKind.Small => Constants.Browser.GridViewBrowser.GridViewSizeSmall,
+				GridViewSizeKind.Medium => Constants.Browser.GridViewBrowser.GridViewSizeMedium,
+				GridViewSizeKind.Large => Constants.Browser.GridViewBrowser.GridViewSizeLarge,
+				_ => throw new InvalidEnumArgumentException(),
+			};
+
+			LayoutModeChangeRequested?.Invoke(this, new(layoutMode, size));
 		}
 
 		public void ToggleLayoutModeGridViewLarge(bool manuallySet)

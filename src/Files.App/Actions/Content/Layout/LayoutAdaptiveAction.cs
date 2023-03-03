@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutAdaptiveAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.Adaptive;
+		protected override LayoutTypes LayoutType => LayoutTypes.Adaptive;
 
 		public override string Label { get; } = "Adaptive".GetLocalizedResource();
 

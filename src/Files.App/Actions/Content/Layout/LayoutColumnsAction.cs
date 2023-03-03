@@ -7,9 +7,9 @@ namespace Files.App.Actions
 {
 	internal class LayoutColumnsAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.Columns;
+		protected override LayoutTypes LayoutType => LayoutTypes.Columns;
 
-		public override string Label { get; } = "Details".GetLocalizedResource();
+		public override string Label { get; } = "Columns".GetLocalizedResource();
 
 		public override RichGlyph Glyph { get; } = new(opacityStyle: "ColorIconColumnsLayout");
 		public override HotKey HotKey { get; } = new(VirtualKey.Number6, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);

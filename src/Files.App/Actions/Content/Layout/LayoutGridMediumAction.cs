@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutGridMediumAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.GridMedium;
+		protected override LayoutTypes LayoutType => LayoutTypes.GridMedium;
 
 		public override string Label { get; } = "MediumIcons".GetLocalizedResource();
 

@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutGridSmallAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.GridSmall;
+		protected override LayoutTypes LayoutType => LayoutTypes.GridSmall;
 
 		public override string Label { get; } = "SmallIcons".GetLocalizedResource();
 

@@ -1,6 +1,6 @@
 ﻿namespace Files.App.Contexts
 {
-	public enum ContentLayoutTypes : ushort
+	public enum LayoutTypes : ushort
 	{
 		None,
 		Details,

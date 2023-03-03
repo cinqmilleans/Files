@@ -7,7 +7,7 @@ namespace Files.App.Actions
 {
 	internal class LayoutTilesAction : ToggleLayoutAction
 	{
-		protected override ContentLayoutTypes LayoutType => ContentLayoutTypes.Tiles;
+		protected override LayoutTypes LayoutType => LayoutTypes.Tiles;
 
 		public override string Label { get; } = "Tiles".GetLocalizedResource();
 

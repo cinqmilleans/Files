@@ -9,9 +9,9 @@ namespace Files.App.Actions
 {
 	internal abstract class ToggleLayoutAction : ObservableObject, IToggleAction
 	{
-		private readonly IContentPageContext context = Ioc.Default.GetRequiredService<IContentPageContext>();
+		private readonly IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
-		protected abstract ContentLayoutTypes LayoutType { get; }
+		protected abstract LayoutTypes LayoutType { get; }
 
 		public abstract string Label { get; }
 
@@ -35,7 +35,7 @@ namespace Files.App.Actions
 
 		private void Context_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName is nameof(IContentPageContext.LayoutType))
+			if (e.PropertyName is nameof(IDisplayPageContext.LayoutType))
 				SetProperty(ref isOn, context.LayoutType == LayoutType, nameof(IsOn));
 		}
 	}
