@@ -693,10 +693,11 @@
 									AutomationProperties.Name="{x:Bind Commands.LayoutColumns.AutomationName}"
 									Command="{x:Bind Commands.LayoutColumns}"
 									CornerRadius="{StaticResource ControlCornerRadius}"
+									IsChecked="{x:Bind Commands.LayoutColumns.IsOn, Mode=OneWay}"
 									Style="{StaticResource DefaultToggleButtonStyle}"
 									ToolTipService.ToolTip="{x:Bind Commands.LayoutColumns.LabelWithHotKey}">
 									<Viewbox Width="20">
-										<ContentControl Content="{x:Bind Commands.LayoutColumns.OpacityIcon}" />
+										<local:OpacityIcon Style="{StaticResource ColorIconColumnsLayout}" />
 									</Viewbox>
 								</RadioButton>
 

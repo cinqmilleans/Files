@@ -15,6 +15,12 @@ namespace Files.App.Contexts
 		private IContext context = new NoneContext();
 		private FolderSettingsViewModel? viewModel;
 
+		public bool IsLayoutAdaptiveEnabled
+		{
+			get => settings.SyncFolderPreferencesAcrossDirectories;
+			set => settings.SyncFolderPreferencesAcrossDirectories = value;
+		}
+
 		private LayoutTypes layoutType = LayoutTypes.None;
 		public LayoutTypes LayoutType
 		{
@@ -82,7 +88,10 @@ namespace Files.App.Contexts
 		private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName is nameof(IFoldersSettingsService.SyncFolderPreferencesAcrossDirectories))
+			{
 				SetProperty(ref layoutType, context.LayoutType, nameof(LayoutType));
+				OnPropertyChanged(nameof(IsLayoutAdaptiveEnabled));
+			}
 		}
 
 		private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -126,27 +135,27 @@ namespace Files.App.Contexts
 			public LayoutTypes LayoutType
 			{
 				get => LayoutTypes.None;
-				set { }
+				set {}
 			}
 			public SortOption SortOption
 			{
 				get => SortOption.Name;
-				set { }
+				set {}
 			}
 			public SortDirection SortDirection
 			{
 				get => SortDirection.Ascending;
-				set { }
+				set {}
 			}
 			public GroupOption GroupOption
 			{
 				get => GroupOption.None;
-				set { }
+				set {}
 			}
 			public SortDirection GroupDirection
 			{
 				get => SortDirection.Ascending;
-				set { }
+				set {}
 			}
 		}
 

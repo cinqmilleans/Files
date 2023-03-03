@@ -5,6 +5,7 @@ namespace Files.App.Contexts
 {
 	public interface IDisplayPageContext : INotifyPropertyChanged
 	{
+		bool IsLayoutAdaptiveEnabled { get; set; }
 		LayoutTypes LayoutType { get; set; }
 
 		SortOption SortOption { get; set; }

@@ -9,7 +9,7 @@ namespace Files.App.Actions
 {
 	internal abstract class ToggleLayoutAction : ObservableObject, IToggleAction
 	{
-		private readonly IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
+		protected IDisplayPageContext Context { get; } = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
 		protected abstract LayoutTypes LayoutType { get; }
 
@@ -21,22 +21,29 @@ namespace Files.App.Actions
 		private bool isOn;
 		public bool IsOn => isOn;
 
+		public virtual bool IsExecutable => true;
+
 		public ToggleLayoutAction()
 		{
-			isOn = context.LayoutType == LayoutType;
-			context.PropertyChanged += Context_PropertyChanged;
+			isOn = Context.LayoutType == LayoutType;
+			Context.PropertyChanged += Context_PropertyChanged;
 		}
 
 		public Task ExecuteAsync()
 		{
-			context.LayoutType = LayoutType;
+			Context.LayoutType = LayoutType;
 			return Task.CompletedTask;
 		}
 
 		private void Context_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName is nameof(IDisplayPageContext.LayoutType))
-				SetProperty(ref isOn, context.LayoutType == LayoutType, nameof(IsOn));
+				SetProperty(ref isOn, Context.LayoutType == LayoutType, nameof(IsOn));
+
+			if (e.PropertyName is not null)
+				OnContextChanged(e.PropertyName);
 		}
+
+		protected virtual void OnContextChanged(string propertyName) {}
 	}
 }
