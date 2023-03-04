@@ -6,6 +6,8 @@ using Files.App.Views;
 using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Files.App.ViewModels;
+using Files.App.UserControls.MultitaskingControl;
 
 namespace Files.App.Actions
 {
@@ -33,6 +35,16 @@ namespace Files.App.Actions
 
 		public Task ExecuteAsync()
 		{
+			var a = BaseShellPage.Instances;
+			var c = a.Where(i => i.IsPageMainPane).ToList();
+			int n = c.Count;
+
+			var instance = MainPageViewModel.AppInstances.FirstOrDefault(x => x.Control.TabItemContent.IsCurrentInstance);
+			if (instance is not null)
+			{
+				var page = (instance.Control.TabItemContent as PaneHolderPage)?.ActivePaneOrColumn;
+			}
+
 			Context.LayoutType = LayoutType;
 			return Task.CompletedTask;
 		}

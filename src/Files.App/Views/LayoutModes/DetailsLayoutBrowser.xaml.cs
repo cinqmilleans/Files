@@ -138,7 +138,6 @@ namespace Files.App.Views.LayoutModes
 			}
 
 			currentIconSize = FolderSettings.GetIconSize();
-			FolderSettings.LayoutModeChangeRequested += FolderSettings_LayoutModeChangeRequested;
 			FolderSettings.GridViewSizeChangeRequested += FolderSettings_GridViewSizeChangeRequested;
 			FolderSettings.GroupOptionPreferenceUpdated += ZoomIn;
 			FolderSettings.SortDirectionPreferenceUpdated += FolderSettings_SortDirectionPreferenceUpdated;
@@ -176,7 +175,6 @@ namespace Files.App.Views.LayoutModes
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
 		{
 			base.OnNavigatingFrom(e);
-			FolderSettings.LayoutModeChangeRequested -= FolderSettings_LayoutModeChangeRequested;
 			FolderSettings.GridViewSizeChangeRequested -= FolderSettings_GridViewSizeChangeRequested;
 			FolderSettings.GroupOptionPreferenceUpdated -= ZoomIn;
 			FolderSettings.SortDirectionPreferenceUpdated -= FolderSettings_SortDirectionPreferenceUpdated;
@@ -234,11 +232,6 @@ namespace Files.App.Views.LayoutModes
 				ColumnsViewModel.StatusColumn.Show();
 
 			UpdateSortIndicator();
-		}
-
-		private void FolderSettings_LayoutModeChangeRequested(object? sender, LayoutModeEventArgs e)
-		{
-
 		}
 
 		private async void FileList_SelectionChanged(object sender, SelectionChangedEventArgs e)

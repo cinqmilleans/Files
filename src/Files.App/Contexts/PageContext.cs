@@ -6,20 +6,23 @@ namespace Files.App.Contexts
 {
 	internal abstract class PageContext : ObservableObject
 	{
-		private BaseShellPage? page;
-		public BaseShellPage? Page => page!;
+		private IShellPage? page;
+		public IShellPage? Page => page;
 
 		public PageContext()
 		{
-			BaseShellPage.CurrentInstanceChanged += BaseShellPage_CurrentInstanceChanged;
+			BaseShellPage.CurrentInstanceChanged += BaseLayout_CurrentInstanceChanged;
+			BaseLayout.CurrentInstanceChanged += BaseLayout_CurrentInstanceChanged;
 		}
 
 		protected virtual void OnPageChanging() {}
 		protected virtual void OnPageChanged() {}
 		protected virtual void OnContentChanged() {}
 
-		private void BaseShellPage_CurrentInstanceChanged(object? sender, BaseShellPage? newPage)
+		private void BaseLayout_CurrentInstanceChanged(object? sender, IShellPage? newPage)
 		{
+			newPage = newPage?.PaneHolder?.ActivePaneOrColumn;
+
 			if (Equals(page, newPage))
 				return;
 

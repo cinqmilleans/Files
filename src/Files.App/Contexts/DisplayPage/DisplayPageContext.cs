@@ -23,7 +23,7 @@ namespace Files.App.Contexts
 			get => layoutType;
 			set
 			{
-				var viewModel = Page?.FolderSettings;
+				var viewModel = Page?.InstanceViewModel?.FolderSettings;
 				if (viewModel is null)
 					return;
 
@@ -60,7 +60,7 @@ namespace Files.App.Contexts
 			get => sortOption;
 			set
 			{
-				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectorySortOption = value;
 			}
 		}
@@ -71,7 +71,7 @@ namespace Files.App.Contexts
 			get => sortDirection;
 			set
 			{
-				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectorySortDirection = value;
 			}
 		}
@@ -82,7 +82,7 @@ namespace Files.App.Contexts
 			get => groupOption;
 			set
 			{
-				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectoryGroupOption = value;
 			}
 		}
@@ -93,7 +93,7 @@ namespace Files.App.Contexts
 			get => groupDirection;
 			set
 			{
-				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectoryGroupDirection = value;
 			}
 		}
@@ -105,7 +105,7 @@ namespace Files.App.Contexts
 
 		protected override void OnContentChanged()
 		{
-			var viewModel = Page?.FolderSettings;
+			var viewModel = Page?.InstanceViewModel?.FolderSettings;
 			if (viewModel is null)
 			{
 				SetProperty(ref layoutType, LayoutTypes.None, nameof(LayoutType));
@@ -136,7 +136,7 @@ namespace Files.App.Contexts
 
 		private LayoutTypes GetLayoutType()
 		{
-			var viewModel = Page?.FolderSettings;
+			var viewModel = Page?.InstanceViewModel?.FolderSettings;
 			if (viewModel is null)
 				return LayoutTypes.None;
 

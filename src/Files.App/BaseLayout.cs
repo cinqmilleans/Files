@@ -85,6 +85,8 @@ namespace Files.App
 
 		public BaseLayoutCommandsViewModel? CommandsViewModel { get; protected set; }
 
+		public static event EventHandler<IShellPage?>? CurrentInstanceChanged;
+
 		public IShellPage? ParentShellPageInstance { get; private set; } = null;
 
 		public bool IsRenamingItem { get; set; } = false;
@@ -529,7 +531,7 @@ namespace Files.App
 			groupingCancellationToken?.Cancel();
 			groupingCancellationToken = new CancellationTokenSource();
 			var token = groupingCancellationToken.Token;
-			
+
 			await ParentShellPageInstance!.FilesystemViewModel.GroupOptionsUpdated(token);
 
 			UpdateCollectionViewSource();
@@ -596,7 +598,7 @@ namespace Files.App
 				var (primaryElements, secondaryElements) = ItemModelListToContextFlyoutHelper.GetAppBarItemsFromModel(items);
 
 				AddCloseHandler(BaseContextMenuFlyout, primaryElements, secondaryElements);
-        
+
 				primaryElements.ForEach(i => BaseContextMenuFlyout.PrimaryCommands.Add(i));
 
 				// Set menu min width
@@ -806,7 +808,7 @@ namespace Files.App
 
 			// Add items to sendto dropdown
 			var sendToOverflow = contextMenuFlyout.SecondaryCommands.FirstOrDefault(x => x is AppBarButton abb && (abb.Tag as string) == "SendToOverflow") as AppBarButton;
-			
+
 			var sendTo = contextMenuFlyout.SecondaryCommands.FirstOrDefault(x => x is AppBarButton abb && (abb.Tag as string) == "SendTo") as AppBarButton;
 			if (sendToSubItems is not null && sendToOverflow is not null)
 			{
@@ -1009,6 +1011,8 @@ namespace Files.App
 		{
 			RefreshContainer(args.ItemContainer, args.InRecycleQueue);
 			RefreshItem(args.ItemContainer, args.Item, args.InRecycleQueue, args);
+
+			CurrentInstanceChanged?.Invoke(null, ParentShellPageInstance);
 		}
 
 		private void RefreshContainer(SelectorItem container, bool inRecycleQueue)

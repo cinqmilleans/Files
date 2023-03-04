@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
-using Files.App.Commands;
 using Files.App.DataModels;
 using Files.App.EventArguments;
 using Files.App.Extensions;
@@ -42,10 +41,9 @@ namespace Files.App.Views
 {
 	public abstract class BaseShellPage : Page, IShellPage, INotifyPropertyChanged
 	{
-		public static IList<IShellPage> Instances { get; } = new List<IShellPage>();
+		public static IList<BaseShellPage> Instances = new List<BaseShellPage>();
 
-		private static BaseShellPage? currentInstance;
-		public static event EventHandler<BaseShellPage?>? CurrentInstanceChanged;
+		public static event EventHandler<IShellPage?>? CurrentInstanceChanged;
 
 		public static readonly DependencyProperty NavParamsProperty =
 			DependencyProperty.Register("NavParams", typeof(NavigationParams), typeof(ModernShellPage), new PropertyMetadata(null));
@@ -64,7 +62,6 @@ namespace Files.App.Views
 
 		public IBaseLayout SlimContentPage => ContentPage;
 
-		public ICommandManager commands = Ioc.Default.GetRequiredService<ICommandManager>();
 		public IFilesystemHelpers FilesystemHelpers { get; protected set; }
 
 		public Type CurrentPageType => ItemDisplay.SourcePageType;
@@ -142,22 +139,23 @@ namespace Files.App.Views
 			}
 		}
 
+		private bool isCurrentInstance = false;
 		public bool IsCurrentInstance
 		{
-			get => Equals(currentInstance);
+			get => isCurrentInstance;
 			set
 			{
-				if (IsCurrentInstance != value)
+				if (isCurrentInstance != value)
 				{
-					currentInstance = value ? this : null;
-
-					if (value)
+					isCurrentInstance = value;
+					if (isCurrentInstance)
 						ContentPage?.ItemManipulationModel.FocusFileList();
 					else if (SlimContentPage is not ColumnViewBrowser)
 						ToolbarViewModel.IsEditModeEnabled = false;
-
 					NotifyPropertyChanged(nameof(IsCurrentInstance));
-					CurrentInstanceChanged?.Invoke(null, currentInstance);
+
+					if (isCurrentInstance)
+						CurrentInstanceChanged?.Invoke(null, this);
 				}
 			}
 		}
