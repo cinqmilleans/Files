@@ -11,6 +11,9 @@ namespace Files.App.Contexts
 
 		public PageContext()
 		{
+
+			Utiliser ITabItemContent, qui contient les 2 shellpages
+
 			BaseShellPage.CurrentInstanceChanged += BaseLayout_CurrentInstanceChanged;
 			BaseLayout.CurrentInstanceChanged += BaseLayout_CurrentInstanceChanged;
 		}
