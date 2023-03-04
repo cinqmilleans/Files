@@ -7,7 +7,6 @@ namespace Files.App.Contexts
 	public interface IContentPageContext : INotifyPropertyChanged
 	{
 		IShellPage? ShellPage { get; }
-
 		ContentPageTypes PageType { get; }
 
 		ListedItem? Folder { get; }

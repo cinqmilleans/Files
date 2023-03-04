@@ -43,6 +43,8 @@ namespace Files.App.Views
 {
 	public abstract class BaseShellPage : Page, IShellPage, INotifyPropertyChanged
 	{
+		public static IList<IShellPage> Instances { get; } = new List<IShellPage>();
+
 		public static event EventHandler<BaseShellPage>? CurrentInstanceChanged;
 
 		public static readonly DependencyProperty NavParamsProperty =
@@ -176,6 +178,8 @@ namespace Files.App.Views
 
 		public BaseShellPage(CurrentInstanceViewModel instanceViewModel)
 		{
+			Instances.Add(this);
+
 			InstanceViewModel = instanceViewModel;
 			InstanceViewModel.FolderSettings.LayoutPreferencesUpdateRequired += FolderSettings_LayoutPreferencesUpdateRequired;
 			cancellationTokenSource = new CancellationTokenSource();
