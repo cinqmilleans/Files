@@ -16,9 +16,9 @@ namespace Files.App.Contexts
 		private ContentPageTypes pageType = ContentPageTypes.None;
 		public ContentPageTypes PageType => pageType;
 
-		public ListedItem? Folder => Page.FilesystemViewModel.CurrentFolder;
+		public ListedItem? Folder => Page?.FilesystemViewModel?.CurrentFolder;
 
-		public bool HasItem => Page.ToolbarViewModel.HasItem;
+		public bool HasItem => Page?.ToolbarViewModel?.HasItem ?? false;
 
 		public bool HasSelection => SelectedItems.Count is not 0;
 		public ListedItem? SelectedItem => SelectedItems.Count is 1 ? SelectedItems[0] : null;
@@ -28,12 +28,16 @@ namespace Files.App.Contexts
 
 		protected override void OnPageChanging()
 		{
+			if (Page is null)
+				return;
 			Page.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
 			Page.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
 		}
 
 		protected override void OnPageChanged()
 		{
+			if (Page is null)
+				return;
 			Page.InstanceViewModel.PropertyChanged += InstanceViewModel_PropertyChanged;
 			Page.ToolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
 		}
@@ -81,7 +85,7 @@ namespace Files.App.Contexts
 
 		private void UpdatePageType()
 		{
-			var type = Page.InstanceViewModel switch
+			var type = Page?.InstanceViewModel switch
 			{
 				null => ContentPageTypes.None,
 				{ IsPageTypeNotHome: false } => ContentPageTypes.Home,
@@ -102,7 +106,7 @@ namespace Files.App.Contexts
 			bool oldHasSelection = HasSelection;
 			ListedItem? oldSelectedItem = SelectedItem;
 
-			IReadOnlyList<ListedItem> items = Page.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? EmptyListedItemList;
+			IReadOnlyList<ListedItem> items = Page?.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? EmptyListedItemList;
 			if (SetProperty(ref selectedItems, items, nameof(SelectedItems)))
 			{
 				if (HasSelection != oldHasSelection)

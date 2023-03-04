@@ -31,7 +31,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -45,7 +44,8 @@ namespace Files.App.Views
 	{
 		public static IList<IShellPage> Instances { get; } = new List<IShellPage>();
 
-		public static event EventHandler<BaseShellPage>? CurrentInstanceChanged;
+		private static BaseShellPage? currentInstance;
+		public static event EventHandler<BaseShellPage?>? CurrentInstanceChanged;
 
 		public static readonly DependencyProperty NavParamsProperty =
 			DependencyProperty.Register("NavParams", typeof(NavigationParams), typeof(ModernShellPage), new PropertyMetadata(null));
@@ -142,23 +142,22 @@ namespace Files.App.Views
 			}
 		}
 
-		protected bool isCurrentInstance = false;
 		public bool IsCurrentInstance
 		{
-			get => isCurrentInstance;
+			get => Equals(currentInstance);
 			set
 			{
-				if (isCurrentInstance != value)
+				if (IsCurrentInstance != value)
 				{
-					isCurrentInstance = value;
-					if (isCurrentInstance)
+					currentInstance = value ? this : null;
+
+					if (value)
 						ContentPage?.ItemManipulationModel.FocusFileList();
 					else if (SlimContentPage is not ColumnViewBrowser)
 						ToolbarViewModel.IsEditModeEnabled = false;
-					NotifyPropertyChanged(nameof(IsCurrentInstance));
 
-					if (isCurrentInstance)
-						CurrentInstanceChanged?.Invoke(null, this);
+					NotifyPropertyChanged(nameof(IsCurrentInstance));
+					CurrentInstanceChanged?.Invoke(null, currentInstance);
 				}
 			}
 		}

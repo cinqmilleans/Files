@@ -33,10 +33,6 @@ namespace Files.App.Actions
 
 		public Task ExecuteAsync()
 		{
-			var a = BaseShellPage.Instances;
-			int n = a.Count(i => i.IsCurrentInstance);
-			var c = a.FirstOrDefault(i => i.IsCurrentInstance);
-
 			Context.LayoutType = LayoutType;
 			return Task.CompletedTask;
 		}

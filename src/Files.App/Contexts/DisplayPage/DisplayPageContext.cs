@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
 using System.ComponentModel;
@@ -20,35 +21,81 @@ namespace Files.App.Contexts
 		public LayoutTypes LayoutType
 		{
 			get => layoutType;
-			set => SetLayoutType(value);
+			set
+			{
+				var viewModel = Page?.FolderSettings;
+				if (viewModel is null)
+					return;
+
+				switch (value)
+				{
+					case LayoutTypes.Details:
+						viewModel.ToggleLayoutModeDetailsView(true);
+						break;
+					case LayoutTypes.Tiles:
+						viewModel.ToggleLayoutModeTiles(true);
+						break;
+					case LayoutTypes.GridSmall:
+						viewModel.ToggleLayoutModeGridViewSmall(true);
+						break;
+					case LayoutTypes.GridMedium:
+						viewModel.ToggleLayoutModeGridViewMedium(true);
+						break;
+					case LayoutTypes.GridLarge:
+						viewModel.ToggleLayoutModeGridViewLarge(true);
+						break;
+					case LayoutTypes.Columns:
+						viewModel.ToggleLayoutModeColumnView(true);
+						break;
+					case LayoutTypes.Adaptive:
+						viewModel.ToggleLayoutModeAdaptive();
+						break;
+				}
+			}
 		}
 
 		private SortOption sortOption = SortOption.Name;
 		public SortOption SortOption
 		{
 			get => sortOption;
-			set => Page.FolderSettings.DirectorySortOption = value;
+			set
+			{
+				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+					viewModel.DirectorySortOption = value;
+			}
 		}
 
 		private SortDirection sortDirection = SortDirection.Ascending;
 		public SortDirection SortDirection
 		{
 			get => sortDirection;
-			set => Page.FolderSettings.DirectorySortDirection = value;
+			set
+			{
+				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+					viewModel.DirectorySortDirection = value;
+			}
 		}
 
 		private GroupOption groupOption = GroupOption.None;
 		public GroupOption GroupOption
 		{
 			get => groupOption;
-			set => Page.FolderSettings.DirectoryGroupOption = value;
+			set
+			{
+				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+					viewModel.DirectoryGroupOption = value;
+			}
 		}
 
 		private SortDirection groupDirection = SortDirection.Ascending;
 		public SortDirection GroupDirection
 		{
 			get => groupDirection;
-			set => Page.FolderSettings.DirectoryGroupDirection = value;
+			set
+			{
+				if (Page?.FolderSettings is FolderSettingsViewModel viewModel)
+					viewModel.DirectoryGroupDirection = value;
+			}
 		}
 
 		public DisplayPageContext()
@@ -89,7 +136,9 @@ namespace Files.App.Contexts
 
 		private LayoutTypes GetLayoutType()
 		{
-			var viewModel = Page.FolderSettings;
+			var viewModel = Page?.FolderSettings;
+			if (viewModel is null)
+				return LayoutTypes.None;
 
 			bool isAdaptive = isLayoutAdaptiveEnabled && viewModel.IsAdaptiveLayoutEnabled && !viewModel.IsLayoutModeFixed;
 			if (isAdaptive)
@@ -109,36 +158,6 @@ namespace Files.App.Contexts
 				FolderLayoutModes.ColumnView => LayoutTypes.Columns,
 				_ => throw new InvalidEnumArgumentException(),
 			};
-		}
-
-		private void SetLayoutType (LayoutTypes layoutType)
-		{
-			var viewModel = Page.FolderSettings;
-
-			switch (layoutType)
-			{
-				case LayoutTypes.Details:
-					viewModel.ToggleLayoutModeDetailsView(true);
-					break;
-				case LayoutTypes.Tiles:
-					viewModel.ToggleLayoutModeTiles(true);
-					break;
-				case LayoutTypes.GridSmall:
-					viewModel.ToggleLayoutModeGridViewSmall(true);
-					break;
-				case LayoutTypes.GridMedium:
-					viewModel.ToggleLayoutModeGridViewMedium(true);
-					break;
-				case LayoutTypes.GridLarge:
-					viewModel.ToggleLayoutModeGridViewLarge(true);
-					break;
-				case LayoutTypes.Columns:
-					viewModel.ToggleLayoutModeColumnView(true);
-					break;
-				case LayoutTypes.Adaptive:
-					viewModel.ToggleLayoutModeAdaptive();
-					break;
-			}
 		}
 	}
 }

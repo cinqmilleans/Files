@@ -7,7 +7,7 @@ namespace Files.App.Contexts
 	internal abstract class PageContext : ObservableObject
 	{
 		private BaseShellPage? page;
-		public BaseShellPage Page => page!;
+		public BaseShellPage? Page => page!;
 
 		public PageContext()
 		{
@@ -18,9 +18,9 @@ namespace Files.App.Contexts
 		protected virtual void OnPageChanged() {}
 		protected virtual void OnContentChanged() {}
 
-		private void BaseShellPage_CurrentInstanceChanged(object? sender, BaseShellPage newPage)
+		private void BaseShellPage_CurrentInstanceChanged(object? sender, BaseShellPage? newPage)
 		{
-			if (page == newPage)
+			if (Equals(page, newPage))
 				return;
 
 			if (page is not null)
