@@ -1,14 +1,17 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Files.App.ViewModels;
 using Files.Backend.Services.Settings;
 using Files.Shared.Enums;
+using System;
 using System.ComponentModel;
 
 namespace Files.App.Contexts
 {
-	internal class DisplayPageContext : PageContext, IDisplayPageContext
+	internal class DisplayPageContext : ObservableObject, IDisplayPageContext
 	{
-		private static readonly IFoldersSettingsService settings = Ioc.Default.GetRequiredService<IFoldersSettingsService>();
+		private readonly IPageContext context = Ioc.Default.GetRequiredService<IPageContext>();
+		private readonly IFoldersSettingsService settings = Ioc.Default.GetRequiredService<IFoldersSettingsService>();
 
 		private bool isLayoutAdaptiveEnabled = false;
 		public bool IsLayoutAdaptiveEnabled
@@ -23,7 +26,7 @@ namespace Files.App.Contexts
 			get => layoutType;
 			set
 			{
-				var viewModel = Page?.InstanceViewModel?.FolderSettings;
+				var viewModel = FolderSettings;
 				if (viewModel is null)
 					return;
 
@@ -60,7 +63,7 @@ namespace Files.App.Contexts
 			get => sortOption;
 			set
 			{
-				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectorySortOption = value;
 			}
 		}
@@ -71,7 +74,7 @@ namespace Files.App.Contexts
 			get => sortDirection;
 			set
 			{
-				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectorySortDirection = value;
 			}
 		}
@@ -82,7 +85,7 @@ namespace Files.App.Contexts
 			get => groupOption;
 			set
 			{
-				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectoryGroupOption = value;
 			}
 		}
@@ -93,19 +96,34 @@ namespace Files.App.Contexts
 			get => groupDirection;
 			set
 			{
-				if (Page?.InstanceViewModel?.FolderSettings is FolderSettingsViewModel viewModel)
+				if (FolderSettings is FolderSettingsViewModel viewModel)
 					viewModel.DirectoryGroupDirection = value;
 			}
 		}
 
+		private FolderSettingsViewModel? FolderSettings => context.Pane?.InstanceViewModel?.FolderSettings;
+
 		public DisplayPageContext()
 		{
+			context.Changed += Context_Changed;
 			settings.PropertyChanged += Settings_PropertyChanged;
 		}
 
-		protected override void OnContentChanged()
+		private void Context_Changed(object? sender, EventArgs e) => Update();
+
+		private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			var viewModel = Page?.InstanceViewModel?.FolderSettings;
+			if (e.PropertyName is nameof(IFoldersSettingsService.SyncFolderPreferencesAcrossDirectories))
+			{
+				bool isEnabled = settings.SyncFolderPreferencesAcrossDirectories;
+				if (SetProperty(ref isLayoutAdaptiveEnabled, isEnabled, nameof(IsLayoutAdaptiveEnabled)))
+					SetProperty(ref layoutType, GetLayoutType(), nameof(LayoutType));
+			}
+		}
+
+		private void Update()
+		{
+			var viewModel = FolderSettings;
 			if (viewModel is null)
 			{
 				SetProperty(ref layoutType, LayoutTypes.None, nameof(LayoutType));
@@ -124,19 +142,9 @@ namespace Files.App.Contexts
 			}
 		}
 
-		private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName is nameof(IFoldersSettingsService.SyncFolderPreferencesAcrossDirectories))
-			{
-				bool isEnabled = settings.SyncFolderPreferencesAcrossDirectories;
-				if (SetProperty(ref isLayoutAdaptiveEnabled, isEnabled, nameof(IsLayoutAdaptiveEnabled)))
-					SetProperty(ref layoutType, GetLayoutType(), nameof(LayoutType));
-			}
-		}
-
 		private LayoutTypes GetLayoutType()
 		{
-			var viewModel = Page?.InstanceViewModel?.FolderSettings;
+			var viewModel = FolderSettings;
 			if (viewModel is null)
 				return LayoutTypes.None;
 

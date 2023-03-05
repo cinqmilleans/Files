@@ -1,5 +1,9 @@
-﻿using Files.App.Filesystem;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Files.App.Filesystem;
+using Files.App.UserControls.MultitaskingControl;
 using Files.App.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
@@ -7,42 +11,57 @@ using System.Linq;
 
 namespace Files.App.Contexts
 {
-	internal class ContentPageContext : PageContext, IContentPageContext
+	internal class ContentPageContext : ObservableObject, IContentPageContext
 	{
-		private static readonly IReadOnlyList<ListedItem> EmptyListedItemList = Enumerable.Empty<ListedItem>().ToImmutableList();
+		private static readonly IReadOnlyList<ListedItem> emptyItems = Enumerable.Empty<ListedItem>().ToImmutableList();
 
-		public IShellPage? ShellPage => Page;
+		private readonly IPageContext context = Ioc.Default.GetRequiredService<IPageContext>();
+
+		public IShellPage? ShellPage => context?.PaneOrColumn;
 
 		private ContentPageTypes pageType = ContentPageTypes.None;
 		public ContentPageTypes PageType => pageType;
 
-		public ListedItem? Folder => Page?.FilesystemViewModel?.CurrentFolder;
+		public ListedItem? Folder => ShellPage?.FilesystemViewModel?.CurrentFolder;
 
-		public bool HasItem => Page?.ToolbarViewModel?.HasItem ?? false;
+		public bool HasItem => ShellPage?.ToolbarViewModel?.HasItem ?? false;
 
 		public bool HasSelection => SelectedItems.Count is not 0;
 		public ListedItem? SelectedItem => SelectedItems.Count is 1 ? SelectedItems[0] : null;
 
-		private IReadOnlyList<ListedItem> selectedItems = EmptyListedItemList;
+		private IReadOnlyList<ListedItem> selectedItems = emptyItems;
 		public IReadOnlyList<ListedItem> SelectedItems => selectedItems;
 
-		protected override void OnPageChanging()
+		public ContentPageContext()
 		{
-			if (Page is null)
-				return;
-			Page.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
-			Page.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+			context.Changing += Context_Changing;
+			context.Changed += Context_Changed;
+			Update();
 		}
 
-		protected override void OnPageChanged()
+		private void Context_Changing(object? sender, EventArgs e)
 		{
-			if (Page is null)
-				return;
-			Page.InstanceViewModel.PropertyChanged += InstanceViewModel_PropertyChanged;
-			Page.ToolbarViewModel.PropertyChanged += ToolbarViewModel_PropertyChanged;
+			if (ShellPage is IShellPage page)
+			{
+				page.ContentChanged -= Page_ContentChanged;
+				page.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
+				page.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+			}
+			OnPropertyChanging(nameof(ShellPage));
+		}
+		private void Context_Changed(object? sender, EventArgs e)
+		{
+			if (ShellPage is IShellPage page)
+			{
+				page.ContentChanged += Page_ContentChanged;
+				page.InstanceViewModel.PropertyChanged -= InstanceViewModel_PropertyChanged;
+				page.ToolbarViewModel.PropertyChanged -= ToolbarViewModel_PropertyChanged;
+			}
+			Update();
+			OnPropertyChanged(nameof(ShellPage));
 		}
 
-		protected override void OnContentChanged() => Update();
+		private void Page_ContentChanged(object? sender, TabItemArguments e) => Update();
 
 		private void InstanceViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -85,7 +104,7 @@ namespace Files.App.Contexts
 
 		private void UpdatePageType()
 		{
-			var type = Page?.InstanceViewModel switch
+			var type = ShellPage?.InstanceViewModel switch
 			{
 				null => ContentPageTypes.None,
 				{ IsPageTypeNotHome: false } => ContentPageTypes.Home,
@@ -106,7 +125,7 @@ namespace Files.App.Contexts
 			bool oldHasSelection = HasSelection;
 			ListedItem? oldSelectedItem = SelectedItem;
 
-			IReadOnlyList<ListedItem> items = Page?.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? EmptyListedItemList;
+			IReadOnlyList<ListedItem> items = ShellPage?.ToolbarViewModel?.SelectedItems?.AsReadOnly() ?? emptyItems;
 			if (SetProperty(ref selectedItems, items, nameof(SelectedItems)))
 			{
 				if (HasSelection != oldHasSelection)

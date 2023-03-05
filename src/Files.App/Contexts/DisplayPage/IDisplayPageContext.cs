@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Files.App.Contexts
 {
-	public interface IDisplayPageContext : INotifyPropertyChanged
+	public interface IDisplayPageContext : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		bool IsLayoutAdaptiveEnabled { get; set; }
 		LayoutTypes LayoutType { get; set; }

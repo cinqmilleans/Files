@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Files.App.Contexts
 {
-	public interface IContentPageContext : INotifyPropertyChanged
+	public interface IContentPageContext : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		IShellPage? ShellPage { get; }
 		ContentPageTypes PageType { get; }
