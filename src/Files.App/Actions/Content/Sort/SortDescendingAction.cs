@@ -10,20 +10,20 @@ namespace Files.App.Actions
 {
 	internal class SortDescendingAction : ObservableObject, IToggleAction
 	{
-		protected IDisplayPageContext Context { get; } = Ioc.Default.GetRequiredService<IDisplayPageContext>();
+		private IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
 		public string Label { get; } = "Descending".GetLocalizedResource();
 
-		public bool IsOn => Context.SortDirection is SortDirection.Descending;
+		public bool IsOn => context.SortDirection is SortDirection.Descending;
 
 		public SortDescendingAction()
 		{
-			Context.PropertyChanged += Context_PropertyChanged;
+			context.PropertyChanged += Context_PropertyChanged;
 		}
 
 		public Task ExecuteAsync()
 		{
-			Context.SortDirection = SortDirection.Descending;
+			context.SortDirection = SortDirection.Descending;
 			return Task.CompletedTask;
 		}
 

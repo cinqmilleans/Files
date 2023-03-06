@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Files.App.Actions
 {
-	internal class ToggleSortDirectionAction : IAction
+	internal class ToggleGroupDirectionAction : IAction
 	{
 		private IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
-		public string Label { get; } = "ToggleSortDirection".GetLocalizedResource();
+		public string Label { get; } = "ToggleGroupDirection".GetLocalizedResource();
 
 		public Task ExecuteAsync()
 		{
-			context.SortDirection = context.SortDirection is SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
+			context.GroupDirection = context.SortDirection is SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
 			return Task.CompletedTask;
 		}
 	}

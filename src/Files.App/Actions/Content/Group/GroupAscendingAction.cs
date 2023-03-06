@@ -8,28 +8,28 @@ using System.Threading.Tasks;
 
 namespace Files.App.Actions
 {
-	internal class SortAscendingAction : ObservableObject, IToggleAction
+	internal class GroupAscendingAction : ObservableObject, IToggleAction
 	{
 		private IDisplayPageContext context = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
 		public string Label { get; } = "Ascending".GetLocalizedResource();
 
-		public bool IsOn => context.SortDirection is SortDirection.Ascending;
+		public bool IsOn => context.GroupDirection is SortDirection.Ascending;
 
-		public SortAscendingAction()
+		public GroupAscendingAction()
 		{
 			context.PropertyChanged += Context_PropertyChanged;
 		}
 
 		public Task ExecuteAsync()
 		{
-			context.SortDirection = SortDirection.Ascending;
+			context.GroupDirection = SortDirection.Ascending;
 			return Task.CompletedTask;
 		}
 
 		private void Context_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName is nameof(IDisplayPageContext.SortDirection))
+			if (e.PropertyName is nameof(IDisplayPageContext.GroupDirection))
 				OnPropertyChanged(nameof(IsOn));
 		}
 	}

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Files.App.Actions
 {
-	internal abstract class SortByAction : ObservableObject, IToggleAction
+	internal abstract class GroupByAction : ObservableObject, IToggleAction
 	{
-		private IContentPageContext contentContext = Ioc.Default.GetRequiredService<IContentPageContext>();
-		private IDisplayPageContext displayContext = Ioc.Default.GetRequiredService<IDisplayPageContext>();
+		protected IContentPageContext ContentContext { get; } = Ioc.Default.GetRequiredService<IContentPageContext>();
+		protected IDisplayPageContext DisplayContext { get; } = Ioc.Default.GetRequiredService<IDisplayPageContext>();
 
-		protected abstract SortOption SortOption { get; }
+		protected abstract GroupOption GroupOption { get; }
 
 		public abstract string Label { get; }
 
@@ -22,18 +22,18 @@ namespace Files.App.Actions
 		private bool isExecutable = false;
 		public bool IsExecutable => isExecutable;
 
-		public SortByAction()
+		public GroupByAction()
 		{
-			isOn = displayContext.SortOption == SortOption;
-			isExecutable = GetIsExecutable(contentContext.PageType);
+			isOn = DisplayContext.GroupOption == GroupOption;
+			isExecutable = GetIsExecutable(ContentContext.PageType);
 
-			contentContext.PropertyChanged += ContentContext_PropertyChanged;
-			displayContext.PropertyChanged += DisplayContext_PropertyChanged;
+			ContentContext.PropertyChanged += ContentContext_PropertyChanged;
+			DisplayContext.PropertyChanged += DisplayContext_PropertyChanged;
 		}
 
 		public Task ExecuteAsync()
 		{
-			displayContext.SortOption = SortOption;
+			DisplayContext.GroupOption = GroupOption;
 			return Task.CompletedTask;
 		}
 
@@ -42,13 +42,13 @@ namespace Files.App.Actions
 		private void ContentContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName is nameof(IContentPageContext.PageType))
-				SetProperty(ref isExecutable, GetIsExecutable(contentContext.PageType), nameof(IsExecutable));
+				SetProperty(ref isExecutable, GetIsExecutable(ContentContext.PageType), nameof(IsExecutable));
 		}
 
 		private void DisplayContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName is nameof(IDisplayPageContext.SortOption))
-				SetProperty(ref isOn, displayContext.SortOption == SortOption, nameof(IsOn));
+				SetProperty(ref isOn, DisplayContext.GroupOption == GroupOption, nameof(IsOn));
 		}
 	}
 }

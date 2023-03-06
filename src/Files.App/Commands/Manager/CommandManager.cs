@@ -131,7 +131,7 @@ namespace Files.App.Commands
 			[CommandCodes.SortByDateDeleted] = new SortByDateDeletedAction(),
 			[CommandCodes.SortAscending] = new SortAscendingAction(),
 			[CommandCodes.SortDescending] = new SortDescendingAction(),
-			[CommandCodes.ToggleSortDirection] = new ToggleSortDirectionAction(),
+			[CommandCodes.ToggleSortDirection] = new ToggleGroupDirectionAction(),
 			[CommandCodes.ToggleSortDirectoriesAlongsideFiles] = new ToggleSortDirectoriesAlongsideFilesAction(),
 		};
 
