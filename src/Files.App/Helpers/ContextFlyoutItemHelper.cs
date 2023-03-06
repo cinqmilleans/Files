@@ -138,96 +138,15 @@ namespace Files.App.Helpers
 					ShowInZipPage = true,
 					Items = new List<ContextMenuFlyoutItemViewModel>()
 					{
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Name".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByName ?? false,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByName = true) : null!,
-							ItemType = ItemType.Toggle,
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "DateModifiedLowerCase".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByDate ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByDate = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "DateCreated".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByDateCreated ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByDateCreated = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Type".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByType ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByType = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Size".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedBySize ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedBySize = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "SyncStatus".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedBySyncStatus ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedBySyncStatus = true) : null!,
-							ShowItem = currentInstanceViewModel.IsPageTypeCloudDrive,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "FileTags".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByFileTag ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByFileTag = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "OriginalPath".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByOriginalPath ?? false,
-							ShowInRecycleBin = true,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByOriginalPath = true) : null!,
-							ShowItem = currentInstanceViewModel.IsPageTypeRecycleBin,
-							ItemType = ItemType.Toggle,
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "DateDeleted".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedByDateDeleted ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedByDateDeleted = true) : null!,
-							ShowInRecycleBin = true,
-							ShowItem = currentInstanceViewModel.IsPageTypeRecycleBin,
-							ItemType = ItemType.Toggle
-						},
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByName).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByDateModified).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByDateCreated).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByType).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortBySize).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortBySyncStatus).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByTag).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByOriginalFolder).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortByDateDeleted).Build(),
 						new ContextMenuFlyoutItemViewModel()
 						{
 							ItemType = ItemType.Separator,
@@ -236,28 +155,8 @@ namespace Files.App.Helpers
 							ShowInFtpPage = true,
 							ShowInZipPage = true,
 						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Ascending".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedAscending ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedAscending = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
-						new ContextMenuFlyoutItemViewModel()
-						{
-							Text = "Descending".GetLocalizedResource(),
-							IsChecked = itemViewModel?.IsSortedDescending ?? false,
-							Command = itemViewModel is not null ? new RelayCommand(() => itemViewModel.IsSortedDescending = true) : null!,
-							ShowInRecycleBin = true,
-							ShowInSearchPage = true,
-							ShowInFtpPage = true,
-							ShowInZipPage = true,
-							ItemType = ItemType.Toggle
-						},
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortAscending).Build(),
+						new ContextMenuFlyoutItemViewModelBuilder(commands.SortDescending).Build(),
 					},
 					ShowItem = !itemsSelected
 				},

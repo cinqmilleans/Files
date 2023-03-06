@@ -12,7 +12,7 @@ namespace Files.App.ViewModels
 
 		private readonly IRichCommand command;
 
-		public bool? isVisible = null;
+		private bool? isVisible = null;
 		public bool IsVisible
 		{
 			get => isVisible ?? command.IsExecutable;
@@ -38,6 +38,8 @@ namespace Files.App.ViewModels
 			if (isVisible is null && !isExecutable)
 				return none;
 
+			ItemType type = command.IsToggle ? ItemType.Toggle : ItemType.Item;
+
 			var viewModel = new ContextMenuFlyoutItemViewModel
 			{
 				Text = command.Label,
@@ -45,6 +47,7 @@ namespace Files.App.ViewModels
 				IsEnabled = isExecutable,
 				IsChecked = command.IsOn,
 				IsPrimary = IsPrimary,
+				ItemType = type,
 				ShowItem = true,
 				ShowOnShift = ShowOnShift,
 				ShowInRecycleBin = true,
