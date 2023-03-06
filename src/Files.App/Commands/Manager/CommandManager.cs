@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
-using Files.App.Actions.Content.Sort;
 using Files.App.Actions.Favorites;
 using Files.App.UserControls;
 using Microsoft.UI.Xaml.Controls;
@@ -71,6 +70,7 @@ namespace Files.App.Commands
 		public IRichCommand SortAscending => commands[CommandCodes.SortAscending];
 		public IRichCommand SortDescending => commands[CommandCodes.SortDescending];
 		public IRichCommand ToggleSortDirection => commands[CommandCodes.ToggleSortDirection];
+		public IRichCommand ToggleSortDirectoriesAlongsideFiles => commands[CommandCodes.ToggleSortDirectoriesAlongsideFiles];
 
 		public CommandManager()
 		{
@@ -132,6 +132,7 @@ namespace Files.App.Commands
 			[CommandCodes.SortAscending] = new SortAscendingAction(),
 			[CommandCodes.SortDescending] = new SortDescendingAction(),
 			[CommandCodes.ToggleSortDirection] = new ToggleSortDirectionAction(),
+			[CommandCodes.ToggleSortDirectoriesAlongsideFiles] = new ToggleSortDirectoriesAlongsideFilesAction(),
 		};
 
 		[DebuggerDisplay("Command None")]

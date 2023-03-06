@@ -4,7 +4,7 @@ using Files.App.Extensions;
 using Files.Shared.Enums;
 using System.Threading.Tasks;
 
-namespace Files.App.Actions.Content.Sort
+namespace Files.App.Actions
 {
 	internal class ToggleSortDirectionAction : IAction
 	{

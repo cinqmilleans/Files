@@ -6,7 +6,7 @@ using Files.Shared.Enums;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace Files.App.Actions.Content.Sort
+namespace Files.App.Actions
 {
 	internal class SortAscendingAction : ObservableObject, IToggleAction
 	{

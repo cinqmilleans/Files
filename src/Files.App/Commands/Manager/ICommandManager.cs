@@ -59,5 +59,6 @@ namespace Files.App.Commands
 		IRichCommand SortAscending { get; }
 		IRichCommand SortDescending { get; }
 		IRichCommand ToggleSortDirection { get; }
+		IRichCommand ToggleSortDirectoriesAlongsideFiles { get; }
 	}
 }

@@ -101,6 +101,17 @@ namespace Files.App.Contexts
 			}
 		}
 
+		private bool sortDirectoriesAlongsideFiles = false;
+		public bool SortDirectoriesAlongsideFiles
+		{
+			get => sortDirectoriesAlongsideFiles;
+			set
+			{
+				if (FolderSettings is FolderSettingsViewModel viewModel)
+					viewModel.SortDirectoriesAlongsideFiles = value;
+			}
+		}
+
 		private FolderSettingsViewModel? FolderSettings => context.Pane?.InstanceViewModel?.FolderSettings;
 
 		public DisplayPageContext()
@@ -146,6 +157,9 @@ namespace Files.App.Contexts
 				case nameof(FolderSettingsViewModel.DirectoryGroupDirection):
 					SetProperty(ref groupDirection, viewModel.DirectoryGroupDirection, nameof(GroupDirection));
 					break;
+				case nameof(FolderSettingsViewModel.SortDirectoriesAlongsideFiles):
+					SetProperty(ref sortDirectoriesAlongsideFiles, viewModel.SortDirectoriesAlongsideFiles, nameof(SortDirectoriesAlongsideFiles));
+					break;
 			}
 		}
 
@@ -177,6 +191,7 @@ namespace Files.App.Contexts
 				SetProperty(ref sortDirection, viewModel.DirectorySortDirection, nameof(SortDirection));
 				SetProperty(ref groupOption, viewModel.DirectoryGroupOption, nameof(GroupOption));
 				SetProperty(ref groupDirection, viewModel.DirectoryGroupDirection, nameof(GroupDirection));
+				SetProperty(ref sortDirectoriesAlongsideFiles, viewModel.SortDirectoriesAlongsideFiles, nameof(SortDirectoriesAlongsideFiles));
 			}
 		}
 
