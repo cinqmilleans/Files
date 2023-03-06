@@ -64,5 +64,9 @@ namespace Files.App.Commands
 		SortDescending,
 		ToggleSortDirection,
 		ToggleSortDirectoriesAlongsideFiles,
+
+		GroupAscending,
+		GroupDescending,
+		ToggleGroupDirection,
 	}
 }

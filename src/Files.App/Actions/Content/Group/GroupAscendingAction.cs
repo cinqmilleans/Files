@@ -15,6 +15,7 @@ namespace Files.App.Actions
 		public string Label { get; } = "Ascending".GetLocalizedResource();
 
 		public bool IsOn => context.GroupDirection is SortDirection.Ascending;
+		public bool IsExecutable => context.GroupOption is not GroupOption.None;
 
 		public GroupAscendingAction()
 		{
@@ -29,8 +30,15 @@ namespace Files.App.Actions
 
 		private void Context_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName is nameof(IDisplayPageContext.GroupDirection))
-				OnPropertyChanged(nameof(IsOn));
+			switch (e.PropertyName)
+			{
+				case nameof(IDisplayPageContext.GroupOption):
+					OnPropertyChanged(nameof(IsExecutable));
+					break;
+				case nameof(IDisplayPageContext.GroupDirection):
+					OnPropertyChanged(nameof(IsOn));
+					break;
+			}
 		}
 	}
 }

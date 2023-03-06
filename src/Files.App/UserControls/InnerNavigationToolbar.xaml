@@ -498,13 +498,13 @@
 								Text="{helpers:ResourceString Name=NavToolbarArrangementOptionFolderPath/Text}" />
 							<MenuFlyoutSeparator />
 							<ToggleMenuFlyoutItem
-								IsChecked="{x:Bind ViewModel.IsGroupedAscending, Mode=TwoWay}"
-								IsEnabled="{x:Bind ViewModel.IsGroupedByNone, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-								Text="{helpers:ResourceString Name=Ascending}" />
+								IsChecked="{x:Bind Commands.GroupAscending.IsOn, Mode=TwoWay}"
+								IsEnabled="{x:Bind Commands.GroupAscending.IsExecutable, Mode=OneWay}"
+								Text="{x:Bind Commands.GroupAscending.Label}" />
 							<ToggleMenuFlyoutItem
-								IsChecked="{x:Bind ViewModel.IsGroupedDescending, Mode=TwoWay}"
-								IsEnabled="{x:Bind ViewModel.IsGroupedByNone, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-								Text="{helpers:ResourceString Name=Descending}" />
+								IsChecked="{x:Bind Commands.GroupDescending.IsOn, Mode=TwoWay}"
+								IsEnabled="{x:Bind Commands.GroupDescending.IsExecutable, Mode=OneWay}"
+								Text="{x:Bind Commands.GroupDescending.Label}" />
 						</MenuFlyoutSubItem>
 						<MenuFlyoutSeparator />
 						<ToggleMenuFlyoutItem IsChecked="{x:Bind Commands.ToggleSortDirectoriesAlongsideFiles.IsOn, Mode=TwoWay}" Text="{x:Bind Commands.ToggleSortDirectoriesAlongsideFiles.Label}" />

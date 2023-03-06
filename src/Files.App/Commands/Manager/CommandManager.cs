@@ -71,6 +71,9 @@ namespace Files.App.Commands
 		public IRichCommand SortDescending => commands[CommandCodes.SortDescending];
 		public IRichCommand ToggleSortDirection => commands[CommandCodes.ToggleSortDirection];
 		public IRichCommand ToggleSortDirectoriesAlongsideFiles => commands[CommandCodes.ToggleSortDirectoriesAlongsideFiles];
+		public IRichCommand GroupAscending => commands[CommandCodes.GroupAscending];
+		public IRichCommand GroupDescending => commands[CommandCodes.GroupDescending];
+		public IRichCommand ToggleGroupDirection => commands[CommandCodes.ToggleGroupDirection];
 
 		public CommandManager()
 		{
@@ -131,8 +134,11 @@ namespace Files.App.Commands
 			[CommandCodes.SortByDateDeleted] = new SortByDateDeletedAction(),
 			[CommandCodes.SortAscending] = new SortAscendingAction(),
 			[CommandCodes.SortDescending] = new SortDescendingAction(),
-			[CommandCodes.ToggleSortDirection] = new ToggleGroupDirectionAction(),
+			[CommandCodes.ToggleSortDirection] = new ToggleSortDirectionAction(),
 			[CommandCodes.ToggleSortDirectoriesAlongsideFiles] = new ToggleSortDirectoriesAlongsideFilesAction(),
+			[CommandCodes.GroupAscending] = new GroupAscendingAction(),
+			[CommandCodes.GroupDescending] = new GroupDescendingAction(),
+			[CommandCodes.ToggleGroupDirection] = new ToggleGroupDirectionAction(),
 		};
 
 		[DebuggerDisplay("Command None")]
