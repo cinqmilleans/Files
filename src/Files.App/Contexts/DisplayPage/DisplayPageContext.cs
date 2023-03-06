@@ -105,11 +105,49 @@ namespace Files.App.Contexts
 
 		public DisplayPageContext()
 		{
+			context.Changing += Context_Changing;
 			context.Changed += Context_Changed;
 			settings.PropertyChanged += Settings_PropertyChanged;
 		}
 
-		private void Context_Changed(object? sender, EventArgs e) => Update();
+		private void Context_Changing(object? sender, EventArgs e)
+		{
+			var viewModel = FolderSettings;
+			if (viewModel is not null)
+				viewModel.PropertyChanged -= FolderSettings_PropertyChanged;
+			Update();
+		}
+		private void Context_Changed(object? sender, EventArgs e)
+		{
+			var viewModel = FolderSettings;
+			if (viewModel is not null)
+				viewModel.PropertyChanged += FolderSettings_PropertyChanged;
+			Update();
+
+		}
+
+		private void FolderSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			var viewModel = FolderSettings;
+			if (viewModel is null)
+				return;
+
+			switch (e.PropertyName)
+			{
+				case nameof(FolderSettingsViewModel.DirectorySortOption):
+					SetProperty(ref sortOption, viewModel.DirectorySortOption, nameof(SortOption));
+					break;
+				case nameof(FolderSettingsViewModel.DirectorySortDirection):
+					SetProperty(ref sortDirection, SortDirection.Ascending, nameof(SortDirection));
+					break;
+				case nameof(FolderSettingsViewModel.DirectoryGroupOption):
+					SetProperty(ref groupOption, viewModel.DirectoryGroupOption, nameof(GroupOption));
+					break;
+				case nameof(FolderSettingsViewModel.DirectoryGroupDirection):
+					SetProperty(ref groupDirection, viewModel.DirectoryGroupDirection, nameof(GroupDirection));
+					break;
+			}
+		}
 
 		private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{

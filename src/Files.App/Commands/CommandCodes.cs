@@ -1,4 +1,6 @@
-﻿namespace Files.App.Commands
+﻿using Microsoft.UI.Xaml.Controls;
+
+namespace Files.App.Commands
 {
 	public enum CommandCodes
 	{
@@ -47,5 +49,19 @@
 		LayoutGridLarge,
 		LayoutColumns,
 		LayoutAdaptive,
+
+		// Sort
+		SortByName,
+		SortByDateModified,
+		SortByDateCreated,
+		SortBySize,
+		SortByType,
+		SortBySyncStatus,
+		SortByTag,
+		SortByOriginalFolder,
+		SortByDateDeleted,
+		SortAscending,
+		SortDescending,
+		ToggleSortDirection,
 	}
 }

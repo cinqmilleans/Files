@@ -46,5 +46,18 @@ namespace Files.App.Commands
 		IRichCommand LayoutGridLarge { get; }
 		IRichCommand LayoutColumns { get; }
 		IRichCommand LayoutAdaptive { get; }
+
+		IRichCommand SortByName { get; }
+		IRichCommand SortByDateModified { get; }
+		IRichCommand SortByDateCreated { get; }
+		IRichCommand SortBySize { get; }
+		IRichCommand SortByType { get; }
+		IRichCommand SortBySyncStatus { get; }
+		IRichCommand SortByTag { get; }
+		IRichCommand SortByOriginalFolder { get; }
+		IRichCommand SortByDateDeleted { get; }
+		IRichCommand SortAscending { get; }
+		IRichCommand SortDescending { get; }
+		IRichCommand ToggleSortDirection { get; }
 	}
 }

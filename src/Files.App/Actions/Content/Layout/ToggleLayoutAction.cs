@@ -35,21 +35,6 @@ namespace Files.App.Actions
 
 		public Task ExecuteAsync()
 		{
-			//var a = PaneHolderPage.Instances;
-			//var d = a.Where(i => i.IsCurrentInstance).ToList();
-			//var c2 = a.Where(i => i.ActivePaneOrColumn.IsPageMainPane).ToList();
-			//var d2 = a.Where(i => i.ActivePaneOrColumn.IsCurrentInstance).ToList();
-			//int n = c.Count;
-			//int m = d.Count;
-			//int n2 = c2.Count;
-			//int m2 = d2.Count;
-
-			//var instance = MainPageViewModel.AppInstances.FirstOrDefault(x => x.Control.TabItemContent.IsCurrentInstance);
-			//if (instance is not null)
-			//{
-			//	var page = (instance.Control.TabItemContent as PaneHolderPage)?.ActivePaneOrColumn;
-			//}
-
 			Context.LayoutType = LayoutType;
 			return Task.CompletedTask;
 		}

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Files.App.Actions;
+using Files.App.Actions.Content.Sort;
 using Files.App.Actions.Favorites;
 using Files.App.UserControls;
 using Microsoft.UI.Xaml.Controls;
@@ -58,6 +59,18 @@ namespace Files.App.Commands
 		public IRichCommand LayoutGridLarge => commands[CommandCodes.LayoutGridLarge];
 		public IRichCommand LayoutColumns => commands[CommandCodes.LayoutColumns];
 		public IRichCommand LayoutAdaptive => commands[CommandCodes.LayoutAdaptive];
+		public IRichCommand SortByName => commands[CommandCodes.SortByName];
+		public IRichCommand SortByDateModified => commands[CommandCodes.SortByDateModified];
+		public IRichCommand SortByDateCreated => commands[CommandCodes.SortByDateCreated];
+		public IRichCommand SortBySize => commands[CommandCodes.SortBySize];
+		public IRichCommand SortByType => commands[CommandCodes.SortByType];
+		public IRichCommand SortBySyncStatus => commands[CommandCodes.SortBySyncStatus];
+		public IRichCommand SortByTag => commands[CommandCodes.SortByTag];
+		public IRichCommand SortByOriginalFolder => commands[CommandCodes.SortByOriginalFolder];
+		public IRichCommand SortByDateDeleted => commands[CommandCodes.SortByDateDeleted];
+		public IRichCommand SortAscending => commands[CommandCodes.SortAscending];
+		public IRichCommand SortDescending => commands[CommandCodes.SortDescending];
+		public IRichCommand ToggleSortDirection => commands[CommandCodes.ToggleSortDirection];
 
 		public CommandManager()
 		{
@@ -107,6 +120,18 @@ namespace Files.App.Commands
 			[CommandCodes.LayoutGridLarge] = new LayoutGridLargeAction(),
 			[CommandCodes.LayoutColumns] = new LayoutColumnsAction(),
 			[CommandCodes.LayoutAdaptive] = new LayoutAdaptiveAction(),
+			[CommandCodes.SortByName] = new SortByNameAction(),
+			[CommandCodes.SortByDateModified] = new SortByDateModifiedAction(),
+			[CommandCodes.SortByDateCreated] = new SortByDateCreatedAction(),
+			[CommandCodes.SortBySize] = new SortBySizeAction(),
+			[CommandCodes.SortByType] = new SortByTypeAction(),
+			[CommandCodes.SortBySyncStatus] = new SortBySyncStatusAction(),
+			[CommandCodes.SortByTag] = new SortByTagAction(),
+			[CommandCodes.SortByOriginalFolder] = new SortByOriginalFolderAction(),
+			[CommandCodes.SortByDateDeleted] = new SortByDateDeletedAction(),
+			[CommandCodes.SortAscending] = new SortAscendingAction(),
+			[CommandCodes.SortDescending] = new SortDescendingAction(),
+			[CommandCodes.ToggleSortDirection] = new ToggleSortDirectionAction(),
 		};
 
 		[DebuggerDisplay("Command None")]
