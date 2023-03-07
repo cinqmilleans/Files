@@ -47,7 +47,7 @@ namespace Files.App.Actions
 
 		private void DisplayContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName is nameof(IDisplayPageContext.SortOption))
+			if (e.PropertyName is nameof(IDisplayPageContext.GroupOption))
 				SetProperty(ref isOn, DisplayContext.GroupOption == GroupOption, nameof(IsOn));
 		}
 	}

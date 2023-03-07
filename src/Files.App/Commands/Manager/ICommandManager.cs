@@ -61,6 +61,17 @@ namespace Files.App.Commands
 		IRichCommand ToggleSortDirection { get; }
 		IRichCommand ToggleSortDirectoriesAlongsideFiles { get; }
 
+		IRichCommand GroupByNone { get; }
+		IRichCommand GroupByName { get; }
+		IRichCommand GroupByDateModified { get; }
+		IRichCommand GroupByDateCreated { get; }
+		IRichCommand GroupBySize { get; }
+		IRichCommand GroupByType { get; }
+		IRichCommand GroupBySyncStatus { get; }
+		IRichCommand GroupByTag { get; }
+		IRichCommand GroupByOriginalFolder { get; }
+		IRichCommand GroupByDateDeleted { get; }
+		IRichCommand GroupByFolderPath { get; }
 		IRichCommand GroupAscending { get; }
 		IRichCommand GroupDescending { get; }
 		IRichCommand ToggleGroupDirection { get; }

@@ -20,6 +20,7 @@ namespace Files.App.ViewModels
 		}
 
 		public bool IsPrimary { get; init; } = false;
+		public bool IsToggle { get; init; } = false;
 
 		public bool ShowOnShift { get; init; } = false;
 
@@ -38,7 +39,7 @@ namespace Files.App.ViewModels
 			if (isVisible is null && !isExecutable)
 				return none;
 
-			ItemType type = command.IsToggle ? ItemType.Toggle : ItemType.Item;
+			ItemType type = IsToggle ? ItemType.Toggle : ItemType.Item;
 
 			var viewModel = new ContextMenuFlyoutItemViewModel
 			{
