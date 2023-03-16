@@ -1,7 +1,6 @@
 ﻿using Files.App.UserControls.MultitaskingControl;
 using Files.App.Views;
 using System;
-using System.ComponentModel;
 
 namespace Files.App.Contexts
 {
@@ -25,25 +24,15 @@ namespace Files.App.Contexts
 
 		private void Page_CurrentInstanceChanged(object? sender, PaneHolderPage? modifiedPage)
 		{
-			bool isCurrent = modifiedPage?.IsCurrentInstance ?? false;
-			var newPage = isCurrent ? modifiedPage : null;
-			UpdatePage(newPage);
+			if (page is not null && !page.IsCurrentInstance)
+				UpdatePage(null);
+			else if (modifiedPage is not null && modifiedPage.IsCurrentInstance)
+				UpdatePage(modifiedPage);
 		}
 
 		private void Page_ContentChanged(object? sender, TabItemArguments e)
 		{
 			UpdateContent();
-		}
-
-		private void Page_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case nameof(IPaneHolder.ActivePane):
-				case nameof(IPaneHolder.ActivePaneOrColumn):
-					UpdateContent();
-					break;
-			}
 		}
 
 		private void UpdatePage(PaneHolderPage? newPage)
@@ -54,7 +43,6 @@ namespace Files.App.Contexts
 			if (page is not null)
 			{
 				page.ContentChanged -= Page_ContentChanged;
-				page.PropertyChanged -= Page_PropertyChanged;
 			}
 
 			page = newPage;
@@ -62,7 +50,6 @@ namespace Files.App.Contexts
 			if (page is not null)
 			{
 				page.ContentChanged += Page_ContentChanged;
-				page.PropertyChanged += Page_PropertyChanged;
 			}
 
 			UpdateContent();
