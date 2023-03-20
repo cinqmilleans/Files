@@ -104,6 +104,9 @@ namespace Files.App.Commands
 		public IRichCommand ToggleGroupDirection => commands[CommandCodes.ToggleGroupDirection];
 		public IRichCommand NewTab => commands[CommandCodes.NewTab];
 		public IRichCommand DuplicateTab => commands[CommandCodes.DuplicateTab];
+		public IRichCommand CloseTabsToTheLeft => commands[CommandCodes.CloseTabsToTheLeft];
+		public IRichCommand CloseTabsToTheRight => commands[CommandCodes.CloseTabsToTheRight];
+		public IRichCommand CloseOtherTabs => commands[CommandCodes.CloseOtherTabs];
 
 		public CommandManager()
 		{
@@ -210,6 +213,9 @@ namespace Files.App.Commands
 			[CommandCodes.ToggleGroupDirection] = new ToggleGroupDirectionAction(),
 			[CommandCodes.NewTab] = new NewTabAction(),
 			[CommandCodes.DuplicateTab] = new DuplicateTabAction(),
+			[CommandCodes.CloseTabsToTheLeft] = new CloseTabsToTheLeftAction(),
+			[CommandCodes.CloseTabsToTheRight] = new CloseTabsToTheRightAction(),
+			[CommandCodes.CloseOtherTabs] = new CloseOtherTabsAction(),
 		};
 
 		[DebuggerDisplay("Command None")]

@@ -96,5 +96,8 @@ namespace Files.App.Commands
 
 		IRichCommand NewTab { get; }
 		IRichCommand DuplicateTab { get; }
+		IRichCommand CloseTabsToTheLeft { get; }
+		IRichCommand CloseTabsToTheRight { get; }
+		IRichCommand CloseOtherTabs { get; }
 	}
 }
