@@ -2845,6 +2845,46 @@
     <value>VolUp</value>
     <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
   </data>
+  <data name="Key.Pad0" xml:space="preserve">
+    <value>Pad0</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad1" xml:space="preserve">
+    <value>Pad1</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad2" xml:space="preserve">
+    <value>Pad2</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad3" xml:space="preserve">
+    <value>Pad3</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad4" xml:space="preserve">
+    <value>Pad4</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad5" xml:space="preserve">
+    <value>Pad5</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad6" xml:space="preserve">
+    <value>Pad6</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad7" xml:space="preserve">
+    <value>Pad7</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad8" xml:space="preserve">
+    <value>Pad8</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
+  <data name="Key.Pad9" xml:space="preserve">
+    <value>Pad9</value>
+    <comment>Key name for hotkeys in menus. Use abbreviation if possible.</comment>
+  </data>
   <data name="Change" xml:space="preserve">
     <value>Change</value>
   </data>
