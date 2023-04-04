@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Files.App.Commands
 {
-	public class HotKeyCollection : IEnumerable<HotKey>
+	public struct HotKeyCollection : IEnumerable<HotKey>
 	{
 		private const char separator = ',';
 

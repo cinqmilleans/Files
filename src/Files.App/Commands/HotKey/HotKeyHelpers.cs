@@ -8,7 +8,6 @@ namespace Files.App.Commands
 {
 	internal static class HotKeyHelpers
 	{
-
 		private static readonly ImmutableArray<Keys> globalKeys = new List<Keys>
 		{
 			Keys.GoHome,
@@ -64,21 +63,13 @@ namespace Files.App.Commands
 			var modifiers = VirtualKeyModifiers.None;
 
 			if (IsPressed(VirtualKey.Menu))
-			{
 				modifiers |= VirtualKeyModifiers.Menu;
-			}
 			if (IsPressed(VirtualKey.Control))
-			{
 				modifiers |= VirtualKeyModifiers.Control;
-			}
 			if (IsPressed(VirtualKey.Shift))
-			{
 				modifiers |= VirtualKeyModifiers.Shift;
-			}
 			if (IsPressed(VirtualKey.LeftWindows) || IsPressed(VirtualKey.RightWindows))
-			{
 				modifiers |= VirtualKeyModifiers.Windows;
-			}
 
 			return (KeyModifiers)modifiers;
 

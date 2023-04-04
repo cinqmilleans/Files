@@ -21,6 +21,8 @@ namespace Files.App.Actions
 		/// </summary>
 		RichGlyph Glyph => RichGlyph.None;
 
+		HotKeyCollection HotKeys { get; }
+
 		/// <summary>
 		/// Primary hotkey to execute the action
 		/// </summary>
