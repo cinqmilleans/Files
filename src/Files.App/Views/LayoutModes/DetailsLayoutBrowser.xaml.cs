@@ -38,6 +38,15 @@ namespace Files.App.Views.LayoutModes
 		public static readonly DependencyProperty IsPointerOverProperty =
 			DependencyProperty.Register("IsPointerOver", typeof(bool), typeof(DetailsLayoutBrowser), new PropertyMetadata(false));
 
+		public bool IsChecked
+		{
+			get { return (bool)GetValue(IsCheckedProperty); }
+			set { SetValue(IsCheckedProperty, value); }
+		}
+		public static readonly DependencyProperty IsCheckedProperty =
+			DependencyProperty.Register(nameof(IsChecked), typeof(bool), typeof(DetailsLayoutBrowser), new PropertyMetadata(false));
+
+
 		private const int TAG_TEXT_BLOCK = 1;
 
 		private uint currentIconSize;
@@ -715,14 +724,41 @@ namespace Files.App.Views.LayoutModes
 
 		private void ItemSelected_Checked(object sender, RoutedEventArgs e)
 		{
-			if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && !FileList.SelectedItems.Contains(item))
-				FileList.SelectedItems.Add(item);
+			foreach (var item in FileList.SelectedItems)
+			{
+				if (item is ListedItem i)
+				{
+					i.IsChecked = true;
+				}
+			}
+
+
+			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
+			ColumnsViewModel.HasChecked = xs.Contains(true);
+			ColumnsViewModel.IsChecked = xs.Contains(false) ? null : true;
+
+
+			//if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && !FileList.SelectedItems.Contains(item))
+			//	FileList.SelectedItems.Add(item);
 		}
 
 		private void ItemSelected_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && FileList.SelectedItems.Contains(item))
-				FileList.SelectedItems.Remove(item);
+			foreach (var item in FileList.SelectedItems)
+			{
+				if (item is ListedItem i)
+				{
+					i.IsChecked = false;
+				}
+			}
+
+			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
+			ColumnsViewModel.HasChecked = xs.Contains(true);
+			ColumnsViewModel.IsChecked = xs.Contains(false) ? null : true;
+
+
+			//if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && FileList.SelectedItems.Contains(item))
+			//	FileList.SelectedItems.Remove(item);
 		}
 
 		private new void FileList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -751,7 +787,7 @@ namespace Files.App.Views.LayoutModes
 					checkbox.Checked -= ItemSelected_Checked;
 					checkbox.Unchecked -= ItemSelected_Unchecked;
 
-					checkbox.IsChecked = FileList.SelectedItems.Contains(item);
+					//checkbox.IsChecked = FileList.SelectedItems.Contains(item);
 
 					checkbox.Checked += ItemSelected_Checked;
 					checkbox.Unchecked += ItemSelected_Unchecked;
@@ -815,15 +851,41 @@ namespace Files.App.Views.LayoutModes
 		{
 			if (sender is ListViewItem control && control.FindDescendant<UserControl>() is UserControl userControl)
 			{
+				var isChecked = (control.Content as ListedItem)?.IsChecked ?? false;
+
 				// Save pointer over state accordingly
+				//if (isChecked.HasValue)
+				//	control.SetValue(IsCheckedProperty, isChecked);
+
 				if (isPointerOver.HasValue)
 					control.SetValue(IsPointerOverProperty, isPointerOver);
 				// Handle visual states
-				if (control.IsSelected || control.GetValue(IsPointerOverProperty) is not false && SelectedItems?.Count >= 1)
+				//bool? c = control.GetValue(IsCheckedProperty) as bool?;
+				if (isChecked)
+					VisualStateManager.GoToState(userControl, "ShowCheckbox", true);
+
+				else if (control.IsSelected || control.GetValue(IsPointerOverProperty) is not false && SelectedItems?.Count >= 1)
 					VisualStateManager.GoToState(userControl, "ShowCheckbox", true);
 				else
 					VisualStateManager.GoToState(userControl, "HideCheckbox", true);
 			}
+		}
+
+		private void CheckBox_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+			/*bool? state = ColumnsViewModel.IsChecked;
+
+			var items = FileList.Items.Cast<ListedItem>().ToList();
+			if (state is null)
+			{
+				foreach (var item in items)
+					item.IsChecked = false;
+			}
+			else
+			{
+				foreach (var item in items)
+					item.IsChecked = true;
+			}*/
 		}
 	}
 }

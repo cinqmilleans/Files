@@ -5,6 +5,20 @@ namespace Files.App.ViewModels
 {
 	public class ColumnsViewModel : ObservableObject
 	{
+		private bool? isChecked = false;
+		public bool? IsChecked
+		{
+			get => isChecked;
+			set => SetProperty(ref isChecked, value);
+		}
+		private bool hasChecked = false;
+		public bool HasChecked
+		{
+			get => hasChecked;
+			set => SetProperty(ref hasChecked, value);
+		}
+
+
 		private ColumnViewModel iconColumn = new()
 		{
 			UserLength = new GridLength(24, GridUnitType.Pixel),

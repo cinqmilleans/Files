@@ -27,6 +27,13 @@ namespace Files.App.Filesystem
 {
 	public class ListedItem : ObservableObject, IGroupableItem
 	{
+		private bool isChecked = false;
+		public bool IsChecked
+		{
+			get => isChecked;
+			set => SetProperty(ref isChecked, value);
+		}
+
 		protected static IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
 
 		protected static readonly IFileTagsSettingsService fileTagsSettingsService = Ioc.Default.GetRequiredService<IFileTagsSettingsService>();

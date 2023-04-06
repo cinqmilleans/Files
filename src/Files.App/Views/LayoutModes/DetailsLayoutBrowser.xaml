@@ -309,7 +309,8 @@
 								<ColumnDefinition
 									x:Name="Column2"
 									Width="{x:Bind ColumnsViewModel.IconColumn.Length, Mode=OneWay}"
-									MaxWidth="{x:Bind ColumnsViewModel.IconColumn.MaxLength, Mode=OneWay}" />
+									MaxWidth="{x:Bind ColumnsViewModel.IconColumn.MaxLength, Mode=OneWay}">
+								</ColumnDefinition>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition x:Name="Column3" Width="{x:Bind ColumnsViewModel.NameColumn.Length, Mode=OneWay}" />
 								<ColumnDefinition Width="Auto" />
@@ -355,6 +356,13 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="0" />
 							</Grid.ColumnDefinitions>
+
+							<CheckBox Width="20"
+									  IsThreeState="True" Tapped="CheckBox_Tapped"
+									  IsChecked="{x:Bind ColumnsViewModel.IsChecked, Mode=OneWay}"
+									  Visibility="{x:Bind ColumnsViewModel.HasChecked, Mode=OneWay}"
+									  />
+
 
 							<uc:DataGridHeader
 								x:Name="NameHeader"
@@ -559,6 +567,7 @@
 											MinWidth="0"
 											HorizontalAlignment="Center"
 											AutomationProperties.AccessibilityView="Raw"
+											IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
 											Checked="ItemSelected_Checked"
 											DoubleTapped="SelectionCheckbox_DoubleTapped"
 											Unchecked="ItemSelected_Unchecked"
