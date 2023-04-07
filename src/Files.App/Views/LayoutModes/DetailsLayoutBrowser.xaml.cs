@@ -734,8 +734,8 @@ namespace Files.App.Views.LayoutModes
 
 
 			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
-			ColumnsViewModel.HasChecked = xs.Contains(true);
-			ColumnsViewModel.IsChecked = xs.Contains(false) ? null : true;
+			ColumnsViewModel.HasChecked = xs.Length is 2;
+			ColumnsViewModel.IsChecked = xs is [true];
 
 
 			//if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && !FileList.SelectedItems.Contains(item))
@@ -753,8 +753,8 @@ namespace Files.App.Views.LayoutModes
 			}
 
 			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
-			ColumnsViewModel.HasChecked = xs.Contains(true);
-			ColumnsViewModel.IsChecked = xs.Contains(false) ? null : true;
+			ColumnsViewModel.HasChecked = xs.Length is 2;
+			ColumnsViewModel.IsChecked = xs is [true];
 
 
 			//if (sender is CheckBox checkBox && checkBox.DataContext is ListedItem item && FileList.SelectedItems.Contains(item))
@@ -886,6 +886,46 @@ namespace Files.App.Views.LayoutModes
 				foreach (var item in items)
 					item.IsChecked = true;
 			}*/
+		}
+
+		private void CheckBox_Tapped_1(object sender, TappedRoutedEventArgs e)
+		{
+			var items = FileList.Items.Cast<ListedItem>().ToList();
+			foreach (var item in items)
+			{
+				item.IsChecked = true;
+				var i = FileList.ContainerFromItem(item) as ListViewItem;
+				UpdateCheckboxVisibility(i);
+			}
+
+			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
+			ColumnsViewModel.HasChecked = xs.Length is 2;
+			ColumnsViewModel.IsChecked = xs is [true];
+		}
+
+		private void CheckBox_Tapped_2(object sender, TappedRoutedEventArgs e)
+		{
+			((CheckBox)sender).IsChecked = null;
+
+			var items = FileList.Items.Cast<ListedItem>().ToList();
+			foreach (var item in items)
+			{
+				item.IsChecked = false;
+				var i = FileList.ContainerFromItem(item) as ListViewItem;
+				UpdateCheckboxVisibility(i);
+			}
+
+			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
+			ColumnsViewModel.HasChecked = xs.Length is 2;
+			ColumnsViewModel.IsChecked = xs is [true];
+		}
+
+		private void SelectionCheckbox_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+			var xs = FileList.Items.Cast<ListedItem>().Select(x => x.IsChecked).Distinct().ToArray();
+			ColumnsViewModel.HasChecked = xs.Length is 2;
+			ColumnsViewModel.IsChecked = xs is [true];
+
 		}
 	}
 }

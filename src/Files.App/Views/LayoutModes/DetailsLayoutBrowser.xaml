@@ -357,10 +357,13 @@
 								<ColumnDefinition Width="0" />
 							</Grid.ColumnDefinitions>
 
-							<CheckBox Width="20"
-									  IsThreeState="True" Tapped="CheckBox_Tapped"
-									  IsChecked="{x:Bind ColumnsViewModel.IsChecked, Mode=OneWay}"
+							<CheckBox Width="20" Tapped="CheckBox_Tapped_1"
+									  IsChecked="{x:Bind ColumnsViewModel.MyNull, Mode=TwoWay}"
 									  Visibility="{x:Bind ColumnsViewModel.HasChecked, Mode=OneWay}"
+									  />
+							<CheckBox Width="20" Tapped="CheckBox_Tapped_2"
+									  IsChecked="{x:Bind ColumnsViewModel.IsChecked, Mode=OneWay}"
+									  Visibility="{x:Bind ColumnsViewModel.IsChecked, Mode=OneWay}"
 									  />
 
 
@@ -564,7 +567,7 @@
 										<CheckBox
 											x:Name="SelectionCheckbox"
 											Width="20"
-											MinWidth="0"
+											MinWidth="0" Tapped="SelectionCheckbox_Tapped"
 											HorizontalAlignment="Center"
 											AutomationProperties.AccessibilityView="Raw"
 											IsChecked="{x:Bind IsChecked, Mode=TwoWay}"

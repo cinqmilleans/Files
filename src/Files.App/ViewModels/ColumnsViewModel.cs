@@ -5,8 +5,14 @@ namespace Files.App.ViewModels
 {
 	public class ColumnsViewModel : ObservableObject
 	{
-		private bool? isChecked = false;
-		public bool? IsChecked
+		public bool? MyNull
+		{
+			get => null;
+			set => OnPropertyChanged(nameof(MyNull));
+		}
+
+		private bool isChecked = false;
+		public bool IsChecked
 		{
 			get => isChecked;
 			set => SetProperty(ref isChecked, value);
