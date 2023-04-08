@@ -273,9 +273,9 @@ namespace Files.App.Commands
 
 		public override string ToString() => Label;
 
-		public override int GetHashCode() => (Key, Modifier).GetHashCode();
+		public override int GetHashCode() => (Key, Modifier, IsVisible).GetHashCode();
 		public override bool Equals(object? other) => other is HotKey hotKey && Equals(hotKey);
-		public bool Equals(HotKey other) => (other.Key, other.Modifier).Equals((Key, Modifier));
+		public bool Equals(HotKey other) => (other.Key, other.Modifier, other.IsVisible).Equals((Key, Modifier, IsVisible));
 
 		private static string GetKeyString(string key) => $"Key/{key}".GetLocalizedResource();
 

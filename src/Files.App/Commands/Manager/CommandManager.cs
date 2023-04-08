@@ -9,15 +9,19 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Files.App.Commands
 {
-	internal class CommandManager : ICommandManager
+	internal partial class CommandManager : ICommandManager
 	{
 		private readonly IImmutableDictionary<CommandCodes, IRichCommand> commands;
-		private readonly IDictionary<HotKey, IRichCommand> hotKeys;
+		private IDictionary<HotKey, IRichCommand> hotKeys;
 
 		public IRichCommand this[CommandCodes code] => commands.TryGetValue(code, out var command) ? command : None;
 		public IRichCommand this[HotKey hotKey] => hotKeys.TryGetValue(hotKey, out var command) ? command : None;
@@ -133,6 +137,8 @@ namespace Files.App.Commands
 		public IRichCommand NextTab => commands[CommandCodes.NextTab];
 		public IRichCommand CloseSelectedTab => commands[CommandCodes.CloseSelectedTab];
 
+		private static string ConfigPath => Path.Combine(ApplicationData.Current.LocalFolder.Path, "hotkeys.config");
+
 		public CommandManager()
 		{
 			commands = CreateActions()
@@ -144,6 +150,8 @@ namespace Files.App.Commands
 			hotKeys = commands.Values
 				.SelectMany(command => command.CustomHotKeys, (command, hotkey) => (Command: command, HotKey: hotkey))
 				.ToDictionary(item => item.HotKey, item => item.Command);
+
+			InitHotKeys();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -262,12 +270,130 @@ namespace Files.App.Commands
 			[CommandCodes.CloseSelectedTab] = new CloseSelectedTabAction(),
 		};
 
+		public async Task ReadAsync()
+		{
+			Regex regex = new("[^a-zA-Z0-9+!]+");
+
+			string[] lines = await Read();
+
+			IEnumerable<ConfigItem> defaultHotKeys = this.Select(ConfigItem.CreateDefaultItem);
+			IEnumerable<ConfigItem> customHotKeys = lines.Select(Parse);
+
+			IList<ConfigItem> items = defaultHotKeys
+				.Concat(customHotKeys)
+				.Where(item => item.Code is not CommandCodes.None)
+				.GroupBy(item => item.Code, item => item.Hotkeys)
+				.Select(group => new ConfigItem(group.Key, group.Last()))
+				.ToList();
+
+			foreach (var item in items)
+			{
+				this[item.Code].CustomHotKeys = item.Hotkeys;
+			}
+
+			async Task<string[]> Read()
+			{
+				try
+				{
+					string path = ConfigPath;
+					if (File.Exists(path))
+						return await File.ReadAllLinesAsync(path);
+					return Array.Empty<string>();
+
+				}
+				catch (IOException)
+				{
+					return Array.Empty<string>();
+				}
+			}
+
+			ConfigItem Parse(string line)
+			{
+				line = line.Split('#')[0].Trim();
+
+				var parts = regex.Split(line);
+				if (parts.Length < 3)
+					return ConfigItem.Empty;
+
+				if (!Enum.TryParse(parts[0], out CommandCodes code))
+					return ConfigItem.Empty;
+
+				if (parts[1].ToLower() is not "1" and not "true")
+					return ConfigItem.Empty;
+
+				var hotKeys = HotKeyCollection.Parse(string.Join(' ', parts.Skip(2)));
+
+				return new(code, hotKeys);
+			}
+		}
+
+		public async Task WriteAsync()
+		{
+			var builder = new StringBuilder("# Documentation: https://github.com/files-community/Files");
+			builder.AppendLine();
+			builder.AppendLine();
+
+			IList<ConfigItem> items = this
+				.Where(command => command.Code is not CommandCodes.None)
+				.Select(ConfigItem.CreateCustomItem)
+				.OrderBy(item => item.Code.ToString())
+				.ToList();
+
+			string codeFormat = GetColumnFormat("# Command", items.Select(item => item.Code.ToString()));
+			builder.AppendFormat(codeFormat, "# Command");
+
+			string customFormat = GetColumnFormat("Custom");
+			builder.AppendFormat(customFormat, "Custom");
+
+			int hotKeyCount = items.Max(item => item.Hotkeys.Length);
+			string[] hotKeyFormats = new string[hotKeyCount];
+			for (int hotKeyIndex = 0; hotKeyIndex < hotKeyCount; ++hotKeyIndex)
+			{
+				string label = $"HotKey {hotKeyIndex + 1}";
+				var values = items.Select(item => item.Hotkeys[hotKeyIndex].Code);
+				hotKeyFormats[hotKeyIndex] = GetColumnFormat(label, values);
+				builder.AppendFormat(hotKeyFormats[hotKeyIndex], label);
+			}
+
+			foreach (var item in items)
+			{
+				builder.AppendLine();
+				builder.AppendFormat(codeFormat, item.Code);
+				builder.AppendFormat(customFormat, item.IsCustom ? '1' : '0');
+
+				for (int hotKeyIndex = 0; hotKeyIndex < hotKeyCount; ++hotKeyIndex)
+				{
+					builder.AppendFormat(hotKeyFormats[hotKeyIndex], item.Hotkeys[hotKeyIndex].Code);
+				}
+			}
+
+			builder.AppendLine();
+
+			try
+			{
+				await File.WriteAllTextAsync(ConfigPath, builder.ToString());
+			}
+			catch (IOException) { }
+
+			static string GetColumnFormat(string label, IEnumerable<string>? values = null, int margin = 4)
+			{
+				int size = margin + Math.Max(label.Length, values?.Max(value => value.Length) ?? 0);
+				return $"{{0,-{size}}}";
+			}
+		}
+
+		private async void InitHotKeys()
+		{
+			await ReadAsync();
+			await WriteAsync();
+		}
+
 		[DebuggerDisplay("Command None")]
 		private class NoneCommand : IRichCommand
 		{
-			public event EventHandler? CanExecuteChanged { add {} remove {} }
-			public event PropertyChangingEventHandler? PropertyChanging { add {} remove {} }
-			public event PropertyChangedEventHandler? PropertyChanged { add {} remove {} }
+			public event EventHandler? CanExecuteChanged { add { } remove { } }
+			public event PropertyChangingEventHandler? PropertyChanging { add { } remove { } }
+			public event PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
 
 			public CommandCodes Code => CommandCodes.None;
 
@@ -291,13 +417,13 @@ namespace Files.App.Commands
 			}
 
 			public bool IsToggle => false;
-			public bool IsOn { get => false; set {} }
+			public bool IsOn { get => false; set { } }
 			public bool IsExecutable => false;
 
 			public bool CanExecute(object? parameter) => false;
-			public void Execute(object? parameter) {}
+			public void Execute(object? parameter) { }
 			public Task ExecuteAsync() => Task.CompletedTask;
-			public void ExecuteTapped(object sender, TappedRoutedEventArgs e) {}
+			public void ExecuteTapped(object sender, TappedRoutedEventArgs e) { }
 		}
 
 		[DebuggerDisplay("Command {Code}")]
@@ -441,6 +567,16 @@ namespace Files.App.Commands
 						break;
 				}
 			}
+		}
+
+		private record ConfigItem(CommandCodes Code, HotKeyCollection Hotkeys, bool IsCustom = false)
+		{
+			public static ConfigItem Empty { get; } = new(CommandCodes.None, HotKeyCollection.Empty);
+
+			public static ConfigItem CreateDefaultItem(IRichCommand command)
+				=> new(command.Code, command.DefaultHotKeys);
+			public static ConfigItem CreateCustomItem(IRichCommand command)
+				=> new(command.Code, command.CustomHotKeys, command.CustomHotKeys != command.DefaultHotKeys);
 		}
 	}
 }
