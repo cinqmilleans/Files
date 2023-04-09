@@ -256,9 +256,9 @@ namespace Files.App.Commands
 			var parts = code.Split('+').Select(part => part.Trim());
 			foreach (var part in parts)
 			{
-				if (Enum.TryParse(part, out Keys partKey))
+				if (Enum.TryParse(part, true, out Keys partKey))
 					key = partKey;
-				if (Enum.TryParse(part, out KeyModifiers partModifier))
+				if (Enum.TryParse(part, true, out KeyModifiers partModifier))
 					modifier |= partModifier;
 			}
 			return new(key, modifier, isVisible);

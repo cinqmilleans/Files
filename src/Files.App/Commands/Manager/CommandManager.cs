@@ -21,7 +21,7 @@ namespace Files.App.Commands
 	internal partial class CommandManager : ICommandManager
 	{
 		private readonly IImmutableDictionary<CommandCodes, IRichCommand> commands;
-		private IDictionary<HotKey, IRichCommand> hotKeys;
+		private readonly IDictionary<HotKey, IRichCommand> hotKeys;
 
 		public IRichCommand this[CommandCodes code] => commands.TryGetValue(code, out var command) ? command : None;
 		public IRichCommand this[HotKey hotKey] => hotKeys.TryGetValue(hotKey, out var command) ? command : None;
@@ -270,11 +270,11 @@ namespace Files.App.Commands
 			[CommandCodes.CloseSelectedTab] = new CloseSelectedTabAction(),
 		};
 
-		public async Task ReadAsync()
+		public async Task LoadHotKeysAsync()
 		{
 			Regex regex = new("[^a-zA-Z0-9+!]+");
 
-			string[] lines = await Read();
+			string[] lines = await ReadAsync();
 
 			IEnumerable<ConfigItem> defaultHotKeys = this.Select(ConfigItem.CreateDefaultItem);
 			IEnumerable<ConfigItem> customHotKeys = lines.Select(Parse);
@@ -291,7 +291,7 @@ namespace Files.App.Commands
 				this[item.Code].CustomHotKeys = item.Hotkeys;
 			}
 
-			async Task<string[]> Read()
+			async Task<string[]> ReadAsync()
 			{
 				try
 				{
@@ -327,7 +327,7 @@ namespace Files.App.Commands
 			}
 		}
 
-		public async Task WriteAsync()
+		public async Task SaveHotKeysAsync()
 		{
 			var builder = new StringBuilder("# Documentation: https://github.com/files-community/Files");
 			builder.AppendLine();
@@ -373,7 +373,7 @@ namespace Files.App.Commands
 			{
 				await File.WriteAllTextAsync(ConfigPath, builder.ToString());
 			}
-			catch (IOException) { }
+			catch (IOException) {}
 
 			static string GetColumnFormat(string label, IEnumerable<string>? values = null, int margin = 4)
 			{
@@ -384,8 +384,8 @@ namespace Files.App.Commands
 
 		private async void InitHotKeys()
 		{
-			await ReadAsync();
-			await WriteAsync();
+			await ReadHotKeysAsync();
+			await WriteHotKeysAsync();
 		}
 
 		[DebuggerDisplay("Command None")]

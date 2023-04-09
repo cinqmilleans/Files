@@ -12,7 +12,7 @@ namespace Files.App.Commands
 	{
 		private static readonly char[] parseSeparators = new char[] { ',', ';', ' ', '\t' };
 
-		private readonly ImmutableArray<HotKey> hotKeys;
+		private readonly ImmutableArray<HotKey> hotKeys = ImmutableArray<HotKey>.Empty;
 
 		public static HotKeyCollection Empty { get; } = new(ImmutableArray<HotKey>.Empty);
 

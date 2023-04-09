@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Files.App.Commands
 {
@@ -133,5 +134,8 @@ namespace Files.App.Commands
 		IRichCommand PreviousTab { get; }
 		IRichCommand NextTab { get; }
 		IRichCommand CloseSelectedTab { get; }
+
+		Task LoadHotKeysAsync();
+		Task SaveHotKeysAsync();
 	}
 }
