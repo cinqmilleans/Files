@@ -50,7 +50,7 @@ namespace Files.App.Commands
 		public override string ToString() => Label;
 		public override int GetHashCode() => hotKeys.GetHashCode();
 		public override bool Equals(object? other) => other is HotKeyCollection hotKeys && Equals(hotKeys);
-		public bool Equals(HotKeyCollection other) => Code.Equals(other.Code);
+		public bool Equals(HotKeyCollection other) => hotKeys.SequenceEqual(other.hotKeys);
 
 		private static ImmutableArray<HotKey> Clean(IEnumerable<HotKey> hotKeys)
 			=> hotKeys.Distinct().Where(HotKey => !HotKey.IsNone).ToImmutableArray();
