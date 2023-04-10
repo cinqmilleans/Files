@@ -294,11 +294,10 @@ namespace Files.App.Commands
 			foreach (var command in commands.Values.OfType<ActionCommand>())
 			{
 				var code = command.Code;
-				bool isCustom = customs.ContainsKey(code) && customs[code] != defaults[code];
 				var defaultHotkeys = new HotKeyCollection(defaults[code].Except(useds));
-				var customHotkeys = isCustom ? customs[code] : defaultHotkeys;
+				var customHotkeys = customs.TryGetValue(code, out var hotkeys) ? hotkeys : defaultHotkeys;
 
-				command.UpdateHotKeys(isCustom, defaultHotkeys, customHotkeys);
+				command.UpdateHotKeys(defaultHotkeys, customHotkeys);
 			}
 
 			hotKeys = commands.Values
@@ -374,9 +373,6 @@ namespace Files.App.Commands
 			public FontIcon? FontIcon { get; }
 			public Style? OpacityStyle { get; }
 
-			private bool hasCustomHotKeys = false;
-			public bool HasCustomHotKeys => hasCustomHotKeys;
-
 			public string? HotKeyText
 			{
 				get
@@ -406,7 +402,7 @@ namespace Files.App.Commands
 
 					if (!manager.settings.CustomHotKeys.ContainsKey(code))
 						settingHotKeys.Add(code, value.Code);
-					else if (value == defaultHotKeys)
+					else if (value != defaultHotKeys)
 						settingHotKeys[code] = value.Code;
 					else
 						settingHotKeys.Remove(code);
@@ -456,9 +452,8 @@ namespace Files.App.Commands
 
 			public async void ExecuteTapped(object sender, TappedRoutedEventArgs e) => await ExecuteAsync();
 
-			public void UpdateHotKeys(bool isCustom, HotKeyCollection defaultHotKeys, HotKeyCollection customHotKeys)
+			public void UpdateHotKeys(HotKeyCollection defaultHotKeys, HotKeyCollection customHotKeys)
 			{
-				hasCustomHotKeys = isCustom;
 				SetProperty(ref this.defaultHotKeys, defaultHotKeys, nameof(DefaultHotKeys));
 
 				if (SetProperty(ref this.customHotKeys, customHotKeys, nameof(CustomHotKeys)))
