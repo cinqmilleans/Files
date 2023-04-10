@@ -269,33 +269,29 @@ namespace Files.App.Commands
 		{
 			ISet<HotKey> useds = new HashSet<HotKey>();
 
-			var defaults = commands
-				.OfType<ActionCommand>()
+			var defaults = commands.Values.OfType<ActionCommand>()
 				.ToDictionary(command => command.Code, commands => GetDefaultHotKeys(commands.Action));
 
 			var customs = new Dictionary<CommandCodes, HotKeyCollection>();
-			if (settings.CustomHotKeys is not null)
+			foreach (var custom in settings.CustomHotKeys)
 			{
-				foreach (var custom in settings.CustomHotKeys)
+				if (Enum.TryParse(custom.Key, true, out CommandCodes code))
 				{
-					if (Enum.TryParse(custom.Key, true, out CommandCodes code))
+					if (code is CommandCodes.None)
+						continue;
+
+					var hotKeys = new HotKeyCollection(HotKeyCollection.Parse(custom.Value).Except(useds));
+					customs.Add(code, new(hotKeys));
+
+					foreach (var hotKey in hotKeys)
 					{
-						if (code is CommandCodes.None)
-							continue;
-
-						var hotKeys = new HotKeyCollection(HotKeyCollection.Parse(custom.Value).Except(useds));
-						customs.Add(code, new(hotKeys));
-
-						foreach (var hotKey in hotKeys)
-						{
-							useds.Add(hotKey with { IsVisible = false });
-							useds.Add(hotKey with { IsVisible = true });
-						}
+						useds.Add(hotKey with { IsVisible = false });
+						useds.Add(hotKey with { IsVisible = true });
 					}
 				}
 			}
 
-			foreach (var command in commands.OfType<ActionCommand>())
+			foreach (var command in commands.Values.OfType<ActionCommand>())
 			{
 				var code = command.Code;
 				bool isCustom = customs.ContainsKey(code) && customs[code] != defaults[code];
@@ -404,13 +400,11 @@ namespace Files.App.Commands
 					if (customHotKeys == value)
 						return;
 
-					var defaultHotKeys = GetDefaultHotKeys(Action);
-
 					string code = Code.ToString();
+					var defaultHotKeys = GetDefaultHotKeys(Action);
+					var settingHotKeys = new Dictionary<string, string>(manager.settings.CustomHotKeys);
 
-					var settingHotKeys = manager.settings.CustomHotKeys ?? new();
-
-					if (!settingHotKeys.ContainsKey(code))
+					if (!manager.settings.CustomHotKeys.ContainsKey(code))
 						settingHotKeys.Add(code, value.Code);
 					else if (value == defaultHotKeys)
 						settingHotKeys[code] = value.Code;

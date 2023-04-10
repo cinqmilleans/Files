@@ -219,9 +219,9 @@ namespace Files.App.ServicesImplementation.Settings
 			set => Set(value);
 		}
 
-		public Dictionary<string, string>? CustomHotKeys
+		public Dictionary<string, string> CustomHotKeys
 		{
-			get => Get<Dictionary<string, string>>(null);
+			get => Get<Dictionary<string, string>>(null) ?? new();
 			set => Set(value);
 		}
 

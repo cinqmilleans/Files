@@ -180,6 +180,6 @@ namespace Files.Backend.Services.Settings
 		/// <summary>
 		/// A dictionary to determine the custom hotKeys.
 		/// </summary>
-		Dictionary<string, string>? CustomHotKeys { get; set; }
+		Dictionary<string, string> CustomHotKeys { get; set; }
 	}
 }
