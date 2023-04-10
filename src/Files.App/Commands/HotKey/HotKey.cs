@@ -159,7 +159,7 @@ namespace Files.App.Commands
 
 		public bool IsNone => Key is Keys.None && Modifier is KeyModifiers.None;
 
-		public bool IsVisible { get; }
+		public bool IsVisible { get; init; }
 
 		public Keys Key { get; }
 		public KeyModifiers Modifier { get; }

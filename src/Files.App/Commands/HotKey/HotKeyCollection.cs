@@ -8,7 +8,7 @@ using System.Linq;
 namespace Files.App.Commands
 {
 	[DebuggerDisplay("{Code}")]
-	public struct HotKeyCollection : IEnumerable<HotKey>, IEquatable<HotKeyCollection>
+	public readonly struct HotKeyCollection : IEnumerable<HotKey>, IEquatable<HotKeyCollection>
 	{
 		private static readonly char[] parseSeparators = new char[] { ',', ';', ' ', '\t' };
 
@@ -41,7 +41,7 @@ namespace Files.App.Commands
 			return new(hotKeys);
 		}
 
-		public void Contains(HotKey hotkey) => hotKeys.Contains(hotkey);
+		public void Contains(HotKey hotKey) => hotKeys.Contains(hotKey);
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<HotKey> GetEnumerator() => (hotKeys as IEnumerable<HotKey>).GetEnumerator();
@@ -52,6 +52,13 @@ namespace Files.App.Commands
 		public bool Equals(HotKeyCollection other) => hotKeys.SequenceEqual(other.hotKeys);
 
 		private static ImmutableArray<HotKey> Clean(IEnumerable<HotKey> hotKeys)
-			=> hotKeys.Distinct().Where(HotKey => !HotKey.IsNone).ToImmutableArray();
+		{
+			return hotKeys
+				.Distinct()
+				.Where(hotKey => !hotKey.IsNone)
+				.GroupBy(hotKey => hotKey with { IsVisible = true})
+				.Select(group => group.OrderBy(hotKey => hotKey.IsVisible).Last())
+				.ToImmutableArray();
+		}
 	}
 }
