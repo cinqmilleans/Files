@@ -8,7 +8,7 @@ using System.Linq;
 namespace Files.App.Commands
 {
 	[DebuggerDisplay("{Code}")]
-	public struct HotKeyCollection : IEnumerable<HotKey>, IEquatable<HotKeyCollection>
+	public readonly struct HotKeyCollection : IEnumerable<HotKey>, IEquatable<HotKeyCollection>
 	{
 		private static readonly char[] parseSeparators = new char[] { ',', ';', ' ', '\t' };
 
