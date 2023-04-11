@@ -161,8 +161,8 @@ namespace Files.App.Commands
 
 		public bool IsVisible { get; init; }
 
-		public Keys Key { get; }
-		public KeyModifiers Modifier { get; }
+		public Keys Key { get; init; }
+		public KeyModifiers Modifier { get; init; }
 
 		public string Code
 		{
