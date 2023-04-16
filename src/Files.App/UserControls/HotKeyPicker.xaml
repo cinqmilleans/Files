@@ -6,10 +6,10 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d">
 
-	<TextBox
+	<TextBox PointerEntered="Box_PointerEntered"
 		x:Name="Box"
-		Width="120"
-		TextChanging="Box_TextChanging"
-		PlaceholderText="Pick a key…" />
+		Width="250"
+		TextChanged="Box_TextChanged"
+		PlaceholderText="Pick a key..." />
 
 </UserControl>

@@ -54,9 +54,14 @@ namespace Files.App.UserControls
 			}
 		}
 
-		private void Box_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+		private void Box_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			Box.Select(Box.Text.Length - 1, 0);
+			Box.Select(Box.Text.Length, 0);
+		}
+
+		private void Box_PointerEntered(object sender, PointerRoutedEventArgs e)
+		{
+
 		}
 	}
 }

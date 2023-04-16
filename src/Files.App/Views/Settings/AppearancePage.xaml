@@ -95,14 +95,16 @@
 				</TransitionCollection>
 			</StackPanel.ChildrenTransitions>
 
+			<local:CommandListControl x:Name="CommandList" Height="500" />
+
 			<!--  Personalization  -->
-			<TextBlock
+			<!--<TextBlock
 				Padding="0,0,0,4"
 				FontSize="14"
 				FontWeight="Medium"
 				Text="{helpers:ResourceString Name=Personalization}" />
 
-			<!--  Theme  -->
+			--><!--  Theme  --><!--
 			<local:SettingsBlockControl Title="{helpers:ResourceString Name=SettingsAppearanceTheme}" HorizontalAlignment="Stretch">
 				<local:SettingsBlockControl.Icon>
 					<FontIcon Glyph="&#xE790;" />
@@ -114,7 +116,7 @@
 					SelectedIndex="{x:Bind ViewModel.SelectedThemeIndex, Mode=TwoWay}" />
 			</local:SettingsBlockControl>
 
-			<!--  App Background  -->
+			--><!--  App Background  --><!--
 			<local:SettingsBlockControl
 				Title="{helpers:ResourceString Name=Background}"
 				HorizontalAlignment="Stretch"
@@ -154,7 +156,7 @@
 				</local:SettingsBlockControl.ExpandableContent>
 			</local:SettingsBlockControl>
 
-			<!--  Compact Spacing  -->
+			--><!--  Compact Spacing  --><!--
 			<local:SettingsBlockControl Title="{helpers:ResourceString Name=UseCompactSpacing}" HorizontalAlignment="Stretch">
 				<local:SettingsBlockControl.Icon>
 					<FontIcon Glyph="&#xE62B;" />
@@ -163,7 +165,7 @@
 					AutomationProperties.Name="{helpers:ResourceString Name=UseCompactSpacing}"
 					IsOn="{x:Bind ViewModel.UseCompactStyles, Mode=TwoWay}"
 					Style="{StaticResource RightAlignedToggleSwitchStyle}" />
-			</local:SettingsBlockControl>
+			</local:SettingsBlockControl>-->
 		</StackPanel>
 	</Grid>
 </Page>

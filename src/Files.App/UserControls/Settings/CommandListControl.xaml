@@ -1,0 +1,45 @@
+<UserControl
+	x:Class="Files.App.UserControls.Settings.CommandListControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:commands="using:Files.App.Commands"
+	mc:Ignorable="d">
+
+	<StackPanel Orientation="Vertical">
+
+		<TextBox
+			x:Name="FilterBox"
+			PlaceholderText="Search..."
+			Text="{x:Bind Filter, Mode=TwoWay}" />
+
+		<ListBox
+			x:Name="CommandList"
+			Height="500"
+			ScrollViewer.HorizontalScrollBarVisibility="Visible"
+			ScrollViewer.HorizontalScrollMode="Enabled"
+			ItemsSource="{x:Bind Items.View}"
+			SelectedItem="{x:Bind SelectedCommand, Mode=TwoWay}">
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				</Style>
+			</ListBox.ItemContainerStyle>
+			<ListBox.ItemTemplate>
+				<DataTemplate x:DataType="commands:IRichCommand">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="{x:Bind Label}" />
+						<TextBlock Grid.Column="1" Text="{x:Bind HotKeyText}" />
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+	</StackPanel>
+
+</UserControl>

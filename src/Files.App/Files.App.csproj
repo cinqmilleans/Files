@@ -21,6 +21,7 @@
         <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
         <UseWinUI>true</UseWinUI>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Configurations>Debug;Release;Sideload</Configurations>
         <TieredCompilation>true</TieredCompilation>
@@ -70,6 +71,7 @@
     <ItemGroup>
       <None Remove="UserControls\HotKeyPicker.xaml" />
       <None Remove="UserControls\OpacityIcon.xaml" />
+      <None Remove="UserControls\Settings\CommandListControl.xaml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ByteSize" Version="2.1.1" />
@@ -126,6 +128,11 @@
         <TrimmerRootAssembly Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <TrimmerRootAssembly Include="CommunityToolkit.WinUI.UI.Controls.Media" />
         <TrimmerRootAssembly Include="CommunityToolkit.WinUI.UI.Controls.Primitives" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="UserControls\Settings\CommandListControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="UserControls\HotKeyPicker.xaml">

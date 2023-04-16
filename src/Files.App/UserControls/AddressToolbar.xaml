@@ -169,6 +169,9 @@
 					Glyph="&#xE70D;" />
 			</Grid>
 
+			<uc:HotKeyPicker Grid.Column="2" Width="250" />
+
+
 			<uc:SearchBox
 				x:Name="SearchRegion"
 				Grid.Column="2"
@@ -183,7 +186,7 @@
 				GotFocus="SearchRegion_OnGotFocus"
 				LostFocus="SearchRegion_LostFocus"
 				SearchBoxViewModel="{x:Bind ViewModel.SearchBoxViewModel, Mode=OneWay}"
-				Visibility="{x:Bind converters:MultiBooleanConverter.OrConvertToVisibility(ShowSearchBox, ViewModel.IsSearchBoxVisible), Mode=OneWay}" />
+				Visibility="Collapsed" />
 
 			<StackPanel Grid.Column="3" Orientation="Horizontal">
 				<Button
