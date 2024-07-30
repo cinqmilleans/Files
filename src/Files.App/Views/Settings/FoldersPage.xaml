@@ -158,6 +158,27 @@
 				</local:SettingsBlockControl.ExpandableContent>
 			</local:SettingsBlockControl>
 
+			<!--  Engine Delete  -->
+			<local:SettingsBlockControl Title="Moteur de copie" HorizontalAlignment="Stretch">
+				<local:SettingsBlockControl.Icon>
+					<FontIcon Glyph="&#xE74D;" />
+				</local:SettingsBlockControl.Icon>
+
+				<uc:ComboBoxEx AutomationProperties.Name="{helpers:ResourceString Name=ShowConfirmationWhenDeletingItems}" SelectedIndex="0">
+					<ComboBoxItem Content="Application" />
+					<ComboBoxItem Content="Windows" />
+					<ComboBoxItem Content="UltraCopier" />
+				</uc:ComboBoxEx>
+			</local:SettingsBlockControl>
+			<InfoBar
+						CornerRadius="0,0,2,2"
+						IsClosable="False"
+						IsIconVisible="True"
+						IsOpen="True"
+						Message="UltraCopier n'est pas installé"
+						Severity="Warning" />
+
+
 			<!--  Confirm Delete  -->
 			<local:SettingsBlockControl Title="{helpers:ResourceString Name=ShowConfirmationWhenDeletingItems}" HorizontalAlignment="Stretch">
 				<local:SettingsBlockControl.Icon>

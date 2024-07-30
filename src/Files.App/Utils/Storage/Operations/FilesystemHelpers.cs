@@ -233,6 +233,8 @@ namespace Files.App.Utils.Storage
 			bool isTargetExecutable = false,
 			bool isTargetScriptFile = false)
 		{
+			showDialog = true;
+
 			try
 			{
 				if (destination is null)

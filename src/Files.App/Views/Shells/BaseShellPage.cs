@@ -164,7 +164,7 @@ namespace Files.App.Views.Shells
 			InstanceViewModel = instanceViewModel;
 			InstanceViewModel.FolderSettings.LayoutPreferencesUpdateRequired += FolderSettings_LayoutPreferencesUpdateRequired;
 			cancellationTokenSource = new CancellationTokenSource();
-			FilesystemHelpers = new FilesystemHelpers(this, cancellationTokenSource.Token);
+			FilesystemHelpers = FilesystemHelpersFactory.GetHelpers(this, cancellationTokenSource.Token);
 			StorageHistoryHelpers = new StorageHistoryHelpers(new StorageHistoryOperations(this, cancellationTokenSource.Token));
 
 			ToolbarViewModel.InstanceViewModel = InstanceViewModel;
